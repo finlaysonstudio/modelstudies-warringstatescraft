@@ -1,0 +1,16 @@
+{
+  "name": "@modelstudies/judges",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Judge specs, fan-out planner, server-side runner, consensus folds, label pipeline",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@jaypie/errors": "^1.2.4",
+    "@modelstudies/workflows": "*"
+  }
+}

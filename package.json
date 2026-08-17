@@ -1,0 +1,31 @@
+{
+  "name": "modelstudies-situationeval",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Situation Room evals: branching multi-model war game, values instrument, judges' box",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "app": "npm run dev --workspace @modelstudies/app",
+    "cli": "tsx packages/cli/src/index.ts",
+    "dev": "npm run dev --workspace @modelstudies/app",
+    "format": "prettier --write \"packages/*/src/**/*.{ts,tsx,css}\"",
+    "lint": "eslint packages/*/src",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit && npm run typecheck --workspace @modelstudies/app"
+  },
+  "devDependencies": {
+    "@jaypie/eslint": "^1.2.5",
+    "@types/node": "^24.0.0",
+    "eslint": "^9.39.0",
+    "prettier": "^3.6.0",
+    "tsx": "^4.20.0",
+    "typescript": "^6.0.0",
+    "vitest": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

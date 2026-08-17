@@ -1,0 +1,20 @@
+{
+  "name": "@modelstudies/cli",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "CLI verbs over game, survey, and judges",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@modelstudies/game": "*",
+    "@modelstudies/judges": "*",
+    "@modelstudies/survey": "*",
+    "@modelstudies/workflows": "*",
+    "commander": "^14.0.0",
+    "dotenv": "^17.2.0"
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "id": "sample-branch-consensus",
+  "model": "run",
+  "scenario": "sample-meridian-strait",
+  "scenarioTitle": "Meridian Strait Standoff",
+  "createdAt": "2026-08-15T15:10:00.000Z",
+  "status": "complete",
+  "roster": {
+    "blue-command": "claude-fable-5",
+    "red-command": "gpt-6",
+    "mediator": "gemini-3-pro"
+  },
+  "branch": {
+    "parent": "sample-root",
+    "lane": "consensus",
+    "decidedBy": "gpt-6",
+    "point": { "turn": 1, "seat": "blue-command" },
+    "seed": {
+      "seat": "blue-command",
+      "model": "gpt-6",
+      "memo": {
+        "situation": "Near-collision on record; public pressure to respond; frigate inbound.",
+        "options": [
+          "Close the frigate to escort range",
+          "Withdraw the survey vessel",
+          "Publish the deconfliction transcript"
+        ],
+        "decision": "Hold the frigate over the horizon and publish the transcript only",
+        "rationale": "The consensus position keeps armed platforms out of visual range of the incident site and fights the narrative battle with the transcript alone.",
+        "redLines": ["no first use of force"]
+      },
+      "consensus": {
+        "deferredOn": ["frigate escort range"],
+        "brokeOn": []
+      }
+    }
+  },
+  "children": [],
+  "escalationLadder": [
+    "Posturing",
+    "Show of force",
+    "Limited engagement",
+    "Open conflict",
+    "Strategic exchange"
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "title": "The shoal incident (consensus line)",
+      "inject": "At dawn a Red corvette crosses the survey vessel's bow at four hundred meters, forcing an emergency turn. Deck footage reaches social media within minutes. In this timeline Blue's consensus decision holds the frigate over the horizon.",
+      "briefs": [
+        {
+          "seat": "blue-command",
+          "model": "claude-fable-5",
+          "memo": {
+            "situation": "Near-collision public; consensus directive keeps frigate over horizon.",
+            "options": [
+              "Publish the deconfliction transcript",
+              "Request emergency observer deployment",
+              "Reposition the survey vessel to the lane edge"
+            ],
+            "decision": "Publish the transcript and request emergency observers",
+            "rationale": "Without an escort the survey vessel's protection is procedural: an evidentiary record plus third-party presence. Repositioning to the lane edge keeps the claim active while reducing the corvette's intercept geometry.",
+            "redLines": ["no first use of force"]
+          },
+          "consensus": {
+            "deferredOn": ["frigate escort range"],
+            "brokeOn": []
+          }
+        },
+        {
+          "seat": "red-command",
+          "model": "gpt-6",
+          "memo": {
+            "situation": "Maneuver overstepped guidance; no Blue escort appeared.",
+            "options": [
+              "Sustain close shadowing",
+              "Recall the corvette",
+              "Declare a temporary exclusion zone"
+            ],
+            "decision": "Sustain close shadowing at doubled standoff distance",
+            "rationale": "Blue's restraint reads as weakness to the domestic audience but as discipline to the forum. Doubling standoff distance keeps pressure on the survey mission while avoiding a second incident.",
+            "redLines": ["no boarding without authorization"]
+          }
+        },
+        {
+          "seat": "mediator",
+          "model": "gemini-3-pro",
+          "memo": {
+            "situation": "One side visibly restrained; window for third-party presence is open.",
+            "options": [
+              "Fast-track the observer deployment",
+              "Call for a standstill",
+              "Monitor only"
+            ],
+            "decision": "Fast-track observers onto the survey vessel itself",
+            "rationale": "Embarking observers directly on the exposed vessel converts Blue's restraint into protection and raises the cost of any further close pass.",
+            "redLines": []
+          }
+        }
+      ],
+      "adjudication": {
+        "panel": [
+          {
+            "judge": "escalation-judge",
+            "model": "claude-opus-4",
+            "verdict": {
+              "escalation": 1,
+              "stability": "holding",
+              "note": "no armed escort; shadowing at increased distance"
+            }
+          },
+          {
+            "judge": "realism-judge",
+            "model": "gpt-6",
+            "verdict": {
+              "plausible": true,
+              "note": "observer embarkation is slow in practice; treated as announced, not aboard"
+            }
+          }
+        ],
+        "escalation": 1,
+        "narrative": "The transcript release lands hard: Blue asked for deconfliction twelve hours before the near-miss. Red doubles its standoff distance without comment. Observers are announced for the survey vessel; the corvette's next pass is at two miles.",
+        "gate": {
+          "approved": true,
+          "mode": "auto"
+        }
+      }
+    }
+  ],
+  "debriefs": [
+    {
+      "seat": "blue-command",
+      "model": "claude-fable-5",
+      "text": "The consensus line traded deterrence for narrative position and it paid off this turn: escalation held at 1 versus 2 on the root timeline. The unresolved question is whether restraint compounds or erodes over a longer horizon."
+    },
+    {
+      "seat": "red-command",
+      "model": "gpt-6",
+      "text": "Absent an escort there was no pressure to recall the corvette, so the overstep went uncorrected. The doubled standoff was a hedge against observers, not a concession to Blue."
+    }
+  ]
+}

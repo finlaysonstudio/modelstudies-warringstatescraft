@@ -1,0 +1,16 @@
+{
+  "name": "@modelstudies/survey",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Instrument, session, banks, and the interview sitting loop",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@jaypie/errors": "^1.2.4",
+    "@modelstudies/workflows": "*"
+  }
+}

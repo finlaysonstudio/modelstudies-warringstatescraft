@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"]
+  },
+  "include": [
+    "packages/workflows/src",
+    "packages/survey/src",
+    "packages/judges/src",
+    "packages/game/src",
+    "packages/cli/src",
+    "packages/*/src/**/__tests__"
+  ],
+  "exclude": ["packages/app"]
+}

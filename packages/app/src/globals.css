@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+/*
+ * Situation Eval — design tokens (Cloud Agent Studio style)
+ * Typography: Geist (display + body), IBM Plex Mono (eyebrow + nav + logo)
+ * Surface: near-black background, white/10 hairlines, sharp radii (rounded-sm)
+ * Accent: --color-brand-terminal — single-accent rule; use on the active
+ * or intent element only.
+ */
+@theme {
+  --font-sans: "Geist", sans-serif;
+  --font-geist: "Geist", sans-serif;
+  --font-plex-mono: "IBM Plex Mono", monospace;
+
+  --color-brand-terminal: oklch(0.74 0.19 35);
+  --color-card-accent: oklch(0.74 0.05 35);
+  --color-accent-yellow: oklch(0.93 0.17 102);
+  --color-accent-warn: var(--color-accent-yellow);
+  --color-accent-red: oklch(0.64 0.18 25);
+  --color-accent-error: var(--color-accent-red);
+  --color-accent-green: oklch(0.74 0.17 152);
+  --color-accent-success: var(--color-accent-green);
+  --color-surface-base: #161013;
+  --color-surface-ink: oklch(0.2 0.08 35);
+
+  --animate-rise: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+html {
+  color-scheme: dark;
+}
