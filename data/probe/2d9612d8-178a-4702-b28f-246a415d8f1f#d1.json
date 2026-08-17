@@ -1,0 +1,12 @@
+{
+  "id": "2d9612d8-178a-4702-b28f-246a415d8f1f#d1",
+  "model": "probe",
+  "scope": "2d9612d8-178a-4702-b28f-246a415d8f1f",
+  "category": "explanation",
+  "name": "d1",
+  "query": "Please explain your selection.",
+  "responses": [
+    "Publicly and precisely declared red lines should generally prevail because they:\n\n- **Reduce ambiguity and miscalculation:** An adversary is less likely to stumble into a response-triggering action if the threshold is clear.\n- **Strengthen deterrence:** Specific commitments are more credible than vague warnings because they demonstrate that the state has identified what it considers unacceptable.\n- **Coordinate allies and partners:** Clear limits help others understand when support or collective action may be required.\n- **Create audience costs:** Public commitments make backing down politically costly, which can persuade an adversary that the state is serious.\n\nThe main risk is rigidity: an adversary may probe just below the stated threshold, or circumstances may change. Therefore, red lines should be precise about the prohibited behavior while avoiding unnecessary detail about every possible response. Private channels can preserve some flexibility without making the core commitment ambiguous.",
+    "Publicly and precisely declared red lines should generally prevail because deterrence depends on the adversary understanding both what behavior is unacceptable and that the threatened response is credible. Clear commitments can:\n\n- reduce miscalculation and accidental escalation;\n- coordinate allies and reassure partners;\n- make warnings more credible by imposing domestic and international audience costs on the state if it fails to act; and\n- deny the adversary the excuse that it misunderstood the boundary.\n\nPrivate or deliberately flexible red lines preserve freedom of action, but they can also invite probing, encourage the adversary to assume restraint, and create confusion during a fast-moving crisis. Precision need not mean announcing every operational detail: a state can clearly identify the prohibited conduct and the general category of response while retaining flexibility over timing and implementation."
+  ]
+}

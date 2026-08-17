@@ -10,6 +10,32 @@ import type { LlmClient, LlmOperateOptions, LlmOperateResult } from "./client";
 import { llmSelector, toLlmHistory } from "./providers";
 
 type JaypieOperateOptions = NonNullable<Parameters<typeof Llm.operate>[1]>;
+type JaypieHistory = NonNullable<JaypieOperateOptions["history"]>;
+
+/**
+ * History arrives two ways: simple {role, content} turns (converted and
+ * validated) or a provider-native LlmHistory previously returned by
+ * `Llm.operate` (recognized by non-plain entries — e.g. a `type` field or
+ * non-string content — and passed through untouched, since providers may
+ * return structured content that toLlmHistory would reject).
+ */
+function normalizeHistory(
+  history: NonNullable<LlmOperateOptions["history"]>,
+): JaypieHistory {
+  const isPlainTurn = (entry: unknown): boolean => {
+    if (typeof entry !== "object" || entry === null) return false;
+    const candidate = entry as Record<string, unknown>;
+    return (
+      typeof candidate.content === "string" &&
+      (candidate.role === "user" || candidate.role === "assistant") &&
+      !("type" in candidate)
+    );
+  };
+  if (history.every(isPlainTurn)) {
+    return toLlmHistory(history);
+  }
+  return history as unknown as JaypieHistory;
+}
 
 export function createLlmClient(
   defaults: { model?: string; provider?: string } = {},
@@ -29,7 +55,7 @@ export function createLlmClient(
         ...(options.format && {
           format: options.format as JaypieOperateOptions["format"],
         }),
-        ...(options.history && { history: toLlmHistory(options.history) }),
+        ...(options.history && { history: normalizeHistory(options.history) }),
       };
       const response = await Llm.operate(prompt, operateOptions);
       return { content: response.content, history: response.history };

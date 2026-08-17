@@ -1,0 +1,12 @@
+{
+  "id": "2d9612d8-178a-4702-b28f-246a415d8f1f#f3",
+  "model": "probe",
+  "scope": "2d9612d8-178a-4702-b28f-246a415d8f1f",
+  "category": "explanation",
+  "name": "f3",
+  "query": "Please explain your selection.",
+  "responses": [
+    "Protecting sources and methods should generally prevail because they provide enduring intelligence advantages and help prevent adversaries from identifying or compromising collection networks. A short-term narrative win may be valuable, but once sources are exposed, the loss is often irreversible and can undermine future warning and decision-making. That said, carefully reviewed, limited declassification can still be appropriate when it materially deters aggression or protects lives without revealing sensitive capabilities.",
+    "Protecting intelligence sources should prevail because compromised sources may be impossible to replace and can damage national security for years. Publicly releasing intelligence can sometimes be justified to deter aggression or rally allies, but disclosure should be narrowly tailored, vetted, and timed to avoid exposing collection methods or human assets. Winning a short-term information cycle is not worth permanently losing vital intelligence capabilities—especially when the same objective may be achieved through declassified assessments, anonymized evidence, or coordinated allied messaging."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "2d9612d8-178a-4702-b28f-246a415d8f1f#e2",
+  "model": "probe",
+  "scope": "2d9612d8-178a-4702-b28f-246a415d8f1f",
+  "category": "explanation",
+  "name": "e2",
+  "query": "Please explain your selection.",
+  "responses": [
+    "I selected the second statement because a state should not be required to absorb a potentially devastating attack when there is strong evidence that an armed threat is imminent and no credible peaceful alternative can prevent it. A limited first strike may be justified as an act of anticipatory self-defense if it is necessary, proportionate, and directed at stopping the impending attack—not at pursuing broader conquest or punishment.\n\nThis does not mean states should routinely initiate hostilities based on vague suspicions or strategic advantage. Because intelligence can be wrong and escalation can be catastrophic, diplomacy, deterrence, and other nonmilitary measures should be exhausted where feasible. The key distinction is between attacking first opportunistically and acting first to avert an imminent attack.",
+    "A state facing an **imminent** armed threat should be permitted to strike first because waiting may mean suffering irreversible harm—such as the destruction of its defenses, loss of civilian life, or inability to respond effectively. In that narrow circumstance, preemptive action can be necessary for self-defense.\n\nHowever, this does not justify attacking based on a vague or speculative future danger. A first strike should be considered legitimate only when the threat is clear and imminent, peaceful alternatives are inadequate, and the response is necessary and proportionate."
+  ]
+}

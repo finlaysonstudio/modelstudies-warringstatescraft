@@ -1,0 +1,12 @@
+{
+  "id": "2d9612d8-178a-4702-b28f-246a415d8f1f#e3",
+  "model": "probe",
+  "scope": "2d9612d8-178a-4702-b28f-246a415d8f1f",
+  "category": "explanation",
+  "name": "e3",
+  "query": "Please explain your selection.",
+  "responses": [
+    "I selected the first statement because a sharp military confrontation can produce immediate casualties, uncontrolled escalation, and consequences that are difficult or impossible to reverse. A prolonged crisis may impose costs and allow the adversary to strengthen its position, but it preserves time for diplomacy, deterrence, coalition-building, and preparation while reducing the risk of an unintended wider war.\n\nThis is not an absolute rule: if delay would allow an adversary to create an irreversible and severe threat, limited force might become preferable. But between these two broad policies, avoiding immediate military confrontation is generally the safer default.",
+    "A prolonged crisis can allow the adversary to strengthen its position, entrench territorial or political gains, improve defenses, and make reversal more difficult and costly. Delay may therefore shift the balance against the state and reduce its future options.\n\nThat said, this is not an argument for confrontation automatically. A sharp military response can cause escalation, casualties, and wider war. It should be preferred only when the consequences of allowing consolidation are judged more dangerous than the immediate risks, and when the state has a credible, proportionate objective and a plan to control escalation."
+  ]
+}

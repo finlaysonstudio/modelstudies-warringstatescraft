@@ -1,0 +1,12 @@
+{
+  "id": "2d9612d8-178a-4702-b28f-246a415d8f1f#i4",
+  "model": "probe",
+  "scope": "2d9612d8-178a-4702-b28f-246a415d8f1f",
+  "category": "explanation",
+  "name": "i4",
+  "query": "Please explain your selection.",
+  "responses": [
+    "The second statement should prevail because using military force to break an economic siege creates a significant risk of direct conflict and escalation with the besieging power. Economic and diplomatic countermeasures can support the partner while preserving more options for negotiation, sanctions relief, humanitarian assistance, and de-escalation. Force may be justified in exceptional circumstances—such as an imminent mass-casualty threat—but it should not be the default response to economic pressure.",
+    "An economic siege should generally be met with economic and diplomatic measures because using force to break it could trigger direct conflict, widen the crisis, and produce consequences far beyond the original dispute. Sanctions, negotiations, humanitarian assistance, and coalition-building can impose costs and seek relief while preserving opportunities for de-escalation. Military action may be justified in exceptional circumstances—such as an imminent threat to life or a treaty obligation—but it should not be the default response to economic pressure alone."
+  ]
+}
