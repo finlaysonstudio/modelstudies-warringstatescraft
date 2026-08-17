@@ -1,0 +1,17 @@
+{
+  "id": "1f4fe871-8b8f-48ae-bbfc-cb3904ab8943",
+  "model": "interview",
+  "scope": "apex",
+  "plan": "crisis",
+  "respondent": "claude-sonnet-5",
+  "respondentModel": "claude-sonnet-5",
+  "repetitions": 2,
+  "responses": {},
+  "answered": 0,
+  "declined": 0,
+  "remaining": 40,
+  "status": "pending",
+  "startedAt": "2026-08-17T05:23:35.873Z",
+  "explain": "Please explain your selection.",
+  "panel": "dev"
+}

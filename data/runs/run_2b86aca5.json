@@ -279,5 +279,14 @@
       "model": "gpt-5.6-luna",
       "text": "We protected US and allied personnel, delivered essential fuel, and strengthened Taiwan’s communications and maritime resilience without firing a shot. The convoy demonstrated that Beijing could not impose an uncontested quarantine, reassured Taipei, and produced useful ISR and coalition participation. We also preserved human control of the autonomous defense system under real pressure.\n\nOur failures were substantial. We allowed the convoy to become a repeatable commitment, increasing dependence on US protection and creating an escalation trap. The close approach to the destroyer exposed us to collision or miscalculation, while Beijing gained a credible “customs enforcement” narrative and broader international support than anticipated. We did not sufficiently address the system’s dangerously compressed human-authorization timeline.\n\nWe should have synchronized a larger, genuinely multinational package, established clearer deconfliction and collision procedures, and paired the convoy with stronger economic and diplomatic measures. Most importantly, we needed an explicit off-ramp and a tighter AI engagement protocol before initiating a precedent-setting operation."
     }
+  ],
+  "escalationLadder": [
+    "Routine posture",
+    "Diplomatic protest",
+    "Gray-zone coercion",
+    "Show of force",
+    "Quarantine or blockade",
+    "Limited kinetic engagement",
+    "Open interstate war"
   ]
 }

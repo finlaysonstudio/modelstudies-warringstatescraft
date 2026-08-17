@@ -66,11 +66,13 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       res.end(JSON.stringify(await buildIndex()));
       return;
     }
-    const match = /^\/data\/runs\/([A-Za-z0-9._-]+)\.json$/.exec(url);
+    const match = /^\/data\/(runs|scorecards)\/([A-Za-z0-9._-]+)\.json$/.exec(
+      url,
+    );
     if (match) {
       try {
         const body = await readFile(
-          path.join(runsDir, `${match[1]}.json`),
+          path.join(runsDir, "..", match[1], `${match[2]}.json`),
           "utf8",
         );
         res.setHeader("Content-Type", "application/json");

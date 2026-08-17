@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { LaneChip, StatusChip } from "../components/chips";
 import { Bar, Section } from "../components/PonyBenchPrimitives";
+import { ScorecardSection } from "../components/ScorecardSection";
 import type {
   DecisionBrief,
   Run,
@@ -174,6 +175,8 @@ function ReplayBody({ run, index }: { run: Run; index: RunIndexEntry[] }) {
           </div>
         </section>
       )}
+
+      {children.length > 0 && <ScorecardSection runId={run.id} />}
 
       {adjudicated.length >= 2 && (
         <EscalationOverview turns={adjudicated} ladder={run.escalationLadder} />

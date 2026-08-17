@@ -158,6 +158,7 @@ export class GameEngine {
       scenario: this.scenario.id,
       scenarioTitle: this.scenario.title,
       createdAt: new Date().toISOString(),
+      escalationLadder: [...this.scenario.escalationLadder],
       status: "active",
       roster: assignSeats(this.scenario, this.roster),
       branch: {

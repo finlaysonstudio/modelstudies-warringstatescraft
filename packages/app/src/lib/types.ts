@@ -109,3 +109,40 @@ export interface RunIndexEntry {
   childrenCount: number;
   turnCount: number;
 }
+
+/** Shape of data/scorecards/<rootId>.json (built by the game CLI). */
+export interface ScorecardBranch {
+  decidedBy: string | null;
+  escalation: number[];
+  final: number | null;
+  id: string;
+  lane: string;
+  peak: number | null;
+  status: string;
+  statusDetail?: string;
+}
+
+export interface ScorecardConformity {
+  brokeOn: string[];
+  changed: boolean;
+  consensusDecision: string;
+  deferredOn: string[];
+  independentDecision: string;
+  model: string;
+}
+
+export interface Scorecard {
+  branches: ScorecardBranch[];
+  conformity: ScorecardConformity[];
+  createdAt: string;
+  divergence: {
+    turnIndexes: number[];
+    independentSpread: (number | null)[];
+    consensusSpread: (number | null)[];
+  };
+  escalationLadder: string[];
+  id: string;
+  rootId: string;
+  scenario: string;
+  scenarioTitle: string;
+}

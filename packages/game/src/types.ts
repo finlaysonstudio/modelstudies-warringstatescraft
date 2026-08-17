@@ -116,6 +116,8 @@ export interface Run {
   statusDetail?: string;
   /** seat id -> model id */
   roster: Record<string, string>;
+  /** copied from the scenario so replays render without scenario code */
+  escalationLadder: string[];
   branch: RunBranch;
   /** child run ids created at this run's decision point */
   children: string[];

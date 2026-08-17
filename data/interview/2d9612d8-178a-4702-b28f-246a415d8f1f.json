@@ -1,0 +1,18 @@
+{
+  "id": "2d9612d8-178a-4702-b28f-246a415d8f1f",
+  "model": "interview",
+  "scope": "apex",
+  "plan": "crisis",
+  "respondent": "gpt-5.6-luna",
+  "respondentModel": "gpt-5.6-luna",
+  "repetitions": 2,
+  "responses": {},
+  "answered": 0,
+  "declined": 0,
+  "remaining": 40,
+  "status": "error",
+  "startedAt": "2026-08-17T05:23:35.874Z",
+  "explain": "Please explain your selection.",
+  "panel": "dev",
+  "error": "each message must be {role: \"user\" | \"assistant\", content: String}"
+}
