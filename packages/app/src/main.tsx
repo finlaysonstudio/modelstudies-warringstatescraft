@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { RunReplay } from "./pages/RunReplay";
 import { RunsIndex } from "./pages/RunsIndex";
+import { ValuesIndex } from "./pages/ValuesIndex";
 import "./globals.css";
 
 const root = document.getElementById("root");
@@ -15,6 +16,7 @@ if (root) {
           <Routes>
             <Route path="/" element={<RunsIndex />} />
             <Route path="/runs/:id" element={<RunReplay />} />
+            <Route path="/values" element={<ValuesIndex />} />
           </Routes>
         </AppShell>
       </BrowserRouter>

@@ -81,3 +81,10 @@ export type {
   SessionExport,
   SurveyItem,
 } from "./types";
+export { buildValuesScorecard } from "./valuesScorecard";
+export type {
+  BuildValuesScorecardOptions,
+  ModelValuesRow,
+  TopicScore,
+  ValuesScorecard,
+} from "./valuesScorecard";

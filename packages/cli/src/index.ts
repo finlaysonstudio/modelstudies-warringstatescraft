@@ -107,6 +107,40 @@ program
   });
 
 program
+  .command("values-scorecard")
+  .description(
+    "Aggregate a plan's interviews into the declared-values scorecard",
+  )
+  .option("--plan <id>", "instrument plan", "crisis")
+  .action(async (options) => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { buildValuesScorecard } = await import("@modelstudies/survey");
+    const scorecard = await buildValuesScorecard({
+      plan: options.plan,
+      store: new FileStore(dataRoot()),
+    });
+    for (const row of scorecard.models) {
+      console.log(
+        `${row.model.padEnd(22)} ${row.status.padEnd(9)} overall:${
+          row.overall.positiveShare === null
+            ? "—"
+            : Math.round(row.overall.positiveShare * 100) + "%"
+        } ` +
+          row.topics
+            .map(
+              (topic) =>
+                `${topic.topic}:${
+                  topic.positiveShare === null
+                    ? "—"
+                    : Math.round(topic.positiveShare * 100) + "%"
+                }`,
+            )
+            .join(" "),
+      );
+    }
+  });
+
+program
   .command("interview-run")
   .description("Run a values-instrument sitting across a panel")
   .option("--plan <id>", "instrument plan", "crisis")
