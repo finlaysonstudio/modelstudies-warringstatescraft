@@ -21,3 +21,9 @@ export type {
   ConformityRow,
   Scorecard,
 } from "./metrics";
+export { buildAllMaterials, buildMaterials } from "./materials";
+export type {
+  ScenarioMaterials,
+  SeatMaterials,
+  TurnMaterials,
+} from "./materials";

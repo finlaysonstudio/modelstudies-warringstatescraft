@@ -284,7 +284,7 @@ function LadderStrip({
     >
       {ladder.map((label, level) => (
         <span
-          key={label}
+          key={level}
           title={label}
           className={clsx(
             "h-3 flex-1 rounded-[2px]",
@@ -334,8 +334,12 @@ function TurnBlock({
           </div>
           {(turn.briefs ?? []).length > 0 && (
             <div className="grid gap-4 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-3">
+              {/* At a fork turn one seat carries several memos: key by lane too. */}
               {turn.briefs.map((brief) => (
-                <BriefCard key={brief.seat} brief={brief} />
+                <BriefCard
+                  key={`${brief.seat}:${brief.model}:${brief.consensus ? "consensus" : "independent"}`}
+                  brief={brief}
+                />
               ))}
             </div>
           )}
@@ -475,8 +479,12 @@ function AdjudicationBlock({
                 </tr>
               </thead>
               <tbody>
+                {/* One judge spec fans out across models: key by both. */}
                 {adjudication.panel.map((verdict) => (
-                  <tr key={verdict.judge} className="border-b border-white/5">
+                  <tr
+                    key={`${verdict.judge}:${verdict.model}`}
+                    className="border-b border-white/5"
+                  >
                     <td className="px-2 py-1.5 text-xs whitespace-nowrap text-zinc-300">
                       {verdict.judge}
                     </td>

@@ -93,6 +93,23 @@ program
   });
 
 program
+  .command("materials")
+  .description(
+    "Export every scenario's cards and prompts to data/scenarios/<id>.json",
+  )
+  .action(async () => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { buildAllMaterials } = await import("@modelstudies/game");
+    const store = new FileStore(dataRoot());
+    for (const materials of buildAllMaterials()) {
+      await store.create(materials);
+      console.log(
+        `${materials.id}  seats:${materials.seats.length}  turns:${materials.turns.length}  → data/scenarios/${materials.id}.json`,
+      );
+    }
+  });
+
+program
   .command("scorecard")
   .description("Build the scorecard for a root run")
   .argument("<rootId>", "root run id")

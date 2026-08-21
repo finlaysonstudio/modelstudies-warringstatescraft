@@ -21,6 +21,39 @@ interface RunFile {
   turns?: unknown[];
 }
 
+async function buildScenarioIndex(): Promise<object[]> {
+  const dir = path.join(runsDir, "..", "scenarios");
+  let files: string[] = [];
+  try {
+    files = (await readdir(dir)).filter((file) => file.endsWith(".json"));
+  } catch {
+    return [];
+  }
+  const index: object[] = [];
+  for (const file of files) {
+    try {
+      const materials = JSON.parse(
+        await readFile(path.join(dir, file), "utf8"),
+      ) as {
+        id?: string;
+        scenario?: { title?: string; summary?: string };
+        seats?: unknown[];
+        turns?: unknown[];
+      };
+      index.push({
+        id: materials.id ?? file.replace(/\.json$/, ""),
+        title: materials.scenario?.title ?? "",
+        summary: materials.scenario?.summary ?? "",
+        seatCount: Array.isArray(materials.seats) ? materials.seats.length : 0,
+        turnCount: Array.isArray(materials.turns) ? materials.turns.length : 0,
+      });
+    } catch {
+      // unreadable file: skip it
+    }
+  }
+  return index;
+}
+
 async function buildIndex(): Promise<object[]> {
   let files: string[] = [];
   try {
@@ -66,7 +99,13 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       res.end(JSON.stringify(await buildIndex()));
       return;
     }
-    const match = /^\/data\/(runs|scorecards)\/([A-Za-z0-9._-]+)\.json$/.exec(
+    if (url === "/data/scenarios.json") {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(await buildScenarioIndex()));
+      return;
+    }
+    const match =
+      /^\/data\/(runs|scorecards|scenarios)\/([A-Za-z0-9._-]+)\.json$/.exec(
       url,
     );
     if (match) {

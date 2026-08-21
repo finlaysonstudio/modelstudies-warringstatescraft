@@ -16,6 +16,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             ·
           </span>
           <NavLink to="/values" label="Values" />
+          <span aria-hidden className="text-zinc-700">
+            ·
+          </span>
+          <NavLink to="/scenarios" label="Scenarios" />
         </div>
       </header>
       {/* relative: absolutely positioned descendants must anchor inside the

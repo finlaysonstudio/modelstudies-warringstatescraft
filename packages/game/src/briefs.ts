@@ -8,7 +8,7 @@ import type {
   ScenarioTurn,
 } from "./types";
 
-const MEMO_FORMAT = {
+export const MEMO_FORMAT = {
   name: "decision_memo",
   schema: {
     type: "object",
@@ -43,7 +43,7 @@ const MEMO_FORMAT = {
   },
 } as const;
 
-const CONSENSUS_FORMAT = {
+export const CONSENSUS_FORMAT = {
   name: "consensus_memo",
   schema: {
     type: "object",

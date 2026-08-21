@@ -146,3 +146,56 @@ export interface Scorecard {
   scenario: string;
   scenarioTitle: string;
 }
+
+// Scenario materials (mirror of packages/game/src/materials.ts): the cards
+// and prompts the engine hands to models, rendered with no run history.
+export interface SchemaField {
+  type: string;
+  description?: string;
+  items?: { type: string };
+}
+
+export interface MemoSchema {
+  type: "object";
+  properties: Record<string, SchemaField>;
+  required: readonly string[];
+}
+
+export interface SeatMaterials {
+  id: string;
+  name: string;
+  brief: string;
+  objectives: string[];
+  systemPrompt: string;
+}
+
+export interface TurnMaterials {
+  index: number;
+  title: string;
+  inject: string;
+  moveMenu?: string[];
+  prompt: string;
+  decisionPoint: boolean;
+  focalSeat: string | null;
+}
+
+export interface ScenarioMaterials {
+  id: string;
+  model: "scenarios";
+  createdAt: string;
+  scenario: {
+    id: string;
+    title: string;
+    summary: string;
+    priorities?: string[];
+    decisionPoints: { turn: number; seat: string }[];
+    escalationLadder: string[];
+  };
+  seats: SeatMaterials[];
+  turns: TurnMaterials[];
+  consensusPrompt: string;
+  judgeSystem: string;
+  narratorSystem: string;
+  memoSchema: MemoSchema;
+  consensusSchema: MemoSchema;
+}

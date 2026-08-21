@@ -21,7 +21,7 @@
   --color-accent-green: oklch(0.74 0.17 152);
   --color-accent-success: var(--color-accent-green);
   --color-surface-base: #161013;
-  --color-surface-ink: oklch(0.2 0.08 35);
+  --color-surface-ink: #101513;
 
   --animate-rise: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 

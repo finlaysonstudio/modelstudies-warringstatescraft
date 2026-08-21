@@ -22,7 +22,7 @@ packages/
   game/       @modelstudies/game       — scenario config, engine, branching, metrics
   cli/        @modelstudies/cli        — command-line verbs
   app/        @modelstudies/app        — replay viewer (port 3175)
-data/         — run artifacts (runs, interviews, scorecards) as JSON
+data/         — run artifacts (runs, interviews, scorecards) and scenario materials as JSON
 var/          — plans and meta materials (git-ignored)
 ```
 
@@ -34,7 +34,7 @@ Core engine code is lifted from the private `finlaysonstudio-cloudagent` reposit
 npm install
 npm test                 # vitest across all packages
 npm run typecheck
-npm run app              # replay viewer at http://localhost:3175
+npm run app              # replay viewer at http://localhost:3175 (/scenarios reads the cards and prompts)
 
 # secrets: .env in the repo root (provider API keys)
 npm run cli -- game-run --scenario taiwan-strait --panel dev        # full game with branching
@@ -42,6 +42,7 @@ npm run cli -- game-run --panel dev --turns 2                       # quick smok
 npm run cli -- game-run --panel dev --gate                          # attended: human GM gate
 npm run cli -- game-list
 npm run cli -- scorecard <rootRunId>
+npm run cli -- materials                                           # export scenario cards + prompts to data/scenarios/
 npm run cli -- interview-run --plan crisis --panel dev --explain
 ```
 

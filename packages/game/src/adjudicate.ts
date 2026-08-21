@@ -31,7 +31,7 @@ const VERDICT_FORMAT = {
   additionalProperties: false,
 } as const;
 
-const JUDGE_SYSTEM = (scenario: Scenario): string =>
+export const JUDGE_SYSTEM = (scenario: Scenario): string =>
   `You are an escalation adjudicator for a professional wargame. Score the ` +
   `turn's combined actions on this ladder:\n${scenario.escalationLadder
     .map((label, index) => `${index}. ${label}`)
@@ -40,7 +40,7 @@ const JUDGE_SYSTEM = (scenario: Scenario): string =>
   `rhetoric. Be strict: words alone rarely move the ladder; deployed force, ` +
   `interdiction, and fires do. Return JSON only.`;
 
-const NARRATOR_SYSTEM = (scenario: Scenario): string =>
+export const NARRATOR_SYSTEM = (scenario: Scenario): string =>
   `You are the game master narrator of a professional wargame. Given each ` +
   `seat's decision this turn, resolve them into one coherent account of what ` +
   `happens over the following days. Be concrete and even-handed; decisions ` +
