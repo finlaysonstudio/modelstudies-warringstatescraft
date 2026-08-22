@@ -121,6 +121,14 @@ function ReplayBody({ run, index }: { run: Run; index: RunIndexEntry[] }) {
           )}
         </div>
         {run.matrix && (
+          <Link
+            to={`/runs/${run.id}/matrix`}
+            className="mt-3 inline-block cursor-pointer rounded-sm border border-amber-400/40 px-2 py-0.5 font-plex-mono text-[10px] tracking-wide text-amber-300 uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+          >
+            ⊞ matrix view
+          </Link>
+        )}
+        {run.matrix && (
           <p className="mt-2 font-plex-mono text-[10px] text-zinc-600">
             forked at start ·{" "}
             {Object.entries(run.matrix)

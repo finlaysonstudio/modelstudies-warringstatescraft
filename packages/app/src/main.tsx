@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
+import { MatrixView } from "./pages/MatrixView";
 import { PlayConsole, PlaySetup } from "./pages/Play";
 import { RunReplay } from "./pages/RunReplay";
 import { RunsIndex } from "./pages/RunsIndex";
@@ -18,6 +19,7 @@ if (root) {
           <Routes>
             <Route path="/" element={<RunsIndex />} />
             <Route path="/runs/:id" element={<RunReplay />} />
+            <Route path="/runs/:id/matrix" element={<MatrixView />} />
             <Route path="/values" element={<ValuesIndex />} />
             <Route path="/scenarios" element={<ScenarioMaterialsPage />} />
             <Route path="/scenarios/:id" element={<ScenarioMaterialsPage />} />
