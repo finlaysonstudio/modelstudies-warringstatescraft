@@ -118,6 +118,12 @@ export interface RunIndexEntry {
   };
   childrenCount: number;
   turnCount: number;
+  /** start-fork roots only: seat id -> candidate models */
+  matrix?: Record<string, string[]>;
+  /** judge panel that scored the run's turns */
+  panel?: PanelConfig;
+  /** model that wrote the run's resolution narratives */
+  narrator?: string;
 }
 
 /** Shape of data/scorecards/<rootId>.json (built by the game CLI). */

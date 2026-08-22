@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@jaypie/errors": "^1.2.5",
+    "@jaypie/errors": "^1.2.6",
     "@modelstudies/game": "*",
     "@modelstudies/judges": "*",
     "@modelstudies/survey": "*",

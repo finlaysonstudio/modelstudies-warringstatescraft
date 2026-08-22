@@ -26,6 +26,9 @@ interface RunFile {
   branch?: { parent?: string | null; lane?: string; decidedBy?: string | null };
   children?: unknown[];
   turns?: unknown[];
+  matrix?: Record<string, string[]>;
+  panel?: { judges?: string[]; mode?: string };
+  narrator?: string;
 }
 
 async function buildScenarioIndex(): Promise<object[]> {
@@ -91,6 +94,11 @@ async function buildIndex(): Promise<object[]> {
         },
         childrenCount: Array.isArray(run.children) ? run.children.length : 0,
         turnCount: Array.isArray(run.turns) ? run.turns.length : 0,
+        // matrix roots only; the app's combine picker reads these to offer
+        // and label other roots of the same scenario
+        ...(run.matrix ? { matrix: run.matrix } : {}),
+        ...(run.panel ? { panel: run.panel } : {}),
+        ...(run.narrator ? { narrator: run.narrator } : {}),
       });
     } catch {
       // unreadable file: skip it rather than break the index

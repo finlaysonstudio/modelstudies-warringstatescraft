@@ -27,5 +27,8 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "@jaypie/errors": "^1.2.6"
   }
 }
