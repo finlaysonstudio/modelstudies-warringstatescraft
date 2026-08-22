@@ -22,7 +22,8 @@ packages/
   game/       @modelstudies/game       — scenario config, engine, branching, metrics
   cli/        @modelstudies/cli        — command-line verbs
   app/        @modelstudies/app        — replay viewer (port 3175)
-data/         — run artifacts (runs, interviews, scorecards) and scenario materials as JSON; data/runs/ is git-ignored
+data/         — interviews, scorecards, and scenario materials as JSON
+var/runs/     — game runs (git-ignored)
 var/          — plans and meta materials (git-ignored)
 ```
 
@@ -56,7 +57,7 @@ Adjudication: each turn the judge panel scores the combined actions on the scena
 
 ### Play in the browser
 
-`/play` (dev server only) runs the start fork. Tick the candidates for every seat (models and "you"); the page deals six starting models (Opus, Sol, Gemini Flash, Grok, GLM, Kimi K3) across the seats at random and marks the focal seat and starts one branch per seat assignment, all playing at once. In every branch you sit in, you play every turn: the console shows one tab per branch waiting on you, and each prompt carries **that branch's own line** (every prior turn of that run: inject, narrative, escalation rung, every seat's decision) and **the table** (the other seats' briefs for the current turn, since model seats move first and the human moves last). Which model holds another seat, wrote a candidate memo, or sat on the panel is hidden from the player (every model id reads `model`, the table is shuffled) until the game completes and the replays open. The Panel card picks the judges (tick "you" to sit on the panel), the mode, and the narrator (a radio: a named model or you; Sol by default). The judges default to the same six models. The other seats' moves for the current turn stay collapsed until expanded. Every turn of every branch then waits on the console for your verdict card (rung, reasoning, flags) or your narration card (the scored turn, the masked panel, your narrative). Sessions live in the dev server's memory; runs land in `data/runs/` (root holds the matrix, children carry `branch.lane: "matrix"`) and replay at `/runs/<id>`. `/` filters replays by scenario; `/scenarios` switches between every exported scenario.
+`/play` (dev server only) runs the start fork. Tick the candidates for every seat (models and "you"); the page deals six starting models (Opus, Sol, Gemini Flash, Grok, GLM, Kimi K3) across the seats at random and marks the focal seat and starts one branch per seat assignment, all playing at once. In every branch you sit in, you play every turn: the console shows one tab per branch waiting on you, and each prompt carries **that branch's own line** (every prior turn of that run: inject, narrative, escalation rung, every seat's decision) and **the table** (the other seats' briefs for the current turn, since model seats move first and the human moves last). Which model holds another seat, wrote a candidate memo, or sat on the panel is hidden from the player (every model id reads `model`, the table is shuffled) until the game completes and the replays open. The Panel card picks the judges (tick "you" to sit on the panel), the mode, and the narrator (a radio: a named model or you; Sol by default). The judges default to the same six models. The other seats' moves for the current turn stay collapsed until expanded. Every turn of every branch then waits on the console for your verdict card (rung, reasoning, flags) or your narration card (the scored turn, the masked panel, your narrative). Sessions live in the dev server's memory; runs land in `var/runs/` (root holds the matrix, children carry `branch.lane: "matrix"`) and replay at `/runs/<id>`. `/` filters replays by scenario; `/scenarios` switches between every exported scenario.
 
 ## Ports (NN = 75)
 

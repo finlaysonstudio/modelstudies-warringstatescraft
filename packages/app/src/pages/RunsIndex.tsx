@@ -76,7 +76,7 @@ export function RunsIndex() {
         )}
         {state.phase === "ready" && state.runs.length === 0 && (
           <p className="text-sm text-zinc-400">
-            No runs yet. Run files land at data/runs/*.json.
+            No runs yet. Run files land at var/runs/*.json.
           </p>
         )}
         {state.phase === "ready" && state.runs.length > 0 && (

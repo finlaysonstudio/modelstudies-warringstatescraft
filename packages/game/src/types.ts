@@ -1,7 +1,8 @@
 /**
  * Run data schema. A run is one timeline of one scenario; branches are
  * separate runs linked by `branch.parent`. Files land at
- * data/runs/<runId>.json via the workflows FileStore (model: "runs").
+ * var/runs/<runId>.json via the workflows FileStore (model: "runs", root
+ * overridden by the CLI and play server).
  */
 
 export interface Scenario {

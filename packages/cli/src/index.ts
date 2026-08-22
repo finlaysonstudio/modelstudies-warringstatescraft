@@ -11,6 +11,10 @@ program
   .description("Warring States Eval: war game runs, instruments, analysis");
 
 const dataRoot = () => resolve(process.cwd(), "data");
+/** runs land in git-ignored var/runs; every other model stays under data/ */
+const storeOptions = () => ({
+  roots: { runs: resolve(process.cwd(), "var", "runs") },
+});
 
 const consoleLog = {
   trace: (...args: unknown[]) => console.log("[trace]", ...args),
@@ -93,7 +97,7 @@ program
             }),
           )
         : undefined,
-      store: new FileStore(dataRoot()),
+      store: new FileStore(dataRoot(), storeOptions()),
     });
     const run = await engine.play(options.resume);
     console.log(
@@ -108,7 +112,7 @@ program
   .description("List recorded runs")
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
-    const store = new FileStore(dataRoot());
+    const store = new FileStore(dataRoot(), storeOptions());
     const runs = await store.list<{
       id: string;
       model: string;
@@ -136,7 +140,7 @@ program
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
     const { buildAllMaterials } = await import("@modelstudies/game");
-    const store = new FileStore(dataRoot());
+    const store = new FileStore(dataRoot(), storeOptions());
     for (const materials of buildAllMaterials()) {
       await store.create(materials);
       console.log(
@@ -154,7 +158,7 @@ program
     const { buildScorecard } = await import("@modelstudies/game");
     const scorecard = await buildScorecard({
       rootId,
-      store: new FileStore(dataRoot()),
+      store: new FileStore(dataRoot(), storeOptions()),
     });
     console.log(JSON.stringify(scorecard, null, 2));
   });
@@ -170,7 +174,7 @@ program
     const { buildValuesScorecard } = await import("@modelstudies/survey");
     const scorecard = await buildValuesScorecard({
       plan: options.plan,
-      store: new FileStore(dataRoot()),
+      store: new FileStore(dataRoot(), storeOptions()),
     });
     for (const row of scorecard.models) {
       console.log(
@@ -221,7 +225,7 @@ program
         ? options.resume.split(",").map((id: string) => id.trim())
         : undefined,
       retry: options.retry,
-      store: new FileStore(dataRoot()),
+      store: new FileStore(dataRoot(), storeOptions()),
     });
     for (const interview of interviews) {
       console.log(

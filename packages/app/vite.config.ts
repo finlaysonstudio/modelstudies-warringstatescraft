@@ -10,11 +10,11 @@ import {
   type ViteDevServer,
 } from "vite";
 
-// Runs live at <repo>/data/runs/*.json, resolved relative to this package.
-const runsDir = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../data/runs",
-);
+// Resolved relative to this package: runs live at <repo>/var/runs/*.json
+// (git-ignored), everything else under <repo>/data/<model>/.
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const runsDir = path.join(repoRoot, "var", "runs");
+const dataDir = path.join(repoRoot, "data");
 
 interface RunFile {
   id?: string;
@@ -29,7 +29,7 @@ interface RunFile {
 }
 
 async function buildScenarioIndex(): Promise<object[]> {
-  const dir = path.join(runsDir, "..", "scenarios");
+  const dir = path.join(dataDir, "scenarios");
   let files: string[] = [];
   try {
     files = (await readdir(dir)).filter((file) => file.endsWith(".json"));
@@ -123,7 +123,7 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
     if (match) {
       try {
         const body = await readFile(
-          path.join(runsDir, "..", match[1], `${match[2]}.json`),
+          path.join(match[1] === "runs" ? runsDir : path.join(dataDir, match[1]), `${match[2]}.json`),
           "utf8",
         );
         res.setHeader("Content-Type", "application/json");

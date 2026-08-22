@@ -1,7 +1,8 @@
 /**
  * Store — minimal persistence seam mirroring the upstream entity verbs
  * (create/get/update are full puts; queryByScope filters children).
- * FileStore keeps one JSON file per entity under root/<model>/<id>.json.
+ * FileStore keeps one JSON file per entity under root/<model>/<id>.json;
+ * `roots` relocates individual models (e.g. runs under a git-ignored dir).
  */
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -36,11 +37,23 @@ export const calculateScope = (parent: EntityLike | string): string =>
 
 const safeName = (id: string) => id.replaceAll("/", "__");
 
+export interface FileStoreOptions {
+  /** per-model directory overrides; unlisted models fall under root/<model> */
+  roots?: Record<string, string>;
+}
+
 export class FileStore implements Store {
-  constructor(private readonly root: string) {}
+  private readonly roots: Record<string, string>;
+
+  constructor(
+    private readonly root: string,
+    { roots = {} }: FileStoreOptions = {},
+  ) {
+    this.roots = roots;
+  }
 
   private dir(model: string) {
-    return join(this.root, model);
+    return this.roots[model] ?? join(this.root, model);
   }
 
   private path(model: string, id: string) {
