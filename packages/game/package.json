@@ -10,7 +10,7 @@
     }
   },
   "dependencies": {
-    "@jaypie/errors": "^1.2.4",
+    "@jaypie/errors": "^1.2.5",
     "@modelstudies/judges": "*",
     "@modelstudies/survey": "*",
     "@modelstudies/workflows": "*"

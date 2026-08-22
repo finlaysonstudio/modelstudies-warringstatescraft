@@ -1,5 +1,5 @@
 {
-  "name": "modelstudies-situationeval",
+  "name": "modelstudies-warringstates",
   "private": true,
   "type": "module",
   "version": "0.0.1",
@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit && npm run typecheck --workspace @modelstudies/app"
   },
   "devDependencies": {
-    "@jaypie/eslint": "^1.2.5",
+    "@jaypie/eslint": "^1.2.6",
     "@types/node": "^24.0.0",
     "eslint": "^9.39.0",
     "prettier": "^3.6.0",

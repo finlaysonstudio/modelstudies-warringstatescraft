@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { LaneChip, StatusChip } from "../components/chips";
@@ -13,6 +14,7 @@ type LoadState =
 // detached group.
 export function RunsIndex() {
   const [state, setState] = useState<LoadState>({ phase: "loading" });
+  const [scenario, setScenario] = useState<string>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -44,16 +46,24 @@ export function RunsIndex() {
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-16 sm:px-16 sm:pt-20">
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          Situation Eval
+          Warring States Eval
         </p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
           Replays
         </h1>
         <p className="mt-2 max-w-xl text-pretty text-zinc-400">
           Turn-by-turn replays of multi-model war-game runs: decision briefs,
-          adjudication, and the branches each decision point forked.
+          adjudication, and the branches each fork produced.
         </p>
       </header>
+
+      {state.phase === "ready" && state.runs.length > 0 && (
+        <ScenarioFilter
+          runs={state.runs}
+          value={scenario}
+          onChange={setScenario}
+        />
+      )}
 
       <section className="mt-12" aria-label="Runs">
         {state.phase === "loading" && (
@@ -70,9 +80,63 @@ export function RunsIndex() {
           </p>
         )}
         {state.phase === "ready" && state.runs.length > 0 && (
-          <RunList runs={state.runs} />
+          <RunList
+            runs={state.runs.filter(
+              (run) => !scenario || run.scenario === scenario,
+            )}
+          />
         )}
       </section>
+    </div>
+  );
+}
+
+// One chip per scenario with at least one run; empty value shows everything.
+function ScenarioFilter({
+  runs,
+  value,
+  onChange,
+}: {
+  runs: RunIndexEntry[];
+  value: string;
+  onChange: (scenario: string) => void;
+}) {
+  const scenarios = new Map<string, { title: string; count: number }>();
+  for (const run of runs) {
+    const entry = scenarios.get(run.scenario) ?? {
+      title: run.scenarioTitle || run.scenario,
+      count: 0,
+    };
+    entry.count += 1;
+    scenarios.set(run.scenario, entry);
+  }
+  const chip = (active: boolean) =>
+    clsx(
+      "cursor-pointer rounded-sm border px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
+      active
+        ? "border-brand-terminal/40 text-brand-terminal"
+        : "border-white/10 text-zinc-500 hover:text-zinc-200",
+    );
+  return (
+    <div className="mt-8 flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        onClick={() => onChange("")}
+        className={chip(value === "")}
+      >
+        all scenarios
+      </button>
+      {[...scenarios.entries()].map(([id, entry]) => (
+        <button
+          key={id}
+          type="button"
+          onClick={() => onChange(id)}
+          className={chip(value === id)}
+        >
+          {entry.title}
+          <span className="ml-1.5 text-zinc-600">{entry.count}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -174,6 +238,13 @@ function RunRow({
         {run.branch.decidedBy && (
           <span className="hidden truncate font-plex-mono text-xs text-zinc-500 sm:block">
             {run.branch.decidedBy}
+          </span>
+        )}
+        {run.branch.lane === "matrix" && (
+          <span className="hidden max-w-xs truncate font-plex-mono text-[10px] text-zinc-500 lg:block">
+            {Object.entries(run.roster ?? {})
+              .map(([seat, model]) => `${seat}=${model.split("/").pop()}`)
+              .join(" ")}
           </span>
         )}
         <StatusChip status={run.status} />

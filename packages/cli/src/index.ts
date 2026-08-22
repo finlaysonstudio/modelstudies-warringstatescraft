@@ -7,8 +7,8 @@ loadEnv({ path: resolve(process.cwd(), ".env"), quiet: true });
 
 const program = new Command();
 program
-  .name("situationeval")
-  .description("Situation Room evals: war game runs, instruments, analysis");
+  .name("warringstates")
+  .description("Warring States Eval: war game runs, instruments, analysis");
 
 const dataRoot = () => resolve(process.cwd(), "data");
 
@@ -17,6 +17,17 @@ const consoleLog = {
   debug: (...args: unknown[]) => console.log("[debug]", ...args),
   warn: (...args: unknown[]) => console.warn("[warn]", ...args),
   error: (...args: unknown[]) => console.error("[error]", ...args),
+};
+
+const parsePanelMode = async (mode: string) => {
+  const { PANEL_MODES } = await import("@modelstudies/game");
+  const { BadRequestError } = await import("@jaypie/errors");
+  if (!(PANEL_MODES as string[]).includes(mode)) {
+    throw new BadRequestError(
+      `Unknown judge mode "${mode}"; expected one of ${PANEL_MODES.join(", ")}`,
+    );
+  }
+  return mode as (typeof PANEL_MODES)[number];
 };
 
 const resolveRoster = async (panelOrModels: string): Promise<string[]> => {
@@ -33,30 +44,55 @@ const resolveRoster = async (panelOrModels: string): Promise<string[]> => {
 program
   .command("game-run")
   .description("Run a war game (root run branches at the decision point)")
-  .option("--scenario <id>", "scenario id", "taiwan-strait")
+  .option("--scenario <id>", "scenario id", "corridor-states")
   .option("--panel <name>", "panel name or comma-separated model ids", "dev")
+  .option(
+    "--seats <pairs>",
+    "explicit seat assignment, comma-separated seat=model pairs",
+  )
+  .option(
+    "--matrix <spec>",
+    "fork at the start: comma-separated seat=model|model pairs (one branch per combination; replaces the decision-point fork)",
+  )
   .option("--turns <n>", "play only the first N scenario turns")
   .option("--narrator <model>", "narrator model id")
   .option("--judges <models>", "comma-separated judge model ids")
-  .option("--gate", "human GM gate (interactive)", false)
+  .option("--judge-mode <mode>", "how judge verdicts combine", "median")
   .option("--resume <runId>", "resume an existing run")
   .action(async (options) => {
     const { FileStore, defaultLlmClient } =
       await import("@modelstudies/workflows");
     const { GameEngine } = await import("@modelstudies/game");
-    const { humanGate } = await import("./gate");
     const roster = await resolveRoster(options.panel);
     const engine = new GameEngine({
-      gate: options.gate ? humanGate : undefined,
-      judges: options.judges
-        ? options.judges.split(",").map((m: string) => m.trim())
-        : undefined,
       llm: defaultLlmClient,
       log: consoleLog,
       maxTurns: options.turns ? Number(options.turns) : undefined,
+      matrix: options.matrix
+        ? Object.fromEntries(
+            options.matrix.split(",").map((pair: string) => {
+              const [seat, models] = pair.split("=").map((s) => s.trim());
+              return [seat, (models ?? "").split("|").map((m) => m.trim())];
+            }),
+          )
+        : undefined,
       narrator: options.narrator,
+      panel: {
+        judges: options.judges
+          ? options.judges.split(",").map((m: string) => m.trim())
+          : undefined,
+        mode: await parsePanelMode(options.judgeMode),
+      },
       roster,
       scenario: options.scenario,
+      seats: options.seats
+        ? Object.fromEntries(
+            options.seats.split(",").map((pair: string) => {
+              const [seat, model] = pair.split("=").map((s) => s.trim());
+              return [seat, model];
+            }),
+          )
+        : undefined,
       store: new FileStore(dataRoot()),
     });
     const run = await engine.play(options.resume);

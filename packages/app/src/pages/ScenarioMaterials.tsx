@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { GitFork } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Bar, Section } from "../components/PonyBenchPrimitives";
 import type { ScenarioMaterials } from "../lib/types";
@@ -15,11 +15,42 @@ type LoadState =
   | { phase: "empty" }
   | { phase: "ready"; materials: ScenarioMaterials };
 
+interface ScenarioIndexEntry {
+  id: string;
+  title: string;
+  summary: string;
+  simulates: string;
+  order: number;
+  seatCount: number;
+  turnCount: number;
+}
+
 export function ScenarioMaterialsPage() {
-  const { id = "taiwan-strait" } = useParams();
+  const { id: routeId } = useParams();
+  const [index, setIndex] = useState<ScenarioIndexEntry[]>([]);
   const [state, setState] = useState<LoadState>({ phase: "loading" });
+  // no id in the route: the first exported scenario
+  const id = routeId ?? index[0]?.id ?? "";
 
   useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch("/data/scenarios.json");
+        if (!res.ok) return;
+        const entries = (await res.json()) as ScenarioIndexEntry[];
+        if (!cancelled) setIndex(entries.sort((a, b) => a.order - b.order));
+      } catch {
+        // index unavailable: the route id still loads directly
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!id) return;
     let cancelled = false;
     setState({ phase: "loading" });
     void (async () => {
@@ -37,6 +68,31 @@ export function ScenarioMaterialsPage() {
     };
   }, [id]);
 
+  const switcher = index.length > 0 && (
+    <nav
+      aria-label="Scenarios"
+      className="mb-8 flex flex-wrap items-center gap-2"
+    >
+      {index.map((entry) => (
+        <Link
+          key={entry.id}
+          to={`/scenarios/${entry.id}`}
+          className={clsx(
+            "cursor-pointer rounded-sm border px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
+            entry.id === id
+              ? "border-brand-terminal/40 text-brand-terminal"
+              : "border-white/10 text-zinc-500 hover:text-zinc-200",
+          )}
+        >
+          {entry.title}
+          <span className="ml-1.5 text-zinc-600 normal-case">
+            {entry.simulates.split(":")[0]}
+          </span>
+        </Link>
+      ))}
+    </nav>
+  );
+
   if (state.phase === "loading") {
     return (
       <p className="px-6 pt-16 font-plex-mono text-xs text-zinc-500 sm:px-16">
@@ -47,6 +103,7 @@ export function ScenarioMaterialsPage() {
   if (state.phase === "empty") {
     return (
       <div className="mx-auto w-full max-w-7xl px-6 pt-16 sm:px-16">
+        {switcher}
         <p className="font-plex-mono text-xs text-zinc-500">
           No materials for <span className="text-zinc-300">{id}</span>. Export
           them with{" "}
@@ -61,6 +118,7 @@ export function ScenarioMaterialsPage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
+      {switcher}
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
           Scenario materials
@@ -70,6 +128,12 @@ export function ScenarioMaterialsPage() {
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-pretty text-zinc-400">
           {scenario.summary}
+        </p>
+        <p className="mt-4 max-w-2xl border-l border-brand-terminal/40 pl-3 text-sm text-pretty text-zinc-300">
+          <span className="mr-2 font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
+            Simulates
+          </span>
+          {scenario.simulates}
         </p>
         <p className="mt-3 font-plex-mono text-[10px] text-zinc-600">
           {materials.seats.length} seats · {materials.turns.length} turns ·
@@ -272,7 +336,7 @@ function Block({
 }: {
   id: string;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <section id={id} className="scroll-mt-8">
@@ -284,13 +348,7 @@ function Block({
   );
 }
 
-function Card({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Card({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="rounded-sm border border-white/10 bg-surface-ink/40">
       <Section label={label} />
@@ -313,7 +371,7 @@ function Prompted({
   flagged?: boolean;
   prompt: string;
   promptLabel: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   return (

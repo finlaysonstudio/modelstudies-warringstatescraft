@@ -4,8 +4,10 @@
  * converting `LlmTurn[]` history via {@link toLlmHistory}. Mirrors how the
  * upstream `chat` and `interviews` services call `Llm.operate`
  * (options shape: `{ model, system?, format?, history?, llm? }`).
+ * Every call requests `effort: highest`; adapters translate it per provider
+ * and ignore it where a model has no reasoning control.
  */
-import { Llm } from "@jaypie/llm";
+import { LLM, Llm } from "@jaypie/llm";
 import type { LlmClient, LlmOperateOptions, LlmOperateResult } from "./client";
 import { llmSelector, toLlmHistory } from "./providers";
 
@@ -51,6 +53,7 @@ export function createLlmClient(
           model: options.model ?? defaults.model,
           provider: options.provider ?? defaults.provider,
         }),
+        effort: LLM.EFFORT.HIGHEST,
         ...(options.system && { system: options.system }),
         ...(options.format && {
           format: options.format as JaypieOperateOptions["format"],

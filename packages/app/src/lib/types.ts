@@ -33,16 +33,19 @@ export interface PanelVerdict {
   error?: string;
 }
 
+export type PanelMode = "median";
+
+export interface PanelConfig {
+  judges: string[];
+  mode: PanelMode;
+}
+
 export interface TurnAdjudication {
   panel: PanelVerdict[];
+  mode: PanelMode;
   /** 0..ladder.length-1 consensus escalation for the turn */
   escalation: number;
   narrative: string;
-  gate: {
-    approved: boolean;
-    mode: "auto" | "human";
-    notes?: string;
-  };
 }
 
 export interface TurnRecord {
@@ -61,7 +64,7 @@ export interface Debrief {
 
 export type RunStatus = "active" | "complete" | "error";
 
-export type RunLane = "consensus" | "independent" | "root";
+export type RunLane = "consensus" | "independent" | "root" | "matrix";
 
 export interface RunBranch {
   parent: string | null;
@@ -86,6 +89,10 @@ export interface Run {
   statusDetail?: string;
   /** seat id -> model id */
   roster: Record<string, string>;
+  panel?: PanelConfig;
+  narrator?: string;
+  /** start-fork roots only: seat id -> candidate models */
+  matrix?: Record<string, string[]>;
   branch: RunBranch;
   /** child run ids created at this run's decision point */
   children: string[];
@@ -98,9 +105,12 @@ export interface Run {
 /** Shape of one entry in the generated /data/runs.json index. */
 export interface RunIndexEntry {
   id: string;
+  scenario: string;
   scenarioTitle: string;
   createdAt: string;
   status: RunStatus;
+  /** seat id -> model id */
+  roster: Record<string, string>;
   branch: {
     parent: string | null;
     lane: RunLane;
@@ -187,6 +197,8 @@ export interface ScenarioMaterials {
     id: string;
     title: string;
     summary: string;
+    /** the modern situation the scenario simulates */
+    simulates: string;
     priorities?: string[];
     decisionPoints: { turn: number; seat: string }[];
     escalationLadder: string[];
@@ -198,4 +210,120 @@ export interface ScenarioMaterials {
   narratorSystem: string;
   memoSchema: MemoSchema;
   consensusSchema: MemoSchema;
+}
+
+// ---- play: mirrors packages/game/src/types.ts and packages/app/server/play.ts
+
+export type DecisionMemo = DecisionBrief["memo"] & {
+  consensus?: DecisionBrief["consensus"];
+};
+
+export const HUMAN_MODEL = "human";
+
+export interface ScenarioTurnCard {
+  index: number;
+  title: string;
+  inject: string;
+  moveMenu?: string[];
+}
+
+export interface HumanPrompt {
+  id: string;
+  runId: string;
+  lane: RunLane;
+  kind: "blind" | "informed" | "turn";
+  seat: string;
+  seatName: string;
+  turn: ScenarioTurnCard;
+  /** this run's seats, each "human" or the masked "model" */
+  roster: Record<string, string>;
+  /** this run's own prior turns, models masked */
+  history: TurnRecord[];
+  system: string;
+  prompt: string;
+  candidates?: DecisionBrief["memo"][];
+  /** the other seats' briefs for this turn, shuffled and masked */
+  table?: DecisionBrief[];
+}
+
+/** A turn awaiting the human judge's verdict (models masked). */
+export interface JudgePrompt {
+  id: string;
+  runId: string;
+  turn: TurnRecord;
+  history: TurnRecord[];
+  escalationLadder: string[];
+  system: string;
+  prompt: string;
+}
+
+export interface JudgeVerdict {
+  escalation: number;
+  reasoning: string;
+  flags: string[];
+}
+
+/** A scored turn awaiting the human narrator (models masked). */
+export interface NarratePrompt {
+  id: string;
+  runId: string;
+  turn: TurnRecord;
+  history: TurnRecord[];
+  escalationLadder: string[];
+  panel: PanelVerdict[];
+  escalation: number;
+  system: string;
+  prompt: string;
+}
+
+export interface PlayCatalog {
+  human: string;
+  models: string[];
+  /** dealt across the seats at random; also the default judges */
+  starting: string[];
+  /** default narrator */
+  narrator: string;
+  panelModes: PanelMode[];
+  scenarios: {
+    id: string;
+    title: string;
+    summary: string;
+    /** the modern situation the scenario simulates */
+    simulates: string;
+    seats: { id: string; name: string }[];
+    decisionPoints: DecisionPoint[];
+    turnCount: number;
+  }[];
+}
+
+export interface PlayRequest {
+  scenario: string;
+  /** seat id -> candidate models; one branch per combination */
+  matrix: Record<string, string[]>;
+  panel?: Partial<PanelConfig>;
+  maxTurns?: number;
+  /** narrator ("human" allowed); defaults to the first matrix model */
+  narrator?: string;
+}
+
+export interface PlaySession {
+  id: string;
+  createdAt: string;
+  status: "active" | "complete" | "error";
+  statusDetail?: string;
+  scenario: string;
+  scenarioTitle: string;
+  matrix: Record<string, string[]>;
+  roster: string[];
+  panel: PanelConfig;
+  narrator: string;
+  /** the human holds a seat, a judge's chair, or the narrator's */
+  human: boolean;
+  branchCount: number;
+  rootId: string | null;
+  runIds: string[];
+  pending: HumanPrompt[];
+  verdicts: JudgePrompt[];
+  narrations: NarratePrompt[];
+  log: string[];
 }

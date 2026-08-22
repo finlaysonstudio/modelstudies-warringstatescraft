@@ -10,6 +10,7 @@
     }
   },
   "dependencies": {
+    "@jaypie/errors": "^1.2.5",
     "@modelstudies/game": "*",
     "@modelstudies/judges": "*",
     "@modelstudies/survey": "*",

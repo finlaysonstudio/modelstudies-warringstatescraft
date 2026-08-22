@@ -9,7 +9,8 @@
     "packages/judges/src",
     "packages/game/src",
     "packages/cli/src",
+    "packages/app/server",
     "packages/*/src/**/__tests__"
   ],
-  "exclude": ["packages/app"]
+  "exclude": ["packages/app/src", "packages/app/vite.config.ts"]
 }

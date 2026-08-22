@@ -40,6 +40,8 @@ export interface ScenarioMaterials {
   id: string;
   model: "scenarios";
   createdAt: string;
+  /** position in the scenario registry (display order) */
+  order: number;
   scenario: Omit<Scenario, "seats" | "turns">;
   seats: SeatMaterials[];
   turns: TurnMaterials[];
@@ -103,6 +105,7 @@ export const buildMaterials = (
     id: scenario.id,
     model: "scenarios",
     createdAt,
+    order: listScenarios().findIndex((entry) => entry.id === scenario.id),
     scenario: rest,
     seats: seats.map((seat) => ({
       ...seat,

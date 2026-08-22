@@ -29,7 +29,7 @@ describe("panels", () => {
       MODELS.LUNA,
     ]);
   });
-  it("production is the eight-model fielded cohort", () => {
+  it("production is the seven-model fielded cohort", () => {
     expect(getPanel("production").models).toEqual([
       MODELS.OPUS,
       MODELS.GEMINI_FLASH,
@@ -38,7 +38,6 @@ describe("panels", () => {
       MODELS.FIREWORKS_GLM,
       MODELS.FIREWORKS_KIMI,
       MODELS.FIREWORKS_QWEN,
-      MODELS.MISTRAL_LARGE,
     ]);
   });
   it("throws BadRequestError on an unknown panel", () => {

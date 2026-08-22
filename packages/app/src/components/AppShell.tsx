@@ -20,6 +20,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             ·
           </span>
           <NavLink to="/scenarios" label="Scenarios" />
+          <span aria-hidden className="text-zinc-700">
+            ·
+          </span>
+          <NavLink to="/play" label="Play" />
         </div>
       </header>
       {/* relative: absolutely positioned descendants must anchor inside the
@@ -71,7 +75,7 @@ function Brand() {
         <Radar className="size-4 text-white" strokeWidth={2} />
       </span>
       <span className="text-base font-semibold tracking-tight text-white">
-        Situation Eval
+        Warring States Eval
       </span>
     </Link>
   );

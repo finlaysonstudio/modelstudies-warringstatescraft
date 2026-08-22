@@ -11,8 +11,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@jaypie/errors": "^1.2.5",
     "@modelstudies/game": "*",
     "@modelstudies/judges": "*",
+    "@modelstudies/survey": "*",
+    "@modelstudies/workflows": "*",
     "clsx": "^2.1.0",
     "lucide-react": "^0.540.0",
     "react": "^19.1.0",

@@ -10,6 +10,7 @@ export function LaneChip({ lane }: { lane: RunLane }) {
         "rounded-sm border px-1.5 py-0.5 font-plex-mono text-[10px] tracking-wide uppercase",
         lane === "consensus" && "border-brand-terminal/40 text-brand-terminal",
         lane === "independent" && "border-sky-400/40 text-sky-400",
+        lane === "matrix" && "border-amber-400/40 text-amber-300",
         lane === "root" && "border-white/10 bg-white/[0.03] text-zinc-400",
       )}
     >

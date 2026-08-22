@@ -39,29 +39,26 @@ const PRODUCTION = [
   MODELS.FIREWORKS_GLM,
   MODELS.FIREWORKS_KIMI,
   MODELS.FIREWORKS_QWEN,
-  MODELS.MISTRAL_LARGE,
 ];
 
 // One flagship per lab: the standing comparison cohort.
-const FRONTIER = [MODELS.OPUS, MODELS.SOL, MODELS.GEMINI_PRO, MODELS.GROK];
+const FRONTIER = [MODELS.OPUS, MODELS.SOL, MODELS.GROK];
 
-// The three closed labs publish a three-rung ladder, and the rungs line up
-// across them: flagship, middle, fastest. Splitting the roster the same way
-// is what lets `frontier` / `balanced` / `fast` read as one variable —
-// model size, held against the same questions. xAI publishes no lower rung,
-// so it appears in frontier only; a per-lab ladder is not a promise every
-// lab keeps.
-const BALANCED = [MODELS.SONNET, MODELS.TERRA, MODELS.GEMINI_FLASH];
+// The closed labs publish a three-rung ladder, and the rungs line up across
+// them: flagship, middle, fastest. Splitting the roster the same way is what
+// lets `frontier` / `balanced` / `fast` read as one variable — model size,
+// held against the same questions. Not every lab fields every rung here
+// (xAI frontier only; Google middle and fastest only; OpenAI flagship and
+// fastest); a per-lab ladder is not a promise every lab keeps.
+const BALANCED = [MODELS.SONNET, MODELS.GEMINI_FLASH];
 
-const FAST = [MODELS.HAIKU, MODELS.LUNA, MODELS.GEMINI_FLASH_LITE];
+const FAST = [MODELS.LUNA, MODELS.GEMINI_FLASH_LITE];
 
 // Open-weight entrants, all served through Fireworks.
 const OPEN = [
   MODELS.FIREWORKS_DEEPSEEK,
   MODELS.FIREWORKS_GLM,
-  MODELS.FIREWORKS_GPT_OSS,
   MODELS.FIREWORKS_KIMI,
-  MODELS.FIREWORKS_MINIMAX,
   MODELS.FIREWORKS_QWEN,
 ];
 

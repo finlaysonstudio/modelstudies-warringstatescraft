@@ -120,6 +120,14 @@ function ReplayBody({ run, index }: { run: Run; index: RunIndexEntry[] }) {
             </Link>
           )}
         </div>
+        {run.matrix && (
+          <p className="mt-2 font-plex-mono text-[10px] text-zinc-600">
+            forked at start ·{" "}
+            {Object.entries(run.matrix)
+              .map(([seat, models]) => `${seat}: ${models.join(" | ")}`)
+              .join(" · ")}
+          </p>
+        )}
         {run.branch?.point && (
           <p className="mt-2 font-plex-mono text-[10px] text-zinc-600">
             forked at turn {run.branch.point.turn} · seat{" "}
@@ -160,13 +168,25 @@ function ReplayBody({ run, index }: { run: Run; index: RunIndexEntry[] }) {
                       ? "border-brand-terminal/40 text-brand-terminal"
                       : child.branch.lane === "independent"
                         ? "border-sky-400/40 text-sky-400"
-                        : "border-white/10 bg-white/[0.03] text-zinc-400",
+                        : child.branch.lane === "matrix"
+                          ? "border-amber-400/40 text-amber-300"
+                          : "border-white/10 bg-white/[0.03] text-zinc-400",
                   )}
                 >
                   <span>{child.branch.lane}</span>
                   {child.branch.decidedBy && (
                     <span className="text-zinc-500 normal-case">
                       {child.branch.decidedBy}
+                    </span>
+                  )}
+                  {child.branch.lane === "matrix" && (
+                    <span className="text-zinc-500 normal-case">
+                      {Object.entries(child.roster ?? {})
+                        .map(
+                          ([seat, model]) =>
+                            `${seat}=${model.split("/").pop() ?? model}`,
+                        )
+                        .join(" ")}
                     </span>
                   )}
                 </Link>
@@ -506,18 +526,6 @@ function AdjudicationBlock({
             </table>
           </div>
         )}
-        <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
-          Gate ·{" "}
-          {adjudication.gate?.approved
-            ? `${adjudication.gate.mode === "auto" ? "auto" : "human"}-approved`
-            : "held"}
-          {adjudication.gate?.notes ? (
-            <span className="text-zinc-600 normal-case">
-              {" "}
-              — {adjudication.gate.notes}
-            </span>
-          ) : null}
-        </p>
       </div>
     </div>
   );
