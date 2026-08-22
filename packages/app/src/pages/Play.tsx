@@ -191,7 +191,7 @@ export function PlaySetup() {
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-16 sm:px-16 sm:pt-20">
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          Warring States Eval
+          Warring States Bench
         </p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
           Play

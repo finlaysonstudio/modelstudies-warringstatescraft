@@ -8,7 +8,7 @@ loadEnv({ path: resolve(process.cwd(), ".env"), quiet: true });
 const program = new Command();
 program
   .name("warringstates")
-  .description("Warring States Eval: war game runs, instruments, analysis");
+  .description("Warring States Bench: war game runs, instruments, analysis");
 
 const dataRoot = () => resolve(process.cwd(), "data");
 /** runs land in git-ignored var/runs; every other model stays under data/ */

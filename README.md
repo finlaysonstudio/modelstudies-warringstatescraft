@@ -1,4 +1,4 @@
-# Warring States Eval 🏛️🎲
+# Warring States Bench 🏛️🎲
 
 Evaluation protocols for frontier AI in diplomatic and strategic decision-making: a branching multi-model war game wrapped in a values instrument, analyzed by a multi-judge consensus panel.
 

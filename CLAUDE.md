@@ -4,7 +4,7 @@
 
 ## What this is
 
-Warring States Eval: a branching multi-model war game + values instrument + judges' box, targeting the ChinaTalk "Evals for the Situation Room" contest (deadline 2026-09-01). The active plan is `var/plans/20260816_PLAN_SITUATION_ROOM_SUBMISSION.md`.
+Warring States Bench: a branching multi-model war game + values instrument + judges' box, targeting the ChinaTalk "Evals for the Situation Room" contest (deadline 2026-09-01). The active plan is `var/plans/20260816_PLAN_SITUATION_ROOM_SUBMISSION.md`.
 
 ## Working rules
 

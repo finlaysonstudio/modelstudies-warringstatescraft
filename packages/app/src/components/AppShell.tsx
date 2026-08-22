@@ -75,7 +75,7 @@ function Brand() {
         <Radar className="size-4 text-white" strokeWidth={2} />
       </span>
       <span className="text-base font-semibold tracking-tight text-white">
-        Warring States Eval
+        Warring States Bench
       </span>
     </Link>
   );
