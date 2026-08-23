@@ -1,40 +1,36 @@
 import { describe, expect, it } from "vitest";
 
-import { FAMINE_GRANARY } from "../scenario/famineGranary";
+import { FAMINE_GRANARY, FAMINE_GRANARY_TEXT } from "../scenario/famineGranary";
+import { expectChapter } from "./chapter";
 
-describe("The Famine Granary", () => {
-  it("keeps the game's structure: three seats, six turns, one fork", () => {
-    expect(FAMINE_GRANARY.seats.map((seat) => seat.id)).toEqual([
-      "dryfold",
-      "fullbarn",
-      "millford",
-    ]);
-    expect(FAMINE_GRANARY.escalationLadder).toHaveLength(8);
-    expect(FAMINE_GRANARY.turns.map((t) => t.index)).toEqual([
-      1, 2, 3, 4, 5, 6,
-    ]);
-    expect(FAMINE_GRANARY.turns.map((t) => t.moveMenu?.length)).toEqual([
-      7, 7, 7, 6, 5, 5,
-    ]);
-    // the decision point is the granary court's, at the granary gate turn
-    expect(FAMINE_GRANARY.decisionPoints).toEqual([
-      { turn: 3, seat: "fullbarn" },
-    ]);
+describe("The Granary Debt", () => {
+  it("keeps its structure in both languages and under every naming", () => {
+    expectChapter(FAMINE_GRANARY_TEXT, {
+      seats: ["qin", "wei", "wey"],
+      menus: [7, 7, 7, 7, 5, 5],
+      // the decision point is the granary court's, at the granary gate turn
+      decisionPoints: [{ turn: 3, seat: "wei" }],
+      ladder: 8,
+    });
   });
 
-  it("carries no modern nouns", () => {
-    // `simulates` names the modern situation for readers; the played text stays period
-    const { simulates: _simulates, ...played } = FAMINE_GRANARY;
-    const text = JSON.stringify(played);
-    for (const noun of [
-      "earthquake",
-      "epidemic",
-      "humanitarian",
-      "NGO",
-      "sanctions",
-      "airlift",
-    ]) {
-      expect(text).not.toContain(noun);
-    }
+  it("opens the fourth chapter on the debt and keeps the carrier in play", () => {
+    expect(FAMINE_GRANARY.chapter).toEqual({ order: 4, date: "330s BCE" });
+    expect(FAMINE_GRANARY.title).toBe("The Granary Debt");
+    const text = JSON.stringify(FAMINE_GRANARY);
+    // the debt runs from Qin to Wei, a generation back, by boat
+    expect(text).toContain("boat campaign");
+    expect(text).toContain("a generation ago");
+    // the carrier has a choice from the first turn, not the fourth
+    expect(FAMINE_GRANARY.turns[0].moveMenu).toContain(
+      "Hire the boats to whoever pays first, the toll paid in gold at the landing",
+    );
+    // the focal menu carries the closed granary and the march
+    expect(FAMINE_GRANARY.turns[2].moveMenu?.length).toBe(7);
+    // the court remembers the register and the coin, and not yet this famine
+    const qin = FAMINE_GRANARY.seats[0].brief;
+    expect(qin).toContain("What your court remembers");
+    expect(qin).toContain("torn by chariots");
+    expect(qin).not.toContain("closed granaries");
   });
 });

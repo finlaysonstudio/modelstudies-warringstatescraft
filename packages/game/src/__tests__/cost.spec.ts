@@ -166,9 +166,9 @@ describe("usage capture", () => {
     const root = await new GameEngine({
       llm: llm.client,
       matrix: {
-        broadland: ["model-a", "model-b"],
-        shoalholm: ["model-a"],
-        farwater: ["model-a"],
+        wu: ["model-a", "model-b"],
+        yue: ["model-a"],
+        qi: ["model-a"],
       },
       maxTurns: 2,
       scenario: "strait-states",
@@ -196,9 +196,9 @@ describe("usage capture", () => {
       dialog: 2,
       llm: llm.client,
       matrix: {
-        broadland: ["model-a"],
-        shoalholm: ["model-a"],
-        farwater: ["model-a"],
+        wu: ["model-a"],
+        yue: ["model-a"],
+        qi: ["model-a"],
       },
       maxTurns: 1,
       scenario: "strait-states",
@@ -219,9 +219,9 @@ describe("usage capture", () => {
     const root = await new GameEngine({
       llm: countingLlm().client,
       matrix: {
-        broadland: ["model-a"],
-        shoalholm: ["model-a"],
-        farwater: ["model-a"],
+        wu: ["model-a"],
+        yue: ["model-a"],
+        qi: ["model-a"],
       },
       maxTurns: 1,
       scenario: "strait-states",

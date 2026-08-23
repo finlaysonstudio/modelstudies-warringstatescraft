@@ -3,7 +3,11 @@ import { GitFork } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Bar, Section } from "../components/PonyBenchPrimitives";
-import type { ScenarioMaterials } from "../lib/types";
+import type {
+  MaterialsRendering,
+  ScenarioChapter,
+  ScenarioMaterials,
+} from "../lib/types";
 
 // The reading room: every card and instruction the engine hands to a model,
 // rendered as the model sees it. Source is var/scenarios/<id>.json, written
@@ -23,7 +27,15 @@ interface ScenarioIndexEntry {
   order: number;
   seatCount: number;
   turnCount: number;
+  /** every rendering the scenario has, the default first */
+  renderings: MaterialsRendering[];
+  /** the chapter's place in the chronicle, when it is one */
+  chapter?: ScenarioChapter;
 }
+
+/** the rendering's label in the switch: "masked · 中文" */
+const renderingLabel = ({ naming, language }: MaterialsRendering): string =>
+  [naming, language === "zh" ? "中文" : "English"].join(" · ");
 
 export function ScenarioMaterialsPage() {
   const { id: routeId } = useParams();
@@ -68,6 +80,14 @@ export function ScenarioMaterialsPage() {
     };
   }, [id]);
 
+  // the switcher lists scenarios by base id; a rendering id (`land-register.zh`)
+  // highlights its scenario
+  const base =
+    state.phase === "ready"
+      ? state.materials.base
+      : (index.find((entry) =>
+          entry.renderings.some((rendering) => rendering.id === id),
+        )?.id ?? id);
   const switcher = index.length > 0 && (
     <nav
       aria-label="Scenarios"
@@ -79,7 +99,7 @@ export function ScenarioMaterialsPage() {
           to={`/scenarios/${entry.id}`}
           className={clsx(
             "cursor-pointer rounded-sm border px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
-            entry.id === id
+            entry.id === base
               ? "border-brand-terminal/40 text-brand-terminal"
               : "border-white/10 text-zinc-500 hover:text-zinc-200",
           )}
@@ -126,6 +146,35 @@ export function ScenarioMaterialsPage() {
         <h1 className="mt-1 text-3xl font-medium tracking-tight text-white">
           {scenario.title}
         </h1>
+        {scenario.chapter && (
+          <p className="mt-1 font-plex-mono text-xs text-zinc-500">
+            {scenario.chapter.order === 0
+              ? "Prologue"
+              : `Chapter ${scenario.chapter.order}`}{" "}
+            · {scenario.chapter.date}
+          </p>
+        )}
+        {materials.renderings.length > 1 && (
+          <nav
+            aria-label="Renderings"
+            className="mt-3 flex flex-wrap items-center gap-2"
+          >
+            {materials.renderings.map((rendering) => (
+              <Link
+                key={rendering.id}
+                to={`/scenarios/${rendering.id}`}
+                className={clsx(
+                  "cursor-pointer rounded-sm border px-2 py-0.5 font-plex-mono text-[10px] tracking-wide focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
+                  rendering.id === materials.id
+                    ? "border-brand-terminal/40 text-brand-terminal"
+                    : "border-white/10 text-zinc-500 hover:text-zinc-200",
+                )}
+              >
+                {renderingLabel(rendering)}
+              </Link>
+            ))}
+          </nav>
+        )}
         <p className="mt-3 max-w-2xl text-sm text-pretty text-zinc-400">
           {scenario.summary}
         </p>
@@ -166,6 +215,23 @@ export function ScenarioMaterialsPage() {
             <Card label="Escalation ladder">
               <Ladder ladder={scenario.escalationLadder} />
             </Card>
+            {materials.pivots.length > 0 && (
+              <Card label="Pivots · one phrase, two readings">
+                <dl className="space-y-2">
+                  {materials.pivots.map((pivot) => (
+                    <div
+                      key={pivot.id}
+                      className="grid gap-x-4 sm:grid-cols-[9rem_1fr]"
+                    >
+                      <dt className="font-plex-mono text-xs text-zinc-200">
+                        {pivot.id}
+                      </dt>
+                      <dd className="text-sm text-zinc-400">{pivot.note}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Card>
+            )}
           </Block>
 
           <Block id="seats" title="Seat cards">
@@ -173,7 +239,10 @@ export function ScenarioMaterialsPage() {
               <Prompted
                 key={seat.id}
                 label={seat.name}
-                detail={seat.id}
+                detail={
+                  materials.cast.find((member) => member.seat === seat.id)
+                    ?.nature ?? seat.id
+                }
                 prompt={seat.systemPrompt}
                 promptLabel="System prompt, verbatim"
               >

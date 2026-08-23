@@ -76,7 +76,11 @@ export const buildScorecard = async ({
 }: BuildScorecardOptions): Promise<Scorecard> => {
   const root = await store.get<Run>("runs", rootId);
   if (!root) throw new NotFoundError(`Unknown run: ${rootId}`);
-  const scenario = getScenario(root.scenario);
+  const scenario = getScenario(root.scenario, {
+    language: root.language,
+    naming: root.naming,
+    pivot: root.pivot,
+  });
 
   const children = (
     await Promise.all(root.children.map((id) => store.get<Run>("runs", id)))

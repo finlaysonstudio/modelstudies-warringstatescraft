@@ -99,6 +99,9 @@ export function StudyView() {
             </span>
           ) : null}
           {study.priorities === false && <span>no priorities</span>}
+          {study.language && <span>language: {study.language}</span>}
+          {study.naming && <span>names: {study.naming}</span>}
+          {study.pivot && <span>pivot: {study.pivot}</span>}
           {study.panel && (
             <span>
               judges: {study.panel.judges.join(", ")} ({study.panel.mode})

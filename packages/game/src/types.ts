@@ -40,12 +40,50 @@ export interface Scenario {
    * `basic`); see `REPORTS`
    */
   report?: ReportId;
+  /**
+   * the language of the played text (default `en`); the engine's own
+   * scaffolding (headers, closing lines, schema descriptions, judge and
+   * narrator prompts) follows it
+   */
+  language?: Language;
+  /**
+   * how the world's proper nouns are rendered in the played text (default
+   * `chronicle`: the period's real names)
+   */
+  naming?: Naming;
+  /** the pivot applied to the played text, when one was (see `Pivot`) */
+  pivot?: string;
+  /** chapter position in the chronicle, for saga chapters */
+  chapter?: ScenarioChapter;
   seats: ScenarioSeat[];
   turns: ScenarioTurn[];
   /** which turns fork, and which seat's decision is focal */
   decisionPoints: DecisionPoint[];
   /** escalation ladder labels, index = severity 0..n */
   escalationLadder: string[];
+}
+
+/** the language a scenario's played text is rendered in */
+export type Language = "en" | "zh";
+
+export const LANGUAGES: Language[] = ["en", "zh"];
+
+/**
+ * how the world's proper nouns are rendered: `chronicle` is the period's
+ * real names (秦, Zhao, Shangdang), `masked` the invented toponyms of the
+ * same world (Upland, Northmarch, Tallgate), `modern` the present-day
+ * names a scenario declares (the strait only)
+ */
+export type Naming = "chronicle" | "masked" | "modern";
+
+export const NAMINGS: Naming[] = ["chronicle", "masked", "modern"];
+
+/** where a scenario sits in the chronicle */
+export interface ScenarioChapter {
+  /** 0 = prologue, then 1..n in chronicle order */
+  order: number;
+  /** the chronicle's anchor for the opening situation, e.g. "262–260 BCE" */
+  date: string;
 }
 
 export type Elicitation = "memo" | "choice";
@@ -69,6 +107,11 @@ export interface ScenarioSeat {
    * model; the roster records `SCRIPTED_MODEL` for it
    */
   scripted?: boolean;
+  /**
+   * the cast member this seat plays (a gazetteer key); the renderer prefixes
+   * the brief with the state's character and what it remembers so far
+   */
+  state?: string;
   /** system-prompt brief for the cell playing this seat */
   brief: string;
   objectives: string[];
@@ -338,6 +381,12 @@ export interface Run {
   dialogWords?: number;
   /** false when the scenario's priorities block was withheld (instruction ablation) */
   priorities?: boolean;
+  /** language the played text was rendered in, when not `en` */
+  language?: Language;
+  /** naming the played text was rendered with, when not `chronicle` */
+  naming?: Naming;
+  /** pivot applied to the played text, when one was */
+  pivot?: string;
   /** study this run belongs to, when it was played as a study arm */
   study?: string;
   /** 1-based replicate index within the study arm's cell */
@@ -380,6 +429,9 @@ export interface Study {
   /** target words per dialog round */
   dialogWords?: number;
   priorities?: boolean;
+  language?: Language;
+  naming?: Naming;
+  pivot?: string;
   arms: StudyArm[];
 }
 

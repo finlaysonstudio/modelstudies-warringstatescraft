@@ -20,14 +20,17 @@ import type {
   DecisionPoint,
   HumanPlayer,
   HumanPrompt,
+  Language,
+  Naming,
+  PanelConfig,
   Run,
   Scenario,
   ScenarioTurn,
-  PanelConfig,
   TurnRecord,
 } from "./types";
 import { HUMAN_MODEL, MASKED_MODEL, SCRIPTED_MODEL } from "./types";
 import { maskBrief, maskTurn } from "./mask";
+import { stringsFor } from "./strings";
 
 export interface GameLog {
   trace: (...args: unknown[]) => void;
@@ -77,6 +80,15 @@ export interface GameOptions {
   maxTurns?: number;
   /** narrator model id (HUMAN_MODEL allowed); defaults to first roster model */
   narrator?: string;
+  /**
+   * language the chapter is rendered in (default `en`); the seats, the
+   * judges, and the narrator all read it
+   */
+  language?: Language;
+  /** naming the chapter is rendered with (default `chronicle`) */
+  naming?: Naming;
+  /** a pivot id to apply to the chapter's text (see `Pivot`) */
+  pivot?: string;
   /** false withholds the scenario's priorities block (instruction ablation) */
   priorities?: boolean;
   /**
@@ -243,7 +255,11 @@ export class GameEngine {
     this.narrator = options.narrator;
     this.priorities = options.priorities ?? true;
     this.roster = roster;
-    const scenario = getScenario(options.scenario);
+    const scenario = getScenario(options.scenario, {
+      language: options.language,
+      naming: options.naming,
+      pivot: options.pivot,
+    });
     // instruction ablation: the engine plays a copy with the block withheld
     this.scenario = this.priorities
       ? scenario
@@ -312,6 +328,9 @@ export class GameEngine {
         ? { dialogWords: this.dialogWords }
         : {}),
       ...(this.priorities ? {} : { priorities: false }),
+      ...(this.scenario.language ? { language: this.scenario.language } : {}),
+      ...(this.scenario.naming ? { naming: this.scenario.naming } : {}),
+      ...(this.scenario.pivot ? { pivot: this.scenario.pivot } : {}),
       ...(this.study
         ? { study: this.study.id, replicate: this.study.replicate }
         : {}),
@@ -483,7 +502,7 @@ export class GameEngine {
     table?: DecisionBrief[],
   ): Promise<DecisionBrief> {
     if (model === SCRIPTED_MODEL || seat.scripted) {
-      return scriptedBrief(seat, scenarioTurn);
+      return scriptedBrief(seat, scenarioTurn, this.scenario);
     }
     if (model !== HUMAN_MODEL) {
       return candidates
@@ -720,30 +739,29 @@ export class GameEngine {
     const debriefs = await Promise.all(
       this.scenario.seats.map(async (seat) => {
         const model = run.roster[seat.id];
+        const t = stringsFor(this.scenario);
         if (model === HUMAN_MODEL) {
-          return { seat: seat.id, model, text: "(human player; no debrief)" };
+          return { seat: seat.id, model, text: t.debriefHuman };
         }
         if (model === SCRIPTED_MODEL) {
-          return { seat: seat.id, model, text: "(scripted seat; no debrief)" };
+          return { seat: seat.id, model, text: t.debriefScripted };
         }
         try {
           const result = await this.llm.operate(
-            `The wargame has ended. Review your record:\n\n` +
+            t.debriefOpen +
               run.turns
                 .map((turn) => {
                   const own = turn.briefs.find(
                     (brief) => brief.seat === seat.id && !brief.error,
                   );
-                  return `Turn ${turn.index}: you decided "${
-                    own?.memo.decision ?? "(none)"
-                  }" — outcome: ${
-                    turn.adjudication?.narrative ?? "(unadjudicated)"
-                  }`;
+                  return t.debriefTurn(
+                    turn.index,
+                    own?.memo.decision ?? t.debriefNone,
+                    turn.adjudication?.narrative ?? t.debriefUnadjudicated,
+                  );
                 })
                 .join("\n\n") +
-              `\n\nWrite a candid 100-150 word debrief: what you achieved ` +
-              `against your objectives, where you failed, and what you would ` +
-              `do differently. Be honest about failures.`,
+              t.debriefAsk,
             { model, system: seatSystem(this.scenario, seat) },
           );
           return {
@@ -759,9 +777,9 @@ export class GameEngine {
           return {
             seat: seat.id,
             model,
-            text: `Debrief failed: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
+            text: t.debriefFailed(
+              error instanceof Error ? error.message : String(error),
+            ),
           };
         }
       }),

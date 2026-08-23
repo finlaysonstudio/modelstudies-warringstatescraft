@@ -106,7 +106,7 @@ describe("GameEngine", () => {
       expect(child!.turns).toHaveLength(4); // seeded turn 3 + turn 4
       expect(child!.turns[2].adjudication).toBeDefined();
       expect(child!.debriefs).toHaveLength(3);
-      expect(child!.roster.farwater).toBe(child!.branch.decidedBy);
+      expect(child!.roster.qi).toBe(child!.branch.decidedBy);
       expect(child!.branch.parent).toBe(root.id);
     }
     const lanes = children.map((child) => child!.branch.lane);
@@ -139,17 +139,17 @@ describe("GameEngine", () => {
       maxTurns: 5,
       roster: ["model-a", "model-b"],
       scenario: "corridor-states",
-      seats: { upland: "model-b", northmarch: "model-a" },
+      seats: { qin: "model-b", zhao: "model-a" },
       store,
     });
     const root = await engine.play();
 
     expect(root.roster).toEqual({
-      upland: "model-b",
-      northmarch: "model-a",
-      saltmarch: "model-a",
+      qin: "model-b",
+      zhao: "model-a",
+      qi: "model-a",
     });
-    expect(root.statusDetail).toContain("branched at turn 4 (saltmarch)");
+    expect(root.statusDetail).toContain("branched at turn 4 (qi)");
     // 2 non-focal + 2 independent + 2 consensus + blind + informed
     expect(root.turns[3].briefs).toHaveLength(8);
     expect(root.children).toHaveLength(6);
@@ -175,13 +175,13 @@ describe("GameEngine", () => {
     for (const child of humanChildren) {
       // the human keeps the focal seat through turn 5 in their own branches
       expect(child!.status).toBe("complete");
-      expect(child!.roster.saltmarch).toBe(HUMAN_MODEL);
-      expect(
-        child!.turns[4].briefs.find((b) => b.seat === "saltmarch")?.model,
-      ).toBe(HUMAN_MODEL);
-      expect(
-        child!.debriefs.find((d) => d.seat === "saltmarch")?.text,
-      ).toContain("human");
+      expect(child!.roster.qi).toBe(HUMAN_MODEL);
+      expect(child!.turns[4].briefs.find((b) => b.seat === "qi")?.model).toBe(
+        HUMAN_MODEL,
+      );
+      expect(child!.debriefs.find((d) => d.seat === "qi")?.text).toContain(
+        "human",
+      );
     }
     // blind + informed + one turn-5 memo per human branch
     expect(prompts.map((prompt) => prompt.kind).sort()).toEqual([
@@ -199,7 +199,7 @@ describe("GameEngine", () => {
           llm: stubLlm,
           roster: ["model-a"],
           scenario: "corridor-states",
-          seats: { saltmarch: HUMAN_MODEL },
+          seats: { qi: HUMAN_MODEL },
           store: new MemoryStore(),
         }),
     ).toThrow(/human/);
@@ -232,9 +232,9 @@ describe("GameEngine", () => {
       },
       llm: stubLlm,
       matrix: {
-        upland: ["model-a", "model-b"],
-        northmarch: ["model-a"],
-        saltmarch: ["model-b", HUMAN_MODEL],
+        qin: ["model-a", "model-b"],
+        zhao: ["model-a"],
+        qi: ["model-b", HUMAN_MODEL],
       },
       maxTurns: 2,
       scenario: "corridor-states",
@@ -252,14 +252,14 @@ describe("GameEngine", () => {
     );
     const rosters = children.map((child) => child!.roster);
     expect(rosters).toContainEqual({
-      upland: "model-a",
-      northmarch: "model-a",
-      saltmarch: "model-b",
+      qin: "model-a",
+      zhao: "model-a",
+      qi: "model-b",
     });
     expect(rosters).toContainEqual({
-      upland: "model-b",
-      northmarch: "model-a",
-      saltmarch: HUMAN_MODEL,
+      qin: "model-b",
+      zhao: "model-a",
+      qi: HUMAN_MODEL,
     });
     for (const child of children) {
       expect(child!.branch.lane).toBe("matrix");
@@ -280,18 +280,18 @@ describe("GameEngine", () => {
     expect(second.history).toHaveLength(1);
     expect(second.history[0].adjudication?.narrative).toContain("quietly");
     expect(second.table?.map((brief) => brief.seat).sort()).toEqual([
-      "northmarch",
-      "upland",
+      "qin",
+      "zhao",
     ]);
-    expect(second.roster.saltmarch).toBe(HUMAN_MODEL);
+    expect(second.roster.qi).toBe(HUMAN_MODEL);
     // the human never learns which model holds another seat or sat on the panel
-    expect(second.roster.upland).toBe(MASKED_MODEL);
+    expect(second.roster.qin).toBe(MASKED_MODEL);
     expect(second.table?.every((brief) => brief.model === MASKED_MODEL)).toBe(
       true,
     );
     expect(
       second.history[0].briefs
-        .filter((brief) => brief.seat !== "saltmarch")
+        .filter((brief) => brief.seat !== "qi")
         .every((brief) => brief.model === MASKED_MODEL),
     ).toBe(true);
     expect(
@@ -301,7 +301,7 @@ describe("GameEngine", () => {
     ).toBe(true);
     // the stored run keeps the truth
     const humanRun = await store.get<Run>("runs", second.runId);
-    expect(humanRun!.roster.upland).toMatch(/^model-/);
+    expect(humanRun!.roster.qin).toMatch(/^model-/);
     expect(humanRun!.panel).toEqual({
       judges: ["model-a", "model-b"],
       mode: "median",
@@ -375,9 +375,9 @@ describe("GameEngine", () => {
     const options = {
       llm: stubLlm,
       matrix: {
-        upland: ["model-a"],
-        northmarch: ["model-a"],
-        saltmarch: ["model-b"],
+        qin: ["model-a"],
+        zhao: ["model-a"],
+        qi: ["model-b"],
       },
       maxTurns: 1,
       scenario: "corridor-states",

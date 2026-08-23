@@ -1,36 +1,45 @@
 import { describe, expect, it } from "vitest";
 
-import { RIVER_WORKS } from "../scenario/riverWorks";
+import { RIVER_WORKS, RIVER_WORKS_TEXT } from "../scenario/riverWorks";
+import { buildChapter } from "../scenario/render";
+import { expectChapter } from "./chapter";
 
-describe("The River Works", () => {
-  it("keeps the river game's structure: three seats, six turns, one fork", () => {
-    expect(RIVER_WORKS.seats.map((seat) => seat.id)).toEqual([
-      "highreach",
-      "fenmarch",
-      "stonegate",
-    ]);
-    expect(RIVER_WORKS.escalationLadder).toHaveLength(8);
-    expect(RIVER_WORKS.turns.map((t) => t.index)).toEqual([1, 2, 3, 4, 5, 6]);
-    expect(RIVER_WORKS.turns.map((t) => t.moveMenu?.length)).toEqual([
-      7, 7, 6, 7, 5, 5,
-    ]);
-    // the decision point is the downstream state's, at the planting moon
-    expect(RIVER_WORKS.decisionPoints).toEqual([{ turn: 4, seat: "fenmarch" }]);
+describe("The Engineer's Canal", () => {
+  it("keeps its structure in both languages and under every naming", () => {
+    expectChapter(RIVER_WORKS_TEXT, {
+      seats: ["qin", "wei", "han"],
+      menus: [7, 7, 6, 7, 6, 5],
+      // the decision point is the downstream court's, at the planting moon
+      decisionPoints: [{ turn: 4, seat: "wei" }],
+      ladder: 8,
+    });
   });
 
-  it("carries no modern nouns", () => {
-    // `simulates` names the modern situation for readers; the played text stays period
-    const { simulates: _simulates, ...played } = RIVER_WORKS;
-    const text = JSON.stringify(played);
-    for (const noun of [
-      "Mekong",
-      "Nile",
-      "Tigris",
-      "dam",
-      "hydro",
-      "turbine",
-    ]) {
-      expect(text).not.toContain(noun);
+  it("bends the canal's year onto the city below the River", () => {
+    expect(RIVER_WORKS.chapter).toEqual({
+      order: 11,
+      date: "246 BCE (bent to the 270s)",
+    });
+    expect(RIVER_WORKS.title).toBe("The Engineer's Canal");
+    const text = JSON.stringify(RIVER_WORKS);
+    expect(text).toContain("three hundred li");
+    expect(text).toContain("ten thousand generations");
+    expect(text).toContain("three boards above the water");
+    // the old text's rice beds and court of arbitration are gone
+    expect(text).not.toMatch(/\brice\b/);
+    expect(text).not.toContain("arbitration");
+    // the local name renders under both namings and never as a placeholder
+    expect(text).toContain("the Great Ditch");
+    expect(
+      JSON.stringify(buildChapter(RIVER_WORKS_TEXT, { naming: "masked" })),
+    ).toContain("the Long Cut");
+    // chapter 11 remembers: every seat carries a memory block
+    for (const seat of RIVER_WORKS.seats) {
+      expect(seat.brief).toContain("What your court remembers");
     }
+    expect(RIVER_WORKS_TEXT.pivots?.map((pivot) => pivot.id)).toEqual([
+      "flood-month-week",
+      "cut-before-fills",
+    ]);
   });
 });

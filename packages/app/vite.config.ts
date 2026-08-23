@@ -33,6 +33,9 @@ interface RunFile {
   narrator?: string;
   study?: string;
   replicate?: number;
+  language?: string;
+  naming?: string;
+  pivot?: string;
 }
 
 interface StudyFile {
@@ -100,19 +103,31 @@ async function buildScenarioIndex(): Promise<object[]> {
         await readFile(path.join(dir, file), "utf8"),
       ) as {
         id?: string;
+        base?: string;
         order?: number;
-        scenario?: { title?: string; summary?: string; simulates?: string };
+        renderings?: { id: string; naming: string; language: string }[];
+        scenario?: {
+          title?: string;
+          summary?: string;
+          simulates?: string;
+          chapter?: { order: number; date: string };
+        };
         seats?: unknown[];
         turns?: unknown[];
       };
+      const id = materials.id ?? file.replace(/\.json$/, "");
+      // one entry per scenario: the default rendering lists the others
+      if (materials.base && materials.base !== id) continue;
       index.push({
-        id: materials.id ?? file.replace(/\.json$/, ""),
+        id,
         order: materials.order ?? Number.MAX_SAFE_INTEGER,
         title: materials.scenario?.title ?? "",
         summary: materials.scenario?.summary ?? "",
         simulates: materials.scenario?.simulates ?? "",
         seatCount: Array.isArray(materials.seats) ? materials.seats.length : 0,
         turnCount: Array.isArray(materials.turns) ? materials.turns.length : 0,
+        renderings: materials.renderings ?? [{ id, naming: "chronicle", language: "en" }],
+        ...(materials.scenario?.chapter ? { chapter: materials.scenario.chapter } : {}),
       });
     } catch {
       // unreadable file: skip it
@@ -154,6 +169,9 @@ async function buildIndex(): Promise<object[]> {
         ...(run.panel ? { panel: run.panel } : {}),
         ...(run.narrator ? { narrator: run.narrator } : {}),
         ...(run.study ? { study: run.study, replicate: run.replicate } : {}),
+        ...(run.language ? { language: run.language } : {}),
+        ...(run.naming ? { naming: run.naming } : {}),
+        ...(run.pivot ? { pivot: run.pivot } : {}),
       });
     } catch {
       // unreadable file: skip it rather than break the index

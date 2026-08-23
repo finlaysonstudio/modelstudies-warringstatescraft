@@ -3,10 +3,14 @@ export * from "./scenarios";
 export {
   CHOICE_FORMAT,
   CHOICE_RETRIES,
+  CONSENSUS_FORMAT,
+  MEMO_FORMAT,
   choiceBlock,
   choiceFormat,
   choiceRetryPrompt,
+  consensusFormat,
   consensusPrompt,
+  dialogClose,
   dialogContinue,
   dialogLength,
   dialogPrompt,
@@ -15,6 +19,7 @@ export {
   DIALOG_OPEN,
   elicitBrief,
   elicitConsensusBrief,
+  memoFormat,
   publicRecord,
   privateRecord,
   scriptBlock,
@@ -24,25 +29,59 @@ export {
   turnPrompt,
   validateChoices,
 } from "./briefs";
-export { adjudicateTurn } from "./adjudicate";
+export {
+  adjudicateTurn,
+  JUDGE_SYSTEM,
+  NARRATOR_SYSTEM,
+  VERDICT_FORMAT,
+  verdictFormat,
+} from "./adjudicate";
 export type { AdjudicateOptions } from "./adjudicate";
 export { GameEngine, matrixCombinations, runGame } from "./engine";
 export type { GameLog, GameOptions } from "./engine";
 export { maskBrief, maskTurn, maskVerdict } from "./mask";
-export { buildCorridorStates, RIVER_PLAIN } from "./scenario/corridorStates";
-export type { CorridorSetting } from "./scenario/corridorStates";
-export { STRAIT_STATES } from "./scenario/straitStates";
-export { HOSTAGE_PRINCE } from "./scenario/hostagePrince";
-export { ASSASSINS_MAP } from "./scenario/assassinsMap";
-export { RIVER_WORKS } from "./scenario/riverWorks";
-export { WEDGE_STATE } from "./scenario/wedgeState";
-export { SALT_AND_IRON } from "./scenario/saltAndIron";
-export { COINAGE_REFORM } from "./scenario/coinageReform";
-export { LAND_REGISTER } from "./scenario/landRegister";
-export { SCHOOLS_OF_THE_HUNDRED } from "./scenario/schoolsOfTheHundred";
-export { CONSCRIPTION_ROLLS } from "./scenario/conscriptionRolls";
-export { FAMINE_GRANARY } from "./scenario/famineGranary";
-export { BORROWED_ROAD } from "./scenario/borrowedRoad";
+export { STRINGS, stringsFor } from "./strings";
+export type { EngineStrings } from "./strings";
+export * from "./world";
+export {
+  buildChapter,
+  DEFAULT_LANGUAGE,
+  DEFAULT_NAMING,
+  gazetteerOf,
+  namingsOf,
+  renderString,
+  standingBrief,
+} from "./scenario/render";
+export type {
+  Pivot,
+  RenderContext,
+  RenderOptions,
+  ScenarioBody,
+  ScenarioText,
+} from "./scenario/render";
+export {
+  CORRIDOR_STATES,
+  CORRIDOR_STATES_TEXT,
+} from "./scenario/corridorStates";
+export { STRAIT_STATES, STRAIT_STATES_TEXT } from "./scenario/straitStates";
+export { TAIWAN_STRAIT } from "./scenario/taiwanStrait";
+export { HOSTAGE_PRINCE, HOSTAGE_PRINCE_TEXT } from "./scenario/hostagePrince";
+export { ASSASSINS_MAP, ASSASSINS_MAP_TEXT } from "./scenario/assassinsMap";
+export { RIVER_WORKS, RIVER_WORKS_TEXT } from "./scenario/riverWorks";
+export { ROYAL_DOMAIN, ROYAL_DOMAIN_TEXT } from "./scenario/royalDomain";
+export { SALT_AND_IRON, SALT_AND_IRON_TEXT } from "./scenario/saltAndIron";
+export { HEAVY_COIN, HEAVY_COIN_TEXT } from "./scenario/heavyCoin";
+export { LAND_REGISTER, LAND_REGISTER_TEXT } from "./scenario/landRegister";
+export {
+  SCHOOLS_OF_THE_HUNDRED,
+  SCHOOLS_OF_THE_HUNDRED_TEXT,
+} from "./scenario/schoolsOfTheHundred";
+export {
+  CONSCRIPTION_ROLLS,
+  CONSCRIPTION_ROLLS_TEXT,
+} from "./scenario/conscriptionRolls";
+export { FAMINE_GRANARY, FAMINE_GRANARY_TEXT } from "./scenario/famineGranary";
+export { BORROWED_ROAD, BORROWED_ROAD_TEXT } from "./scenario/borrowedRoad";
 export {
   buildLamparth,
   LAMPARTH_2024,
@@ -101,9 +140,11 @@ export type {
   ConformityRow,
   Scorecard,
 } from "./metrics";
-export { buildAllMaterials, buildMaterials } from "./materials";
+export { buildAllMaterials, buildMaterials, materialsId } from "./materials";
 export type {
+  MaterialsRendering,
   ScenarioMaterials,
+  SeatCast,
   SeatMaterials,
   TurnMaterials,
 } from "./materials";

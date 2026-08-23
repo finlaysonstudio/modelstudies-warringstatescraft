@@ -140,6 +140,20 @@ function ReplayBody({
               {run.statusDetail}
             </span>
           )}
+          {[
+            run.language && `language ${run.language}`,
+            run.naming && `names ${run.naming}`,
+            run.pivot && `pivot ${run.pivot}`,
+          ]
+            .filter((label): label is string => Boolean(label))
+            .map((label) => (
+              <span
+                key={label}
+                className="rounded-sm border border-white/10 px-2 py-0.5 font-plex-mono text-[10px] tracking-wide text-zinc-400 uppercase"
+              >
+                {label}
+              </span>
+            ))}
           {run.branch?.parent && (
             <Link
               to={`/runs/${run.branch.parent}`}

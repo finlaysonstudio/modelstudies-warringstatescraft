@@ -7,7 +7,15 @@ import { GameEngine, type GameLog } from "./engine";
 import { getReport, scenarioReport } from "./reports";
 import type { ReportBase } from "./reports";
 import { getScenario } from "./scenarios";
-import type { PanelConfig, ReportId, Run, Study, StudyArm } from "./types";
+import type {
+  Language,
+  Naming,
+  PanelConfig,
+  ReportId,
+  Run,
+  Study,
+  StudyArm,
+} from "./types";
 import { SCRIPTED_MODEL } from "./types";
 
 /**
@@ -32,6 +40,12 @@ export interface PlanStudyOptions {
   /** target words per dialog round */
   dialogWords?: number;
   priorities?: boolean;
+  /** language every arm is rendered in (default en) */
+  language?: Language;
+  /** naming every arm is rendered with (default chronicle) */
+  naming?: Naming;
+  /** pivot applied to every arm's text */
+  pivot?: string;
   store: Store;
 }
 
@@ -76,7 +90,14 @@ export const planStudy = async (options: PlanStudyOptions): Promise<Study> => {
   if (!(replicates >= 1)) {
     throw new BadRequestError("Study needs at least one replicate");
   }
-  const scenarios = options.scenarios.map(getScenario);
+  // every cell must render under the study's options; render now to fail early
+  const scenarios = options.scenarios.map((id) =>
+    getScenario(id, {
+      language: options.language,
+      naming: options.naming,
+      pivot: options.pivot,
+    }),
+  );
   const reports = [...new Set(scenarios.map(scenarioReport))];
   const report = options.report ?? reports[0];
   if (!options.report && reports.length > 1) {
@@ -113,6 +134,13 @@ export const planStudy = async (options: PlanStudyOptions): Promise<Study> => {
       ? { dialogWords: options.dialogWords }
       : {}),
     ...(options.priorities === false ? { priorities: false } : {}),
+    ...(options.language && options.language !== "en"
+      ? { language: options.language }
+      : {}),
+    ...(options.naming && options.naming !== "chronicle"
+      ? { naming: options.naming }
+      : {}),
+    ...(options.pivot ? { pivot: options.pivot } : {}),
     arms,
   };
   await options.store.create(study);
@@ -244,6 +272,9 @@ export const runStudy = async (options: RunStudyOptions): Promise<Study> => {
         narrator: study.narrator,
         panel: study.panel,
         priorities: study.priorities,
+        language: study.language,
+        naming: study.naming,
+        pivot: study.pivot,
         roster: [arm.model],
         scenario: arm.scenario,
         seats: study.seats,
@@ -325,7 +356,13 @@ export const buildStudyReport = async (
   const study = await loadStudy(options.store, options.id);
   const report = await getReport(study.report).build({
     study,
-    scenarios: study.scenarios.map(getScenario),
+    scenarios: study.scenarios.map((id) =>
+      getScenario(id, {
+        language: study.language,
+        naming: study.naming,
+        pivot: study.pivot,
+      }),
+    ),
     runs: await studyRuns(options.store, study),
     store: options.store,
     bootstrap: options.bootstrap,

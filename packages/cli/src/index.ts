@@ -59,6 +59,28 @@ const parsePanelMode = async (mode: string) => {
   return mode as (typeof PANEL_MODES)[number];
 };
 
+const parseLanguage = async (language: string) => {
+  const { LANGUAGES } = await import("@modelstudies/game");
+  const { BadRequestError } = await import("@jaypie/errors");
+  if (!(LANGUAGES as string[]).includes(language)) {
+    throw new BadRequestError(
+      `Unknown language "${language}"; expected one of ${LANGUAGES.join(", ")}`,
+    );
+  }
+  return language as (typeof LANGUAGES)[number];
+};
+
+const parseNaming = async (naming: string) => {
+  const { NAMINGS } = await import("@modelstudies/game");
+  const { BadRequestError } = await import("@jaypie/errors");
+  if (!(NAMINGS as string[]).includes(naming)) {
+    throw new BadRequestError(
+      `Unknown naming "${naming}"; expected one of ${NAMINGS.join(", ")}`,
+    );
+  }
+  return naming as (typeof NAMINGS)[number];
+};
+
 const resolveRoster = async (panelOrModels: string): Promise<string[]> => {
   if (panelOrModels.includes(","))
     return panelOrModels.split(",").map((m) => m.trim());
@@ -96,6 +118,13 @@ program
     "--no-priorities",
     "withhold the scenario's priorities block (instruction ablation)",
   )
+  .option("--language <lang>", "render the chapter in en or zh", "en")
+  .option(
+    "--naming <naming>",
+    "render names as chronicle, masked, or modern",
+    "chronicle",
+  )
+  .option("--pivot <id>", "apply one of the chapter's pivots")
   .option("--narrator <model>", "narrator model id")
   .option("--judges <models>", "comma-separated judge model ids")
   .option("--judge-mode <mode>", "how judge verdicts combine", "median")
@@ -114,6 +143,9 @@ program
       log: consoleLog,
       maxTurns: options.turns ? Number(options.turns) : undefined,
       priorities: options.priorities,
+      language: await parseLanguage(options.language),
+      naming: await parseNaming(options.naming),
+      pivot: options.pivot,
       matrix: options.matrix
         ? Object.fromEntries(
             options.matrix.split(",").map((pair: string) => {
@@ -178,6 +210,13 @@ program
   )
   .option("--dialog-words <n>", "target words per dialog round")
   .option("--no-priorities", "withhold the scenario's priorities block")
+  .option("--language <lang>", "render every arm in en or zh", "en")
+  .option(
+    "--naming <naming>",
+    "render names as chronicle, masked, or modern",
+    "chronicle",
+  )
+  .option("--pivot <id>", "apply one of the chapter's pivots to every arm")
   .option("--narrator <model>", "narrator model id")
   .option("--judges <models>", "comma-separated judge model ids")
   .option("--judge-mode <mode>", "how judge verdicts combine", "median")
@@ -228,6 +267,9 @@ program
           mode: await parsePanelMode(options.judgeMode),
         },
         priorities: options.priorities,
+        language: await parseLanguage(options.language),
+        naming: await parseNaming(options.naming),
+        pivot: options.pivot,
         replicates: Number(options.replicates ?? 1),
         report: options.report,
         scenarios: await resolveScenarios(options.scenarios),

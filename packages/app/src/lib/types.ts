@@ -108,6 +108,20 @@ export interface RunBranch {
   seed: DecisionBrief | null;
 }
 
+/** the language a chapter is rendered in (mirrors packages/game/src/types.ts) */
+export type Language = "en" | "zh";
+export const LANGUAGES: Language[] = ["en", "zh"];
+
+/** which names a chapter is rendered under */
+export type Naming = "chronicle" | "masked" | "modern";
+export const NAMINGS: Naming[] = ["chronicle", "masked", "modern"];
+
+/** a chapter's place in the chronicle */
+export interface ScenarioChapter {
+  order: number;
+  date: string;
+}
+
 export interface Run {
   id: string;
   model: "run";
@@ -129,6 +143,10 @@ export interface Run {
   dialogWords?: number;
   /** false when the scenario's priorities block was withheld */
   priorities?: boolean;
+  /** the chapter's rendering, when not the default (en, chronicle, no pivot) */
+  language?: Language;
+  naming?: Naming;
+  pivot?: string;
   /** study this run belongs to, when it was played as a study arm */
   study?: string;
   /** 1-based replicate index within the study arm's cell */
@@ -167,6 +185,10 @@ export interface RunIndexEntry {
   /** study this run belongs to */
   study?: string;
   replicate?: number;
+  /** the chapter's rendering, when not the default */
+  language?: Language;
+  naming?: Naming;
+  pivot?: string;
 }
 
 // ---- studies and reports (mirror packages/game/src/types.ts and reports/)
@@ -200,6 +222,10 @@ export interface Study {
   dialog?: number;
   dialogWords?: number;
   priorities?: boolean;
+  /** the chapter's rendering, when not the default */
+  language?: Language;
+  naming?: Naming;
+  pivot?: string;
   arms: StudyArm[];
 }
 
@@ -416,6 +442,8 @@ export interface MemoSchema {
 export interface SeatMaterials {
   id: string;
   name: string;
+  /** the cast member the seat plays, when the scenario is a chapter */
+  state?: string;
   /** played by the scenario's script, never by a model */
   scripted?: boolean;
   brief: string;
@@ -443,10 +471,38 @@ export interface TurnMaterials {
   focalSeat: string | null;
 }
 
+/** one rendering of a scenario, as the materials index lists it */
+export interface MaterialsRendering {
+  /** the materials id (`<scenario>`, `<scenario>.zh`, `<scenario>.masked.zh`) */
+  id: string;
+  naming: Naming;
+  language: Language;
+}
+
+/** a cast member a seat plays, for the reading room */
+export interface SeatCast {
+  seat: string;
+  state: string;
+  nature: string;
+}
+
 export interface ScenarioMaterials {
+  /** the materials id: the scenario id with a rendering suffix when not the default */
   id: string;
   model: "scenarios";
   createdAt: string;
+  /** the scenario id every rendering shares */
+  base: string;
+  /** position in the scenario registry (display order) */
+  order: number;
+  naming: Naming;
+  language: Language;
+  /** every rendering this scenario has, the default first */
+  renderings: MaterialsRendering[];
+  /** the cast behind the seats, when the scenario is a chapter */
+  cast: SeatCast[];
+  /** the pivots the chapter declares, when it does */
+  pivots: { id: string; note: string }[];
   scenario: {
     id: string;
     title: string;
@@ -454,6 +510,12 @@ export interface ScenarioMaterials {
     /** the modern situation the scenario simulates */
     simulates: string;
     priorities?: string[];
+    /** the rendering, when not the default */
+    language?: Language;
+    naming?: Naming;
+    pivot?: string;
+    /** the chapter's place in the chronicle */
+    chapter?: ScenarioChapter;
     /** `bare` seat prompts carry the brief and priorities only */
     seatPrompt?: "framed" | "bare";
     elicitation?: "memo" | "choice";
