@@ -120,6 +120,28 @@ describe("priceUsage", () => {
 });
 
 describe("MODEL_PRICES", () => {
+  it("prices the Lamparth-era OpenAI subjects Jaypie does not carry", () => {
+    expect(MODEL_PRICES["gpt-3.5-turbo-0125"]).toEqual({
+      input: 0.5,
+      output: 1.5,
+    });
+    expect(MODEL_PRICES["gpt-4o-2024-08-06"]).toEqual({
+      input: 2.5,
+      output: 10,
+      cachedInputRead: 1.25,
+    });
+    expect(
+      priceOf({
+        input: 1_000_000,
+        output: 100_000,
+        reasoning: 0,
+        total: 1_100_000,
+        provider: "openai",
+        model: "gpt-4o-2024-08-06",
+      }),
+    ).toBe(3.5);
+  });
+
   it("exposes Jaypie's table", () => {
     expect(Object.keys(MODEL_PRICES).length).toBeGreaterThan(10);
     expect(MODEL_PRICES["claude-sonnet-5"]?.input).toBeGreaterThan(0);
