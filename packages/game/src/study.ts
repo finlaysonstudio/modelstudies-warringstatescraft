@@ -37,6 +37,34 @@ export interface PlanStudyOptions {
 
 const studyId = () => `study_${randomUUID().slice(0, 8)}`;
 
+/** the default title: `<cell or N cells> × <models> × <replicates>` */
+const studyTitle = (
+  scenarios: string[],
+  models: string[],
+  replicates: number,
+): string =>
+  `${scenarios.length === 1 ? getScenario(scenarios[0]).title : `${scenarios.length} cells`} × ${models.join(", ")} × ${replicates}`;
+
+const armKey = (arm: StudyArm): string =>
+  `${arm.scenario} ${arm.model} #${arm.replicate}`;
+
+/** the arms of scenarios × models × replicates, in that order */
+const armsOf = (
+  scenarios: string[],
+  models: string[],
+  replicates: number,
+): StudyArm[] => {
+  const arms: StudyArm[] = [];
+  for (const scenario of scenarios) {
+    for (const model of models) {
+      for (let replicate = 1; replicate <= replicates; replicate++) {
+        arms.push({ scenario, model, replicate, status: "pending" });
+      }
+    }
+  }
+  return arms;
+};
+
 export const planStudy = async (options: PlanStudyOptions): Promise<Study> => {
   if (!options.scenarios.length) {
     throw new BadRequestError("Study needs at least one scenario");
@@ -57,20 +85,13 @@ export const planStudy = async (options: PlanStudyOptions): Promise<Study> => {
     );
   }
   getReport(report);
-  const arms: StudyArm[] = [];
-  for (const scenario of options.scenarios) {
-    for (const model of options.models) {
-      for (let replicate = 1; replicate <= replicates; replicate++) {
-        arms.push({ scenario, model, replicate, status: "pending" });
-      }
-    }
-  }
+  const arms = armsOf(options.scenarios, options.models, replicates);
   const study: Study = {
     id: options.id ?? studyId(),
     model: "studies",
     title:
       options.title ??
-      `${scenarios.length === 1 ? scenarios[0].title : `${scenarios.length} cells`} × ${options.models.join(", ")} × ${replicates}`,
+      studyTitle(options.scenarios, options.models, replicates),
     createdAt: new Date().toISOString(),
     status: "active",
     report,
@@ -95,6 +116,64 @@ export const planStudy = async (options: PlanStudyOptions): Promise<Study> => {
     arms,
   };
   await options.store.create(study);
+  return study;
+};
+
+export interface ExtendStudyOptions {
+  id: string;
+  /** new replicate count; must not be below the study's */
+  replicates?: number;
+  /** subject models to add; existing ones are kept */
+  models?: string[];
+  store: Store;
+}
+
+/**
+ * grow a study in place: raise the replicate count and/or add subject
+ * models. Every (scenario, model, replicate) the study lacks is appended as
+ * a pending arm, in scenario × model × replicate order after the existing
+ * arms; played arms are untouched, so the next `runStudy` plays only the
+ * additions. A default title follows the new shape; a custom title stays.
+ */
+export const extendStudy = async (
+  options: ExtendStudyOptions,
+): Promise<Study> => {
+  const study = await loadStudy(options.store, options.id);
+  const replicates =
+    options.replicates === undefined
+      ? study.replicates
+      : Math.floor(options.replicates);
+  if (!(replicates >= study.replicates)) {
+    throw new BadRequestError(
+      `Study ${study.id} has ${study.replicates} replicates; cannot reduce to ${replicates}`,
+    );
+  }
+  const models = [...study.models];
+  for (const model of options.models ?? []) {
+    if (!models.includes(model)) models.push(model);
+  }
+  const have = new Set(study.arms.map(armKey));
+  const added = armsOf(study.scenarios, models, replicates).filter(
+    (arm) => !have.has(armKey(arm)),
+  );
+  if (!added.length) {
+    throw new BadRequestError(
+      `Study ${study.id} already has ${replicates} replicates of ${models.join(", ")}`,
+    );
+  }
+  const defaultTitle = studyTitle(
+    study.scenarios,
+    study.models,
+    study.replicates,
+  );
+  if (study.title === defaultTitle) {
+    study.title = studyTitle(study.scenarios, models, replicates);
+  }
+  study.models = models;
+  study.replicates = replicates;
+  study.arms.push(...added);
+  settle(study);
+  await options.store.update(study);
   return study;
 };
 

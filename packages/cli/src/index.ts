@@ -160,9 +160,12 @@ program
   )
   .option(
     "--models <ids>",
-    "comma-separated subject model ids (MODELS constant names such as SOL resolve)",
+    "comma-separated subject model ids (MODELS constant names such as SOL resolve; with --resume, adds models)",
   )
-  .option("--replicates <k>", "games per scenario per model", "1")
+  .option(
+    "--replicates <k>",
+    "games per scenario per model (default 1; with --resume, raises the study's count)",
+  )
   .option("--title <text>", "study title")
   .option("--report <id>", "reporting definition (defaults to the scenarios')")
   .option(
@@ -180,13 +183,31 @@ program
   .option("--judge-mode <mode>", "how judge verdicts combine", "median")
   .option("--concurrency <n>", "arms played at once", "2")
   .option("--plan-only", "write the study without playing it", false)
-  .option("--resume <studyId>", "play the incomplete arms of an existing study")
+  .option(
+    "--resume <studyId>",
+    "play the incomplete arms of an existing study; with --replicates or --models, extend it first",
+  )
   .action(async (options) => {
     const { FileStore, defaultLlmClient } =
       await import("@modelstudies/workflows");
-    const { planStudy, runStudy } = await import("@modelstudies/game");
+    const { extendStudy, planStudy, runStudy } =
+      await import("@modelstudies/game");
     const store = new FileStore(varRoot());
     let id: string = options.resume;
+    if (id && (options.replicates || options.models)) {
+      const study = await extendStudy({
+        id,
+        models: options.models
+          ? await resolveModels(options.models)
+          : undefined,
+        replicates: options.replicates ? Number(options.replicates) : undefined,
+        store,
+      });
+      console.log(
+        `study: ${study.id}  ${study.arms.length} arms (${study.scenarios.length} cells × ${study.models.length} models × ${study.replicates}) ${study.statusDetail ?? study.status}`,
+      );
+      if (options.planOnly) return;
+    }
     if (!id) {
       if (!options.scenarios || !options.models) {
         throw new Error(
@@ -207,7 +228,7 @@ program
           mode: await parsePanelMode(options.judgeMode),
         },
         priorities: options.priorities,
-        replicates: Number(options.replicates),
+        replicates: Number(options.replicates ?? 1),
         report: options.report,
         scenarios: await resolveScenarios(options.scenarios),
         seats: options.seats

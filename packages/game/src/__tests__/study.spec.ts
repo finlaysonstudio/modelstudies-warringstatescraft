@@ -7,7 +7,7 @@ import type {
 } from "@modelstudies/workflows";
 
 import type { BasicReport, LamparthReport } from "../reports";
-import { buildStudyReport, planStudy, runStudy } from "../study";
+import { buildStudyReport, extendStudy, planStudy, runStudy } from "../study";
 import { lamparthId, LAMPARTH_2024 } from "../scenario/lamparth2024";
 import type { Run, Study } from "../types";
 
@@ -128,6 +128,102 @@ describe("studies", () => {
       store,
     });
     expect(study.report).toBe("basic");
+  });
+
+  it("extends a played study with replicates and models, playing only the additions", async () => {
+    const store = new MemoryStore();
+    const planned = await planStudy({
+      models: ["hawk"],
+      replicates: 1,
+      scenarios: CELLS,
+      store,
+    });
+    expect(planned.title).toBe("2 cells × hawk × 1");
+    const played = await runStudy({
+      id: planned.id,
+      llm: makeStub(hawk),
+      store,
+    });
+    expect(played.status).toBe("complete");
+    const playedRuns = played.arms.map((arm) => arm.runId);
+
+    await expect(
+      extendStudy({ id: planned.id, replicates: 0, store }),
+    ).rejects.toThrow(/cannot reduce/);
+    await expect(
+      extendStudy({ id: planned.id, models: ["hawk"], store }),
+    ).rejects.toThrow(/already has/);
+
+    const extended = await extendStudy({
+      id: planned.id,
+      models: ["dove"],
+      replicates: 2,
+      store,
+    });
+    expect(extended.models).toEqual(["hawk", "dove"]);
+    expect(extended.replicates).toBe(2);
+    expect(extended.title).toBe("2 cells × hawk, dove × 2");
+    expect(extended.status).toBe("active");
+    expect(extended.statusDetail).toBe("2/8 arms complete");
+    // the played arms keep their place and runs; the additions follow
+    expect(extended.arms.slice(0, 2).map((arm) => arm.runId)).toEqual(
+      playedRuns,
+    );
+    expect(
+      extended.arms
+        .slice(2)
+        .map((arm) => [arm.scenario, arm.model, arm.replicate]),
+    ).toEqual([
+      [CELLS[0], "hawk", 2],
+      [CELLS[0], "dove", 1],
+      [CELLS[0], "dove", 2],
+      [CELLS[1], "hawk", 2],
+      [CELLS[1], "dove", 1],
+      [CELLS[1], "dove", 2],
+    ]);
+    expect(
+      extended.arms.slice(2).every((arm) => arm.status === "pending"),
+    ).toBe(true);
+
+    const resumed = await runStudy({
+      id: planned.id,
+      llm: makeStub(hawk),
+      store,
+    });
+    expect(resumed.status).toBe("complete");
+    expect(resumed.arms.slice(0, 2).map((arm) => arm.runId)).toEqual(
+      playedRuns,
+    );
+    expect(store.runs()).toHaveLength(8);
+    const report = (await buildStudyReport({
+      bootstrap: 20,
+      id: planned.id,
+      store,
+    })) as LamparthReport;
+    expect(
+      report.groups.slice(0, 2).map((group) => [group.id, group.n]),
+    ).toEqual([
+      ["hawk", 4],
+      ["dove", 4],
+    ]);
+  });
+
+  it("keeps a custom title when extended", async () => {
+    const store = new MemoryStore();
+    const planned = await planStudy({
+      models: ["hawk"],
+      replicates: 1,
+      scenarios: CELLS,
+      store,
+      title: "pilot",
+    });
+    const extended = await extendStudy({
+      id: planned.id,
+      replicates: 3,
+      store,
+    });
+    expect(extended.title).toBe("pilot");
+    expect(extended.arms).toHaveLength(6);
   });
 
   it("plays every arm, stamps runs, resumes after a failure, and reports", async () => {

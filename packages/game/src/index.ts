@@ -110,6 +110,7 @@ export type {
 export * from "./reports";
 export {
   buildStudyReport,
+  extendStudy,
   loadStudy,
   planStudy,
   runStudy,
@@ -117,6 +118,7 @@ export {
 } from "./study";
 export type {
   BuildStudyReportOptions,
+  ExtendStudyOptions,
   PlanStudyOptions,
   RunStudyOptions,
 } from "./study";
