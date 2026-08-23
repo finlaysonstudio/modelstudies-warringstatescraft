@@ -1,4 +1,4 @@
-import type { Run, Study } from "../types";
+import type { Run } from "../types";
 import {
   bootstrapStat,
   DEFAULT_BOOTSTRAP,
@@ -6,6 +6,7 @@ import {
   type BootstrapOptions,
 } from "./bootstrap";
 import {
+  armOfRuns,
   reportBase,
   type Estimate,
   type ReportBase,
@@ -43,28 +44,7 @@ const series = (run: Run): number[] =>
     .filter((turn) => turn.adjudication)
     .map((turn) => turn.adjudication!.escalation);
 
-/** arm (scenario, model) for each run the study produced, roots and branches */
-export const armOfRuns = (
-  study: Study,
-  runs: Run[],
-): Map<string, { scenario: string; model: string; replicate: number }> => {
-  const byRoot = new Map(
-    study.arms
-      .filter((arm) => arm.runId)
-      .map((arm) => [arm.runId!, arm] as const),
-  );
-  const result = new Map<
-    string,
-    { scenario: string; model: string; replicate: number }
-  >();
-  for (const run of runs) {
-    const arm =
-      byRoot.get(run.id) ??
-      (run.branch.parent ? byRoot.get(run.branch.parent) : undefined);
-    if (arm) result.set(run.id, arm);
-  }
-  return result;
-};
+export { armOfRuns } from "./types";
 
 const estimate = (values: number[], options: BootstrapOptions): Estimate => {
   const { value, ci } = bootstrapStat(

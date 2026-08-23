@@ -8,7 +8,6 @@ import {
   type LamparthTreatment,
 } from "../scenario/lamparth2024";
 import type { Run, Scenario, ScenarioChoice, Study } from "../types";
-import { armOfRuns } from "./basic";
 import {
   bootstrapDiff,
   bootstrapStat,
@@ -18,6 +17,7 @@ import {
   type BootstrapOptions,
 } from "./bootstrap";
 import {
+  armOfRuns,
   reportBase,
   type Estimate,
   type ReportBase,

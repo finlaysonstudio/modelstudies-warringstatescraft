@@ -11,6 +11,7 @@ import {
   scriptedBrief,
   seatSystem,
   turnPrompt,
+  withUsage,
 } from "./briefs";
 import { getScenario } from "./scenarios";
 import type {
@@ -737,6 +738,7 @@ export class GameEngine {
               typeof result.content === "string"
                 ? result.content
                 : JSON.stringify(result.content),
+            ...withUsage(result.usage),
           };
         } catch (error) {
           return {

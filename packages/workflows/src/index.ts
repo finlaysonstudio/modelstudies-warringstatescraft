@@ -21,8 +21,19 @@ export type {
   LlmOperateOptions,
   LlmOperateResult,
   LlmTurn,
+  LlmUsage,
+  LlmUsageItem,
 } from "./llm/client";
 export { createLlmClient, defaultLlmClient } from "./llm/jaypieClient";
+
+// Pricing: list price per model and the per-call dollar stamp
+export {
+  billableTokens,
+  MODEL_PRICES,
+  priceOf,
+  priceUsage,
+  type ModelPrice,
+} from "./llm/pricing";
 
 // Provider selection seam over @jaypie/llm
 export {

@@ -26,7 +26,7 @@ export const getReport = (id: string): ReportDefinition => {
 export const scenarioReport = (scenario: Scenario): ReportId =>
   scenario.report ?? "basic";
 
-export { BASIC_REPORT, armOfRuns } from "./basic";
+export { BASIC_REPORT } from "./basic";
 export type { BasicReport, EscalationGroup } from "./basic";
 export {
   LAMPARTH_REPORT,
@@ -57,11 +57,13 @@ export {
   DEFAULT_BOOTSTRAP,
 } from "./bootstrap";
 export type { BootstrapOptions } from "./bootstrap";
-export { coverageOf, reportBase } from "./types";
+export { armOfRuns, coverageOf, reportBase, studyUsage } from "./types";
 export type {
   CellCoverage,
+  CellUsage,
   Estimate,
   ReportBase,
   ReportDefinition,
   ReportInput,
+  StudyUsage,
 } from "./types";

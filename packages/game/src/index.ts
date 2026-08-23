@@ -70,6 +70,24 @@ export type {
   ChoiceStatsOptions,
   MoveStance,
 } from "./choices";
+export {
+  addItem,
+  addTotals,
+  emptyTotals,
+  groupUsage,
+  loadTree,
+  USAGE_ROLES,
+  usageOf,
+  usageOfRuns,
+  usageOfTree,
+} from "./cost";
+export type {
+  RunUsage,
+  UsageOfTreeOptions,
+  UsageRole,
+  UsageRow,
+  UsageTotals,
+} from "./cost";
 export { buildScorecard } from "./metrics";
 export type {
   BranchSummary,

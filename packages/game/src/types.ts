@@ -90,6 +90,26 @@ export interface DecisionPoint {
   seat: string;
 }
 
+/**
+ * One model call's token accounting as the provider reported it, with the
+ * list-price dollars in force when the call was made (`usd` absent when the
+ * model is unpriced). Mirrors `LlmUsageItem` in `@modelstudies/workflows`.
+ */
+export interface UsageItem {
+  input: number;
+  output: number;
+  reasoning: number;
+  total: number;
+  cacheRead?: number;
+  cacheWrite?: number;
+  provider?: string;
+  model?: string;
+  usd?: number;
+}
+
+/** the calls behind one artifact, in the order they were made */
+export type Usage = UsageItem[];
+
 export interface DecisionBrief {
   seat: string;
   model: string;
@@ -111,6 +131,8 @@ export interface DecisionBrief {
     deferredOn: string[];
     brokeOn: string[];
   };
+  /** the dialog rounds then the decision call; absent for human and scripted seats */
+  usage?: Usage;
   error?: string;
 }
 
@@ -222,6 +244,8 @@ export interface PanelVerdict {
   judge: string;
   model: string;
   verdict: Record<string, unknown>;
+  /** the judge's call; absent for a human judge */
+  usage?: Usage;
   error?: string;
 }
 
@@ -231,6 +255,8 @@ export interface TurnAdjudication {
   /** 0..ladder.length-1 consensus escalation for the turn */
   escalation: number;
   narrative: string;
+  /** the narrator's call; absent for a human narrator */
+  narratorUsage?: Usage;
 }
 
 export interface TurnRecord {
@@ -245,6 +271,8 @@ export interface Debrief {
   seat: string;
   model: string;
   text: string;
+  /** the debrief call; absent for human and scripted seats */
+  usage?: Usage;
 }
 
 export type RunStatus = "active" | "complete" | "error";

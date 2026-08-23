@@ -8,6 +8,21 @@ export interface DecisionPoint {
   seat: string;
 }
 
+/** one model call's tokens and the list-price dollars at call time */
+export interface UsageItem {
+  input: number;
+  output: number;
+  reasoning: number;
+  total: number;
+  cacheRead?: number;
+  cacheWrite?: number;
+  provider?: string;
+  model?: string;
+  usd?: number;
+}
+
+export type Usage = UsageItem[];
+
 export interface DecisionBrief {
   seat: string;
   model: string;
@@ -29,6 +44,8 @@ export interface DecisionBrief {
     deferredOn: string[];
     brokeOn: string[];
   };
+  /** the dialog rounds then the decision call */
+  usage?: Usage;
   error?: string;
 }
 
@@ -36,6 +53,7 @@ export interface PanelVerdict {
   judge: string;
   model: string;
   verdict: Record<string, unknown>;
+  usage?: Usage;
   error?: string;
 }
 
@@ -52,6 +70,7 @@ export interface TurnAdjudication {
   /** 0..ladder.length-1 consensus escalation for the turn */
   escalation: number;
   narrative: string;
+  narratorUsage?: Usage;
 }
 
 export interface TurnRecord {
@@ -66,6 +85,7 @@ export interface Debrief {
   seat: string;
   model: string;
   text: string;
+  usage?: Usage;
 }
 
 export type RunStatus = "active" | "complete" | "error";
@@ -206,6 +226,48 @@ export interface CellCoverage {
   pending: number;
 }
 
+// mirror of packages/game/src/cost.ts
+export type UsageRole = "seat" | "judge" | "narrator" | "debrief";
+
+export interface UsageTotals {
+  calls: number;
+  input: number;
+  output: number;
+  reasoning: number;
+  cacheRead: number;
+  cacheWrite: number;
+  total: number;
+  usd: number;
+  /** calls with no price at call time */
+  unpriced: number;
+}
+
+export interface UsageRow extends UsageTotals {
+  role: UsageRole;
+  seat: string | null;
+  model: string;
+}
+
+export interface RunUsage {
+  total: UsageTotals;
+  rows: UsageRow[];
+}
+
+export interface CellUsage {
+  scenario: string;
+  model: string;
+  games: number;
+  totals: UsageTotals;
+  usdPerGame: number;
+}
+
+export interface StudyUsage {
+  total: UsageTotals;
+  rows: UsageRow[];
+  byModel: { model: string; totals: UsageTotals }[];
+  cells: CellUsage[];
+}
+
 export interface ReportBase {
   id: string;
   model: "reports";
@@ -218,6 +280,8 @@ export interface ReportBase {
   replicates: number;
   coverage: CellCoverage[];
   bootstrap: number;
+  /** absent on reports built before usage capture */
+  usage?: StudyUsage;
 }
 
 export interface EscalationGroup {

@@ -12,9 +12,10 @@ import type {
   Scenario,
   TurnAdjudication,
   TurnRecord,
+  Usage,
 } from "./types";
 import { HUMAN_MODEL } from "./types";
-import { publicRecord } from "./briefs";
+import { publicRecord, withUsage } from "./briefs";
 import { maskTurn, maskVerdict } from "./mask";
 
 const VERDICT_FORMAT = {
@@ -156,6 +157,7 @@ export const adjudicateTurn = async ({
           judge: "escalation",
           model,
           verdict: parseVerdict(result.content),
+          ...withUsage(result.usage),
         };
       } catch (error) {
         return {
@@ -179,6 +181,7 @@ export const adjudicateTurn = async ({
     `(${scenario.escalationLadder[escalation]}). Write the resolution ` +
     `narrative for this turn.`;
   let narrative: string;
+  let narratorUsage: Usage | undefined;
   try {
     if (narrator === HUMAN_MODEL) {
       if (!human?.narrate) {
@@ -204,6 +207,7 @@ export const adjudicateTurn = async ({
         typeof result.content === "string"
           ? result.content
           : JSON.stringify(result.content);
+      narratorUsage = result.usage;
     }
   } catch (error) {
     narrative = `Narration failed: ${
@@ -216,5 +220,6 @@ export const adjudicateTurn = async ({
     mode: config.mode,
     escalation,
     narrative,
+    ...(narratorUsage?.length ? { narratorUsage } : {}),
   };
 };

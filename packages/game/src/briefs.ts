@@ -6,6 +6,7 @@ import type {
   Scenario,
   ScenarioSeat,
   ScenarioTurn,
+  Usage,
 } from "./types";
 import { SCRIPTED_MODEL } from "./types";
 
@@ -377,6 +378,10 @@ export interface ElicitBriefOptions {
 const asText = (content: unknown): string =>
   typeof content === "string" ? content : JSON.stringify(content);
 
+/** `{ usage }` when a call reported any, else nothing to spread */
+export const withUsage = (usage?: Usage): { usage?: Usage } =>
+  usage?.length ? { usage } : {};
+
 /**
  * Run the dialog rounds for a turn. Returns the transcript (one entry per
  * round) and the chat history to carry into the decision call.
@@ -389,9 +394,14 @@ const simulateDialog = async ({
   scenario,
   seat,
   turn,
-}: ElicitBriefOptions): Promise<{ dialog: string[]; history: LlmTurn[] }> => {
+}: ElicitBriefOptions): Promise<{
+  dialog: string[];
+  history: LlmTurn[];
+  usage: Usage;
+}> => {
   const transcript: string[] = [];
   const history: LlmTurn[] = [];
+  const usage: Usage = [];
   const system = seatSystem(scenario, seat);
   for (let round = 0; round < dialog; round++) {
     const prompt =
@@ -405,8 +415,9 @@ const simulateDialog = async ({
     transcript.push(text);
     history.push({ role: "user", content: prompt });
     history.push({ role: "assistant", content: text });
+    usage.push(...(result.usage ?? []));
   }
-  return { dialog: transcript, history };
+  return { dialog: transcript, history, usage };
 };
 
 const decisionFormat = (scenario: Scenario, turn: ScenarioTurn) =>
@@ -419,7 +430,7 @@ export const elicitBrief = async (
 ): Promise<DecisionBrief> => {
   const { llm, model, run, scenario, seat, turn } = options;
   try {
-    const { dialog, history } = await simulateDialog(options);
+    const { dialog, history, usage } = await simulateDialog(options);
     const base = turnPrompt(run, scenario, seat, turn);
     const prompt = dialog.length ? `${DIALOG_CLOSE}\n\n${base}` : base;
     const result = await llm.operate(prompt, {
@@ -429,7 +440,11 @@ export const elicitBrief = async (
       system: seatSystem(scenario, seat),
     });
     const brief = toDecisionBrief(seat.id, model, result.content, turn);
-    return dialog.length ? { ...brief, dialog } : brief;
+    return {
+      ...brief,
+      ...(dialog.length ? { dialog } : {}),
+      ...withUsage([...usage, ...(result.usage ?? [])]),
+    };
   } catch (error) {
     return {
       seat: seat.id,
@@ -488,7 +503,7 @@ export const elicitConsensusBrief = async ({
     });
     const brief = toDecisionBrief(seat.id, model, result.content);
     brief.consensus ??= { deferredOn: [], brokeOn: [] };
-    return brief;
+    return { ...brief, ...withUsage(result.usage) };
   } catch (error) {
     return {
       seat: seat.id,

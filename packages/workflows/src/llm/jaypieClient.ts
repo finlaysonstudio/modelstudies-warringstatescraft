@@ -9,6 +9,7 @@
  */
 import { LLM, Llm } from "@jaypie/llm";
 import type { LlmClient, LlmOperateOptions, LlmOperateResult } from "./client";
+import { priceUsage } from "./pricing";
 import { llmSelector, toLlmHistory } from "./providers";
 
 type JaypieOperateOptions = NonNullable<Parameters<typeof Llm.operate>[1]>;
@@ -63,7 +64,13 @@ export function createLlmClient(
         }),
       };
       const response = await Llm.operate(prompt, operateOptions);
-      return { content: response.content, history: response.history };
+      return {
+        content: response.content,
+        history: response.history,
+        ...(response.usage?.length
+          ? { usage: priceUsage(response.usage) }
+          : {}),
+      };
     },
   };
 }

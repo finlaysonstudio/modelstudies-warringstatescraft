@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom";
 import { LaneChip, StatusChip } from "../components/chips";
 import { Bar, Section } from "../components/PonyBenchPrimitives";
 import { ScorecardSection } from "../components/ScorecardSection";
+import { UsageSection } from "../components/UsageSection";
+import { usageOfRuns } from "../lib/usage";
 import type {
   DecisionBrief,
   Run,
@@ -15,7 +17,7 @@ import type {
 type LoadState =
   | { phase: "loading" }
   | { phase: "error"; message: string }
-  | { phase: "ready"; run: Run; index: RunIndexEntry[] };
+  | { phase: "ready"; run: Run; index: RunIndexEntry[]; branches: Run[] };
 
 // Replay: one run, turn by turn — inject, decision briefs per seat,
 // adjudication, then debriefs. Branch links point up (parent timeline) and
@@ -43,8 +45,24 @@ export function RunReplay() {
         const index = indexRes.ok
           ? ((await indexRes.json()) as RunIndexEntry[])
           : [];
+        // the branches under this run, for the tree's cost; a missing one
+        // is left out rather than failing the page
+        const branches = (
+          await Promise.all(
+            (run.children ?? []).map(async (childId) => {
+              try {
+                const res = await fetch(
+                  `/data/runs/${encodeURIComponent(childId)}.json`,
+                );
+                return res.ok ? ((await res.json()) as Run) : null;
+              } catch {
+                return null;
+              }
+            }),
+          )
+        ).filter((branch): branch is Run => branch !== null);
         if (!cancelled) {
-          setState({ phase: "ready", run, index });
+          setState({ phase: "ready", run, index, branches });
         }
       } catch (error) {
         if (!cancelled) {
@@ -76,11 +94,22 @@ export function RunReplay() {
       </div>
     );
   }
-  return <ReplayBody run={state.run} index={state.index} />;
+  return (
+    <ReplayBody run={state.run} index={state.index} branches={state.branches} />
+  );
 }
 
-function ReplayBody({ run, index }: { run: Run; index: RunIndexEntry[] }) {
+function ReplayBody({
+  run,
+  index,
+  branches,
+}: {
+  run: Run;
+  index: RunIndexEntry[];
+  branches: Run[];
+}) {
   const turns = run.turns ?? [];
+  const usage = usageOfRuns([run, ...branches]);
   const latest = turns.length > 0 ? turns[turns.length - 1].index : -1;
   const children = (run.children ?? []).map(
     (childId) => index.find((entry) => entry.id === childId) ?? childId,
@@ -203,6 +232,21 @@ function ReplayBody({ run, index }: { run: Run; index: RunIndexEntry[] }) {
           </div>
         </section>
       )}
+
+      <UsageSection
+        total={usage.total}
+        rows={usage.rows}
+        note={
+          branches.length
+            ? `this run and its ${branches.length} branch${
+                branches.length === 1 ? "" : "es"
+              }, each call counted once`
+            : run.branch?.point
+              ? "this branch's own calls; turns inherited from the parent are counted there"
+              : "this run's calls"
+        }
+        delay={90}
+      />
 
       {children.length > 0 && <ScorecardSection runId={run.id} />}
 

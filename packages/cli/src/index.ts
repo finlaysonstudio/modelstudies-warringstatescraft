@@ -283,28 +283,77 @@ program
     }
   });
 
+const usd = (value: number): string => `$${value.toFixed(4)}`;
+
+const tokens = (value: number): string =>
+  value >= 1_000_000
+    ? `${(value / 1_000_000).toFixed(2)}M`
+    : value >= 1_000
+      ? `${(value / 1_000).toFixed(1)}k`
+      : String(value);
+
 program
   .command("game-list")
-  .description("List recorded runs")
+  .description("List recorded runs with each run's own calls and cost")
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
+    const { usageOf } = await import("@modelstudies/game");
     const store = new FileStore(dataRoot(), storeOptions());
-    const runs = await store.list<{
-      id: string;
-      model: string;
-      status: string;
-      scenarioTitle: string;
-      createdAt: string;
-      branch: { lane: string; decidedBy: string | null };
-      turns: unknown[];
-    }>("runs");
+    const runs = await store.list<import("@modelstudies/game").Run>("runs");
     for (const run of runs.sort((a, b) =>
       a.createdAt.localeCompare(b.createdAt),
     )) {
+      const usage = usageOf(run);
+      const cost = usage.total.calls
+        ? `${usd(usage.total.usd)}${usage.total.unpriced ? "+" : ""}`
+        : "-";
       console.log(
         `${run.id}  ${run.status.padEnd(8)}  ${run.branch.lane.padEnd(11)}` +
-          `${(run.branch.decidedBy ?? "-").padEnd(22)}  turns:${run.turns.length}  ${run.scenarioTitle}`,
+          `${(run.branch.decidedBy ?? "-").padEnd(22)}  turns:${run.turns.length}` +
+          `  ${cost.padStart(9)}  ${run.scenarioTitle}`,
       );
+    }
+  });
+
+program
+  .command("game-cost")
+  .description(
+    "Usage and cost of a run and every branch under it, by role, seat, and model",
+  )
+  .argument("<runId>", "run id (a root sums its whole tree)")
+  .option("--json", "print the fold as JSON")
+  .action(async (runId: string, options) => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { groupUsage, usageOfTree } = await import("@modelstudies/game");
+    const usage = await usageOfTree({
+      rootId: runId,
+      store: new FileStore(dataRoot(), storeOptions()),
+    });
+    if (options.json) {
+      console.log(JSON.stringify(usage, null, 2));
+      return;
+    }
+    const line = (
+      label: string,
+      totals: import("@modelstudies/game").UsageTotals,
+    ) =>
+      `${label.padEnd(56)}  calls:${String(totals.calls).padStart(4)}` +
+      `  in:${tokens(totals.input).padStart(8)}  out:${tokens(totals.output).padStart(8)}` +
+      `  reason:${tokens(totals.reasoning).padStart(8)}  ${usd(totals.usd).padStart(10)}` +
+      (totals.unpriced ? `  (${totals.unpriced} unpriced)` : "");
+    console.log(`${runId}: ${usage.runs} run(s)`);
+    console.log(line("total", usage.total));
+    console.log("\nby role");
+    for (const { key, totals } of groupUsage(usage.rows, (row) => row.role)) {
+      console.log(line(`  ${key}`, totals));
+    }
+    console.log("\nby model");
+    for (const { key, totals } of groupUsage(usage.rows, (row) => row.model)) {
+      console.log(line(`  ${key}`, totals));
+    }
+    console.log("\nby seat");
+    for (const row of usage.rows.filter((row) => row.role === "seat")) {
+      console.log(line(`  ${row.seat} ← ${row.model}`, row));
     }
   });
 

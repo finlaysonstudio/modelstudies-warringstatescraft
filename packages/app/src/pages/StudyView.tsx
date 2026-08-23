@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { StatusChip } from "../components/chips";
+import { UsageSection } from "../components/UsageSection";
 import type {
   BasicReport,
   Estimate,
@@ -11,7 +12,9 @@ import type {
   LamparthReport,
   Report,
   Study,
+  StudyUsage,
 } from "../lib/types";
+import { formatUsd } from "../lib/usage";
 
 type LoadState =
   | { phase: "loading" }
@@ -101,6 +104,17 @@ export function StudyView() {
       </header>
 
       <ArmGrid study={study} />
+
+      {report?.usage && (
+        <UsageSection
+          total={report.usage.total}
+          rows={report.usage.rows}
+          note="every run the study produced, each call counted once"
+          defaultOpen
+          delay={120}
+        />
+      )}
+      {report?.usage && <CellCostTable usage={report.usage} />}
 
       <section className="mt-16" aria-label="Report">
         <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
@@ -278,6 +292,57 @@ function Table({ head, children }: { head: ReactNode; children: ReactNode }) {
 
 const th = "py-2 pr-4 font-normal whitespace-nowrap";
 const td = "py-2 pr-4 align-top";
+
+function CellCostTable({ usage }: { usage: StudyUsage }) {
+  const cells = usage.cells.filter((cell) => cell.games > 0);
+  if (!cells.length) return null;
+  return (
+    <section className="mt-6" aria-label="Cost per game">
+      <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+        Cost per game
+      </p>
+      <Table
+        head={
+          <>
+            <th className={th}>Scenario</th>
+            <th className={th}>Model</th>
+            <th className={th}>Games</th>
+            <th className={th}>Calls</th>
+            <th className={th}>USD</th>
+            <th className={th}>USD / game</th>
+          </>
+        }
+      >
+        {cells.map((cell) => (
+          <tr
+            key={`${cell.scenario}-${cell.model}`}
+            className="border-b border-white/5"
+          >
+            <td className={clsx(td, "font-plex-mono text-zinc-400")}>
+              {cell.scenario}
+            </td>
+            <td className={clsx(td, "text-zinc-200")}>{cell.model}</td>
+            <td className={clsx(td, "font-plex-mono text-zinc-400")}>
+              {cell.games}
+            </td>
+            <td className={clsx(td, "font-plex-mono text-zinc-400")}>
+              {cell.totals.calls}
+            </td>
+            <td className={clsx(td, "font-plex-mono text-zinc-400")}>
+              {formatUsd(cell.totals.usd)}
+              {cell.totals.unpriced > 0 && (
+                <span className="text-amber-300">+</span>
+              )}
+            </td>
+            <td className={clsx(td, "font-plex-mono text-zinc-200")}>
+              {formatUsd(cell.usdPerGame)}
+            </td>
+          </tr>
+        ))}
+      </Table>
+    </section>
+  );
+}
 
 function Coverage({ report }: { report: Report }) {
   const short = report.coverage.filter((cell) => cell.complete < cell.expected);
