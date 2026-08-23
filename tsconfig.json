@@ -7,6 +7,7 @@
     "packages/workflows/src",
     "packages/survey/src",
     "packages/judges/src",
+    "packages/lake/src",
     "packages/game/src",
     "packages/cli/src",
     "packages/app/server",

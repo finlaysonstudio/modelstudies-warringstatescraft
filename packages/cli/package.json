@@ -13,6 +13,7 @@
     "@jaypie/errors": "^1.2.6",
     "@modelstudies/game": "*",
     "@modelstudies/judges": "*",
+    "@modelstudies/lake": "*",
     "@modelstudies/survey": "*",
     "@modelstudies/workflows": "*",
     "commander": "^14.0.0",

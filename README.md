@@ -20,10 +20,12 @@ packages/
   survey/     @modelstudies/survey     — instrument, session, banks, interview sitting loop
   judges/     @modelstudies/judges     — judge specs, fan-out planner, runner, consensus folds, label pipeline
   game/       @modelstudies/game       — scenario config, engine, branching, metrics
+  lake/       @modelstudies/lake       — document lake seam: rights-aware retrieval over the source corpus
   cli/        @modelstudies/cli        — command-line verbs
   app/        @modelstudies/app        — replay viewer (port 3175)
 data/         — interviews, scorecards, reports, reference data, and scenario materials as JSON
 var/runs/     — game runs (git-ignored)
+var/lake/     — the document corpus and its ingesters (git-ignored)
 var/          — plans and meta materials (git-ignored)
 ```
 
@@ -53,6 +55,10 @@ npm run cli -- study-list
 npm run cli -- study-report <studyId>                              # the study's report → data/reports/<studyId>.json
 npm run cli -- materials                                           # export scenario cards + prompts to data/scenarios/
 npm run cli -- interview-run --plan crisis --panel dev --explain
+npm run cli -- lake-search "hostage prince" --use prompt --limit 5   # the corpus; --use is required
+npm run cli -- lake-get zuozhuan-legge-en --use prompt --from 1348 --lines 40
+npm run cli -- lake-list --collection period                        # what the lake holds, with rights
+npm run cli -- lake-index --verify                                  # rebuild var/lake/index.json
 ```
 
 Panels: `dev` (SONNET, GEMINI_FLASH, LUNA) and `production` (see `packages/survey/src/panel.ts`). A comma-separated model list works anywhere a panel name does. `--seats` pins seats explicitly; unlisted seats fall back to round-robin over the panel. The fielded model set (`packages/survey/src/models.ts`): Opus, Sonnet, Sol, Luna, Gemini Flash, Gemini Flash Lite, Grok, and four open weights through Fireworks (DeepSeek, GLM, Kimi, Qwen).
@@ -68,6 +74,16 @@ Every model call records its tokens (input, output, reasoning, cache reads and w
 ### Studies and reports
 
 A study is scenarios × models × replicates, each arm its own game. `study-run` plans and plays it (a second call with `--resume` plays whatever did not finish), and `study-report` builds the report the study's scenarios define: `basic` (escalation per turn, peak, and final across replicates) for the Warring States scenarios, `lamparth` for the eight Lamparth cells. The Lamparth report computes the paper's statistics for every subject model and for its reference groups (`data/reference/lamparth-2024.json`: the MIT repository's human teams and its GPT-4 and GPT-3.5 games): action frequency per move, the total causal effect of each treatment factor, aggressiveness, actions selected, the Table 2 consistency statistic, and subject-minus-reference differences per action, every interval a seeded 95% bootstrap. `/studies` lists studies; `/studies/:id` shows the arm grid (each chip a replay link) and the report.
+
+### The document lake
+
+`var/lake/` holds the source corpus scenario authoring draws on: the period material the fiction is made from, the modern crisis record behind each scenario's `simulates`, the wargaming and escalation literature behind the ladders and the reports, and the repository's own exported scenario materials. Acquisition lives in `var/lake/bin/` (re-runnable, HTTP-cached ingesters, one registry entry per source); retrieval lives in `@modelstudies/lake` and is reached through the CLI, and later through the chat assistant's `search_lake` and `get_document` tools.
+
+**The wall.** Every document carries a `use`: `prompt` material may reach text a seat reads and is period material only; `reader` material may inform `simulates`, plans, and the submission narrative and never a prompt; `internal` material is method reference. `use` is a required argument on every retrieval entry point, with no default, and it holds for retrieval by id as well as by query: a caller permitted `prompt` material cannot reach a `reader` document by knowing its name. `packages/lake/src/__tests__/wall.spec.ts` asserts it, as `materials.spec.ts` asserts that `simulates` never reaches a prompt.
+
+**Rights.** Every document also carries `rights` and `redistribute`, which govern redistribution rather than retrieval. Only `public-domain`, `open-license`, and `government` documents may travel with the submission bundle; everything else is cited instead. Every search hit and every window carries its citation line, so a rights audit of the submission is a query rather than an archaeology project.
+
+Search is BM25 over whole documents, scaled by how many of the query's terms a document carries, with snippets drawn from the best-matching lines; the whole corpus answers in well under a second. It is lexical, so it will fail on a query like "an episode about a subordinate who acted without orders"; an embedding sidecar belongs beside it, not instead of it. `lake-index` is the only writer of `var/lake/index.json`, and `--verify` recomputes each document's sha1 and word count against the text on disk.
 
 ### Play in the browser
 

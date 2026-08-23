@@ -11,6 +11,8 @@ program
   .description("Warring States Bench: war game runs, instruments, analysis");
 
 const dataRoot = () => resolve(process.cwd(), "data");
+/** the corpus is git-ignored, like runs and studies */
+const lakeRoot = () => resolve(process.cwd(), "var", "lake");
 /** runs and studies land in git-ignored var/; every other model stays under data/ */
 const storeOptions = () => ({
   roots: {
@@ -457,6 +459,168 @@ program
         `${interview.id}  ${String(interview.status).padEnd(9)}  ${interview.respondent ?? interview.llm ?? ""}`,
       );
     }
+  });
+
+program
+  .command("lake-search")
+  .description(
+    "Search the document lake; --use is required and names the side of the wall",
+  )
+  .argument("<query>", 'terms, or "a quoted phrase" to match literally')
+  .requiredOption("--use <use>", "prompt | reader | internal | any")
+  .option("--collection <collection>", "period, situation, method, house")
+  .option("--topic <topic>", "manifest topic")
+  .option("--tier <tier>", "1 period, 2 situation, 3 method, 5 house")
+  .option("--limit <n>", "documents to return", "8")
+  .option("--snippets <n>", "snippets per document", "3")
+  .option("--context <n>", "lines around each snippet", "1")
+  .option("--json", "print the result as JSON")
+  .action(async (query: string, options) => {
+    const { FileLake, searchLake } = await import("@modelstudies/lake");
+    const result = await searchLake({
+      collection: options.collection,
+      context: Number(options.context),
+      lake: new FileLake(lakeRoot()),
+      limit: Number(options.limit),
+      query,
+      snippets: Number(options.snippets),
+      tier: options.tier ? Number(options.tier) : undefined,
+      topic: options.topic,
+      use: options.use,
+    });
+    if (options.json) {
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+    console.log(
+      `${result.matched} of ${result.searched} documents matched ${JSON.stringify(query)}  [use:${result.use}]`,
+    );
+    for (const hit of result.hits) {
+      console.log(
+        `\n\u2500\u2500 ${hit.id}  [${hit.collection}/${hit.use} tier ${hit.tier}]` +
+          `  score ${hit.score.toFixed(2)}  hits ${hit.hits}`,
+      );
+      console.log(`   ${hit.title}`);
+      for (const snippet of hit.snippets) {
+        console.log(
+          `   line ${String(snippet.line).padStart(6)}  ${snippet.text.split("\n").join("\n" + " ".repeat(15))}`,
+        );
+      }
+      console.log(
+        `   cite: ${hit.citation ?? "(none recorded)"}${hit.redistribute ? "" : "  [not redistributable]"}`,
+      );
+    }
+    if (result.missing.length) {
+      console.log(
+        `\nindex is ahead of the tree: no text for ${result.missing.join(", ")}`,
+      );
+    }
+  });
+
+program
+  .command("lake-get")
+  .description("Read a bounded window of one lake document, with its citation")
+  .argument("<id>", "document id")
+  .requiredOption("--use <use>", "prompt | reader | internal | any")
+  .option("--from <line>", "first line, 1-indexed", "1")
+  .option("--lines <n>", "lines to return", "80")
+  .option("--json", "print the window as JSON")
+  .action(async (id: string, options) => {
+    const { FileLake, getDocument } = await import("@modelstudies/lake");
+    const document = await getDocument({
+      from: Number(options.from),
+      id,
+      lake: new FileLake(lakeRoot()),
+      lines: Number(options.lines),
+      use: options.use,
+    });
+    if (options.json) {
+      console.log(JSON.stringify(document, null, 2));
+      return;
+    }
+    console.log(
+      `${document.id}  [${document.collection}/${document.use} tier ${document.tier}]` +
+        `  lines ${document.from}-${document.to} of ${document.totalLines}`,
+    );
+    console.log(document.title);
+    console.log(
+      `cite: ${document.citation ?? "(none recorded)"}${document.redistribute ? "" : "  [not redistributable]"}`,
+    );
+    console.log("\u2500".repeat(72));
+    console.log(document.text);
+  });
+
+program
+  .command("lake-list")
+  .description("List what the lake holds, with rights and use")
+  .option("--use <use>", "prompt | reader | internal | any", "any")
+  .option("--collection <collection>", "one collection")
+  .option("--topic <topic>", "manifest topic")
+  .option("--tier <tier>", "one tier")
+  .option("--rights <rights>", "one rights value")
+  .option("--redistributable", "only what may travel with the bundle")
+  .option("--json", "print the manifests as JSON")
+  .action(async (options) => {
+    const { FileLake, listDocuments } = await import("@modelstudies/lake");
+    const documents = await listDocuments({
+      collection: options.collection,
+      lake: new FileLake(lakeRoot()),
+      redistributable: options.redistributable,
+      rights: options.rights,
+      tier: options.tier ? Number(options.tier) : undefined,
+      topic: options.topic,
+      use: options.use,
+    });
+    if (options.json) {
+      console.log(JSON.stringify(documents, null, 2));
+      return;
+    }
+    for (const doc of documents) {
+      console.log(
+        `${doc.id.padEnd(34)}  ${doc.collection.padEnd(10)}  ${doc.use.padEnd(8)}` +
+          `  ${doc.rights.padEnd(14)}  ${doc.words.toLocaleString().padStart(10)} words` +
+          `  ${doc.redistribute ? "" : "no-redist  "}${doc.title}`,
+      );
+    }
+    const words = documents.reduce((sum, doc) => sum + doc.words, 0);
+    console.log(
+      `\n${documents.length} documents, ${words.toLocaleString()} words`,
+    );
+  });
+
+program
+  .command("lake-index")
+  .description("Rebuild var/lake/index.json from the manifests on disk")
+  .option("--verify", "recompute sha1 and word counts against the text")
+  .option("--json", "print the index summary as JSON")
+  .action(async (options) => {
+    const { buildLakeIndex } = await import("@modelstudies/lake");
+    const { index, issues } = await buildLakeIndex({
+      root: lakeRoot(),
+      verify: options.verify,
+    });
+    if (options.json) {
+      console.log(
+        JSON.stringify({ ...index, docs: undefined, issues }, null, 2),
+      );
+    } else {
+      console.log(
+        `index: ${index.documents} documents, ${index.words.toLocaleString()} words, ` +
+          `${index.redistributable} redistributable`,
+      );
+      for (const [collection, totals] of Object.entries(index.byCollection)) {
+        console.log(
+          `  ${collection.padEnd(12)}${String(totals.documents).padStart(4)} docs` +
+            `  ${totals.words.toLocaleString().padStart(12)} words`,
+        );
+      }
+      for (const issue of issues) {
+        console.log(
+          `  ${issue.excluded ? "excluded" : "warning "}  ${issue.collection}/${issue.id}: ${issue.problem}`,
+        );
+      }
+    }
+    if (issues.some((issue) => issue.excluded)) process.exitCode = 1;
   });
 
 program.parseAsync(process.argv).catch((error) => {

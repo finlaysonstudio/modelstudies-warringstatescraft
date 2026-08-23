@@ -1,0 +1,15 @@
+{
+  "name": "@modelstudies/lake",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Document lake seam: rights-aware retrieval over the source corpus",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@jaypie/errors": "^1.2.6"
+  }
+}
