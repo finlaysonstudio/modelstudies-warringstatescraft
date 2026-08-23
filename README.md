@@ -23,13 +23,12 @@ packages/
   lake/       @modelstudies/lake       — document lake seam: rights-aware retrieval over the source corpus
   cli/        @modelstudies/cli        — command-line verbs
   app/        @modelstudies/app        — replay viewer (port 3175)
-data/         — interviews, scorecards, reports, reference data, and scenario materials as JSON
-var/runs/     — game runs (git-ignored)
+var/<model>/  — every stored model as JSON: runs, studies, interview, probe, scorecards, reports, scenarios (git-ignored)
 var/lake/     — the document corpus and its ingesters (git-ignored)
 var/          — plans and meta materials (git-ignored)
 ```
 
-Core engine code is lifted from the private `finlaysonstudio-cloudagent` repository and modularized behind two injected seams: `LlmClient` (all model calls) and `Store` (all persistence; `FileStore` locally).
+Core engine code is lifted from the private `finlaysonstudio-cloudagent` repository and modularized behind two injected seams: `LlmClient` (all model calls) and `Store` (all persistence; `FileStore` locally, rooted at `var/`). Nothing under `var/` is committed: runs, studies, reports, and scenario materials are regenerated, and the Lamparth reference dataset ships inside the game package.
 
 ## Use
 
@@ -52,8 +51,8 @@ npm run cli -- game-run --scenario lamparth-2024-acc95-basic-revisionist --panel
 npm run cli -- study-run --scenarios "lamparth-2024-*" --models SOL,LUNA --replicates 10 --dialog 3 --dialog-words 350   # the replication: 8 cells × 2 models × 10 games, length-matched dialog
 npm run cli -- study-run --resume <studyId>                        # play the arms that did not finish
 npm run cli -- study-list
-npm run cli -- study-report <studyId>                              # the study's report → data/reports/<studyId>.json
-npm run cli -- materials                                           # export scenario cards + prompts to data/scenarios/
+npm run cli -- study-report <studyId>                              # the study's report → var/reports/<studyId>.json
+npm run materials                                                  # export scenario cards + prompts to var/scenarios/ (npm run app does this first)
 npm run cli -- interview-run --plan crisis --panel dev --explain
 npm run cli -- lake-search "hostage prince" --use prompt --limit 5   # the corpus; --use is required
 npm run cli -- lake-get zuozhuan-legge-en --use prompt --from 1348 --lines 40
@@ -73,7 +72,7 @@ Every model call records its tokens (input, output, reasoning, cache reads and w
 
 ### Studies and reports
 
-A study is scenarios × models × replicates, each arm its own game. `study-run` plans and plays it (a second call with `--resume` plays whatever did not finish), and `study-report` builds the report the study's scenarios define: `basic` (escalation per turn, peak, and final across replicates) for the Warring States scenarios, `lamparth` for the eight Lamparth cells. The Lamparth report computes the paper's statistics for every subject model and for its reference groups (`data/reference/lamparth-2024.json`: the MIT repository's human teams and its GPT-4 and GPT-3.5 games): action frequency per move, the total causal effect of each treatment factor, aggressiveness, actions selected, the Table 2 consistency statistic, and subject-minus-reference differences per action, every interval a seeded 95% bootstrap. `/studies` lists studies; `/studies/:id` shows the arm grid (each chip a replay link) and the report.
+A study is scenarios × models × replicates, each arm its own game. `study-run` plans and plays it (a second call with `--resume` plays whatever did not finish), and `study-report` builds the report the study's scenarios define: `basic` (escalation per turn, peak, and final across replicates) for the Warring States scenarios, `lamparth` for the eight Lamparth cells. The Lamparth report computes the paper's statistics for every subject model and for its reference groups (`packages/game/src/reference/lamparth-2024.json`: the MIT repository's human teams and its GPT-4 and GPT-3.5 games): action frequency per move, the total causal effect of each treatment factor, aggressiveness, actions selected, the Table 2 consistency statistic, and subject-minus-reference differences per action, every interval a seeded 95% bootstrap. `/studies` lists studies; `/studies/:id` shows the arm grid (each chip a replay link) and the report.
 
 ### The document lake
 

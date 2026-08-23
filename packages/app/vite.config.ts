@@ -10,12 +10,13 @@ import {
   type ViteDevServer,
 } from "vite";
 
-// Resolved relative to this package: runs live at <repo>/var/runs/*.json
-// (git-ignored), everything else under <repo>/data/<model>/.
+// Resolved relative to this package: every stored model lives at
+// <repo>/var/<model>/*.json (git-ignored), served here under /data/<model>/.
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const runsDir = path.join(repoRoot, "var", "runs");
-const studiesDir = path.join(repoRoot, "var", "studies");
-const dataDir = path.join(repoRoot, "data");
+const varDir = path.join(repoRoot, "var");
+const modelDir = (model: string) => path.join(varDir, model);
+const runsDir = modelDir("runs");
+const studiesDir = modelDir("studies");
 
 interface RunFile {
   id?: string;
@@ -85,7 +86,7 @@ async function buildStudyIndex(): Promise<object[]> {
 }
 
 async function buildScenarioIndex(): Promise<object[]> {
-  const dir = path.join(dataDir, "scenarios");
+  const dir = modelDir("scenarios");
   let files: string[] = [];
   try {
     files = (await readdir(dir)).filter((file) => file.endsWith(".json"));
@@ -184,14 +185,13 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       return;
     }
     const match =
-      /^\/data\/(runs|studies|scorecards|scenarios|reports|reference)\/([A-Za-z0-9._-]+)\.json$/.exec(
+      /^\/data\/(runs|studies|scorecards|scenarios|reports)\/([A-Za-z0-9._-]+)\.json$/.exec(
         url,
       );
     if (match) {
-      const varDirs: Record<string, string> = { runs: runsDir, studies: studiesDir };
       try {
         const body = await readFile(
-          path.join(varDirs[match[1]] ?? path.join(dataDir, match[1]), `${match[2]}.json`),
+          path.join(modelDir(match[1]), `${match[2]}.json`),
           "utf8",
         );
         res.setHeader("Content-Type", "application/json");

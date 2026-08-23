@@ -1,7 +1,5 @@
 {
   "id": "lamparth-2024",
-  "model": "reference",
-  "createdAt": "2026-08-22T00:00:00.000Z",
   "title": "Lamparth et al. 2024 reference data",
   "paper": "arXiv:2403.03407",
   "repo": "https://github.com/ancorso/LLMWargaming",

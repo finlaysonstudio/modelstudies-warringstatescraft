@@ -362,7 +362,7 @@ export interface LamparthReport extends ReportBase {
 
 export type Report = BasicReport | LamparthReport;
 
-/** Shape of data/scorecards/<rootId>.json (built by the game CLI). */
+/** Shape of var/scorecards/<rootId>.json (built by the game CLI). */
 export interface ScorecardBranch {
   decidedBy: string | null;
   escalation: number[];

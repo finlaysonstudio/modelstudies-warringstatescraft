@@ -283,9 +283,7 @@ export const createSession = (request: PlayRequest): PlaySession => {
     panel,
     scenario: scenario.id,
     store: new RecordingStore(
-      new FileStore(path.join(repoRoot, "data"), {
-        roots: { runs: path.join(repoRoot, "var", "runs") },
-      }),
+      new FileStore(path.join(repoRoot, "var")),
       session,
     ),
   });

@@ -30,7 +30,7 @@ export { BASIC_REPORT } from "./basic";
 export type { BasicReport, EscalationGroup } from "./basic";
 export {
   LAMPARTH_REPORT,
-  LAMPARTH_REFERENCE_ID,
+  LAMPARTH_REFERENCE,
   actionsOf,
   aggressivenessOf,
   comparisonOf,

@@ -10,16 +10,10 @@ program
   .name("warringstates")
   .description("Warring States Bench: war game runs, instruments, analysis");
 
-const dataRoot = () => resolve(process.cwd(), "data");
-/** the corpus is git-ignored, like runs and studies */
-const lakeRoot = () => resolve(process.cwd(), "var", "lake");
-/** runs and studies land in git-ignored var/; every other model stays under data/ */
-const storeOptions = () => ({
-  roots: {
-    runs: resolve(process.cwd(), "var", "runs"),
-    studies: resolve(process.cwd(), "var", "studies"),
-  },
-});
+/** every stored model lands under git-ignored var/<model>/ */
+const varRoot = () => resolve(process.cwd(), "var");
+/** the corpus lives beside them */
+const lakeRoot = () => resolve(varRoot(), "lake");
 
 /** comma-separated model ids; a `MODELS` constant name (SOL, OPUS, ...) resolves to its id */
 const resolveModels = async (spec: string): Promise<string[]> => {
@@ -145,7 +139,7 @@ program
             }),
           )
         : undefined,
-      store: new FileStore(dataRoot(), storeOptions()),
+      store: new FileStore(varRoot()),
     });
     const run = await engine.play(options.resume);
     console.log(
@@ -191,7 +185,7 @@ program
     const { FileStore, defaultLlmClient } =
       await import("@modelstudies/workflows");
     const { planStudy, runStudy } = await import("@modelstudies/game");
-    const store = new FileStore(dataRoot(), storeOptions());
+    const store = new FileStore(varRoot());
     let id: string = options.resume;
     if (!id) {
       if (!options.scenarios || !options.models) {
@@ -250,7 +244,7 @@ program
   .description("List studies and their progress")
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
-    const store = new FileStore(dataRoot(), storeOptions());
+    const store = new FileStore(varRoot());
     const studies = await store.list<{
       id: string;
       model: string;
@@ -276,7 +270,7 @@ program
 program
   .command("study-report")
   .description(
-    "Build a study's report (its reporting definition) and write data/reports/<studyId>.json",
+    "Build a study's report (its reporting definition) and write var/reports/<studyId>.json",
   )
   .argument("<studyId>", "study id")
   .option("--bootstrap <n>", "bootstrap resamples", "10000")
@@ -288,11 +282,11 @@ program
       bootstrap: Number(options.bootstrap),
       id: studyId,
       save: options.save,
-      store: new FileStore(dataRoot(), storeOptions()),
+      store: new FileStore(varRoot()),
     });
     console.log(JSON.stringify(report, null, 2));
     if (options.save) {
-      console.error(`→ data/reports/${report.id}.json`);
+      console.error(`→ var/reports/${report.id}.json`);
     }
   });
 
@@ -311,7 +305,7 @@ program
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
     const { usageOf } = await import("@modelstudies/game");
-    const store = new FileStore(dataRoot(), storeOptions());
+    const store = new FileStore(varRoot());
     const runs = await store.list<import("@modelstudies/game").Run>("runs");
     for (const run of runs.sort((a, b) =>
       a.createdAt.localeCompare(b.createdAt),
@@ -340,7 +334,7 @@ program
     const { groupUsage, usageOfTree } = await import("@modelstudies/game");
     const usage = await usageOfTree({
       rootId: runId,
-      store: new FileStore(dataRoot(), storeOptions()),
+      store: new FileStore(varRoot()),
     });
     if (options.json) {
       console.log(JSON.stringify(usage, null, 2));
@@ -373,16 +367,16 @@ program
 program
   .command("materials")
   .description(
-    "Export every scenario's cards and prompts to data/scenarios/<id>.json",
+    "Export every scenario's cards and prompts to var/scenarios/<id>.json",
   )
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
     const { buildAllMaterials } = await import("@modelstudies/game");
-    const store = new FileStore(dataRoot(), storeOptions());
+    const store = new FileStore(varRoot());
     for (const materials of buildAllMaterials()) {
       await store.create(materials);
       console.log(
-        `${materials.id}  seats:${materials.seats.length}  turns:${materials.turns.length}  → data/scenarios/${materials.id}.json`,
+        `${materials.id}  seats:${materials.seats.length}  turns:${materials.turns.length}  → var/scenarios/${materials.id}.json`,
       );
     }
   });
@@ -396,7 +390,7 @@ program
     const { buildScorecard } = await import("@modelstudies/game");
     const scorecard = await buildScorecard({
       rootId,
-      store: new FileStore(dataRoot(), storeOptions()),
+      store: new FileStore(varRoot()),
     });
     console.log(JSON.stringify(scorecard, null, 2));
   });
@@ -412,7 +406,7 @@ program
     const { buildValuesScorecard } = await import("@modelstudies/survey");
     const scorecard = await buildValuesScorecard({
       plan: options.plan,
-      store: new FileStore(dataRoot(), storeOptions()),
+      store: new FileStore(varRoot()),
     });
     for (const row of scorecard.models) {
       console.log(
@@ -463,7 +457,7 @@ program
         ? options.resume.split(",").map((id: string) => id.trim())
         : undefined,
       retry: options.retry,
-      store: new FileStore(dataRoot(), storeOptions()),
+      store: new FileStore(varRoot()),
     });
     for (const interview of interviews) {
       console.log(

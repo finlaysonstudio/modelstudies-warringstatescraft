@@ -4,7 +4,7 @@ import globals from "globals";
 export default [
   ...jaypie,
   {
-    ignores: ["**/dist/**", "data/**", "var/**"],
+    ignores: ["**/dist/**", "var/**"],
   },
   {
     // The app package runs in the browser: DOM globals, not Node.

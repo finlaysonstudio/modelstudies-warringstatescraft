@@ -24,12 +24,13 @@ import {
   type ReportDefinition,
   type ReportInput,
 } from "./types";
+import lamparthReference from "../reference/lamparth-2024.json" with { type: "json" };
 
 /**
  * The Lamparth report: the statistics of Lamparth et al. 2024 (arXiv
  * 2403.03407; analysis/*.jl in github.com/ancorso/LLMWargaming), computed
  * for every subject model in the study and for the reference groups
- * shipped in data/reference/lamparth-2024.json (the repo's human teams and
+ * shipped in ../reference/lamparth-2024.json (the repo's human teams and
  * its GPT-4 / GPT-3.5 dialog-3 games):
  *
  * - action frequency: per-game selection rate of each of the 21 actions
@@ -141,10 +142,9 @@ export interface LamparthReport extends ReportBase {
   table2?: Record<string, { aggGivenAgg: number; aggGivenDes: number }>;
 }
 
-/** shape of data/reference/lamparth-2024.json */
+/** shape of ../reference/lamparth-2024.json */
 export interface LamparthReference {
   id: string;
-  model: "reference";
   title: string;
   table2?: LamparthReport["table2"];
   sources: {
@@ -161,7 +161,8 @@ export interface LamparthReference {
   }[];
 }
 
-export const LAMPARTH_REFERENCE_ID = "lamparth-2024";
+/** the reference groups ship with the package; the report never reads them from the store */
+export const LAMPARTH_REFERENCE = lamparthReference as LamparthReference;
 
 const FACTORS: LamparthEffect[]["0"]["factor"][] = [
   "accuracy",
@@ -512,11 +513,8 @@ export const LAMPARTH_REPORT: ReportDefinition<LamparthReport> = {
       ...gamesOfRuns(input.study, input.runs, scenarios, columns, model),
     }));
 
-    const reference = await input.store.get<LamparthReference>(
-      "reference",
-      LAMPARTH_REFERENCE_ID,
-    );
-    const references = (reference?.sources ?? []).map((source) => ({
+    const reference = LAMPARTH_REFERENCE;
+    const references = reference.sources.map((source) => ({
       id: source.id,
       label: source.label,
       kind: "reference" as const,
@@ -548,7 +546,7 @@ export const LAMPARTH_REPORT: ReportDefinition<LamparthReport> = {
       columns,
       groups,
       comparisons,
-      ...(reference?.table2 ? { table2: reference.table2 } : {}),
+      ...(reference.table2 ? { table2: reference.table2 } : {}),
     };
   },
 };

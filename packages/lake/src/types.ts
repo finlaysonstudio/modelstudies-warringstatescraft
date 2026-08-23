@@ -78,7 +78,7 @@ export interface LakeCollectionTotals {
   bytes: number;
 }
 
-/** built artifact, like data/runs.json; `lake-index` is its only writer */
+/** built artifact, like the app's /data/runs.json index; `lake-index` is its only writer */
 export interface LakeIndex {
   builtAt: string;
   documents: number;

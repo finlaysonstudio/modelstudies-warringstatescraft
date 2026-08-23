@@ -1,6 +1,3 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
-
 import { describe, expect, it } from "vitest";
 import type {
   EntityLike,
@@ -92,14 +89,6 @@ const hawk: Picker = (model, turn) =>
       ? ["b", "g"]
       : ["d", "f"];
 
-const loadReference = async (store: MemoryStore) => {
-  const raw = await readFile(
-    resolve(__dirname, "../../../../data/reference/lamparth-2024.json"),
-    "utf8",
-  );
-  await store.create(JSON.parse(raw) as EntityLike);
-};
-
 describe("studies", () => {
   it("plans arms from cells × models × replicates and infers the report", async () => {
     const store = new MemoryStore();
@@ -143,7 +132,6 @@ describe("studies", () => {
 
   it("plays every arm, stamps runs, resumes after a failure, and reports", async () => {
     const store = new MemoryStore();
-    await loadReference(store);
     const planned = await planStudy({
       dialog: 1,
       dialogWords: 350,

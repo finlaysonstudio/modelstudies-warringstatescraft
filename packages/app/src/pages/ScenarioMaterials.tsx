@@ -6,7 +6,7 @@ import { Bar, Section } from "../components/PonyBenchPrimitives";
 import type { ScenarioMaterials } from "../lib/types";
 
 // The reading room: every card and instruction the engine hands to a model,
-// rendered as the model sees it. Source is data/scenarios/<id>.json, written
+// rendered as the model sees it. Source is var/scenarios/<id>.json, written
 // by `cli materials`. Left rail jumps between blocks; each block opens to
 // the verbatim prompt beneath the human-readable card.
 

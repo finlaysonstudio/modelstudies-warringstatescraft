@@ -19,7 +19,7 @@ import type {
  * Scenario materials: every card and instruction the engine hands to a
  * model, rendered exactly as the model sees it, with no run history. The
  * reading-room counterpart to a run replay. Persisted as
- * `data/scenarios/<id>.json` so the app can render it without engine code.
+ * `var/scenarios/<id>.json` so the app can render it without engine code.
  */
 
 export interface SeatMaterials extends ScenarioSeat {
