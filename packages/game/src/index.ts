@@ -37,6 +37,7 @@ export { LAND_REGISTER } from "./scenario/landRegister";
 export { SCHOOLS_OF_THE_HUNDRED } from "./scenario/schoolsOfTheHundred";
 export { CONSCRIPTION_ROLLS } from "./scenario/conscriptionRolls";
 export { FAMINE_GRANARY } from "./scenario/famineGranary";
+export { BORROWED_ROAD } from "./scenario/borrowedRoad";
 export {
   buildLamparth,
   LAMPARTH_2024,

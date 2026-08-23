@@ -1,8 +1,8 @@
 {
   "id": "lamparth-2024-acc95-basic-revisionist",
   "model": "scenarios",
-  "createdAt": "2026-08-22T17:46:38.164Z",
-  "order": 16,
+  "createdAt": "2026-08-23T04:45:32.930Z",
+  "order": 17,
   "scenario": {
     "id": "lamparth-2024-acc95-basic-revisionist",
     "title": "Lamparth 2024 (AI accuracy 95-99%, basic training, revisionist PRC)",
