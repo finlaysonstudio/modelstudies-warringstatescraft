@@ -125,6 +125,7 @@ describe("MODEL_PRICES", () => {
       input: 0.5,
       output: 1.5,
     });
+    expect(MODEL_PRICES["gpt-4-0613"]).toEqual({ input: 30, output: 60 });
     expect(MODEL_PRICES["gpt-4o-2024-08-06"]).toEqual({
       input: 2.5,
       output: 10,

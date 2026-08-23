@@ -25,6 +25,11 @@ export type {
   LlmUsageItem,
 } from "./llm/client";
 export { createLlmClient, defaultLlmClient } from "./llm/jaypieClient";
+export {
+  createLegacyOpenAiClient,
+  isLegacyOpenAiModel,
+  LEGACY_OPENAI_MODELS,
+} from "./llm/legacyOpenAiClient";
 
 // Pricing: list price per model and the per-call dollar stamp
 export {

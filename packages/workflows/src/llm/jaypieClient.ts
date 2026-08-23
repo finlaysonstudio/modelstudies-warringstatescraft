@@ -5,10 +5,16 @@
  * upstream `chat` and `interviews` services call `Llm.operate`
  * (options shape: `{ model, system?, format?, history?, llm? }`).
  * Every call requests `effort: highest`; adapters translate it per provider
- * and ignore it where a model has no reasoning control.
+ * and ignore it where a model has no reasoning control. A legacy OpenAI model
+ * id (`isLegacyOpenAiModel`) bypasses Jaypie for the Chat Completions client,
+ * the only path those models answer a `format` on.
  */
 import { LLM, Llm } from "@jaypie/llm";
 import type { LlmClient, LlmOperateOptions, LlmOperateResult } from "./client";
+import {
+  createLegacyOpenAiClient,
+  isLegacyOpenAiModel,
+} from "./legacyOpenAiClient";
 import { priceUsage } from "./pricing";
 import { llmSelector, toLlmHistory } from "./providers";
 
@@ -43,15 +49,20 @@ function normalizeHistory(
 export function createLlmClient(
   defaults: { model?: string; provider?: string } = {},
 ): LlmClient {
+  const legacy = createLegacyOpenAiClient();
   return {
     async operate(
       prompt: string,
       options: LlmOperateOptions = {},
     ): Promise<LlmOperateResult> {
+      const model = options.model ?? defaults.model;
+      if (isLegacyOpenAiModel(model)) {
+        return legacy.operate(prompt, { ...options, model });
+      }
       // llmSelector throws BadRequestError on an unknown provider
       const operateOptions: JaypieOperateOptions = {
         ...llmSelector({
-          model: options.model ?? defaults.model,
+          model,
           provider: options.provider ?? defaults.provider,
         }),
         effort: LLM.EFFORT.HIGHEST,

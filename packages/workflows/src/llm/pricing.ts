@@ -24,11 +24,14 @@ export interface ModelPrice {
 /**
  * Prices for models Jaypie's table does not carry: the Lamparth-era OpenAI
  * models played as replication subjects (OpenAI list rates, USD per million;
- * gpt-4o cache reads bill at half the input rate). Jaypie's table wins on any
- * id both carry. Candidate upstream contribution, noted in the plan.
+ * gpt-4o cache reads bill at half the input rate; `gpt-4-0613` is the 8k
+ * GPT-4 snapshot, the one the API still serves from the paper's generation).
+ * Jaypie's table wins on any id both carry. Candidate upstream contribution,
+ * noted in the plan.
  */
 export const LOCAL_PRICES: Record<string, ModelPrice> = {
   "gpt-3.5-turbo-0125": { input: 0.5, output: 1.5 },
+  "gpt-4-0613": { input: 30, output: 60 },
   "gpt-4o-2024-08-06": { input: 2.5, output: 10, cachedInputRead: 1.25 },
 };
 
