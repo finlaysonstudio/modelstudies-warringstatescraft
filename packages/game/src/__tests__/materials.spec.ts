@@ -40,7 +40,7 @@ describe("simulates", () => {
     const { listScenarios } = await import("../scenarios");
     for (const scenario of listScenarios()) {
       expect(`${scenario.id}: ${scenario.simulates}`).toMatch(
-        /^[a-z-]+: [^:]{8,60}: .{20,}$/,
+        /^[a-z0-9-]+: [^:]{8,60}: .{20,}$/,
       );
     }
   });

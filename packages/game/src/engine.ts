@@ -8,6 +8,7 @@ import {
   consensusPrompt,
   elicitBrief,
   elicitConsensusBrief,
+  scriptedBrief,
   seatSystem,
   turnPrompt,
 } from "./briefs";
@@ -24,7 +25,7 @@ import type {
   PanelConfig,
   TurnRecord,
 } from "./types";
-import { HUMAN_MODEL, MASKED_MODEL } from "./types";
+import { HUMAN_MODEL, MASKED_MODEL, SCRIPTED_MODEL } from "./types";
 import { maskBrief, maskTurn } from "./mask";
 
 export interface GameLog {
@@ -44,6 +45,11 @@ const silentLog: GameLog = {
 export interface GameOptions {
   /** bounded concurrency for branch playout */
   branchConcurrency?: number;
+  /**
+   * rounds of simulated team dialog before each model decision (Lamparth
+   * et al. 2024 dialog treatment); 0 or unset decides directly
+   */
+  dialog?: number;
   /**
    * a human player; plays any seat assigned `HUMAN_MODEL` (and, at the
    * decision point, adds a blind and an informed focal memo beside the
@@ -65,6 +71,8 @@ export interface GameOptions {
   maxTurns?: number;
   /** narrator model id (HUMAN_MODEL allowed); defaults to first roster model */
   narrator?: string;
+  /** false withholds the scenario's priorities block (instruction ablation) */
+  priorities?: boolean;
   /**
    * roster model ids, one cell each; seats are assigned round-robin. With a
    * matrix, defaults to the distinct non-human models in the matrix.
@@ -74,6 +82,8 @@ export interface GameOptions {
   /** explicit seat id -> model id; seats not listed fall back to round-robin */
   seats?: Record<string, string>;
   store: Store;
+  /** study arm this run plays, recorded on the root and every branch */
+  study?: { id: string; replicate: number };
 }
 
 const runId = () => `run_${randomUUID().slice(0, 8)}`;
@@ -90,9 +100,17 @@ const assignSeats = (
     }
   }
   const assignment: Record<string, string> = {};
-  scenario.seats.forEach((seat, index) => {
-    assignment[seat.id] = explicit[seat.id] ?? roster[index % roster.length];
-  });
+  let cursor = 0;
+  for (const seat of scenario.seats) {
+    if (seat.scripted) {
+      if (explicit[seat.id] && explicit[seat.id] !== SCRIPTED_MODEL) {
+        throw new BadRequestError(`Seat is scripted: ${seat.id}`);
+      }
+      assignment[seat.id] = SCRIPTED_MODEL;
+      continue;
+    }
+    assignment[seat.id] = explicit[seat.id] ?? roster[cursor++ % roster.length];
+  }
   return assignment;
 };
 
@@ -109,7 +127,12 @@ export const matrixCombinations = (
   }
   let combinations: Record<string, string>[] = [{}];
   for (const seat of scenario.seats) {
-    const candidates = [...new Set(matrix[seat.id] ?? [])];
+    const candidates = seat.scripted
+      ? [SCRIPTED_MODEL]
+      : [...new Set(matrix[seat.id] ?? [])];
+    if (seat.scripted && matrix[seat.id]?.some((m) => m !== SCRIPTED_MODEL)) {
+      throw new BadRequestError(`Seat is scripted: ${seat.id}`);
+    }
     if (!candidates.length) {
       throw new BadRequestError(`Matrix has no models for seat: ${seat.id}`);
     }
@@ -168,6 +191,7 @@ const pool = async <T, R>(
 
 export class GameEngine {
   private readonly branchConcurrency: number;
+  private readonly dialog: number;
   private readonly human?: HumanPlayer;
   private readonly panel: Partial<PanelConfig>;
   private readonly llm: LlmClient;
@@ -175,10 +199,12 @@ export class GameEngine {
   private readonly matrix?: Record<string, string[]>;
   private readonly maxTurns?: number;
   private readonly narrator?: string;
+  private readonly priorities: boolean;
   private readonly roster: string[];
   private readonly scenario: Scenario;
   private readonly seats: Record<string, string>;
   private readonly store: Store;
+  private readonly study?: { id: string; replicate: number };
 
   constructor(options: GameOptions) {
     const roster = options.roster?.length
@@ -187,13 +213,16 @@ export class GameEngine {
           ...new Set(
             Object.values(options.matrix ?? {})
               .flat()
-              .filter((model) => model !== HUMAN_MODEL),
+              .filter(
+                (model) => model !== HUMAN_MODEL && model !== SCRIPTED_MODEL,
+              ),
           ),
         ];
     if (!roster.length) {
       throw new BadRequestError("Roster must contain at least one model");
     }
     this.branchConcurrency = options.branchConcurrency ?? 3;
+    this.dialog = Math.max(0, Math.floor(options.dialog ?? 0));
     this.human = options.human;
     this.panel = options.panel ?? {};
     this.llm = options.llm;
@@ -201,9 +230,15 @@ export class GameEngine {
     this.matrix = options.matrix;
     this.maxTurns = options.maxTurns;
     this.narrator = options.narrator;
+    this.priorities = options.priorities ?? true;
     this.roster = roster;
-    this.scenario = getScenario(options.scenario);
+    const scenario = getScenario(options.scenario);
+    // instruction ablation: the engine plays a copy with the block withheld
+    this.scenario = this.priorities
+      ? scenario
+      : { ...scenario, priorities: undefined };
     this.store = options.store;
+    this.study = options.study;
     const combinations = this.matrix
       ? matrixCombinations(this.scenario, this.matrix)
       : [];
@@ -261,6 +296,11 @@ export class GameEngine {
       roster: { ...this.seats },
       panel: this.panelConfig(),
       narrator: this.narrator ?? this.roster[0],
+      ...(this.dialog ? { dialog: this.dialog } : {}),
+      ...(this.priorities ? {} : { priorities: false }),
+      ...(this.study
+        ? { study: this.study.id, replicate: this.study.replicate }
+        : {}),
       branch: {
         parent: null,
         lane: "root",
@@ -428,6 +468,9 @@ export class GameEngine {
     candidates?: DecisionBrief[],
     table?: DecisionBrief[],
   ): Promise<DecisionBrief> {
+    if (model === SCRIPTED_MODEL || seat.scripted) {
+      return scriptedBrief(seat, scenarioTurn);
+    }
     if (model !== HUMAN_MODEL) {
       return candidates
         ? elicitConsensusBrief({
@@ -440,6 +483,7 @@ export class GameEngine {
             turn: scenarioTurn,
           })
         : elicitBrief({
+            dialog: this.dialog,
             llm: this.llm,
             model,
             run,
@@ -464,7 +508,9 @@ export class GameEngine {
       roster: Object.fromEntries(
         Object.entries(run.roster).map(([id, model]) => [
           id,
-          model === HUMAN_MODEL ? HUMAN_MODEL : MASKED_MODEL,
+          model === HUMAN_MODEL || model === SCRIPTED_MODEL
+            ? model
+            : MASKED_MODEL,
         ]),
       ),
       history: run.turns.map(maskTurn),
@@ -535,6 +581,7 @@ export class GameEngine {
     const [independent, humanBlind] = await Promise.all([
       pool(this.roster, this.branchConcurrency, (model) =>
         elicitBrief({
+          dialog: this.dialog,
           llm: this.llm,
           model,
           run,
@@ -659,6 +706,9 @@ export class GameEngine {
         const model = run.roster[seat.id];
         if (model === HUMAN_MODEL) {
           return { seat: seat.id, model, text: "(human player; no debrief)" };
+        }
+        if (model === SCRIPTED_MODEL) {
+          return { seat: seat.id, model, text: "(scripted seat; no debrief)" };
         }
         try {
           const result = await this.llm.operate(

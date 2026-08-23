@@ -17,7 +17,13 @@ export interface DecisionBrief {
     decision: string;
     rationale: string;
     redLines: string[];
+    /** choice elicitation: answers to the turn's questions, in order */
+    answers?: string[];
+    /** choice elicitation: selected choice ids */
+    choices?: string[];
   };
+  /** simulated team dialog that preceded the decision, one entry per round */
+  dialog?: string[];
   /** consensus-lane only */
   consensus?: {
     deferredOn: string[];
@@ -93,6 +99,14 @@ export interface Run {
   narrator?: string;
   /** start-fork roots only: seat id -> candidate models */
   matrix?: Record<string, string[]>;
+  /** rounds of simulated team dialog before each model decision */
+  dialog?: number;
+  /** false when the scenario's priorities block was withheld */
+  priorities?: boolean;
+  /** study this run belongs to, when it was played as a study arm */
+  study?: string;
+  /** 1-based replicate index within the study arm's cell */
+  replicate?: number;
   branch: RunBranch;
   /** child run ids created at this run's decision point */
   children: string[];
@@ -124,7 +138,154 @@ export interface RunIndexEntry {
   panel?: PanelConfig;
   /** model that wrote the run's resolution narratives */
   narrator?: string;
+  /** study this run belongs to */
+  study?: string;
+  replicate?: number;
 }
+
+// ---- studies and reports (mirror packages/game/src/types.ts and reports/)
+
+export type ReportId = "basic" | "lamparth";
+
+export interface StudyArm {
+  scenario: string;
+  model: string;
+  replicate: number;
+  runId?: string;
+  status: "pending" | RunStatus;
+  statusDetail?: string;
+}
+
+/** Shape of var/studies/<id>.json. */
+export interface Study {
+  id: string;
+  model: "studies";
+  title: string;
+  createdAt: string;
+  status: RunStatus;
+  statusDetail?: string;
+  report: ReportId;
+  scenarios: string[];
+  models: string[];
+  replicates: number;
+  seats?: Record<string, string>;
+  panel?: PanelConfig;
+  narrator?: string;
+  dialog?: number;
+  priorities?: boolean;
+  arms: StudyArm[];
+}
+
+/** Shape of one entry in the generated /data/studies.json index. */
+export interface StudyIndexEntry {
+  id: string;
+  title: string;
+  createdAt: string;
+  status: RunStatus;
+  statusDetail?: string;
+  report: ReportId;
+  scenarios: string[];
+  models: string[];
+  replicates: number;
+  armCount: number;
+  completeCount: number;
+  errorCount: number;
+}
+
+export interface Estimate {
+  value: number;
+  ci: [number, number];
+}
+
+export interface CellCoverage {
+  scenario: string;
+  model: string;
+  expected: number;
+  complete: number;
+  error: number;
+  pending: number;
+}
+
+export interface ReportBase {
+  id: string;
+  model: "reports";
+  report: ReportId;
+  study: string;
+  title: string;
+  createdAt: string;
+  scenarios: string[];
+  models: string[];
+  replicates: number;
+  coverage: CellCoverage[];
+  bootstrap: number;
+}
+
+export interface EscalationGroup {
+  scenario: string | null;
+  model: string;
+  games: number;
+  timelines: number;
+  turns: { index: number; escalation: Estimate }[];
+  peak: Estimate;
+  final: Estimate;
+}
+
+export interface BasicReport extends ReportBase {
+  report: "basic";
+  cells: EscalationGroup[];
+  byModel: EscalationGroup[];
+}
+
+export interface LamparthColumn {
+  turn: number;
+  id: string;
+  label: string;
+  stance?: "agg" | "des";
+}
+
+export interface LamparthEffect {
+  factor: "accuracy" | "training" | "posture";
+  levels: [string, string];
+  n: [number, number];
+  rows: (LamparthColumn & Estimate)[];
+}
+
+export interface LamparthConsistency {
+  table2: { aggAgg: Estimate; desAgg: Estimate };
+  conditional: { aggGivenAgg: Estimate; aggGivenDes: Estimate };
+  nAgg: number;
+  nDes: number;
+}
+
+export interface LamparthGroup {
+  id: string;
+  label: string;
+  kind: "study" | "reference";
+  model?: string;
+  n: number;
+  cells: { scenario: string; n: number }[];
+  frequencies: (LamparthColumn & Estimate)[];
+  effects: LamparthEffect[];
+  aggressiveness: Estimate;
+  actions: Estimate;
+  consistency: LamparthConsistency;
+}
+
+export interface LamparthComparison {
+  group: string;
+  reference: string;
+  rows: (LamparthColumn & Estimate)[];
+}
+
+export interface LamparthReport extends ReportBase {
+  report: "lamparth";
+  columns: LamparthColumn[];
+  groups: LamparthGroup[];
+  comparisons: LamparthComparison[];
+  table2?: Record<string, { aggGivenAgg: number; aggGivenDes: number }>;
+}
+
+export type Report = BasicReport | LamparthReport;
 
 /** Shape of data/scorecards/<rootId>.json (built by the game CLI). */
 export interface ScorecardBranch {
@@ -180,9 +341,17 @@ export interface MemoSchema {
 export interface SeatMaterials {
   id: string;
   name: string;
+  /** played by the scenario's script, never by a model */
+  scripted?: boolean;
   brief: string;
   objectives: string[];
   systemPrompt: string;
+}
+
+export interface ScenarioChoice {
+  id: string;
+  label: string;
+  stance?: "agg" | "des";
 }
 
 export interface TurnMaterials {
@@ -190,6 +359,10 @@ export interface TurnMaterials {
   title: string;
   inject: string;
   moveMenu?: string[];
+  questions?: string[];
+  choices?: ScenarioChoice[];
+  /** scripted seats' moves this turn, seat id -> text */
+  script?: Record<string, string>;
   prompt: string;
   decisionPoint: boolean;
   focalSeat: string | null;
@@ -206,6 +379,10 @@ export interface ScenarioMaterials {
     /** the modern situation the scenario simulates */
     simulates: string;
     priorities?: string[];
+    elicitation?: "memo" | "choice";
+    /** reporting definition a study of this scenario builds */
+    report?: ReportId;
+    record?: "narrated" | "scripted";
     decisionPoints: { turn: number; seat: string }[];
     escalationLadder: string[];
   };
@@ -226,11 +403,16 @@ export type DecisionMemo = DecisionBrief["memo"] & {
 
 export const HUMAN_MODEL = "human";
 
+export const SCRIPTED_MODEL = "scripted";
+
 export interface ScenarioTurnCard {
   index: number;
   title: string;
   inject: string;
   moveMenu?: string[];
+  questions?: string[];
+  choices?: ScenarioChoice[];
+  script?: Record<string, string>;
 }
 
 export interface HumanPrompt {

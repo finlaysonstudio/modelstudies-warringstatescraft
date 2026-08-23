@@ -398,6 +398,26 @@ function BriefCard({ brief }: { brief: DecisionBrief }) {
         </p>
       ) : (
         <>
+          {(memo?.answers ?? []).map((answer, index) => (
+            <p
+              key={index}
+              className="mt-2 text-xs leading-relaxed text-zinc-300"
+            >
+              {answer}
+            </p>
+          ))}
+          {(memo?.choices ?? []).length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {memo.choices!.map((id) => (
+                <span
+                  key={id}
+                  className="rounded-sm border border-brand-terminal/40 bg-brand-terminal/10 px-1.5 py-0.5 font-plex-mono text-[10px] text-brand-terminal"
+                >
+                  {id}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <p className="mt-2 text-sm font-medium text-white">
             {memo?.decision ?? "—"}
           </p>
@@ -433,6 +453,23 @@ function BriefCard({ brief }: { brief: DecisionBrief }) {
                 </span>
               ))}
             </div>
+          )}
+          {(brief.dialog ?? []).length > 0 && (
+            <details className="mt-3">
+              <summary className="cursor-pointer font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase hover:text-zinc-300">
+                dialog · {brief.dialog!.length} rounds
+              </summary>
+              <div className="mt-2 space-y-2">
+                {brief.dialog!.map((round, index) => (
+                  <p
+                    key={index}
+                    className="text-xs leading-relaxed whitespace-pre-wrap text-zinc-400"
+                  >
+                    {round}
+                  </p>
+                ))}
+              </div>
+            </details>
           )}
           {brief.consensus && (
             <div className="mt-3 space-y-0.5">

@@ -11,10 +11,39 @@ program
   .description("Warring States Bench: war game runs, instruments, analysis");
 
 const dataRoot = () => resolve(process.cwd(), "data");
-/** runs land in git-ignored var/runs; every other model stays under data/ */
+/** runs and studies land in git-ignored var/; every other model stays under data/ */
 const storeOptions = () => ({
-  roots: { runs: resolve(process.cwd(), "var", "runs") },
+  roots: {
+    runs: resolve(process.cwd(), "var", "runs"),
+    studies: resolve(process.cwd(), "var", "studies"),
+  },
 });
+
+/** comma-separated model ids; a `MODELS` constant name (SOL, OPUS, ...) resolves to its id */
+const resolveModels = async (spec: string): Promise<string[]> => {
+  const { MODELS } = await import("@modelstudies/survey");
+  const named = MODELS as Record<string, string>;
+  return spec
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => named[part] ?? part);
+};
+
+/** comma-separated ids; a trailing `*` matches every registered scenario with that prefix */
+const resolveScenarios = async (spec: string): Promise<string[]> => {
+  const { listScenarios } = await import("@modelstudies/game");
+  const known = listScenarios().map((scenario) => scenario.id);
+  return spec
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .flatMap((part) =>
+      part.endsWith("*")
+        ? known.filter((id) => id.startsWith(part.slice(0, -1)))
+        : [part],
+    );
+};
 
 const consoleLog = {
   trace: (...args: unknown[]) => console.log("[trace]", ...args),
@@ -59,6 +88,14 @@ program
     "fork at the start: comma-separated seat=model|model pairs (one branch per combination; replaces the decision-point fork)",
   )
   .option("--turns <n>", "play only the first N scenario turns")
+  .option(
+    "--dialog <n>",
+    "rounds of simulated team dialog before each model decision (Lamparth treatment)",
+  )
+  .option(
+    "--no-priorities",
+    "withhold the scenario's priorities block (instruction ablation)",
+  )
   .option("--narrator <model>", "narrator model id")
   .option("--judges <models>", "comma-separated judge model ids")
   .option("--judge-mode <mode>", "how judge verdicts combine", "median")
@@ -69,9 +106,11 @@ program
     const { GameEngine } = await import("@modelstudies/game");
     const roster = await resolveRoster(options.panel);
     const engine = new GameEngine({
+      dialog: options.dialog ? Number(options.dialog) : undefined,
       llm: defaultLlmClient,
       log: consoleLog,
       maxTurns: options.turns ? Number(options.turns) : undefined,
+      priorities: options.priorities,
       matrix: options.matrix
         ? Object.fromEntries(
             options.matrix.split(",").map((pair: string) => {
@@ -105,6 +144,143 @@ program
     );
     if (run.children.length)
       console.log(`branches: ${run.children.join(", ")}`);
+  });
+
+program
+  .command("study-run")
+  .description(
+    "Plan and play a study: every scenario × model × replicate as its own game (resumes with --resume)",
+  )
+  .option(
+    "--scenarios <ids>",
+    "comma-separated scenario ids; a trailing * expands a prefix (e.g. lamparth-2024-*)",
+  )
+  .option(
+    "--models <ids>",
+    "comma-separated subject model ids (MODELS constant names such as SOL resolve)",
+  )
+  .option("--replicates <k>", "games per scenario per model", "1")
+  .option("--title <text>", "study title")
+  .option("--report <id>", "reporting definition (defaults to the scenarios')")
+  .option(
+    "--seats <pairs>",
+    "seat assignment applied to every arm, comma-separated seat=model pairs",
+  )
+  .option(
+    "--dialog <n>",
+    "rounds of simulated team dialog before each model decision",
+  )
+  .option("--no-priorities", "withhold the scenario's priorities block")
+  .option("--narrator <model>", "narrator model id")
+  .option("--judges <models>", "comma-separated judge model ids")
+  .option("--judge-mode <mode>", "how judge verdicts combine", "median")
+  .option("--concurrency <n>", "arms played at once", "2")
+  .option("--plan-only", "write the study without playing it", false)
+  .option("--resume <studyId>", "play the incomplete arms of an existing study")
+  .action(async (options) => {
+    const { FileStore, defaultLlmClient } =
+      await import("@modelstudies/workflows");
+    const { planStudy, runStudy } = await import("@modelstudies/game");
+    const store = new FileStore(dataRoot(), storeOptions());
+    let id: string = options.resume;
+    if (!id) {
+      if (!options.scenarios || !options.models) {
+        throw new Error(
+          "--scenarios and --models are required without --resume",
+        );
+      }
+      const study = await planStudy({
+        dialog: options.dialog ? Number(options.dialog) : undefined,
+        models: await resolveModels(options.models),
+        narrator: options.narrator,
+        panel: {
+          judges: options.judges
+            ? options.judges.split(",").map((m: string) => m.trim())
+            : undefined,
+          mode: await parsePanelMode(options.judgeMode),
+        },
+        priorities: options.priorities,
+        replicates: Number(options.replicates),
+        report: options.report,
+        scenarios: await resolveScenarios(options.scenarios),
+        seats: options.seats
+          ? Object.fromEntries(
+              options.seats.split(",").map((pair: string) => {
+                const [seat, model] = pair.split("=").map((s) => s.trim());
+                return [seat, model];
+              }),
+            )
+          : undefined,
+        store,
+        title: options.title,
+      });
+      id = study.id;
+      console.log(
+        `study: ${study.id}  ${study.arms.length} arms (${study.scenarios.length} cells × ${study.models.length} models × ${study.replicates}) report:${study.report}`,
+      );
+      if (options.planOnly) return;
+    }
+    const study = await runStudy({
+      concurrency: Number(options.concurrency),
+      id,
+      llm: defaultLlmClient,
+      log: consoleLog,
+      store,
+    });
+    console.log(
+      `\nstudy: ${study.id} (${study.status}${study.statusDetail ? ` — ${study.statusDetail}` : ""})`,
+    );
+  });
+
+program
+  .command("study-list")
+  .description("List studies and their progress")
+  .action(async () => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const store = new FileStore(dataRoot(), storeOptions());
+    const studies = await store.list<{
+      id: string;
+      model: string;
+      title: string;
+      status: string;
+      statusDetail?: string;
+      report: string;
+      createdAt: string;
+      arms: { status: string }[];
+    }>("studies");
+    for (const study of studies.sort((a, b) =>
+      a.createdAt.localeCompare(b.createdAt),
+    )) {
+      const complete = study.arms.filter(
+        (arm) => arm.status === "complete",
+      ).length;
+      console.log(
+        `${study.id}  ${study.status.padEnd(8)}  ${study.report.padEnd(9)}  arms:${complete}/${study.arms.length}  ${study.title}`,
+      );
+    }
+  });
+
+program
+  .command("study-report")
+  .description(
+    "Build a study's report (its reporting definition) and write data/reports/<studyId>.json",
+  )
+  .argument("<studyId>", "study id")
+  .option("--bootstrap <n>", "bootstrap resamples", "10000")
+  .option("--no-save", "print only")
+  .action(async (studyId: string, options) => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { buildStudyReport } = await import("@modelstudies/game");
+    const report = await buildStudyReport({
+      bootstrap: Number(options.bootstrap),
+      id: studyId,
+      save: options.save,
+      store: new FileStore(dataRoot(), storeOptions()),
+    });
+    console.log(JSON.stringify(report, null, 2));
+    if (options.save) {
+      console.error(`→ data/reports/${report.id}.json`);
+    }
   });
 
 program

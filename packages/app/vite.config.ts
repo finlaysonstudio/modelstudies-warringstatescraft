@@ -14,6 +14,7 @@ import {
 // (git-ignored), everything else under <repo>/data/<model>/.
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const runsDir = path.join(repoRoot, "var", "runs");
+const studiesDir = path.join(repoRoot, "var", "studies");
 const dataDir = path.join(repoRoot, "data");
 
 interface RunFile {
@@ -29,6 +30,58 @@ interface RunFile {
   matrix?: Record<string, string[]>;
   panel?: { judges?: string[]; mode?: string };
   narrator?: string;
+  study?: string;
+  replicate?: number;
+}
+
+interface StudyFile {
+  id?: string;
+  title?: string;
+  createdAt?: string;
+  status?: string;
+  statusDetail?: string;
+  report?: string;
+  scenarios?: string[];
+  models?: string[];
+  replicates?: number;
+  arms?: { status?: string }[];
+}
+
+async function buildStudyIndex(): Promise<object[]> {
+  let files: string[] = [];
+  try {
+    files = (await readdir(studiesDir)).filter((file) => file.endsWith(".json"));
+  } catch {
+    return [];
+  }
+  const index: object[] = [];
+  for (const file of files) {
+    try {
+      const study = JSON.parse(
+        await readFile(path.join(studiesDir, file), "utf8"),
+      ) as StudyFile;
+      const arms = Array.isArray(study.arms) ? study.arms : [];
+      index.push({
+        id: study.id ?? file.replace(/\.json$/, ""),
+        title: study.title ?? "",
+        createdAt: study.createdAt ?? "",
+        status: study.status ?? "active",
+        ...(study.statusDetail ? { statusDetail: study.statusDetail } : {}),
+        report: study.report ?? "basic",
+        scenarios: study.scenarios ?? [],
+        models: study.models ?? [],
+        replicates: study.replicates ?? 0,
+        armCount: arms.length,
+        completeCount: arms.filter((arm) => arm.status === "complete").length,
+        errorCount: arms.filter((arm) => arm.status === "error").length,
+      });
+    } catch {
+      // unreadable file: skip it
+    }
+  }
+  return (index as { createdAt: string }[]).sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt),
+  );
 }
 
 async function buildScenarioIndex(): Promise<object[]> {
@@ -99,6 +152,7 @@ async function buildIndex(): Promise<object[]> {
         ...(run.matrix ? { matrix: run.matrix } : {}),
         ...(run.panel ? { panel: run.panel } : {}),
         ...(run.narrator ? { narrator: run.narrator } : {}),
+        ...(run.study ? { study: run.study, replicate: run.replicate } : {}),
       });
     } catch {
       // unreadable file: skip it rather than break the index
@@ -124,14 +178,20 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       res.end(JSON.stringify(await buildScenarioIndex()));
       return;
     }
+    if (url === "/data/studies.json") {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(await buildStudyIndex()));
+      return;
+    }
     const match =
-      /^\/data\/(runs|scorecards|scenarios)\/([A-Za-z0-9._-]+)\.json$/.exec(
+      /^\/data\/(runs|studies|scorecards|scenarios|reports|reference)\/([A-Za-z0-9._-]+)\.json$/.exec(
         url,
       );
     if (match) {
+      const varDirs: Record<string, string> = { runs: runsDir, studies: studiesDir };
       try {
         const body = await readFile(
-          path.join(match[1] === "runs" ? runsDir : path.join(dataDir, match[1]), `${match[2]}.json`),
+          path.join(varDirs[match[1]] ?? path.join(dataDir, match[1]), `${match[2]}.json`),
           "utf8",
         );
         res.setHeader("Content-Type", "application/json");

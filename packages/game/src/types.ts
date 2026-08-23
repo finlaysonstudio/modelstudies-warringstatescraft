@@ -16,6 +16,22 @@ export interface Scenario {
   simulates: string;
   /** toggleable priorities block (instruction-ablation lever) */
   priorities?: string[];
+  /**
+   * how seats answer a turn: `memo` (default) is the free decision memo;
+   * `choice` answers the turn's `questions` and selects from its `choices`
+   */
+  elicitation?: Elicitation;
+  /**
+   * what the public record carries between turns: `narrated` (default) is
+   * the narrator's account of each settled turn; `scripted` is the injects
+   * and scripted moves only, so no generated text reaches a later prompt
+   */
+  record?: "narrated" | "scripted";
+  /**
+   * which reporting definition a study of this scenario builds (default
+   * `basic`); see `REPORTS`
+   */
+  report?: ReportId;
   seats: ScenarioSeat[];
   turns: ScenarioTurn[];
   /** which turns fork, and which seat's decision is focal */
@@ -24,9 +40,23 @@ export interface Scenario {
   escalationLadder: string[];
 }
 
+export type Elicitation = "memo" | "choice";
+
+/** reporting definitions a scenario or study can name */
+export type ReportId = "basic" | "lamparth";
+
+export const REPORT_IDS: ReportId[] = ["basic", "lamparth"];
+
+export const ELICITATIONS: Elicitation[] = ["memo", "choice"];
+
 export interface ScenarioSeat {
   id: string;
   name: string;
+  /**
+   * played by the scenario's script (each turn's `script[seat]`), never by a
+   * model; the roster records `SCRIPTED_MODEL` for it
+   */
+  scripted?: boolean;
   /** system-prompt brief for the cell playing this seat */
   brief: string;
   objectives: string[];
@@ -39,6 +69,20 @@ export interface ScenarioTurn {
   inject: string;
   /** optional move menu; cells may also free-move */
   moveMenu?: string[];
+  /** choice elicitation: free-text questions answered in order */
+  questions?: string[];
+  /** choice elicitation: the forced-choice action set (select all that apply) */
+  choices?: ScenarioChoice[];
+  /** scripted seats' moves this turn, seat id -> text */
+  script?: Record<string, string>;
+}
+
+/** One selectable action in a forced-choice turn. */
+export interface ScenarioChoice {
+  id: string;
+  label: string;
+  /** aggressiveness class for the Lamparth-style measure */
+  stance?: "agg" | "des";
 }
 
 export interface DecisionPoint {
@@ -55,7 +99,13 @@ export interface DecisionBrief {
     decision: string;
     rationale: string;
     redLines: string[];
+    /** choice elicitation: answers to the turn's questions, in order */
+    answers?: string[];
+    /** choice elicitation: selected choice ids */
+    choices?: string[];
   };
+  /** simulated team dialog that preceded the decision, one entry per round */
+  dialog?: string[];
   /** consensus-lane only */
   consensus?: {
     deferredOn: string[];
@@ -71,6 +121,9 @@ export type DecisionMemo = DecisionBrief["memo"] & {
 
 /** Model id recorded for a seat or decision played by a human. */
 export const HUMAN_MODEL = "human";
+
+/** Model id recorded for a seat played by the scenario's script. */
+export const SCRIPTED_MODEL = "scripted";
 
 /**
  * Model id shown to a human player in place of a real one. Human prompts
@@ -228,6 +281,14 @@ export interface Run {
   narrator?: string;
   /** start-fork roots only: seat id -> candidate models, one child per combination */
   matrix?: Record<string, string[]>;
+  /** rounds of simulated team dialog before each model decision (0 = direct) */
+  dialog?: number;
+  /** false when the scenario's priorities block was withheld (instruction ablation) */
+  priorities?: boolean;
+  /** study this run belongs to, when it was played as a study arm */
+  study?: string;
+  /** 1-based replicate index within the study arm's cell */
+  replicate?: number;
   /** copied from the scenario so replays render without scenario code */
   escalationLadder: string[];
   branch: RunBranch;
@@ -235,4 +296,45 @@ export interface Run {
   children: string[];
   turns: TurnRecord[];
   debriefs: Debrief[];
+}
+
+/**
+ * A study is a planned set of games: every listed scenario (cell) crossed
+ * with every subject roster, each played `replicates` times. Each arm is
+ * one game (a root run); the study records which run plays it. Files land
+ * at var/studies/<studyId>.json.
+ */
+export interface Study {
+  id: string;
+  model: "studies";
+  title: string;
+  createdAt: string;
+  status: RunStatus;
+  statusDetail?: string;
+  /** reporting definition the study's report builds */
+  report: ReportId;
+  /** scenario ids (cells), in display order */
+  scenarios: string[];
+  /** subject model ids; each plays every non-scripted seat in its arms */
+  models: string[];
+  /** games per cell per model */
+  replicates: number;
+  /** seat id -> model id overrides applied to every arm (e.g. a fixed opponent) */
+  seats?: Record<string, string>;
+  panel?: PanelConfig;
+  narrator?: string;
+  dialog?: number;
+  priorities?: boolean;
+  arms: StudyArm[];
+}
+
+export interface StudyArm {
+  scenario: string;
+  model: string;
+  /** 1-based */
+  replicate: number;
+  /** the root run playing this arm, once started */
+  runId?: string;
+  status: "pending" | RunStatus;
+  statusDetail?: string;
 }

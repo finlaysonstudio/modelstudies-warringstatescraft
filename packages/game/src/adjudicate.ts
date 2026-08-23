@@ -57,7 +57,7 @@ export const NARRATOR_SYSTEM = (scenario: Scenario): string =>
 
 const turnBriefsBlock = (turn: TurnRecord): string =>
   turn.briefs
-    .filter((brief) => !brief.error)
+    .filter((brief) => !brief.error && brief.memo.decision)
     .map(
       (brief) =>
         `${brief.seat.toUpperCase()} decision: ${brief.memo.decision}\n` +

@@ -15,6 +15,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span aria-hidden className="text-zinc-700">
             ·
           </span>
+          <NavLink to="/studies" label="Studies" />
+          <span aria-hidden className="text-zinc-700">
+            ·
+          </span>
           <NavLink to="/values" label="Values" />
           <span aria-hidden className="text-zinc-700">
             ·

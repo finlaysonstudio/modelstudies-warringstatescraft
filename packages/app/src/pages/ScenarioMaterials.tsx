@@ -137,11 +137,13 @@ export function ScenarioMaterialsPage() {
         </p>
         <p className="mt-3 font-plex-mono text-[10px] text-zinc-600">
           {materials.seats.length} seats · {materials.turns.length} turns ·
-          forks at{" "}
-          {scenario.decisionPoints
-            .map((point) => `turn ${point.turn} (${point.seat})`)
-            .join(", ")}{" "}
-          · exported {materials.createdAt.slice(0, 10)}
+          {scenario.decisionPoints.length
+            ? ` forks at ${scenario.decisionPoints
+                .map((point) => `turn ${point.turn} (${point.seat})`)
+                .join(", ")}`
+            : " no fork"}{" "}
+          · report {scenario.report ?? "basic"} · exported{" "}
+          {materials.createdAt.slice(0, 10)}
         </p>
       </header>
 
@@ -175,7 +177,7 @@ export function ScenarioMaterialsPage() {
                 prompt={seat.systemPrompt}
                 promptLabel="System prompt, verbatim"
               >
-                <p className="text-sm leading-relaxed text-zinc-300">
+                <p className="text-sm leading-relaxed text-zinc-300 whitespace-pre-wrap">
                   {seat.brief}
                 </p>
                 <p className="mt-4 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
@@ -210,9 +212,55 @@ export function ScenarioMaterialsPage() {
                 <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
                   Inject
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-zinc-300">
+                <p className="mt-1 text-sm leading-relaxed whitespace-pre-wrap text-zinc-300">
                   {turn.inject}
                 </p>
+                {turn.script
+                  ? Object.entries(turn.script).map(([seat, text]) => (
+                      <div key={seat}>
+                        <p className="mt-4 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                          Scripted · {seat}
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed whitespace-pre-wrap text-zinc-300">
+                          {text}
+                        </p>
+                      </div>
+                    ))
+                  : null}
+                {turn.questions?.length ? (
+                  <>
+                    <p className="mt-4 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                      Questions
+                    </p>
+                    <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm text-zinc-300">
+                      {turn.questions.map((question) => (
+                        <li key={question}>{question}</li>
+                      ))}
+                    </ol>
+                  </>
+                ) : null}
+                {turn.choices?.length ? (
+                  <>
+                    <p className="mt-4 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                      Choices · select all that apply
+                    </p>
+                    <ul className="mt-1 space-y-1 text-sm text-zinc-300">
+                      {turn.choices.map((choice) => (
+                        <li key={choice.id} className="flex gap-x-2">
+                          <span className="font-plex-mono text-xs text-brand-terminal">
+                            [{choice.id}]
+                          </span>
+                          <span>{choice.label}</span>
+                          {choice.stance && (
+                            <span className="font-plex-mono text-[10px] text-zinc-500 uppercase">
+                              {choice.stance}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
                 {turn.moveMenu?.length ? (
                   <>
                     <p className="mt-4 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">

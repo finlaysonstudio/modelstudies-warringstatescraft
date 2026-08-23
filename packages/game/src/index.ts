@@ -1,11 +1,20 @@
 export * from "./types";
 export * from "./scenarios";
 export {
+  CHOICE_FORMAT,
+  choiceBlock,
+  choiceFormat,
   consensusPrompt,
+  dialogPrompt,
+  DIALOG_CLOSE,
+  DIALOG_CONTINUE,
+  DIALOG_OPEN,
   elicitBrief,
   elicitConsensusBrief,
   publicRecord,
   privateRecord,
+  scriptBlock,
+  scriptedBrief,
   seatSystem,
   toDecisionBrief,
   turnPrompt,
@@ -28,6 +37,39 @@ export { LAND_REGISTER } from "./scenario/landRegister";
 export { SCHOOLS_OF_THE_HUNDRED } from "./scenario/schoolsOfTheHundred";
 export { CONSCRIPTION_ROLLS } from "./scenario/conscriptionRolls";
 export { FAMINE_GRANARY } from "./scenario/famineGranary";
+export {
+  buildLamparth,
+  LAMPARTH_2024,
+  LAMPARTH_ACCURACIES,
+  LAMPARTH_POSTURES,
+  LAMPARTH_TRAININGS,
+  LAMPARTH_TREATMENTS,
+  LAMPARTH_VARIANTS,
+  lamparthId,
+  lamparthTreatmentOf,
+  MOVE_1_CHOICES,
+  MOVE_2_CHOICES,
+} from "./scenario/lamparth2024";
+export type {
+  LamparthAccuracy,
+  LamparthPosture,
+  LamparthTraining,
+  LamparthTreatment,
+} from "./scenario/lamparth2024";
+export {
+  aggressiveness,
+  bootstrapMean,
+  choiceStats,
+  moveStance,
+  selectedStance,
+  selectionFor,
+} from "./choices";
+export type {
+  ChoiceFrequency,
+  ChoiceStats,
+  ChoiceStatsOptions,
+  MoveStance,
+} from "./choices";
 export { buildScorecard } from "./metrics";
 export type {
   BranchSummary,
@@ -41,3 +83,16 @@ export type {
   SeatMaterials,
   TurnMaterials,
 } from "./materials";
+export * from "./reports";
+export {
+  buildStudyReport,
+  loadStudy,
+  planStudy,
+  runStudy,
+  studyRuns,
+} from "./study";
+export type {
+  BuildStudyReportOptions,
+  PlanStudyOptions,
+  RunStudyOptions,
+} from "./study";

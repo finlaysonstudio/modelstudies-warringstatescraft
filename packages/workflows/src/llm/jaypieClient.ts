@@ -58,7 +58,9 @@ export function createLlmClient(
         ...(options.format && {
           format: options.format as JaypieOperateOptions["format"],
         }),
-        ...(options.history && { history: normalizeHistory(options.history) }),
+        ...(options.history?.length && {
+          history: normalizeHistory(options.history),
+        }),
       };
       const response = await Llm.operate(prompt, operateOptions);
       return { content: response.content, history: response.history };

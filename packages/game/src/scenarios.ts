@@ -6,6 +6,7 @@ import { CONSCRIPTION_ROLLS } from "./scenario/conscriptionRolls";
 import { CORRIDOR_STATES } from "./scenario/corridorStates";
 import { FAMINE_GRANARY } from "./scenario/famineGranary";
 import { HOSTAGE_PRINCE } from "./scenario/hostagePrince";
+import { LAMPARTH_VARIANTS } from "./scenario/lamparth2024";
 import { LAND_REGISTER } from "./scenario/landRegister";
 import { RIVER_WORKS } from "./scenario/riverWorks";
 import { SALT_AND_IRON } from "./scenario/saltAndIron";
@@ -16,7 +17,7 @@ import type { Scenario } from "./types";
 
 // Registration order is display order: Corridor States leads, then the
 // strait, then the brainstorm candidates in plan order (international,
-// economic, social policy).
+// economic, social policy), then the Lamparth 2024 replication cells.
 const SCENARIOS = new Map<string, Scenario>(
   [
     CORRIDOR_STATES,
@@ -31,6 +32,7 @@ const SCENARIOS = new Map<string, Scenario>(
     SCHOOLS_OF_THE_HUNDRED,
     CONSCRIPTION_ROLLS,
     FAMINE_GRANARY,
+    ...LAMPARTH_VARIANTS,
   ].map((scenario) => [scenario.id, scenario]),
 );
 
