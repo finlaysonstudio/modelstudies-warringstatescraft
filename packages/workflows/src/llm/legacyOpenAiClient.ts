@@ -138,6 +138,67 @@ const usageOf = (
   ];
 };
 
+/**
+ * Repair the JSON defects `gpt-4-0613` produces in function arguments:
+ * trailing commas before a closing bracket, raw control characters inside
+ * strings, and a reply cut off mid-string or mid-object (the string and every
+ * open bracket are closed). Anything else still fails the parse and the raw
+ * string is returned for the caller's own validation to reject.
+ */
+export const repairJson = (text: string): string => {
+  const CONTROL: Record<string, string> = {
+    "\b": "\\b",
+    "\f": "\\f",
+    "\n": "\\n",
+    "\r": "\\r",
+    "\t": "\\t",
+  };
+  let out = "";
+  const stack: string[] = [];
+  let inString = false;
+  let escaped = false;
+  for (const char of text) {
+    if (inString) {
+      if (escaped) {
+        out += char;
+        escaped = false;
+      } else if (char === "\\") {
+        out += char;
+        escaped = true;
+      } else if (char === '"') {
+        out += char;
+        inString = false;
+      } else if (char < " ") {
+        out +=
+          CONTROL[char] ??
+          `\\u${char.codePointAt(0)!.toString(16).padStart(4, "0")}`;
+      } else {
+        out += char;
+      }
+      continue;
+    }
+    if (char === '"') {
+      out += char;
+      inString = true;
+    } else if (char === "{" || char === "[") {
+      out += char;
+      stack.push(char === "{" ? "}" : "]");
+    } else if (char === "}" || char === "]") {
+      // drop a trailing comma the model left before the close
+      out = out.replace(/,\s*$/, "");
+      out += char;
+      stack.pop();
+    } else {
+      out += char;
+    }
+  }
+  if (escaped) out = out.slice(0, -1);
+  if (inString) out += '"';
+  out = out.replace(/,\s*$/, "");
+  while (stack.length) out += stack.pop();
+  return out;
+};
+
 const contentOf = (
   response: ChatCompletionResponse,
   structured: boolean,
@@ -149,7 +210,11 @@ const contentOf = (
     try {
       return JSON.parse(args);
     } catch {
-      return args;
+      try {
+        return JSON.parse(repairJson(args));
+      } catch {
+        return args;
+      }
     }
   }
   return message?.content ?? "";
@@ -243,7 +308,9 @@ const postWithRetry = async ({
     }
     if (result.ok && parsed.choices) return parsed;
     const detail = parsed.error?.message ?? text.slice(0, 200);
-    const retryable = result.status === 429 || result.status >= 500;
+    // an exhausted balance is a 429 no backoff will cure
+    const quota = parsed.error?.code === "insufficient_quota";
+    const retryable = !quota && (result.status === 429 || result.status >= 500);
     if (retryable && attempt < RETRIES) {
       await sleep(RETRY_BASE_MS * 2 ** attempt);
       continue;

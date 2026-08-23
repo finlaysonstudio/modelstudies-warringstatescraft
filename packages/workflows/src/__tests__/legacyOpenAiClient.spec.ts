@@ -5,6 +5,7 @@ import {
   isLegacyOpenAiModel,
   LEGACY_OPENAI_MODELS,
   OPENAI_CHAT_COMPLETIONS_URL,
+  repairJson,
 } from "../llm/legacyOpenAiClient";
 
 const completion = (
@@ -146,6 +147,39 @@ describe("createLegacyOpenAiClient", () => {
     expect(tool.function.parameters).toEqual(FORMAT);
   });
 
+  it("repairs the JSON defects gpt-4-0613 produces in function arguments", () => {
+    expect(repairJson('{"a": ["x", "y",\n ], "b": 1,}')).toBe(
+      '{"a": ["x", "y"], "b": 1}',
+    );
+    expect(JSON.parse(repairJson('{"a": "line one\nline two"}'))).toEqual({
+      a: "line one\nline two",
+    });
+    expect(JSON.parse(repairJson('{"a": ["x", "unterminat'))).toEqual({
+      a: ["x", "unterminat"],
+    });
+    expect(JSON.parse(repairJson('{"a": "tab\there"}'))).toEqual({
+      a: "tab\there",
+    });
+  });
+
+  it("parses arguments a repair can save and keeps the truth beyond repair raw", async () => {
+    const args = '{"answers": ["ok",\n], "choices": ["b",]}';
+    const doFetch = vi.fn(async () =>
+      respond(
+        completion({
+          role: "assistant",
+          tool_calls: [{ function: { name: "response", arguments: args } }],
+        }),
+      ),
+    );
+    const client = createLegacyOpenAiClient({ apiKey: "k", fetch: doFetch });
+    const result = await client.operate("Choose.", {
+      model: "gpt-4-0613",
+      format: FORMAT,
+    });
+    expect(result.content).toEqual({ answers: ["ok"], choices: ["b"] });
+  });
+
   it("returns malformed function arguments as the raw string", async () => {
     const doFetch = vi.fn(async () =>
       respond(
@@ -234,6 +268,27 @@ describe("createLegacyOpenAiClient", () => {
     const result = await client.operate("Hi", { model: "gpt-4-0613" });
     expect(result.content).toBe("ok");
     expect(sleep.mock.calls.map((call) => call[0])).toEqual([2000, 4000]);
+
+    const quota = vi.fn(async () =>
+      respond(
+        JSON.stringify({
+          error: {
+            message: "You have no credits remaining.",
+            code: "insufficient_quota",
+          },
+        }),
+        429,
+      ),
+    );
+    const exhausted = createLegacyOpenAiClient({
+      apiKey: "k",
+      fetch: quota,
+      sleep,
+    });
+    await expect(
+      exhausted.operate("Hi", { model: "gpt-4-0613" }),
+    ).rejects.toThrow(/credits/);
+    expect(quota).toHaveBeenCalledTimes(1);
 
     const failing = vi.fn(async () =>
       respond(JSON.stringify({ error: { message: "bad schema" } }), 400),
