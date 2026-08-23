@@ -39,6 +39,10 @@ export interface DecisionBrief {
   };
   /** simulated team dialog that preceded the decision, one entry per round */
   dialog?: string[];
+  /** choice elicitation: decision calls repeated on an invalid selection */
+  retries?: number;
+  /** choice elicitation: why the final selection failed validation (reports exclude the game) */
+  unusable?: string;
   /** consensus-lane only */
   consensus?: {
     deferredOn: string[];
@@ -121,6 +125,8 @@ export interface Run {
   matrix?: Record<string, string[]>;
   /** rounds of simulated team dialog before each model decision */
   dialog?: number;
+  /** target words per dialog round, when the rounds were length-instructed */
+  dialogWords?: number;
   /** false when the scenario's priorities block was withheld */
   priorities?: boolean;
   /** study this run belongs to, when it was played as a study arm */
@@ -192,6 +198,7 @@ export interface Study {
   panel?: PanelConfig;
   narrator?: string;
   dialog?: number;
+  dialogWords?: number;
   priorities?: boolean;
   arms: StudyArm[];
 }
@@ -327,7 +334,11 @@ export interface LamparthGroup {
   kind: "study" | "reference";
   model?: string;
   n: number;
+  /** complete games dropped for a missing or unusable selection */
+  excluded: number;
   cells: { scenario: string; n: number }[];
+  /** study groups: mean words of simulated dialog per move */
+  dialogWords?: { turn: number; mean: number }[];
   frequencies: (LamparthColumn & Estimate)[];
   effects: LamparthEffect[];
   aggressiveness: Estimate;
@@ -443,6 +454,8 @@ export interface ScenarioMaterials {
     /** the modern situation the scenario simulates */
     simulates: string;
     priorities?: string[];
+    /** `bare` seat prompts carry the brief and priorities only */
+    seatPrompt?: "framed" | "bare";
     elicitation?: "memo" | "choice";
     /** reporting definition a study of this scenario builds */
     report?: ReportId;

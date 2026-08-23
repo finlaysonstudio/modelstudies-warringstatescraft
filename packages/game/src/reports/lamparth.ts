@@ -68,7 +68,18 @@ export interface LamparthGame {
   treatment: LamparthTreatment;
   /** 0/1 per column, in `columns` order */
   flags: number[];
+  /** study games: words of simulated dialog per move, keyed by turn */
+  dialogWords?: Record<string, number>;
 }
+
+/** what `gamesOfRuns` read: the usable games and how many it dropped */
+export interface LamparthGames {
+  games: LamparthGame[];
+  excluded: number;
+}
+
+const wordCount = (text: string): number =>
+  text.split(/\s+/).filter(Boolean).length;
 
 export interface LamparthEffect {
   factor: keyof LamparthTreatment;
@@ -95,8 +106,18 @@ export interface LamparthGroup {
   model?: string;
   /** games with a usable selection on both moves */
   n: number;
+  /**
+   * complete games dropped for a missing or unusable selection on a move
+   * (`DecisionBrief.unusable` or a failed brief); reference groups have none
+   */
+  excluded: number;
   /** games per cell */
   cells: { scenario: string; n: number }[];
+  /**
+   * study groups: words of simulated dialog per move, mean across the
+   * counted games (the paper's length was about 1,050 per move at dialog 3)
+   */
+  dialogWords?: { turn: number; mean: number }[];
   frequencies: (LamparthColumn & Estimate)[];
   effects: LamparthEffect[];
   aggressiveness: Estimate;
@@ -180,16 +201,21 @@ const flagsOf = (
 const subjectSeat = (scenario: Scenario): string =>
   scenario.seats.find((seat) => !seat.scripted)?.id ?? scenario.seats[0].id;
 
-/** one game row per complete study run of `model` */
+/**
+ * one game row per complete study run of `model` whose subject seat has a
+ * usable selection on every move; a failed or `unusable` brief drops the
+ * game and counts it in `excluded`
+ */
 export const gamesOfRuns = (
   study: Study,
   runs: Run[],
   scenarios: Map<string, Scenario>,
   columns: LamparthColumn[],
   model: string,
-): LamparthGame[] => {
+): LamparthGames => {
   const arms = armOfRuns(study, runs);
   const games: LamparthGame[] = [];
+  let excluded = 0;
   for (const run of runs) {
     const arm = arms.get(run.id);
     if (!arm || arm.model !== model || run.status !== "complete") continue;
@@ -198,14 +224,51 @@ export const gamesOfRuns = (
     if (!scenario || !treatment) continue;
     const seat = subjectSeat(scenario);
     const choices: Record<string, string[] | null> = {};
+    const dialogWords: Record<string, number> = {};
     for (const turn of run.turns) {
-      const brief = turn.briefs.find((b) => b.seat === seat && !b.error);
+      const brief = turn.briefs.find(
+        (b) => b.seat === seat && !b.error && !b.unusable,
+      );
       choices[String(turn.index)] = brief?.memo.choices ?? null;
+      if (brief?.dialog?.length) {
+        dialogWords[String(turn.index)] = brief.dialog.reduce(
+          (sum, round) => sum + wordCount(round),
+          0,
+        );
+      }
     }
     const flags = flagsOf(columns, choices);
-    if (flags) games.push({ scenario: run.scenario, treatment, flags });
+    if (!flags) {
+      excluded++;
+      continue;
+    }
+    games.push({
+      scenario: run.scenario,
+      treatment,
+      flags,
+      ...(Object.keys(dialogWords).length ? { dialogWords } : {}),
+    });
   }
-  return games;
+  return { games, excluded };
+};
+
+/** mean words of dialog per move across the games that carry any */
+export const dialogWordsOf = (
+  games: LamparthGame[],
+  columns: LamparthColumn[],
+): LamparthGroup["dialogWords"] => {
+  const turns = [...new Set(columns.map((column) => column.turn))].sort(
+    (a, b) => a - b,
+  );
+  const rows = turns.map((turn) => {
+    const words = games
+      .map((game) => game.dialogWords?.[String(turn)])
+      .filter((value): value is number => value !== undefined);
+    return { turn, mean: words.length ? mean(words) : 0, n: words.length };
+  });
+  return rows.some((row) => row.n)
+    ? rows.map(({ turn, mean: value }) => ({ turn, mean: value }))
+    : undefined;
 };
 
 const gamesOfReference = (
@@ -362,7 +425,9 @@ export const effectsOf = (
   });
 
 export const groupOf = (
-  base: Pick<LamparthGroup, "id" | "label" | "kind" | "model">,
+  base: Pick<LamparthGroup, "id" | "label" | "kind" | "model"> & {
+    excluded?: number;
+  },
   games: LamparthGame[],
   columns: LamparthColumn[],
   scenarios: string[],
@@ -373,13 +438,17 @@ export const groupOf = (
     (rows) => columnMeans(rows, columns.length),
     options,
   );
+  const { excluded = 0, ...identity } = base;
+  const dialogWords = dialogWordsOf(games, columns);
   return {
-    ...base,
+    ...identity,
     n: games.length,
+    excluded,
     cells: scenarios.map((scenario) => ({
       scenario,
       n: games.filter((game) => game.scenario === scenario).length,
     })),
+    ...(dialogWords ? { dialogWords } : {}),
     frequencies: withColumns(columns, frequencies.value, frequencies.ci),
     effects: effectsOf(games, columns, options),
     aggressiveness: aggressivenessOf(games, columns, {
@@ -440,7 +509,7 @@ export const LAMPARTH_REPORT: ReportDefinition<LamparthReport> = {
       label: model,
       kind: "study" as const,
       model,
-      games: gamesOfRuns(input.study, input.runs, scenarios, columns, model),
+      ...gamesOfRuns(input.study, input.runs, scenarios, columns, model),
     }));
 
     const reference = await input.store.get<LamparthReference>(

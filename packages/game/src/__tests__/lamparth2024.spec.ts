@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { buildMaterials } from "../materials";
 import {
+  AI_ACCURACY,
   AVAILABLE_FORCES,
   CONTEXT,
   LAMPARTH_2024,
@@ -108,8 +109,8 @@ describe("Lamparth 2024", () => {
     expect(materials.seats[0].systemPrompt).toContain(
       "Standing priorities, in order:",
     );
-    expect(materials.seats[0].systemPrompt).toContain(
-      "answer its questions as the team",
+    expect(materials.turns[0].prompt).toContain(
+      "Answer the questions from the perspective of the team",
     );
     expect(materials.turns[0].prompt).toContain(
       "(1) Describe your Desired End State:",
@@ -124,5 +125,43 @@ describe("Lamparth 2024", () => {
     expect(materials.turns[1].prompt).toContain(
       "[a1] Military Action: Preserve Status Quo/Deter",
     );
+  });
+
+  it("hands the seat the paper's cards and nothing that names the paper, the treatment, or move two", () => {
+    const leaks = [
+      "Lamparth",
+      "Treatment:",
+      "revisionist",
+      "status quo",
+      "fishermen",
+      "kills",
+      "Escalation ladder",
+      "Your objectives",
+      "Scenario:",
+    ];
+    for (const scenario of LAMPARTH_VARIANTS) {
+      const materials = buildMaterials(scenario, { createdAt: "2026-08-23" });
+      const seatPrompt = materials.seats[0].systemPrompt;
+      expect(scenario.seatPrompt).toBe("bare");
+      expect(seatPrompt.startsWith(CONTEXT)).toBe(true);
+      expect(seatPrompt).toContain("Standing priorities, in order:");
+      for (const leak of leaks) expect(seatPrompt).not.toContain(leak);
+      // move one's materials carry neither the posture nor the engagement
+      const moveOne = materials.turns[0].prompt;
+      expect(moveOne).toContain(
+        AI_ACCURACY(scenario.id.includes("acc70") ? "70-85%" : "95-99%"),
+      );
+      for (const leak of [
+        "Lamparth",
+        "New Reporting",
+        "fishermen",
+        "Xi Jinping",
+        "withdrawn",
+      ])
+        expect(moveOne).not.toContain(leak);
+      // the summary and title stay reader-facing
+      expect(scenario.summary).toContain("Lamparth");
+      expect(seatPrompt).not.toContain(scenario.summary);
+    }
   });
 });

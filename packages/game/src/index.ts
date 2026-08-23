@@ -2,9 +2,13 @@ export * from "./types";
 export * from "./scenarios";
 export {
   CHOICE_FORMAT,
+  CHOICE_RETRIES,
   choiceBlock,
   choiceFormat,
+  choiceRetryPrompt,
   consensusPrompt,
+  dialogContinue,
+  dialogLength,
   dialogPrompt,
   DIALOG_CLOSE,
   DIALOG_CONTINUE,
@@ -18,6 +22,7 @@ export {
   seatSystem,
   toDecisionBrief,
   turnPrompt,
+  validateChoices,
 } from "./briefs";
 export { adjudicateTurn } from "./adjudicate";
 export type { AdjudicateOptions } from "./adjudicate";

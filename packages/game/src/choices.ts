@@ -98,7 +98,9 @@ export const selectionFor = (
   seatId: string,
 ): string[] | null => {
   const turn = run.turns.find((t) => t.index === turnIndex);
-  const brief = turn?.briefs.find((b) => b.seat === seatId && !b.error);
+  const brief = turn?.briefs.find(
+    (b) => b.seat === seatId && !b.error && !b.unusable,
+  );
   return brief?.memo.choices ?? null;
 };
 

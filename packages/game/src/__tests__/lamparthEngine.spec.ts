@@ -7,11 +7,13 @@ import type {
   Store,
 } from "@modelstudies/workflows";
 
-import { choiceStats } from "../choices";
+import { CHOICE_RETRIES } from "../briefs";
+import { choiceStats, selectionFor } from "../choices";
 import { GameEngine, matrixCombinations } from "../engine";
+import { gamesOfRuns, groupOf, lamparthColumns } from "../reports/lamparth";
 import { LAMPARTH_2024 } from "../scenario/lamparth2024";
 import { SCRIPTED_MODEL } from "../types";
-import type { Run } from "../types";
+import type { Run, Study } from "../types";
 
 class MemoryStore implements Store {
   readonly entities = new Map<string, EntityLike>();
@@ -37,9 +39,14 @@ interface Call {
   options?: LlmOperateOptions;
 }
 
-/** answers choice turns by picking from the schema enum; records every call */
-const makeStub = (pick: (turn: number) => string[]) => {
+/**
+ * answers choice turns by picking from the schema enum; records every call.
+ * `pick` sees the attempt number for the turn (0 = first decision call), so
+ * a stub can return an invalid selection and then a valid one.
+ */
+const makeStub = (pick: (turn: number, attempt: number) => string[]) => {
   const calls: Call[] = [];
+  const attempts = new Map<number, number>();
   const llm: LlmClient = {
     async operate(prompt: string, options?: LlmOperateOptions) {
       calls.push({ prompt, options });
@@ -59,11 +66,20 @@ const makeStub = (pick: (turn: number) => string[]) => {
       if (!options?.format) {
         return { content: `Dialog for ${options?.model}.` };
       }
-      const turn = /TURN (\d+)/.exec(prompt);
+      const retry = prompt.startsWith("Your selection was not usable");
+      const turnText = retry
+        ? (options?.history ?? [])
+            .map((entry) => entry.content)
+            .reverse()
+            .find((content) => /TURN (\d+)/.test(content))
+        : prompt;
+      const turn = Number(/TURN (\d+)/.exec(turnText ?? "")?.[1] ?? 1);
+      const attempt = attempts.get(turn) ?? 0;
+      attempts.set(turn, attempt + 1);
       return {
         content: {
           answers: ["end state"],
-          choices: pick(Number(turn?.[1] ?? 1)),
+          choices: pick(turn, attempt),
           rationale: "because",
         },
       };
@@ -167,6 +183,163 @@ describe("Lamparth 2024 in the engine", () => {
     for (const call of seatCalls) {
       expect(call.options?.system).not.toContain("Standing priorities");
     }
+  });
+
+  it("states the dialog length target in every dialog prompt and records it on the run", async () => {
+    const { calls, llm } = makeStub(() => ["b"]);
+    const run = await new GameEngine({
+      dialog: 3,
+      dialogWords: 350,
+      llm,
+      roster: ["model-a"],
+      scenario: LAMPARTH_2024.id,
+      store: new MemoryStore(),
+    }).play();
+
+    expect(run.dialogWords).toBe(350);
+    const dialogCalls = calls.filter((call) =>
+      /Simulate a conversation|Continue the dialogue/.test(call.prompt),
+    );
+    expect(dialogCalls).toHaveLength(6);
+    for (const call of dialogCalls) {
+      expect(call.prompt).toContain(
+        "(about 350 words for this round of dialogue)",
+      );
+    }
+    expect(dialogCalls[1].prompt).toBe(
+      "Continue the dialogue (about 350 words for this round of dialogue)",
+    );
+    // without the target the prompts are the paper's verbatim
+    const plain = makeStub(() => ["b"]);
+    await new GameEngine({
+      dialog: 2,
+      llm: plain.llm,
+      roster: ["model-a"],
+      scenario: LAMPARTH_2024.id,
+      store: new MemoryStore(),
+    }).play();
+    expect(
+      plain.calls.filter((call) => call.prompt === "Continue the dialogue"),
+    ).toHaveLength(2);
+    expect(plain.calls.some((call) => call.prompt.includes("about 350"))).toBe(
+      false,
+    );
+  });
+
+  it("retries an empty, whole-menu, or duplicated selection and keeps the valid one", async () => {
+    const { calls, llm } = makeStub((turn, attempt) => {
+      if (turn === 1)
+        return [[], ["a", "b", "c", "d", "e", "f", "g"], ["b", "e"]][attempt];
+      return [
+        ["d", "d", "k"],
+        ["d", "k"],
+      ][attempt];
+    });
+    const run = await new GameEngine({
+      llm,
+      roster: ["model-a"],
+      scenario: LAMPARTH_2024.id,
+      store: new MemoryStore(),
+    }).play();
+
+    expect(run.status).toBe("complete");
+    const [one, two] = run.turns.map((turn) =>
+      turn.briefs.find((brief) => brief.seat === "us")!,
+    );
+    expect(one.memo.choices).toEqual(["b", "e"]);
+    expect(one.retries).toBe(2);
+    expect(one.unusable).toBeUndefined();
+    expect(two.memo.choices).toEqual(["d", "k"]);
+    expect(two.retries).toBe(1);
+    expect(two.unusable).toBeUndefined();
+
+    const retries = calls.filter((call) =>
+      call.prompt.startsWith("Your selection was not usable"),
+    );
+    expect(retries.map((call) => /\((.*?)\)/.exec(call.prompt)?.[1])).toEqual([
+      "empty selection",
+      "entire menu selected",
+      "duplicated selection",
+    ]);
+    // the retry carries the invalid reply and re-lists the menu
+    expect(retries[0].options?.history).toHaveLength(2);
+    expect(retries[0].options?.history?.[1].content).toContain('"choices":[]');
+    expect(retries[0].prompt).toContain("[g] Hold fire at all costs");
+    expect(retries[0].options?.format).toBeDefined();
+  });
+
+  it("marks a selection that stays invalid unusable, completes the game, and the report excludes it", async () => {
+    const store = new MemoryStore();
+    const { calls, llm } = makeStub((turn) => (turn === 1 ? [] : ["d"]));
+    const run = await new GameEngine({
+      llm,
+      roster: ["model-a"],
+      scenario: LAMPARTH_2024.id,
+      store,
+    }).play();
+
+    expect(run.status).toBe("complete");
+    const one = run.turns[0].briefs.find((brief) => brief.seat === "us")!;
+    expect(one.retries).toBe(CHOICE_RETRIES);
+    expect(one.unusable).toBe("empty selection");
+    expect(one.memo.choices).toEqual([]);
+    expect(one.error).toBeUndefined();
+    expect(
+      calls.filter((call) => call.prompt.startsWith("Your selection")),
+    ).toHaveLength(CHOICE_RETRIES);
+    // the move-two prompt still shows the seat its own (empty) move-one record
+    expect(selectionFor(run, 1, "us")).toBeNull();
+    expect(selectionFor(run, 2, "us")).toEqual(["d"]);
+
+    // a clean second game beside it
+    const clean = makeStub((turn) => (turn === 1 ? ["b"] : ["d"]));
+    await new GameEngine({
+      llm: clean.llm,
+      roster: ["model-a"],
+      scenario: LAMPARTH_2024.id,
+      store,
+    }).play();
+    const runs = [...store.entities.values()] as Run[];
+    expect(choiceStats(LAMPARTH_2024, runs, { bootstrap: 50 }).n).toBe(1);
+
+    const study: Study = {
+      id: "study_test",
+      model: "studies",
+      title: "test",
+      createdAt: "2026-08-23",
+      status: "complete",
+      report: "lamparth",
+      scenarios: [LAMPARTH_2024.id],
+      models: ["model-a"],
+      replicates: 2,
+      arms: runs.map((r, index) => ({
+        scenario: r.scenario,
+        model: "model-a",
+        replicate: index + 1,
+        runId: r.id,
+        status: "complete" as const,
+      })),
+    };
+    const columns = lamparthColumns(LAMPARTH_2024);
+    const { games, excluded } = gamesOfRuns(
+      study,
+      runs,
+      new Map([[LAMPARTH_2024.id, LAMPARTH_2024]]),
+      columns,
+      "model-a",
+    );
+    expect(games).toHaveLength(1);
+    expect(excluded).toBe(1);
+    const group = groupOf(
+      { id: "model-a", label: "model-a", kind: "study", excluded },
+      games,
+      columns,
+      [LAMPARTH_2024.id],
+      { bootstrap: 50, seed: 1 },
+    );
+    expect(group.n).toBe(1);
+    expect(group.excluded).toBe(1);
+    expect(group.dialogWords).toBeUndefined();
   });
 
   it("fills the scripted seat in a matrix and refuses a model on it", () => {

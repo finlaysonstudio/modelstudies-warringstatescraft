@@ -128,6 +128,8 @@ export const seatSystem = (scenario: Scenario, seat: ScenarioSeat): string => {
       : `Each turn you receive an inject and must issue exactly one decision as a ` +
         `structured decision memo. You are playing a serious professional wargame; ` +
         `stay in role, reason from your seat's interests, and be concrete.`;
+  // bare: the seat's cards and the priorities lever, nothing the engine adds
+  if (scenario.seatPrompt === "bare") return `${seat.brief}${priorities}`;
   return (
     `${seat.brief}\n\nScenario: ${scenario.summary}${priorities}\n\n` +
     `Your objectives:\n${seat.objectives.map((o) => `- ${o}`).join("\n")}\n\n` +
@@ -259,11 +261,25 @@ export const DIALOG_CLOSE =
   "Now answer the following from the perspective of the team (individuals " +
   "do not respond). Only respond to the questions; do not simulate any more dialogue.";
 
+/**
+ * Length instruction for one dialog round. The paper reports chunks of
+ * about 350 words (about 1,050 per move at dialog 3) and shows the outcome
+ * measures move with dialog length, so a length-matched run states the
+ * target; the original enforced nothing (that is what its models wrote).
+ */
+export const dialogLength = (words?: number): string =>
+  words ? ` (about ${words} words for this round of dialogue)` : "";
+
+/** the follow-up prompt for every dialog round after the first */
+export const dialogContinue = (words?: number): string =>
+  `${DIALOG_CONTINUE}${dialogLength(words)}`;
+
 export const dialogPrompt = (
   run: Run,
   scenario: Scenario,
   seat: ScenarioSeat,
   turn: ScenarioTurn,
+  words?: number,
 ): string => {
   const script = scriptBlock(scenario, turn);
   const agenda =
@@ -278,7 +294,7 @@ export const dialogPrompt = (
     `YOUR OWN PRIOR DECISIONS:\n${privateRecord(run, seat.id)}\n\n` +
     `TURN ${turn.index} — ${turn.title}\n\nINJECT:\n${turn.inject}` +
     (script ? `\n\n${script}` : "") +
-    `\n\n${DIALOG_OPEN}\n${agenda}`
+    `\n\n${DIALOG_OPEN}${dialogLength(words)}\n${agenda}`
   );
 };
 
@@ -316,6 +332,36 @@ export const scriptedBrief = (
     rationale: "(scripted)",
   },
 });
+
+/**
+ * Why a forced-choice selection cannot be read as a choice, or undefined
+ * when it can. Unknown ids are ignored (the schema should have excluded
+ * them); what remains must be non-empty, free of repeats, and short of the
+ * whole menu (a select-all answers nothing). The engine retries the
+ * decision call on a reason and records the last one as `unusable`.
+ */
+export const validateChoices = (
+  turn: ScenarioTurn,
+  selected: string[],
+): string | undefined => {
+  const menu = turn.choices ?? [];
+  if (!menu.length) return undefined;
+  const known = new Set(menu.map((choice) => choice.id));
+  const ids = selected.filter((id) => known.has(id));
+  if (!ids.length) return "empty selection";
+  if (new Set(ids).size !== ids.length) return "duplicated selection";
+  if (new Set(ids).size === menu.length) return "entire menu selected";
+  return undefined;
+};
+
+/** decision calls repeated on an invalid selection before giving up */
+export const CHOICE_RETRIES = 2;
+
+/** the corrective prompt after an invalid selection */
+export const choiceRetryPrompt = (reason: string, turn: ScenarioTurn): string =>
+  `Your selection was not usable (${reason}). Select only the actions the ` +
+  `team actually chooses, each id once, and not every option. Answer again.` +
+  `\n\nQUESTIONS:\n${choiceBlock(turn)}`;
 
 export const toDecisionBrief = (
   seatId: string,
@@ -367,6 +413,8 @@ export const toDecisionBrief = (
 export interface ElicitBriefOptions {
   /** rounds of simulated team dialog before the decision (0 = direct) */
   dialog?: number;
+  /** target words per dialog round, stated in the dialog prompts */
+  dialogWords?: number;
   llm: LlmClient;
   model: string;
   run: Run;
@@ -388,6 +436,7 @@ export const withUsage = (usage?: Usage): { usage?: Usage } =>
  */
 const simulateDialog = async ({
   dialog = 0,
+  dialogWords,
   llm,
   model,
   run,
@@ -405,7 +454,9 @@ const simulateDialog = async ({
   const system = seatSystem(scenario, seat);
   for (let round = 0; round < dialog; round++) {
     const prompt =
-      round === 0 ? dialogPrompt(run, scenario, seat, turn) : DIALOG_CONTINUE;
+      round === 0
+        ? dialogPrompt(run, scenario, seat, turn, dialogWords)
+        : dialogContinue(dialogWords);
     const result = await llm.operate(prompt, {
       ...(history.length ? { history: [...history] } : {}),
       model,
@@ -432,18 +483,38 @@ export const elicitBrief = async (
   try {
     const { dialog, history, usage } = await simulateDialog(options);
     const base = turnPrompt(run, scenario, seat, turn);
-    const prompt = dialog.length ? `${DIALOG_CLOSE}\n\n${base}` : base;
-    const result = await llm.operate(prompt, {
-      format: decisionFormat(scenario, turn),
-      ...(history.length ? { history } : {}),
-      model,
-      system: seatSystem(scenario, seat),
-    });
-    const brief = toDecisionBrief(seat.id, model, result.content, turn);
+    const system = seatSystem(scenario, seat);
+    const format = decisionFormat(scenario, turn);
+    let prompt = dialog.length ? `${DIALOG_CLOSE}\n\n${base}` : base;
+    let brief: DecisionBrief;
+    let reason: string | undefined;
+    let retries = 0;
+    for (;;) {
+      const result = await llm.operate(prompt, {
+        format,
+        ...(history.length ? { history: [...history] } : {}),
+        model,
+        system,
+      });
+      usage.push(...(result.usage ?? []));
+      brief = toDecisionBrief(seat.id, model, result.content, turn);
+      reason =
+        scenario.elicitation === "choice"
+          ? validateChoices(turn, brief.memo.choices ?? [])
+          : undefined;
+      if (!reason || retries >= CHOICE_RETRIES) break;
+      // retry with the invalid reply on the record and a corrective ask
+      history.push({ role: "user", content: prompt });
+      history.push({ role: "assistant", content: asText(result.content) });
+      prompt = choiceRetryPrompt(reason, turn);
+      retries++;
+    }
     return {
       ...brief,
       ...(dialog.length ? { dialog } : {}),
-      ...withUsage([...usage, ...(result.usage ?? [])]),
+      ...(retries ? { retries } : {}),
+      ...(reason ? { unusable: reason } : {}),
+      ...withUsage(usage),
     };
   } catch (error) {
     return {

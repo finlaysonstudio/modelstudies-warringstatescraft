@@ -435,6 +435,16 @@ function BriefCard({ brief }: { brief: DecisionBrief }) {
       <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
         {brief.seat}{" "}
         <span className="text-zinc-500 normal-case">{brief.model}</span>
+        {brief.retries ? (
+          <span className="ml-2 text-zinc-500 normal-case">
+            {brief.retries} {brief.retries === 1 ? "retry" : "retries"}
+          </span>
+        ) : null}
+        {brief.unusable ? (
+          <span className="ml-2 text-amber-400 normal-case">
+            unusable: {brief.unusable}
+          </span>
+        ) : null}
       </p>
       {brief.error ? (
         <p className="mt-2 font-plex-mono text-xs text-red-400">

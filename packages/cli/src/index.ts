@@ -95,6 +95,10 @@ program
     "rounds of simulated team dialog before each model decision (Lamparth treatment)",
   )
   .option(
+    "--dialog-words <n>",
+    "target words per dialog round, stated in the dialog prompts (the paper's chunks were about 350)",
+  )
+  .option(
     "--no-priorities",
     "withhold the scenario's priorities block (instruction ablation)",
   )
@@ -109,6 +113,9 @@ program
     const roster = await resolveRoster(options.panel);
     const engine = new GameEngine({
       dialog: options.dialog ? Number(options.dialog) : undefined,
+      dialogWords: options.dialogWords
+        ? Number(options.dialogWords)
+        : undefined,
       llm: defaultLlmClient,
       log: consoleLog,
       maxTurns: options.turns ? Number(options.turns) : undefined,
@@ -172,6 +179,7 @@ program
     "--dialog <n>",
     "rounds of simulated team dialog before each model decision",
   )
+  .option("--dialog-words <n>", "target words per dialog round")
   .option("--no-priorities", "withhold the scenario's priorities block")
   .option("--narrator <model>", "narrator model id")
   .option("--judges <models>", "comma-separated judge model ids")
@@ -193,6 +201,9 @@ program
       }
       const study = await planStudy({
         dialog: options.dialog ? Number(options.dialog) : undefined,
+        dialogWords: options.dialogWords
+          ? Number(options.dialogWords)
+          : undefined,
         models: await resolveModels(options.models),
         narrator: options.narrator,
         panel: {

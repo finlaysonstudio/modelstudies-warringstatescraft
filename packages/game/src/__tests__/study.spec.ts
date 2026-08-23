@@ -146,6 +146,7 @@ describe("studies", () => {
     await loadReference(store);
     const planned = await planStudy({
       dialog: 1,
+      dialogWords: 350,
       models: ["hawk", "dove"],
       replicates: 2,
       scenarios: CELLS,
@@ -190,6 +191,7 @@ describe("studies", () => {
       expect(run.study).toBe(planned.id);
       expect(run.replicate).toBeGreaterThanOrEqual(1);
       expect(run.dialog).toBe(1);
+      expect(run.dialogWords).toBe(350);
       expect(run.status).toBe("complete");
     }
     const stored = (await store.get<Study>("studies", planned.id))!;
@@ -216,6 +218,12 @@ describe("studies", () => {
     ]);
     const hawkGroup = report.groups[0];
     expect(hawkGroup.n).toBe(4);
+    expect(hawkGroup.excluded).toBe(0);
+    // one dialog round per move, so each move carries its words
+    expect(hawkGroup.dialogWords?.map((row) => row.turn)).toEqual([1, 2]);
+    expect(hawkGroup.dialogWords?.every((row) => row.mean > 0)).toBe(true);
+    expect(report.groups[2].excluded).toBe(0);
+    expect(report.groups[2].dialogWords).toBeUndefined();
     expect(hawkGroup.cells).toEqual([
       { scenario: CELLS[0], n: 2 },
       { scenario: CELLS[1], n: 2 },

@@ -28,6 +28,20 @@ import type { Scenario, ScenarioChoice } from "../types";
  * - The three presidential priorities are lifted out of the New Technology
  *   card into `priorities` so the instruction-ablation lever works; the
  *   card's sentence now points at them instead of listing them.
+ * - The seat's system prompt is `bare`: the cards above and the priorities
+ *   block, nothing else. The engine's framing (summary, objectives, ladder,
+ *   closing instruction) never reaches the seat, because the summary and
+ *   title name the paper, the treatment, and move two's outcome; those
+ *   stay reader-facing. The spec asserts the seat prompt carries none of
+ *   them.
+ * - The original set no dialog length; its models wrote chunks of about
+ *   350 words. A length-matched run states that target
+ *   (`GameOptions.dialogWords`, `--dialog-words 350`).
+ * - The original parsed letters out of free text (`onehot`); here the
+ *   selection is schema-constrained and validated (`validateChoices`): an
+ *   empty, duplicated, or whole-menu selection is retried, and a game whose
+ *   selection is still unusable is excluded from the report, not coded as
+ *   zeros.
  */
 
 export type LamparthAccuracy = "70-85%" | "95-99%";
@@ -203,6 +217,7 @@ export const buildLamparth = (treatment: LamparthTreatment): Scenario => ({
     "paper's 107 human experts and its GPT-3.5/4/4o runs.",
   elicitation: "choice",
   record: "scripted",
+  seatPrompt: "bare",
   priorities: PRIORITIES,
   escalationLadder: [
     "Routine posture",

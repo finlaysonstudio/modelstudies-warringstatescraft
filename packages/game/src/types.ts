@@ -17,6 +17,14 @@ export interface Scenario {
   /** toggleable priorities block (instruction-ablation lever) */
   priorities?: string[];
   /**
+   * what a seat's system prompt carries: `framed` (default) wraps the
+   * seat's brief with the summary, priorities, objectives, ladder, and a
+   * closing instruction; `bare` is the brief and the priorities block only,
+   * for a replication whose cards must reach the seat unadorned (the
+   * summary and title stay reader-facing and never reach a seat)
+   */
+  seatPrompt?: SeatPrompt;
+  /**
    * how seats answer a turn: `memo` (default) is the free decision memo;
    * `choice` answers the turn's `questions` and selects from its `choices`
    */
@@ -41,6 +49,10 @@ export interface Scenario {
 }
 
 export type Elicitation = "memo" | "choice";
+
+export type SeatPrompt = "framed" | "bare";
+
+export const SEAT_PROMPTS: SeatPrompt[] = ["framed", "bare"];
 
 /** reporting definitions a scenario or study can name */
 export type ReportId = "basic" | "lamparth";
@@ -126,6 +138,17 @@ export interface DecisionBrief {
   };
   /** simulated team dialog that preceded the decision, one entry per round */
   dialog?: string[];
+  /**
+   * choice elicitation: decision calls repeated because the selection was
+   * empty, the whole menu, or duplicated (see `validateChoices`)
+   */
+  retries?: number;
+  /**
+   * choice elicitation: why the final selection still failed validation;
+   * the memo keeps what the model returned, and reports exclude the game
+   * instead of coding it as zeros
+   */
+  unusable?: string;
   /** consensus-lane only */
   consensus?: {
     deferredOn: string[];
@@ -311,6 +334,8 @@ export interface Run {
   matrix?: Record<string, string[]>;
   /** rounds of simulated team dialog before each model decision (0 = direct) */
   dialog?: number;
+  /** target words per dialog round, when the rounds were length-instructed */
+  dialogWords?: number;
   /** false when the scenario's priorities block was withheld (instruction ablation) */
   priorities?: boolean;
   /** study this run belongs to, when it was played as a study arm */
@@ -352,6 +377,8 @@ export interface Study {
   panel?: PanelConfig;
   narrator?: string;
   dialog?: number;
+  /** target words per dialog round */
+  dialogWords?: number;
   priorities?: boolean;
   arms: StudyArm[];
 }

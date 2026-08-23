@@ -29,6 +29,8 @@ export interface PlanStudyOptions {
   panel?: Partial<PanelConfig>;
   narrator?: string;
   dialog?: number;
+  /** target words per dialog round */
+  dialogWords?: number;
   priorities?: boolean;
   store: Store;
 }
@@ -86,6 +88,9 @@ export const planStudy = async (options: PlanStudyOptions): Promise<Study> => {
       : {}),
     ...(options.narrator ? { narrator: options.narrator } : {}),
     ...(options.dialog ? { dialog: options.dialog } : {}),
+    ...(options.dialog && options.dialogWords
+      ? { dialogWords: options.dialogWords }
+      : {}),
     ...(options.priorities === false ? { priorities: false } : {}),
     arms,
   };
@@ -154,6 +159,7 @@ export const runStudy = async (options: RunStudyOptions): Promise<Study> => {
       const arm = pending[cursor++];
       const engine = new GameEngine({
         dialog: study.dialog,
+        dialogWords: study.dialogWords,
         llm: options.llm,
         log,
         narrator: study.narrator,

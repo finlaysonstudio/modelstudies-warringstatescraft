@@ -52,6 +52,11 @@ export interface GameOptions {
    */
   dialog?: number;
   /**
+   * target words per dialog round, stated in the dialog prompts (the paper's
+   * chunks were about 350 words); unset leaves the length to the model
+   */
+  dialogWords?: number;
+  /**
    * a human player; plays any seat assigned `HUMAN_MODEL` (and, at the
    * decision point, adds a blind and an informed focal memo beside the
    * roster), judges when `HUMAN_MODEL` sits on the panel, and narrates when
@@ -193,6 +198,7 @@ const pool = async <T, R>(
 export class GameEngine {
   private readonly branchConcurrency: number;
   private readonly dialog: number;
+  private readonly dialogWords?: number;
   private readonly human?: HumanPlayer;
   private readonly panel: Partial<PanelConfig>;
   private readonly llm: LlmClient;
@@ -224,6 +230,10 @@ export class GameEngine {
     }
     this.branchConcurrency = options.branchConcurrency ?? 3;
     this.dialog = Math.max(0, Math.floor(options.dialog ?? 0));
+    this.dialogWords =
+      options.dialogWords && options.dialogWords > 0
+        ? Math.floor(options.dialogWords)
+        : undefined;
     this.human = options.human;
     this.panel = options.panel ?? {};
     this.llm = options.llm;
@@ -298,6 +308,9 @@ export class GameEngine {
       panel: this.panelConfig(),
       narrator: this.narrator ?? this.roster[0],
       ...(this.dialog ? { dialog: this.dialog } : {}),
+      ...(this.dialog && this.dialogWords
+        ? { dialogWords: this.dialogWords }
+        : {}),
       ...(this.priorities ? {} : { priorities: false }),
       ...(this.study
         ? { study: this.study.id, replicate: this.study.replicate }
@@ -485,6 +498,7 @@ export class GameEngine {
           })
         : elicitBrief({
             dialog: this.dialog,
+            dialogWords: this.dialogWords,
             llm: this.llm,
             model,
             run,
@@ -583,6 +597,7 @@ export class GameEngine {
       pool(this.roster, this.branchConcurrency, (model) =>
         elicitBrief({
           dialog: this.dialog,
+          dialogWords: this.dialogWords,
           llm: this.llm,
           model,
           run,

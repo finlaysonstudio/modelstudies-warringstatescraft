@@ -92,7 +92,12 @@ export function StudyView() {
             {complete}/{study.arms.length} arms
           </span>
           <span>report: {study.report}</span>
-          {study.dialog ? <span>dialog {study.dialog}</span> : null}
+          {study.dialog ? (
+            <span>
+              dialog {study.dialog}
+              {study.dialogWords ? ` × ~${study.dialogWords} words` : ""}
+            </span>
+          ) : null}
           {study.priorities === false && <span>no priorities</span>}
           {study.panel && (
             <span>
@@ -576,13 +581,19 @@ function LamparthReportView({ report }: { report: LamparthReport }) {
           Aggressiveness is (aggressive − de-escalatory selections) / 21 across
           both moves; actions is the mean count selected. Table 2 is the paper's
           printed statistic, p(agg2 ∧ agg1) and p(agg2 ∧ des1); the conditional
-          columns are the probabilities its caption names.
+          columns are the probabilities its caption names. n counts games with a
+          usable selection on both moves; excluded games had an empty,
+          duplicated, or whole-menu selection after retries, or a failed brief.
+          Dialog words is the mean simulated dialog per move (the paper's was
+          about 1,050 at dialog 3).
         </p>
         <Table
           head={
             <>
               <th className={th}>Group</th>
               <th className={th}>n</th>
+              <th className={th}>Excluded</th>
+              <th className={th}>Dialog words (m1 / m2)</th>
               <th className={th}>Aggressiveness</th>
               <th className={th}>Actions</th>
               <th className={th}>Table 2 agg→agg</th>
@@ -607,6 +618,22 @@ function LamparthReportView({ report }: { report: LamparthReport }) {
               </td>
               <td className={clsx(td, "font-plex-mono text-zinc-400")}>
                 {group.n}
+              </td>
+              <td
+                className={clsx(
+                  td,
+                  "font-plex-mono",
+                  group.excluded ? "text-amber-400" : "text-zinc-600",
+                )}
+              >
+                {group.kind === "study" ? group.excluded : "–"}
+              </td>
+              <td className={clsx(td, "font-plex-mono text-zinc-400")}>
+                {group.dialogWords
+                  ? group.dialogWords
+                      .map((row) => Math.round(row.mean).toLocaleString())
+                      .join(" / ")
+                  : "–"}
               </td>
               <td className={td}>
                 <EstimateCell estimate={group.aggressiveness} max={0.5} />
