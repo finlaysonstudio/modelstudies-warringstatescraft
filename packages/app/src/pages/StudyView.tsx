@@ -669,6 +669,8 @@ function LamparthReportView({ report }: { report: LamparthReport }) {
                 <td className={td}>—</td>
                 <td className={td}>—</td>
                 <td className={td}>—</td>
+                <td className={td}>—</td>
+                <td className={td}>—</td>
                 <td className={clsx(td, "font-plex-mono")}>
                   {fmt(row.aggGivenAgg)}
                 </td>
