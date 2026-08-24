@@ -877,7 +877,7 @@ export function Survey() {
       )}
       {state.phase === "empty" && (
         <p className="mt-12 font-plex-mono text-xs text-zinc-600">
-          No values scorecard yet — run: npm run cli -- values-scorecard --plan
+          No values scorecard yet. Run: npm run cli -- values-scorecard --plan
           crisis-situated
         </p>
       )}

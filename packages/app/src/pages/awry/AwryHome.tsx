@@ -96,7 +96,7 @@ export function AwryHome() {
     return (
       <div className="mx-auto w-full max-w-7xl px-6 pt-16 sm:px-16">
         <p className="font-plex-mono text-xs text-red-400">
-          failed to load — {state.message}
+          failed to load: {state.message}
         </p>
       </div>
     );

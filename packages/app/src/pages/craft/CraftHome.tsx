@@ -158,7 +158,7 @@ export function CraftHome() {
     return (
       <div className="mx-auto w-full max-w-7xl px-6 pt-16 sm:px-16">
         <p className="font-plex-mono text-xs text-red-400">
-          failed to load — {state.message}
+          failed to load: {state.message}
         </p>
       </div>
     );
@@ -186,7 +186,7 @@ export function CraftHome() {
           it at one decision point; a judge panel scores every turn on the
           chapter's own escalation ladder. The two language bodies are written
           to the same structure, not translated, and the specs check shape
-          rather than meaning — a documented limitation of the whole instrument.
+          rather than meaning, a documented limitation of the whole instrument.
         </p>
       </header>
 
@@ -323,9 +323,9 @@ export function CraftHome() {
             Play
           </h2>
           <p className="mt-2 text-sm text-zinc-400">
-            Choose a chapter, a seat to follow, and the opposing models — or
-            take a game at random — and watch the recorded game turn by turn
-            from that seat's vantage.
+            Choose a chapter, a seat to follow, and the opposing models, or take
+            a game at random, and watch the recorded game turn by turn from that
+            seat's vantage.
           </p>
           <p className="mt-3 font-plex-mono text-xs text-zinc-400">
             <span className="text-white">{state.library.length}</span> games in

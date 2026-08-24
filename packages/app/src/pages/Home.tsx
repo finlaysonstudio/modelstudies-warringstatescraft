@@ -80,7 +80,7 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
         </p>
         {notFound && (
           <p className="mt-4 font-plex-mono text-xs text-amber-300">
-            No page at this address — the campaigns below are the way in.
+            No page at this address. The campaigns below are the way in.
           </p>
         )}
       </header>

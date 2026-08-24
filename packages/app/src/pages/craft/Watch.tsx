@@ -135,7 +135,7 @@ export function Watch() {
   if (state.phase === "error" || !run) {
     return (
       <p className="px-6 pt-16 font-plex-mono text-xs text-red-400 sm:px-16">
-        failed to load game —{" "}
+        failed to load game:{" "}
         {state.phase === "error" ? state.message : "no run"}
       </p>
     );

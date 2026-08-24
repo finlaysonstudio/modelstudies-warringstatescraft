@@ -81,7 +81,7 @@ export function Interview() {
   if (state.phase === "error") {
     return (
       <p className="px-6 pt-16 font-plex-mono text-xs text-red-400 sm:px-16">
-        failed to load sitting — {state.message}
+        failed to load sitting: {state.message}
       </p>
     );
   }

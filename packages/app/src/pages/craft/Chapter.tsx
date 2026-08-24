@@ -3,6 +3,7 @@ import { GitFork } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Bar, Section } from "../../components/PonyBenchPrimitives";
+import { campaignOf } from "../../campaigns";
 import { libraryOf, type LibraryGame } from "../../lib/library";
 import type {
   BasicReport,
@@ -140,12 +141,13 @@ export function Chapter() {
       : (index.find((entry) =>
           entry.renderings.some((rendering) => rendering.id === id),
         )?.id ?? id);
-  const switcher = index.length > 0 && (
+  const chapters = index.filter((entry) => campaignOf(entry.id) === "craft");
+  const switcher = chapters.length > 0 && (
     <nav
       aria-label="Chapters"
       className="mb-8 flex flex-wrap items-center gap-2"
     >
-      {index.map((entry) => (
+      {chapters.map((entry) => (
         <Link
           key={entry.id}
           to={`/craft/chapters/${entry.id}`}
