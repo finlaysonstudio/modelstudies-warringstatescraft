@@ -11,6 +11,8 @@ import { createHash } from "node:crypto";
 export interface StartEvent extends JournalEvent {
   t: "start";
   plan: string;
+  /** the arm the sitting was fielded in, when one was named */
+  arm?: string;
   model: string;
   repetitions: number;
   /** items the sitting was scoped to */
@@ -40,6 +42,8 @@ export interface TurnEvent extends JournalEvent {
   rep: number;
   /** option labels as shown; absent on open numeric items */
   order?: string[];
+  /** the course the informed arm's appended line named, by code */
+  majority?: 1 | 2;
   provider?: string;
   /** the reply, verbatim */
   content: unknown;
@@ -110,6 +114,8 @@ export const sha1 = (text: string): string =>
 export interface FoldedItem {
   values: (number | null)[];
   orders: (string[] | null)[];
+  /** the majority named per turn; null where the turn carried none */
+  majority: (1 | 2 | null)[];
   contents: unknown[];
   usage: (LlmUsage | null)[];
   /** undefined = never probed, null = probed and no text */
@@ -132,6 +138,7 @@ export interface SittingFold {
 const emptyItem = (): FoldedItem => ({
   values: [],
   orders: [],
+  majority: [],
   contents: [],
   usage: [],
   explanations: [],
@@ -157,6 +164,7 @@ export function discardReps(item: FoldedItem, reps: number[]): void {
   const keep = (_: unknown, index: number) => !drop.has(index);
   item.values = item.values.filter(keep);
   item.orders = item.orders.filter(keep);
+  item.majority = item.majority.filter(keep);
   item.contents = item.contents.filter(keep);
   item.usage = item.usage.filter(keep);
   item.explanations = item.explanations.filter(keep);
@@ -203,6 +211,7 @@ export function foldJournal(
         }
         item.values.push(event.code);
         item.orders.push(event.order ?? null);
+        item.majority.push(event.majority ?? null);
         item.contents.push(event.content);
         item.usage.push(event.usage ?? null);
         item.explanations.push(undefined);

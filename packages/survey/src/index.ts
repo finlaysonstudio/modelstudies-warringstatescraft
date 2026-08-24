@@ -16,18 +16,25 @@ export {
 } from "./bank/crisis";
 export {
   CRISIS_SITUATED,
+  CRISIS_SITUATED_ARMS,
   CRISIS_SITUATED_CRUX,
   CRISIS_SITUATED_INSTRUCTION,
+  CRISIS_SITUATED_MAJORITY,
   CRISIS_SITUATED_MODULES,
+  CRISIS_SITUATED_PRIORITIES,
   CRISIS_SITUATED_PROBE,
+  CRISIS_SITUATED_RENDERINGS,
   CRISIS_SITUATED_STEM,
+  CRISIS_SITUATED_ZH,
 } from "./bank/crisisSituated";
 export type { CrisisSituatedModule } from "./bank/crisisSituated";
 export { parseInstrumentMarkdown } from "./bank/markdown";
 export type {
+  MarkdownArms,
   MarkdownInstrument,
   MarkdownItem,
   MarkdownModule,
+  MarkdownRendering,
 } from "./bank/markdown";
 export {
   groupInterviewUsage,
@@ -59,10 +66,12 @@ export type {
 export { formatItemPrompt } from "./format";
 export type { FormatItemOptions } from "./format";
 export {
+  armItems,
   buildInstrument,
   DEFAULT_PLAN,
   EXPLAIN_PROMPT,
   listPlans,
+  resolveArm,
   resolveItems,
 } from "./instrument";
 export type { BuildInstrumentOptions } from "./instrument";
@@ -70,23 +79,28 @@ export { FIELDING_MODEL, fieldingId, fieldingStatus } from "./fielding";
 export type { FieldingEntity, FieldingStatus } from "./fielding";
 export {
   APEX,
+  armOf,
   backfillExplanations,
   budgetDetail,
   budgetExhausted,
   chargeBudget,
   createBudget,
+  DEFAULT_MAJORITY_TEXT,
   INTERVIEW_JOURNAL,
   INTERVIEW_MODEL,
   INTERVIEW_STATUSES,
   itemFormat,
   itemPrompt,
   loadSitting,
+  majorityLine,
   materializeResponses,
   orderedLabels,
+  presentItem,
   PROBE_CATEGORY_EXPLANATION,
   PROBE_MODEL,
   probeId,
   probesOf,
+  recordedMajority,
   recordedOrders,
   replayProbe,
   responseOf,
@@ -134,12 +148,20 @@ export type {
 } from "./order";
 export { MODELS } from "./models";
 export type { ModelName } from "./models";
-export { DEFAULT_PANEL, getPanel, listPanels, resolvePanel } from "./panel";
+export {
+  DEFAULT_PANEL,
+  getPanel,
+  listPanels,
+  PRODUCTION_FROZEN,
+  resolvePanel,
+} from "./panel";
 export type { Panel, ResolvePanelOptions } from "./panel";
 export { createSession, isValidAnswer } from "./session";
 export type { CreateSessionOptions, SurveySession } from "./session";
 export type {
   AnswerValue,
+  ArmDefinition,
+  ArmRendering,
   Instrument,
   InstrumentCategory,
   InstrumentFilter,

@@ -8,37 +8,44 @@ import { MODELS } from "./models";
 // improvised list of model ids that nobody can reconstruct later. Panels are
 // the respondent-side counterpart to instrument plans on the question side.
 //
-// Rosters are built from the MODELS mirror of LLM.MODEL (see ./models — the
-// real constant cannot be imported here, it would drag a Node runtime into
-// the browser bundle) so a panel tracks the version Jaypie points a name at. That is deliberate: the
-// panel names a *tier* (the Anthropic flagship), not a frozen artifact. The
-// consequence is that the same panel alias can mean different weights across
-// sittings — the interview records the respondent model per sitting, so the
-// record stays exact even as the roster moves.
+// Two kinds of roster. A tracking panel is built from the MODELS mirror of
+// LLM.MODEL (see ./models — the real constant cannot be imported here, it
+// would drag a Node runtime into the browser bundle) so it follows the
+// version Jaypie points a name at: the panel names a *tier* (the Anthropic
+// flagship), not an artifact, and the same alias can mean different weights
+// across sittings. The interview records the respondent model per sitting,
+// so the record stays exact even as the roster moves.
 //
-// Intended: publishable research will want frozen rosters, cast in stone on
-// a quarterly cadence (a dated panel holding literal ids, so a result set
-// can be re-fielded against exactly the weights it was taken on). These
-// tracking panels are the working set until then.
+// A frozen panel holds literal ids and carries the date they were cast, so a
+// result set can be re-fielded against exactly the weights it was taken on.
+// `production` is frozen (2026-08-23). When a Jaypie bump moves the mirror,
+// the frozen roster does not move; the new id is appended beside the old one
+// and both are fielded, so the record keeps every generation the study
+// reports on. `panel.spec.ts` fails on the bump to prompt the append.
 export interface Panel {
   id: string;
   title: string;
   description: string;
   models: string[];
+  /** the date a frozen roster's literal ids were cast (ISO date); absent on a tracking roster */
+  frozen?: string;
 }
 
 // The two primary rosters for this study: a cheap three-model panel for
-// iterating on the game and instrument, and the full fielded cohort.
+// iterating on the game and instrument, and the fielded cohort.
 const DEV = [MODELS.SONNET, MODELS.GEMINI_FLASH, MODELS.LUNA];
 
+// Frozen: literal ids, not the mirror. Append on a Jaypie bump; never replace.
+export const PRODUCTION_FROZEN = "2026-08-23";
 const PRODUCTION = [
-  MODELS.OPUS,
-  MODELS.GEMINI_FLASH,
-  MODELS.SOL,
-  MODELS.GROK,
-  MODELS.FIREWORKS_GLM,
-  MODELS.FIREWORKS_KIMI,
-  MODELS.FIREWORKS_QWEN,
+  "claude-opus-5",
+  "gemini-3.7-flash",
+  "gpt-5.6-sol",
+  "grok-4.6",
+  "accounts/fireworks/models/deepseek-v4-pro",
+  "accounts/fireworks/models/glm-5p2",
+  "accounts/fireworks/models/kimi-k3",
+  "accounts/fireworks/models/qwen3p7-plus",
 ];
 
 // One flagship per lab: the standing comparison cohort.
@@ -79,8 +86,9 @@ const PANELS: Record<string, Panel> = {
     id: "production",
     title: "Production",
     description:
-      "The fielded cohort: closed-lab flagships plus the open-weight and Mistral entrants a full study reports on.",
+      "The fielded cohort, frozen 2026-08-23: closed-lab flagships plus the four open-weight entrants a full study reports on.",
     models: PRODUCTION,
+    frozen: PRODUCTION_FROZEN,
   },
   frontier: {
     id: "frontier",

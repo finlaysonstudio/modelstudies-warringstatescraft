@@ -15,6 +15,7 @@ import {
 import { buildInstrument } from "./instrument";
 import {
   APEX,
+  armOf,
   INTERVIEW_JOURNAL,
   INTERVIEW_MODEL,
   PROBE_MODEL,
@@ -95,6 +96,7 @@ export async function verifyInterview(options: {
       model: INTERVIEW_MODEL,
       scope: APEX,
       plan: start.plan,
+      ...(start.arm !== undefined ? { arm: start.arm } : {}),
       respondent: start.model,
       respondentModel: start.model,
       repetitions: start.repetitions,
@@ -113,8 +115,10 @@ export async function verifyInterview(options: {
   }
   const instrument = buildInstrument({ plan: base.plan as InstrumentPlan });
   const items = new Map(instrument.items.map((item) => [item.name, item]));
+  const arm = armOf(instrument, base);
 
-  // Prompt hashes: the order the journal recorded rebuilds the prompt sent.
+  // Prompt hashes: the order (and, in the informed arm, the majority) the
+  // journal recorded rebuilds the prompt sent.
   const promptMismatches: { item: string; rep: number }[] = [];
   let promptsChecked = 0;
   const seen = new Map<string, number>();
@@ -130,11 +134,11 @@ export async function verifyInterview(options: {
       continue;
     }
     promptsChecked += 1;
-    const prompt = itemPrompt(
-      instrument,
-      item,
-      turn.order ? { order: turn.order } : {},
-    );
+    const prompt = itemPrompt(instrument, item, {
+      ...(turn.order ? { order: turn.order } : {}),
+      ...(arm ? { arm } : {}),
+      ...(turn.majority !== undefined ? { majority: turn.majority } : {}),
+    });
     if (sha1(prompt) !== turn.promptSha1) {
       promptMismatches.push({ item: turn.item, rep: turn.rep });
     }

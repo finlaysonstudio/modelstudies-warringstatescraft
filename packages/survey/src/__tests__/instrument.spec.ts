@@ -1,7 +1,13 @@
 import { BadRequestError } from "@jaypie/errors";
 import { describe, expect, it } from "vitest";
 
-import { buildInstrument, listPlans, resolveItems } from "../instrument";
+import {
+  armItems,
+  buildInstrument,
+  listPlans,
+  resolveArm,
+  resolveItems,
+} from "../instrument";
 
 describe("buildInstrument", () => {
   it("defaults to the paper-rock-scissors plan", () => {
@@ -96,5 +102,31 @@ describe("resolveItems", () => {
     expect(() => resolveItems(situated, [])).toThrow(BadRequestError);
     const debug = buildInstrument({ plan: "paper-rock-scissors" });
     expect(() => resolveItems(debug, ["crux"])).toThrow(/Unknown items/);
+  });
+
+  it("crisis-situated declares five arms on the crux, and resolveArm refuses an unknown one", () => {
+    const instrument = buildInstrument({ plan: "crisis-situated" });
+    expect(Object.keys(instrument.arms ?? {})).toEqual([
+      "priorities",
+      "informed",
+      "dress-period",
+      "dress-modern",
+      "zh",
+    ]);
+    for (const [id, arm] of Object.entries(instrument.arms!)) {
+      expect(armItems(instrument, arm), id).toEqual(instrument.subsets!.crux);
+    }
+    expect(resolveArm(instrument, "informed").append).toBe("majority");
+    expect(resolveArm(instrument, "zh").language).toBe("zh");
+    expect(() => resolveArm(instrument, "nope")).toThrow(BadRequestError);
+    expect(() => resolveArm(instrument, "nope")).toThrow(/known: priorities/);
+    expect(() =>
+      resolveArm(buildInstrument({ plan: "paper-rock-scissors" }), "zh"),
+    ).toThrow(/declares no arms/);
+    // an arm without items fields the whole plan
+    expect(armItems(instrument, { title: "all" })).toHaveLength(88);
+    expect(() =>
+      armItems(instrument, { title: "bad", items: ["zz9"] }),
+    ).toThrow(/lacks: zz9/);
   });
 });

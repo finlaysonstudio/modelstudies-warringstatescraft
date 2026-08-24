@@ -7,8 +7,12 @@
  * `Situation…:` paragraph; items as `### <id> · <title>` with statements
  * `1.` and `2.` and `construct:` / `design:` / `game:` lines; and a crux
  * subset named in a `## … Crux` section as a comma list ending in a period.
- * Shared by the emitter (`scripts/emit-instrument.ts`) and the spec that
- * holds the emitted bank to the document.
+ * An optional `## … Renderings` section carries the arms' text: the
+ * priorities line, the majority line, the zh preamble, stem, and probe, and
+ * per-item renderings as `### <id> · <rendering>` blocks (an optional
+ * `Situation:` line, then statements `1.` and `2.`). Shared by the emitter
+ * (`scripts/emit-instrument.ts`) and the spec that holds the emitted bank
+ * to the document.
  */
 import { BadRequestError } from "@jaypie/errors";
 
@@ -29,12 +33,31 @@ export interface MarkdownModule {
   items: MarkdownItem[];
 }
 
+/** one item as an arm renders it */
+export interface MarkdownRendering {
+  situation?: string;
+  statements: [string, string];
+}
+
+/** the arms' text, from the `## … Renderings` section */
+export interface MarkdownArms {
+  /** prepended to the preamble in the priorities arm */
+  priorities: string;
+  /** appended after the courses in the informed arm; `{course}` is the course named */
+  majority: string;
+  zh: { preamble: string; stem: string; probe: string };
+  /** item id → rendering id (`period`, `modern`, `zh`) → text */
+  renderings: Record<string, Record<string, MarkdownRendering>>;
+}
+
 export interface MarkdownInstrument {
   preamble: string;
   stem: string;
   probe: string;
   modules: MarkdownModule[];
   crux: string[];
+  /** present when the document carries a Renderings section */
+  arms?: MarkdownArms;
 }
 
 const MODULE_HEADING = /^### ([A-Z]) · (.+?) · (\d+) items?\s*$/;
@@ -42,6 +65,7 @@ const ITEM_HEADING = /^### ([a-z]\d+) · (.+?)\s*$/;
 const STATEMENT = /^([12])\. (.+)$/;
 const FIELD = /^(construct|design|game): (.+)$/;
 const SITUATION = /^Situation[^:]*: (.+)$/;
+const RENDERING_HEADING = /^### ([a-z]\d+) · ([a-z][a-z-]*)\s*$/;
 
 const capitalize = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1);
@@ -155,6 +179,8 @@ export function parseInstrumentMarkdown(text: string): MarkdownInstrument {
       `instrument markdown: crux names unknown items ${unknown.join(", ")}`,
     );
   }
+  const arms = parseRenderings(lines, { known, crux });
+
   for (const entry of modules) {
     const declared = text.match(
       new RegExp(`^### ${entry.id} · .+? · (\\d+) items?`, "m"),
@@ -165,5 +191,121 @@ export function parseInstrumentMarkdown(text: string): MarkdownInstrument {
       );
     }
   }
-  return { preamble, stem, probe, modules, crux };
+  return { preamble, stem, probe, modules, crux, ...(arms ? { arms } : {}) };
+}
+
+// The Renderings section: the arms' lines, then one block per (item,
+// rendering). Every crux item must carry every rendering the section uses,
+// so an arm fielded on the crux never falls back to the bank's wording.
+function parseRenderings(
+  lines: string[],
+  options: { known: Set<string>; crux: string[] },
+): MarkdownArms | undefined {
+  const { known, crux } = options;
+  const at = lines.findIndex((line) => /^## .*Renderings/i.test(line));
+  if (at < 0) return undefined;
+  const end = lines.findIndex(
+    (line, index) => index > at && line.startsWith("## "),
+  );
+  const section = lines.slice(at + 1, end < 0 ? undefined : end);
+  const quoted = (prefix: string): string => {
+    const line = section.find((entry) => entry.startsWith(prefix));
+    const match = line?.match(/"(.+)"/);
+    if (!match) {
+      throw new BadRequestError(`instrument markdown: no ${prefix} line`);
+    }
+    return match[1]!;
+  };
+  const preambleAt = section.findIndex((line) =>
+    line.startsWith("**Preamble (zh)"),
+  );
+  const zhQuote =
+    preambleAt >= 0
+      ? section.slice(preambleAt + 1).find((line) => line.startsWith("> "))
+      : undefined;
+  if (!zhQuote) {
+    throw new BadRequestError("instrument markdown: no zh preamble blockquote");
+  }
+  const majority = quoted("**Majority.**");
+  if (!majority.includes("{course}")) {
+    throw new BadRequestError(
+      "instrument markdown: the majority line must carry {course}",
+    );
+  }
+  const arms: MarkdownArms = {
+    priorities: quoted("**Priorities.**"),
+    majority,
+    zh: {
+      preamble: zhQuote.slice(2).trim(),
+      stem: quoted("**Stem (zh).**"),
+      probe: quoted("**Probe (zh).**"),
+    },
+    renderings: {},
+  };
+  let current:
+    | {
+        id: string;
+        rendering: string;
+        situation?: string;
+        statements: (string | undefined)[];
+      }
+    | undefined;
+  const close = () => {
+    if (!current) return;
+    const [one, two] = current.statements;
+    if (!one || !two) {
+      throw new BadRequestError(
+        `instrument markdown: rendering ${current.id} · ${current.rendering} lacks two statements`,
+      );
+    }
+    const byRendering = (arms.renderings[current.id] ??= {});
+    if (byRendering[current.rendering]) {
+      throw new BadRequestError(
+        `instrument markdown: rendering ${current.id} · ${current.rendering} appears twice`,
+      );
+    }
+    byRendering[current.rendering] = {
+      ...(current.situation ? { situation: current.situation } : {}),
+      statements: [one, two],
+    };
+    current = undefined;
+  };
+  for (const raw of section) {
+    const line = raw.trimEnd();
+    const heading = line.match(RENDERING_HEADING);
+    if (heading) {
+      close();
+      if (!known.has(heading[1]!)) {
+        throw new BadRequestError(
+          `instrument markdown: rendering names unknown item ${heading[1]}`,
+        );
+      }
+      current = { id: heading[1]!, rendering: heading[2]!, statements: [] };
+      continue;
+    }
+    if (!current) continue;
+    const situation = line.match(SITUATION);
+    if (situation) {
+      current.situation = capitalize(situation[1]!.trim());
+      continue;
+    }
+    const statement = line.match(STATEMENT);
+    if (statement) {
+      current.statements[Number(statement[1]) - 1] = statement[2]!.trim();
+    }
+  }
+  close();
+  const ids = new Set(
+    Object.values(arms.renderings).flatMap((entry) => Object.keys(entry)),
+  );
+  for (const id of crux) {
+    for (const rendering of ids) {
+      if (!arms.renderings[id]?.[rendering]) {
+        throw new BadRequestError(
+          `instrument markdown: crux item ${id} lacks the ${rendering} rendering`,
+        );
+      }
+    }
+  }
+  return arms;
 }

@@ -3,13 +3,18 @@ import {
   type EntityLike,
   type LlmClient,
   type LlmOperateOptions,
+  type LlmTurn,
   type Store,
 } from "@modelstudies/workflows";
 import { describe, expect, it } from "vitest";
 
 import { FIELDING_MODEL, type FieldingEntity } from "../fielding";
+import { buildInstrument } from "../instrument";
 import {
   INTERVIEW_JOURNAL,
+  itemPrompt,
+  majorityLine,
+  presentItem,
   runInterviews,
   type InterviewEntity,
   type ProbeEntity,
@@ -54,6 +59,8 @@ class MemoryStore implements Store {
 interface StubLlm extends LlmClient {
   calls: number;
   prompts: string[];
+  /** the history each call carried (a replayed probe's transcript) */
+  histories: (LlmTurn[] | undefined)[];
 }
 
 // Fixed-answer respondent: always the first enum label on choice items, 5 on
@@ -70,9 +77,11 @@ function stubLlm(
   const llm: StubLlm = {
     calls: 0,
     prompts: [],
+    histories: [],
     async operate(prompt: string, operateOptions?: LlmOperateOptions) {
       llm.calls += 1;
       llm.prompts.push(prompt);
+      llm.histories.push(operateOptions?.history as LlmTurn[] | undefined);
       options.onCall?.(llm.calls);
       if (llm.calls === options.failAt) {
         throw Object.assign(new Error("provider down"), { status: 503 });
@@ -627,5 +636,241 @@ describe("runInterviews with an item subset", () => {
         llm,
       }),
     ).rejects.toThrow(/fresh fielding/);
+  });
+
+  it("fields the informed arm on the crux: majority scheduled 6/6, named in the prompt, recorded per turn", async () => {
+    const store = new MemoryStore();
+    const journal = new MemoryJournal();
+    const llm = stubLlm();
+    const [sitting] = await runInterviews({
+      plan: "crisis-situated",
+      arm: "informed",
+      models: ["stub-model"],
+      repetitions: 12,
+      store,
+      llm,
+      journal,
+    });
+    expect(sitting!.status).toBe("complete");
+    expect(sitting!.arm).toBe("informed");
+    expect(sitting!.items).toHaveLength(12);
+    expect(llm.calls).toBe(144);
+    const instrument = buildInstrument({ plan: "crisis-situated" });
+    const arm = instrument.arms!.informed!;
+    for (const [name, response] of Object.entries(sitting!.responses)) {
+      const item = instrument.items.find((entry) => entry.name === name)!;
+      expect(response.majority).toHaveLength(12);
+      expect(response.majority!.filter((code) => code === 1)).toHaveLength(6);
+      expect(response.majority!.filter((code) => code === 2)).toHaveLength(6);
+      // the line names the scheduled course by its label
+      for (const [rep, majority] of response.majority!.entries()) {
+        const line = majorityLine(item, arm, majority);
+        const label = item.options.find((o) => o.code === majority)!.label;
+        expect(line).toBe(
+          `Four other advisers, deciding independently, chose: ${label}`,
+        );
+        expect(
+          llm.prompts.some((prompt) => prompt.endsWith(`\n\n${line}`)),
+          `${name} rep ${rep}`,
+        ).toBe(true);
+      }
+    }
+    const events = await eventsOf(journal, sitting!.id);
+    expect(events[0]).toMatchObject({ t: "start", arm: "informed" });
+    const turns = events.filter((event) => event.t === "turn");
+    expect(turns).toHaveLength(144);
+    for (const turn of turns) expect([1, 2]).toContain(turn.majority);
+    const fielding = await store.get<FieldingEntity>(
+      FIELDING_MODEL,
+      sitting!.fielding!,
+    );
+    expect(fielding!.arm).toBe("informed");
+    // the schedule is a pure function of (plan, arm, item): another sitting agrees
+    const [again] = await runInterviews({
+      plan: "crisis-situated",
+      arm: "informed",
+      models: ["other-model"],
+      repetitions: 12,
+      store,
+      llm: stubLlm(),
+    });
+    expect(again!.responses.f2!.majority).toEqual(
+      sitting!.responses.f2!.majority,
+    );
+    // verify rebuilds every prompt, majority included
+    const report = await verifyInterview({ id: sitting!.id, store, journal });
+    expect(report.promptsChecked).toBe(144);
+    expect(report.promptMismatches).toEqual([]);
+    expect(report.drift).toEqual([]);
+  });
+
+  it("resumes an informed-arm sitting on its own arm, tops up the schedule, and replays probes with the recorded majority", async () => {
+    const store = new MemoryStore();
+    const journal = new MemoryJournal();
+    const llm = stubLlm();
+    const [sitting] = await runInterviews({
+      plan: "crisis-situated",
+      arm: "informed",
+      items: ["f2"],
+      models: ["stub-model"],
+      repetitions: 2,
+      store,
+      llm,
+      journal,
+    });
+    expect(sitting!.items).toEqual(["f2"]);
+    const head = [...sitting!.responses.f2!.majority!];
+    expect(head).toHaveLength(2);
+    // explain on resume backfills by replay: the replayed prompt carries the
+    // same line the respondent saw, then the top-up appends
+    const [topped] = await runInterviews({
+      resume: [sitting!.id],
+      repetitions: 4,
+      explain: true,
+      store,
+      llm,
+      journal,
+    });
+    expect(topped!.arm).toBe("informed");
+    expect(topped!.status).toBe("complete");
+    expect(topped!.responses.f2!.majority!.slice(0, 2)).toEqual(head);
+    expect(topped!.responses.f2!.majority).toHaveLength(4);
+    const instrument = buildInstrument({ plan: "crisis-situated" });
+    const f2 = instrument.items.find((item) => item.name === "f2")!;
+    const arm = instrument.arms!.informed!;
+    // calls 3 and 4 are the replayed probes: the query is the prompt, and the
+    // transcript the respondent saw is the history's first turn
+    expect(llm.prompts.slice(2, 4)).toEqual([
+      instrument.probe,
+      instrument.probe,
+    ]);
+    const replayed = llm.histories
+      .slice(2, 4)
+      .map((history) => history![0]!.content);
+    expect(replayed).toEqual([
+      itemPrompt(instrument, f2, {
+        order: sitting!.responses.f2!.orders![0],
+        arm,
+        majority: head[0],
+      }),
+      itemPrompt(instrument, f2, {
+        order: sitting!.responses.f2!.orders![1],
+        arm,
+        majority: head[1],
+      }),
+    ]);
+    const probe = await store.get<ProbeEntity>("probe", `${sitting!.id}#f2`);
+    expect(probe!.responses).toHaveLength(4);
+    const report = await verifyInterview({ id: sitting!.id, store, journal });
+    expect(report.promptMismatches).toEqual([]);
+    // the arm is part of the identity: a fresh --arm on resume refuses, and
+    // items outside the arm refuse
+    await expect(
+      runInterviews({ resume: [sitting!.id], arm: "zh", store, llm }),
+    ).rejects.toThrow(/fresh fielding/);
+    await expect(
+      runInterviews({
+        plan: "crisis-situated",
+        arm: "informed",
+        items: ["f1"],
+        models: ["stub-model"],
+        store,
+        llm,
+      }),
+    ).rejects.toThrow(/does not field f1/);
+  });
+
+  it("fields the priorities arm with the standing block before the preamble", async () => {
+    const store = new MemoryStore();
+    const llm = stubLlm();
+    const [sitting] = await runInterviews({
+      plan: "crisis-situated",
+      arm: "priorities",
+      items: ["c3"],
+      models: ["stub-model"],
+      repetitions: 1,
+      store,
+      llm,
+    });
+    expect(sitting!.arm).toBe("priorities");
+    expect(sitting!.responses.c3!.majority).toBeUndefined();
+    const instrument = buildInstrument({ plan: "crisis-situated" });
+    expect(
+      llm.prompts[0]!.startsWith("The state's standing priorities are:"),
+    ).toBe(true);
+    expect(llm.prompts[0]).toContain(`\n\n${instrument.instruction!}\n\n`);
+  });
+
+  it("fields the zh arm in its rendering, stamps the language, and probes in zh", async () => {
+    const store = new MemoryStore();
+    const journal = new MemoryJournal();
+    const llm = stubLlm();
+    const [sitting] = await runInterviews({
+      plan: "crisis-situated",
+      arm: "zh",
+      items: ["f2"],
+      models: ["stub-model"],
+      repetitions: 1,
+      explain: true,
+      store,
+      llm,
+      journal,
+    });
+    expect(sitting!.language).toBe("zh");
+    expect(sitting!.explain).toBe("请说明您的选择。");
+    const instrument = buildInstrument({ plan: "crisis-situated" });
+    const f2 = instrument.items.find((item) => item.name === "f2")!;
+    const shown = presentItem(f2, instrument.arms!.zh!);
+    expect(shown.options.map((o) => o.code)).toEqual([1, 2]);
+    expect(shown.wording).not.toBe(f2.wording);
+    expect(llm.prompts[0]!.startsWith(instrument.arms!.zh!.preamble!)).toBe(
+      true,
+    );
+    expect(llm.prompts[0]).toContain(shown.wording);
+    expect(llm.prompts[0]).not.toContain(f2.options[0]!.label);
+    // the stub answers the first enum label, a rendered label, and it codes
+    expect(sitting!.responses.f2!.values![0]).not.toBeNull();
+    expect(sitting!.responses.f2!.orders![0]).toContain(
+      shown.options[0]!.label,
+    );
+    const report = await verifyInterview({ id: sitting!.id, store, journal });
+    expect(report.promptMismatches).toEqual([]);
+    await expect(
+      runInterviews({
+        plan: "crisis-situated",
+        arm: "zh",
+        language: "en",
+        models: ["stub-model"],
+        store,
+        llm,
+      }),
+    ).rejects.toThrow(/conflicts/);
+  });
+
+  it("fields a dress arm with rendered courses that code back to the bank", async () => {
+    const store = new MemoryStore();
+    const llm = stubLlm();
+    const instrument = buildInstrument({ plan: "crisis-situated" });
+    for (const id of ["dress-period", "dress-modern"]) {
+      const [sitting] = await runInterviews({
+        plan: "crisis-situated",
+        arm: id,
+        items: ["h1"],
+        models: ["stub-model"],
+        repetitions: 2,
+        store,
+        llm,
+      });
+      const h1 = instrument.items.find((item) => item.name === "h1")!;
+      const shown = presentItem(h1, instrument.arms![id]!);
+      expect(sitting!.arm).toBe(id);
+      expect(sitting!.language).toBeUndefined();
+      expect(sitting!.responses.h1!.values).toHaveLength(2);
+      for (const order of sitting!.responses.h1!.orders!) {
+        expect([...order].sort()).toEqual(
+          shown.options.map((o) => o.label).sort(),
+        );
+      }
+    }
   });
 });

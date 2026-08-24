@@ -27,6 +27,12 @@ const resolveModels = async (spec: string): Promise<string[]> => {
     .map((part) => named[part] ?? part);
 };
 
+/** a registered panel id (`dev`, `production`, ...) or not: anything else is model ids */
+const isPanel = async (spec: string): Promise<boolean> => {
+  const { listPanels } = await import("@modelstudies/survey");
+  return listPanels().some((panel) => panel.id === spec);
+};
+
 /** comma-separated ids; a trailing `*` matches every registered scenario with that prefix */
 const resolveScenarios = async (spec: string): Promise<string[]> => {
   const { listScenarios } = await import("@modelstudies/game");
@@ -197,8 +203,7 @@ const parseNaming = async (naming: string) => {
 };
 
 const resolveRoster = async (panelOrModels: string): Promise<string[]> => {
-  if (panelOrModels.includes(","))
-    return panelOrModels.split(",").map((m) => m.trim());
+  if (!(await isPanel(panelOrModels))) return resolveModels(panelOrModels);
   const survey = await import("@modelstudies/survey");
   const panel = survey.getPanel(panelOrModels) as
     { models?: string[] } | string[];
@@ -602,7 +607,7 @@ program
     );
     for (const row of scorecard.models) {
       console.log(
-        `${row.model.padEnd(22)} ${row.status.padEnd(9)} overall:${
+        `${row.model.padEnd(22)} ${(row.arm ?? "default").padEnd(13)} ${row.status.padEnd(9)} overall:${
           row.overall.positiveShare === null
             ? "—"
             : Math.round(row.overall.positiveShare * 100) + "%"
@@ -625,6 +630,10 @@ program
   .command("interview-run")
   .description("Run a values-instrument sitting across a panel")
   .option("--plan <id>", "instrument plan", "crisis")
+  .option(
+    "--arm <id>",
+    "a treatment arm the plan declares (crisis-situated: priorities, informed, dress-period, dress-modern, zh); the sitting keeps to the arm's items and records the arm",
+  )
   .option("--panel <name>", "panel name or comma-separated model ids", "dev")
   .option(
     "--repetitions <n>",
@@ -651,10 +660,11 @@ program
     const controller = interruptible(log);
     console.error(`log → ${log.file}`);
     const store = new FileStore(varRoot());
-    const models = options.panel.includes(",")
-      ? await resolveModels(options.panel)
-      : undefined;
+    const models = (await isPanel(options.panel))
+      ? undefined
+      : await resolveModels(options.panel);
     const interviews = await survey.runInterviews({
+      ...(options.arm ? { arm: String(options.arm) } : {}),
       explain: options.explain,
       journal: new FileJournal(varRoot()),
       llm: await llmFor(log, controller.signal),
@@ -689,6 +699,7 @@ program
       usages.push(usage);
       console.log(
         `${interview.id}  ${String(interview.status).padEnd(9)}  ${(interview.respondent ?? "").padEnd(28)}` +
+          (interview.arm ? `arm:${interview.arm}  ` : "") +
           `${interview.answered}/${interview.answered + interview.declined + interview.remaining}` +
           `  ${usageLine(usage.total)}` +
           (detail ? `  ${detail}` : ""),
@@ -740,6 +751,7 @@ program
         `  ${entity.id}  ${String(entity.status).padEnd(9)}  ${entity.plan.padEnd(20)}` +
         `  ${survey.respondentOf(entity).padEnd(28)}  reps:${String(entity.repetitions ?? 1).padStart(2)}` +
         `  ${String(entity.answered).padStart(3)}/${String(entity.declined).padStart(2)}` +
+        (entity.arm ? `  arm:${entity.arm}` : "") +
         (entity.items ? `  items:${entity.items.length}` : "") +
         `  ${usageLine(usage.total)}` +
         (detail ? `  ${detail}` : "")
@@ -751,6 +763,7 @@ program
       console.log(
         `${fielding.id}  ${fielding.status.padEnd(9)}  ${fielding.plan}  ${fielding.panel ?? fielding.models.join(",")}` +
           `  reps:${fielding.repetitions}` +
+          (fielding.arm ? `  arm:${fielding.arm}` : "") +
           (fielding.items ? `  items:${fielding.items.length}` : "") +
           (fielding.budgetUsd !== undefined
             ? `  budget:${usd(fielding.budgetUsd)}`
@@ -809,58 +822,92 @@ program
   .option("--repetitions <n>", "repetitions per item", "1")
   .option("--explain", "probe an explanation for each answer", false)
   .option("--items <spec>", "item names or a subset the plan declares")
+  .option(
+    "--arm <id>",
+    "estimate one arm the plan declares (its items, preamble, rendering, probe)",
+  )
+  .option("--arms", "estimate every arm the plan declares, after the default")
   .option("--json", "print the estimate as JSON")
   .action(async (options) => {
     const { FileStore } = await import("@modelstudies/workflows");
+    const { BadRequestError } = await import("@jaypie/errors");
     const survey = await import("@modelstudies/survey");
     const store = new FileStore(varRoot());
-    const models = options.panel.includes(",")
-      ? await resolveModels(options.panel)
-      : survey.resolvePanel({ panel: options.panel }).models;
+    const models = (await isPanel(options.panel))
+      ? survey.resolvePanel({ panel: options.panel }).models
+      : await resolveModels(options.panel);
     const instrument = survey.buildInstrument({ plan: options.plan });
-    const estimate = await survey.estimateFielding({
-      plan: options.plan,
-      models,
-      repetitions: Number(options.repetitions),
-      explain: options.explain,
-      ...(options.items
-        ? {
-            items: survey.resolveItems(
-              instrument,
-              String(options.items).split(","),
-            ),
-          }
-        : {}),
-      store,
-    });
+    if (options.arm && options.arms) {
+      throw new BadRequestError("pass --arm <id> or --arms, not both");
+    }
+    // The default arm, then each named arm: one estimate per arm.
+    const arms: (string | undefined)[] = options.arms
+      ? [undefined, ...Object.keys(instrument.arms ?? {})]
+      : [options.arm ? String(options.arm) : undefined];
+    const estimates = [];
+    for (const arm of arms) {
+      estimates.push(
+        await survey.estimateFielding({
+          plan: options.plan,
+          models,
+          repetitions: Number(options.repetitions),
+          explain: options.explain,
+          ...(arm !== undefined ? { arm } : {}),
+          ...(options.items
+            ? {
+                items: survey.resolveItems(
+                  instrument,
+                  String(options.items).split(","),
+                ),
+              }
+            : {}),
+          store,
+        }),
+      );
+    }
     if (options.json) {
-      console.log(JSON.stringify(estimate, null, 2));
+      console.log(
+        JSON.stringify(
+          estimates.length === 1 ? estimates[0] : estimates,
+          null,
+          2,
+        ),
+      );
       return;
     }
     const figure = (f: import("@modelstudies/survey").TokenFigure) =>
       `${f.input}/${f.output} ${f.source}${f.n ? `(n=${f.n})` : ""}`;
-    console.log(
-      `${estimate.plan}: ${estimate.sittings[0]?.items ?? 0} items × ${estimate.repetitions} reps` +
-        (estimate.explain ? " × (answer + probe)" : "") +
-        ` over ${models.length} model(s)`,
-    );
-    for (const sitting of estimate.sittings) {
+    for (const estimate of estimates) {
       console.log(
-        `  ${sitting.model.padEnd(28)}  calls:${String(sitting.calls).padStart(5)}` +
-          `  in:${tokens(sitting.input).padStart(8)}  out:${tokens(sitting.output).padStart(8)}` +
-          `  ${(sitting.usd === null ? "unpriced" : usd(sitting.usd)).padStart(10)}` +
-          `  answer ${figure(sitting.answer)}` +
-          (sitting.probe ? `  probe ${figure(sitting.probe)}` : ""),
+        `${estimate.plan}${estimate.arm ? ` · arm ${estimate.arm}` : ""}: ${estimate.sittings[0]?.items ?? 0} items × ${estimate.repetitions} reps` +
+          (estimate.explain ? " × (answer + probe)" : "") +
+          ` over ${models.length} model(s)`,
+      );
+      for (const sitting of estimate.sittings) {
+        console.log(
+          `  ${sitting.model.padEnd(28)}  calls:${String(sitting.calls).padStart(5)}` +
+            `  in:${tokens(sitting.input).padStart(8)}  out:${tokens(sitting.output).padStart(8)}` +
+            `  ${(sitting.usd === null ? "unpriced" : usd(sitting.usd)).padStart(10)}` +
+            `  answer ${figure(sitting.answer)}` +
+            (sitting.probe ? `  probe ${figure(sitting.probe)}` : ""),
+        );
+      }
+      console.log(
+        `  ${"total".padEnd(28)}  calls:${String(estimate.calls).padStart(5)}` +
+          `  in:${tokens(estimate.input).padStart(8)}  out:${tokens(estimate.output).padStart(8)}` +
+          `  ${usd(estimate.usd).padStart(10)}` +
+          (estimate.unpriced.length
+            ? `  (unpriced: ${estimate.unpriced.join(", ")})`
+            : ""),
       );
     }
-    console.log(
-      `  ${"total".padEnd(28)}  calls:${String(estimate.calls).padStart(5)}` +
-        `  in:${tokens(estimate.input).padStart(8)}  out:${tokens(estimate.output).padStart(8)}` +
-        `  ${usd(estimate.usd).padStart(10)}` +
-        (estimate.unpriced.length
-          ? `  (unpriced: ${estimate.unpriced.join(", ")})`
-          : ""),
-    );
+    if (estimates.length > 1) {
+      const calls = estimates.reduce((sum, e) => sum + e.calls, 0);
+      const total = estimates.reduce((sum, e) => sum + e.usd, 0);
+      console.log(
+        `${"all arms".padEnd(30)}  calls:${String(calls).padStart(5)}  ${usd(total).padStart(30)}`,
+      );
+    }
   });
 
 program

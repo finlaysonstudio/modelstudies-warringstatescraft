@@ -80,6 +80,41 @@ export interface InstrumentFilter {
   exclude?: string[];
 }
 
+/** one item's wording and courses as an arm renders them (a dress or a language) */
+export interface ArmRendering {
+  wording: string;
+  /** statement 1 then statement 2, codes unchanged */
+  options: [string, string];
+}
+
+/**
+ * A treatment arm the plan declares: the same items asked another way. The
+ * arm is part of a sitting's identity (`InterviewEntity.arm`), and its
+ * definition is data on the instrument so a resume, a replay, and verify
+ * reconstruct the prompt the respondent saw.
+ */
+export interface ArmDefinition {
+  title: string;
+  /** the items the arm fields (default: the whole bank) */
+  items?: string[];
+  /** replaces the instrument's instruction */
+  preamble?: string;
+  /** replaces the instrument's probe (a language rendering) */
+  probe?: string;
+  /**
+   * "majority": one line appended after the courses names the course a
+   * majority of other advisers chose, scheduled 6/6 across the reps and
+   * recorded per turn (`InterviewItemResponse.majority`).
+   */
+  append?: "majority";
+  /** the line appended under "majority"; `{course}` is the course named */
+  appendText?: string;
+  /** the language the arm is rendered in; stamped on the sitting */
+  language?: string;
+  /** per-item wording and courses replacing the bank's (a dress or a language) */
+  rendering?: Record<string, ArmRendering>;
+}
+
 export interface Instrument {
   id: string;
   title: string;
@@ -103,6 +138,8 @@ export interface Instrument {
   optionOrder?: InstrumentOptionOrder;
   /** Named item subsets the plan declares (e.g. a crux subset for arms). */
   subsets?: Record<string, string[]>;
+  /** Treatment arms the plan declares, by id. */
+  arms?: Record<string, ArmDefinition>;
   items: SurveyItem[];
 }
 

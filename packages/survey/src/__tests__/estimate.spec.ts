@@ -128,4 +128,59 @@ describe("estimateSitting", () => {
     expect(estimate.sittings[0]!.input).toBe(9 * 400 + 9 * 400);
     expect(estimate.sittings[1]!.answer.source).toBe("heuristic");
   });
+
+  it("estimates an arm on its own items with the arm's prompt", async () => {
+    const whole = await estimateFielding({
+      plan: "crisis-situated",
+      models: ["priced-model"],
+      repetitions: 12,
+      explain: true,
+      prices: PRICES,
+    });
+    const crux = await estimateFielding({
+      plan: "crisis-situated",
+      models: ["priced-model"],
+      repetitions: 12,
+      explain: true,
+      items: buildInstrument({ plan: "crisis-situated" }).subsets!.crux,
+      prices: PRICES,
+    });
+    const informed = await estimateFielding({
+      plan: "crisis-situated",
+      arm: "informed",
+      models: ["priced-model"],
+      repetitions: 12,
+      explain: true,
+      prices: PRICES,
+    });
+    const zh = await estimateFielding({
+      plan: "crisis-situated",
+      arm: "zh",
+      models: ["priced-model"],
+      repetitions: 12,
+      explain: true,
+      prices: PRICES,
+    });
+    expect(whole.sittings[0]!.items).toBe(88);
+    expect(informed.arm).toBe("informed");
+    expect(informed.sittings[0]!.arm).toBe("informed");
+    expect(informed.sittings[0]!.items).toBe(12);
+    expect(informed.calls).toBe(crux.calls);
+    // the appended line lengthens every answer prompt
+    expect(informed.sittings[0]!.answer.input).toBeGreaterThan(
+      crux.sittings[0]!.answer.input,
+    );
+    // the zh probe is the arm's
+    expect(zh.sittings[0]!.probe!.input).not.toBe(
+      crux.sittings[0]!.probe!.input,
+    );
+    await expect(
+      estimateFielding({
+        plan: "crisis-situated",
+        arm: "nope",
+        models: ["priced-model"],
+        repetitions: 1,
+      }),
+    ).rejects.toThrow(/Unknown arm/);
+  });
 });

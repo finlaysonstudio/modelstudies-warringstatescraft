@@ -25,6 +25,8 @@ export interface TopicScore {
 export interface ModelValuesRow {
   interviewId: string;
   model: string;
+  /** the arm the sitting was fielded in; absent on the default arm */
+  arm?: string;
   overall: TopicScore;
   status: string;
   topics: TopicScore[];
@@ -101,6 +103,7 @@ export const buildValuesScorecard = async ({
     return {
       interviewId: entity.id,
       model: entity.respondent ?? entity.respondentModel ?? "unknown",
+      ...(entity.arm !== undefined ? { arm: entity.arm } : {}),
       overall: score("overall", all),
       status: String(entity.status ?? "unknown"),
       topics: topics.map((topic) => score(topic, byTopic.get(topic) ?? [])),
@@ -113,7 +116,12 @@ export const buildValuesScorecard = async ({
     createdAt: new Date().toISOString(),
     id: `values-${plan}`,
     model: "scorecards",
-    models: models.sort((a, b) => a.model.localeCompare(b.model)),
+    // grouped by model, the default arm first, then the arms by id
+    models: models.sort(
+      (a, b) =>
+        a.model.localeCompare(b.model) ||
+        (a.arm ?? "").localeCompare(b.arm ?? ""),
+    ),
     plan,
     title: instrument.title,
     topics,

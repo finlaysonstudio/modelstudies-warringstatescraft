@@ -17,9 +17,11 @@ import {
   type FieldingEntity,
 } from "./fielding";
 import {
+  armItems,
   buildInstrument,
   DEFAULT_PLAN,
   EXPLAIN_PROMPT,
+  resolveArm,
   resolveItems,
 } from "./instrument";
 import {
@@ -36,7 +38,12 @@ import {
 import { noopLog, type Logger } from "./log";
 import { balancedOrders, seededShuffle, turnSeed } from "./order";
 import { resolvePanel } from "./panel";
-import type { Instrument, InstrumentPlan, SurveyItem } from "./types";
+import type {
+  ArmDefinition,
+  Instrument,
+  InstrumentPlan,
+  SurveyItem,
+} from "./types";
 
 export const INTERVIEW_MODEL = "interview";
 
@@ -70,6 +77,9 @@ export interface InterviewItemResponse {
   // what the respondent actually saw, so a later probe can replay the turn
   // rather than re-ask it. Absent on open numeric items.
   orders?: string[][];
+  // The course the informed arm's appended line named, by code, one per
+  // repetition; present only in an arm that appends a majority
+  majority?: (1 | 2)[];
   declined?: boolean;
   // Verbatim non-conforming answer, kept for refusal analysis
   raw?: string;
@@ -88,6 +98,10 @@ export interface InterviewEntity extends Entity {
   // Instrument plan id, e.g. "model-values-96" — the comparison cohort this
   // sitting belongs to
   plan: string;
+  // The treatment arm the plan declares that this sitting was fielded in
+  // (absent = the default arm); part of the sitting's identity, read back
+  // on resume, replay, and verify
+  arm?: string;
   // Who answered
   respondent: string;
   // The named roster this sitting was fielded to, when it was taken as
@@ -153,6 +167,37 @@ export interface ItemPresentationOptions {
   shuffleSeed?: string;
   /** Explicit label order (balanced-random protocol); wins over both. */
   order?: string[];
+  /** The arm the item is asked in: preamble, rendering, appended line. */
+  arm?: ArmDefinition;
+  /** The course the informed arm's line names this turn, by code. */
+  majority?: 1 | 2;
+}
+
+/** the informed arm's line when the arm states none; `{course}` is the course named */
+export const DEFAULT_MAJORITY_TEXT =
+  "Four other advisers, deciding independently, chose: {course}";
+
+/**
+ * The item as an arm shows it: the arm's rendering of its wording and
+ * courses when it has one, codes unchanged; the bank's item otherwise.
+ * Idempotent, so a rendered item passed back in renders the same.
+ */
+export function presentItem(item: SurveyItem, arm?: ArmDefinition): SurveyItem {
+  const rendering = arm?.rendering?.[item.name];
+  if (!rendering) return item;
+  if (item.options.length !== 2) {
+    throw new BadRequestError(
+      `Arm ${arm!.title} renders ${item.name}, which is not a two-course item`,
+    );
+  }
+  return {
+    ...item,
+    wording: rendering.wording,
+    options: item.options.map((option, index) => ({
+      ...option,
+      label: rendering.options[index]!,
+    })),
+  };
 }
 
 export function orderedLabels(
@@ -160,7 +205,9 @@ export function orderedLabels(
   options: ItemPresentationOptions,
 ): string[] {
   if (options.order !== undefined) return [...options.order];
-  const labels = item.options.map((option) => option.label);
+  const labels = presentItem(item, options.arm).options.map(
+    (option) => option.label,
+  );
   if (options.shuffleSeed !== undefined) {
     return seededShuffle(labels, { seed: options.shuffleSeed });
   }
@@ -168,27 +215,60 @@ export function orderedLabels(
   return labels;
 }
 
+/** The informed arm's appended line naming the course `majority` codes. */
+export function majorityLine(
+  item: SurveyItem,
+  arm: ArmDefinition,
+  majority: 1 | 2,
+): string {
+  const shown = presentItem(item, arm);
+  const course = shown.options.find((option) => option.code === majority);
+  if (!course) {
+    throw new BadRequestError(
+      `Item ${item.name} has no course coded ${majority} for the majority line`,
+    );
+  }
+  return (arm.appendText ?? DEFAULT_MAJORITY_TEXT).replaceAll(
+    "{course}",
+    course.label,
+  );
+}
+
 // One repetition's presentation: the question and its labeled choices as
 // plain text — no numbers, no letters, no system prompt. Each item is asked
 // in an independent conversation so earlier answers cannot anchor later ones.
+// An arm swaps the preamble and the rendering, and the informed arm appends
+// its line after the courses; the prompt stays a pure function of (plan,
+// arm, item, order, majority), which is what replay and verify rely on.
 export function itemPrompt(
   instrument: Instrument,
   item: SurveyItem,
   options: ItemPresentationOptions = {},
 ): string {
+  const { arm } = options;
+  const shown = presentItem(item, arm);
   const lines: string[] = [];
-  const instruction = item.instruction ?? instrument.instruction;
+  const instruction =
+    shown.instruction ?? arm?.preamble ?? instrument.instruction;
   if (instruction) {
     lines.push(instruction, "");
   }
-  lines.push(item.wording);
-  if (item.options.length > 0) {
-    lines.push("", ...orderedLabels(item, options));
+  lines.push(shown.wording);
+  if (shown.options.length > 0) {
+    lines.push("", ...orderedLabels(shown, options));
   } else {
     lines.push(
       "",
-      `Answer with a number between ${item.range[0]} and ${item.range[1]}.`,
+      `Answer with a number between ${shown.range[0]} and ${shown.range[1]}.`,
     );
+  }
+  if (arm?.append === "majority") {
+    if (options.majority === undefined) {
+      throw new BadRequestError(
+        `Arm ${arm.title} appends a majority line and none was scheduled for ${item.name}`,
+      );
+    }
+    lines.push("", majorityLine(shown, arm, options.majority));
   }
   return lines.join("\n");
 }
@@ -376,6 +456,10 @@ export function responseOf(
     (order): order is string[] => order !== null,
   );
   if (orders.length > 0) response.orders = orders;
+  const majority = item.majority.filter(
+    (entry): entry is 1 | 2 => entry !== null,
+  );
+  if (majority.length > 0) response.majority = majority;
   if (response.value === null) response.declined = true;
   const missed = item.values.findIndex((value) => value === null);
   if (missed >= 0) response.raw = rawOf(item.contents[missed]);
@@ -447,7 +531,18 @@ export function probesOf(options: {
   return probes;
 }
 
-// The option order each turn is shown, for turns [from, turns). Derived in one
+/** The arm a sitting was fielded in, resolved against its plan (undefined on the default arm). */
+export function armOf(
+  instrument: Instrument,
+  entity: Pick<InterviewEntity, "arm">,
+): ArmDefinition | undefined {
+  return entity.arm === undefined
+    ? undefined
+    : resolveArm(instrument, entity.arm);
+}
+
+// The option order each turn is shown, for turns [from, turns), and in an
+// arm that appends a majority line, the course it names. Derived in one
 // place so the ask path and the replay path agree: a probe reconstructs the
 // transcript the respondent saw rather than a differently-ordered one.
 export function turnPresentations(options: {
@@ -459,6 +554,8 @@ export function turnPresentations(options: {
 }): ItemPresentationOptions[] {
   const { entity, instrument, item, turns } = options;
   const from = options.from ?? 0;
+  const arm = armOf(instrument, entity);
+  const shown = presentItem(item, arm);
   const reverseOptions = entity.condition === "reversed-options";
   const randomizedOptions = entity.condition === "randomized-options";
   // Plan-mandated protocol; an explicit condition overrides it.
@@ -472,9 +569,9 @@ export function turnPresentations(options: {
   // schedule: the banked head was balanced under its own target, so head plus
   // balanced tail stays balanced.
   const orders =
-    balancedOptions && item.options.length > 1
+    balancedOptions && shown.options.length > 1
       ? balancedOrders(
-          item.options.map((option) => option.label),
+          shown.options.map((option) => option.label),
           {
             seed:
               from === 0
@@ -483,6 +580,19 @@ export function turnPresentations(options: {
             turns: turns - from,
           },
         )
+      : undefined;
+  // The informed arm's majority: the same balanced machinery over the two
+  // codes, seeded by (plan, arm, item) and independent of the option order,
+  // so 12 reps name course 1 six times and course 2 six times.
+  const majorities =
+    arm?.append === "majority"
+      ? balancedOrders([1, 2] as const, {
+          seed:
+            from === 0
+              ? `${entity.plan}:${entity.arm}:${item.name}`
+              : `${entity.plan}:${entity.arm}:${item.name}:from${from}`,
+          turns: turns - from,
+        }).map((pair) => pair[0]!)
       : undefined;
   const schedule: ItemPresentationOptions[] = [];
   for (let rep = from; rep < turns; rep += 1) {
@@ -494,6 +604,8 @@ export function turnPresentations(options: {
         ? turnSeed({ plan: entity.plan, item: item.name, turn: rep + 1 })
         : undefined,
       order: orders?.[rep - from],
+      ...(arm ? { arm } : {}),
+      ...(majorities ? { majority: majorities[rep - from] } : {}),
     });
   }
   return schedule;
@@ -520,6 +632,30 @@ export function recordedOrders(options: {
     orders[rep] = orderedLabels(item, derived[rep]!);
   }
   return orders;
+}
+
+// The majority named on each recorded turn of an informed-arm sitting:
+// recorded verbatim, else re-derived from the schedule. Empty outside such
+// an arm.
+export function recordedMajority(options: {
+  entity: InterviewEntity;
+  instrument: Instrument;
+  item: SurveyItem;
+  turns: number;
+}): (1 | 2)[] {
+  const { entity, instrument, item, turns } = options;
+  const arm = armOf(instrument, entity);
+  if (arm?.append !== "majority") return [];
+  const majority = [...(entity.responses[item.name]?.majority ?? [])].slice(
+    0,
+    turns,
+  );
+  if (majority.length >= turns) return majority;
+  const derived = turnPresentations({ entity, instrument, item, turns });
+  for (let rep = majority.length; rep < turns; rep += 1) {
+    majority[rep] = derived[rep]!.majority!;
+  }
+  return majority;
 }
 
 /**
@@ -605,6 +741,7 @@ export async function runSitting(
   const log = options.log ?? noopLog;
   const { id } = entity;
   const modelId = entity.respondentModel!;
+  const arm = armOf(instrument, entity);
   const append = async (event: Omit<SittingEvent, "at">) => {
     if (!journal) return;
     await journal.append(INTERVIEW_JOURNAL, id, {
@@ -668,6 +805,7 @@ export async function runSitting(
     values: (number | null)[];
     usage: (LlmUsage | null)[];
     orders: string[][];
+    majority: (1 | 2)[];
     explanations: (string | null)[];
     probeUsage: (LlmUsage | null)[];
     raw: string | undefined;
@@ -675,14 +813,23 @@ export async function runSitting(
   let current: ItemState | undefined;
   const land = async (state: ItemState | undefined) => {
     if (!state || state.values.length <= state.banked) return;
-    const { item, banked, values, usage, orders, explanations, probeUsage } =
-      state;
+    const {
+      item,
+      banked,
+      values,
+      usage,
+      orders,
+      majority,
+      explanations,
+      probeUsage,
+    } = state;
     const itemResponse: InterviewItemResponse = {
       name: item.name,
       value: meanOf(values),
       values,
     };
     if (orders.length > 0) itemResponse.orders = orders;
+    if (majority.length > 0) itemResponse.majority = majority;
     if (itemResponse.value === null) itemResponse.declined = true;
     if (state.raw !== undefined) itemResponse.raw = state.raw;
     if (usage.some((entry) => entry !== null)) itemResponse.usage = usage;
@@ -720,6 +867,12 @@ export async function runSitting(
         item,
         turns: banked,
       });
+      const majority = recordedMajority({
+        entity,
+        instrument,
+        item,
+        turns: banked,
+      });
       const schedule = turnPresentations({
         entity,
         instrument,
@@ -727,6 +880,9 @@ export async function runSitting(
         turns: repetitions,
         from: banked,
       });
+      // The item as this arm shows it: labels the schema constrains, the
+      // reply is matched against, and the record keeps.
+      const shown = presentItem(item, arm);
       const explanations: (string | null)[] = [];
       const probeUsage: (LlmUsage | null)[] = [];
       const state: ItemState = {
@@ -735,6 +891,7 @@ export async function runSitting(
         values,
         usage,
         orders,
+        majority,
         explanations,
         probeUsage,
         raw: prior?.raw,
@@ -753,11 +910,14 @@ export async function runSitting(
           break;
         }
         const presentation = schedule[rep - banked]!;
-        if (item.options.length > 0) {
-          orders[rep] = orderedLabels(item, presentation);
+        if (shown.options.length > 0) {
+          orders[rep] = orderedLabels(shown, presentation);
         }
-        const prompt = itemPrompt(instrument, item, presentation);
-        const format = itemFormat(item, presentation);
+        if (presentation.majority !== undefined) {
+          majority[rep] = presentation.majority;
+        }
+        const prompt = itemPrompt(instrument, shown, presentation);
+        const format = itemFormat(shown, presentation);
         const started = Date.now();
         let response;
         try {
@@ -774,14 +934,15 @@ export async function runSitting(
         }
         provider = (response as { provider?: string }).provider ?? provider;
         const content = response.content as { response?: unknown } | null;
-        const strict = toCode(item, content?.response);
+        const strict = toCode(shown, content?.response);
         // Fall back to the envelope walk only when the declared key misses.
-        const code = strict ?? toResponseCode(item, response.content);
+        const code = strict ?? toResponseCode(shown, response.content);
         await append({
           t: "turn",
           item: item.name,
           rep,
           ...(orders[rep] ? { order: orders[rep] } : {}),
+          ...(majority[rep] !== undefined ? { majority: majority[rep] } : {}),
           ...(provider ? { provider } : {}),
           content: response.content,
           code,
@@ -910,20 +1071,29 @@ export async function replayProbe(options: {
   instrument: Instrument;
   item: SurveyItem;
   order: string[] | undefined;
+  /** the course the informed arm's line named on that turn */
+  majority?: 1 | 2;
   value: number;
   query: string;
   llm: LlmClient;
 }): Promise<ReplayProbeResult> {
-  const { entity, instrument, item, order, value, query, llm } = options;
+  const { entity, instrument, item, order, majority, value, query, llm } =
+    options;
   const started = Date.now();
+  const arm = armOf(instrument, entity);
+  const shown = presentItem(item, arm);
   const answer =
-    item.options.length > 0
-      ? item.options.find((option) => option.code === value)!.label
+    shown.options.length > 0
+      ? shown.options.find((option) => option.code === value)!.label
       : value;
   const history: LlmTurn[] = [
     {
       role: "user",
-      content: itemPrompt(instrument, item, order ? { order } : {}),
+      content: itemPrompt(instrument, shown, {
+        ...(order ? { order } : {}),
+        ...(arm ? { arm } : {}),
+        ...(majority !== undefined ? { majority } : {}),
+      }),
     },
     {
       role: "assistant",
@@ -996,6 +1166,12 @@ export async function backfillExplanations(options: {
       item,
       turns: values.length,
     });
+    const majority = recordedMajority({
+      entity,
+      instrument,
+      item,
+      turns: values.length,
+    });
     let added = 0;
     for (const [rep, value] of values.entries()) {
       if (value === null || explanations[rep] !== null) continue;
@@ -1007,6 +1183,7 @@ export async function backfillExplanations(options: {
           instrument,
           item,
           order: orders[rep],
+          ...(majority[rep] !== undefined ? { majority: majority[rep] } : {}),
           value,
           query,
           llm,
@@ -1057,6 +1234,8 @@ interface RunOneModelOptions {
   instrument: Instrument;
   items: SurveyItem[];
   repetitions: number;
+  /** the arm the sitting is fielded in */
+  arm?: string;
   condition?: string;
   explain?: string;
   panel?: string;
@@ -1081,6 +1260,7 @@ async function runOneModel(
     instrument,
     items,
     repetitions,
+    arm,
     condition,
     explain,
     panel,
@@ -1110,6 +1290,7 @@ async function runOneModel(
     status: "pending",
     startedAt: new Date().toISOString(),
   };
+  if (arm !== undefined) entity.arm = arm;
   if (condition !== undefined) entity.condition = condition;
   if (explain !== undefined) entity.explain = explain;
   if (panel !== undefined) entity.panel = panel;
@@ -1121,6 +1302,7 @@ async function runOneModel(
     t: "start",
     at: stamp(),
     plan: instrument.id,
+    ...(arm !== undefined ? { arm } : {}),
     model: modelId,
     repetitions,
     items: items.length,
@@ -1257,7 +1439,10 @@ async function resumeOneModel(options: {
       }
     }
   }
-  const explain = explainPrompt(options.explain, { probe: instrument.probe });
+  const arm = armOf(instrument, entity);
+  const explain = explainPrompt(options.explain, {
+    probe: arm?.probe ?? instrument.probe,
+  });
   const reps =
     repetitions && repetitions > 0
       ? Math.floor(repetitions)
@@ -1407,6 +1592,8 @@ async function resumeOneModel(options: {
 export interface RunInterviewsOptions {
   /** Instrument plan; defaults to the registry default. */
   plan?: InstrumentPlan;
+  /** A treatment arm the plan declares; the sitting is scoped to the arm's items and records the arm. */
+  arm?: string;
   /** Named roster to field; defaults to the instrument's own panel, then the registry default. */
   panel?: string;
   /** Explicit model ids; overrides the panel. */
@@ -1452,7 +1639,6 @@ export async function runInterviews(
     models,
     repetitions,
     condition,
-    language,
     explain,
     retry,
     resume,
@@ -1470,6 +1656,11 @@ export async function runInterviews(
   if (options.items && resume) {
     throw new BadRequestError(
       "items applies to a fresh fielding; a resumed sitting keeps its own scope",
+    );
+  }
+  if (options.arm && resume) {
+    throw new BadRequestError(
+      "arm applies to a fresh fielding; a resumed sitting keeps its own arm",
     );
   }
   if (resume) {
@@ -1521,12 +1712,37 @@ export async function runInterviews(
       ? Math.floor(repetitions)
       : DEFAULT_REPETITIONS;
   const instrument = buildInstrument({ plan: plan ?? DEFAULT_PLAN });
-  const subset = options.items
+  const arm =
+    options.arm === undefined ? undefined : resolveArm(instrument, options.arm);
+  // The arm's items bound the sitting; an explicit subset narrows within
+  // them, and a name outside the arm refuses rather than fielding it bare.
+  const armScope = arm ? armItems(instrument, arm) : undefined;
+  const named = options.items
     ? resolveItems(instrument, options.items)
     : undefined;
+  if (named && armScope) {
+    const outside = named.filter((name) => !armScope.includes(name));
+    if (outside.length > 0) {
+      throw new BadRequestError(
+        `Arm ${options.arm} does not field ${outside.join(", ")}`,
+      );
+    }
+  }
+  const subset = named ?? armScope;
   const items = subset
     ? instrument.items.filter((item) => subset.includes(item.name))
     : instrument.items;
+  // A language arm stamps the sitting's language; a conflicting request refuses.
+  if (
+    arm?.language !== undefined &&
+    options.language !== undefined &&
+    options.language !== arm.language
+  ) {
+    throw new BadRequestError(
+      `Arm ${options.arm} is rendered in ${arm.language}; language ${options.language} conflicts`,
+    );
+  }
+  const language = arm?.language ?? options.language;
   // An explicit roster wins; otherwise the run is fielded to a panel —
   // the one named, the instrument's own, or the registry default — so a
   // sitting always records which cohort it belongs to.
@@ -1539,7 +1755,9 @@ export async function runInterviews(
   const cohort = models
     ? undefined
     : resolvePanel({ panel, instrumentPanel: instrument.panel }).id;
-  const probe = explainPrompt(explain, { probe: instrument.probe });
+  const probe = explainPrompt(explain, {
+    probe: arm?.probe ?? instrument.probe,
+  });
   // The fielding record goes down first, so an interrupted roster has one id
   // to resume by; each sitting's id is filled in as the sitting opens.
   const fielding: FieldingEntity = {
@@ -1547,6 +1765,7 @@ export async function runInterviews(
     model: FIELDING_MODEL,
     scope: APEX,
     plan: instrument.id,
+    ...(options.arm !== undefined ? { arm: options.arm } : {}),
     models: roster,
     repetitions: reps,
     interviews: {},
@@ -1567,6 +1786,7 @@ export async function runInterviews(
         instrument,
         items,
         repetitions: reps,
+        ...(options.arm !== undefined ? { arm: options.arm } : {}),
         condition,
         explain: probe,
         language,

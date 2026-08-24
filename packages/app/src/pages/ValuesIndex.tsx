@@ -23,6 +23,8 @@ interface UsageTotals {
 interface ModelRow {
   interviewId: string;
   model: string;
+  // the treatment arm the sitting was fielded in; absent on the default arm
+  arm?: string;
   overall: TopicScore;
   status: string;
   topics: TopicScore[];
@@ -164,6 +166,11 @@ export function ValuesIndex() {
                     >
                       <td className="py-1.5 pr-3 font-plex-mono text-xs text-zinc-300">
                         {row.model}
+                        {row.arm && (
+                          <span className="ml-2 font-plex-mono text-[10px] text-card-accent uppercase">
+                            {row.arm}
+                          </span>
+                        )}
                         {row.status !== "complete" && (
                           <span className="ml-2 font-plex-mono text-[10px] text-zinc-600 uppercase">
                             {row.status}

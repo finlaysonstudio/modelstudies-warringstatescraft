@@ -62,6 +62,7 @@ describe("foldJournal", () => {
         ["A", "B"],
         ["A", "B"],
       ],
+      majority: [null, null],
       contents: [{ response: "A" }, { response: "meh" }],
       usage: [
         [{ input: 10, output: 2, reasoning: 0, total: 12, usd: 0.001 }],

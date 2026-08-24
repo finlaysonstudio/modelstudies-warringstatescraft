@@ -1,9 +1,16 @@
 import { BadRequestError } from "@jaypie/errors";
+import { MODEL_PRICES } from "@modelstudies/workflows";
 import { describe, expect, it } from "vitest";
 
 import { buildInstrument } from "../instrument";
 import { MODELS } from "../models";
-import { DEFAULT_PANEL, getPanel, listPanels, resolvePanel } from "../panel";
+import {
+  DEFAULT_PANEL,
+  getPanel,
+  listPanels,
+  PRODUCTION_FROZEN,
+  resolvePanel,
+} from "../panel";
 
 describe("panels", () => {
   it("registers rosters of bare model ids", () => {
@@ -29,16 +36,53 @@ describe("panels", () => {
       MODELS.LUNA,
     ]);
   });
-  it("production is the seven-model fielded cohort", () => {
-    expect(getPanel("production").models).toEqual([
-      MODELS.OPUS,
-      MODELS.GEMINI_FLASH,
-      MODELS.SOL,
-      MODELS.GROK,
-      MODELS.FIREWORKS_GLM,
-      MODELS.FIREWORKS_KIMI,
-      MODELS.FIREWORKS_QWEN,
+  it("production is the frozen eight-model fielded cohort", () => {
+    // Literal ids on purpose: a frozen roster does not follow the mirror.
+    const production = getPanel("production");
+    expect(production.frozen).toBe(PRODUCTION_FROZEN);
+    expect(production.frozen).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(production.models).toEqual([
+      "claude-opus-5",
+      "gemini-3.7-flash",
+      "gpt-5.6-sol",
+      "grok-4.6",
+      "accounts/fireworks/models/deepseek-v4-pro",
+      "accounts/fireworks/models/glm-5p2",
+      "accounts/fireworks/models/kimi-k3",
+      "accounts/fireworks/models/qwen3p7-plus",
     ]);
+  });
+  it("production carries the mirror's current id for every tier it fields", () => {
+    // A Jaypie bump moves the mirror and this fails: append the new id to
+    // PRODUCTION (keep the old one) and advance nothing else.
+    const production = new Set(getPanel("production").models);
+    for (const name of [
+      "OPUS",
+      "GEMINI_FLASH",
+      "SOL",
+      "GROK",
+      "FIREWORKS_DEEPSEEK",
+      "FIREWORKS_GLM",
+      "FIREWORKS_KIMI",
+      "FIREWORKS_QWEN",
+    ] as const) {
+      expect(
+        production.has(MODELS[name]),
+        `${name} (${MODELS[name]}) is not on the frozen production roster`,
+      ).toBe(true);
+    }
+  });
+  it("every production model is priced, so a budget cap can charge it", () => {
+    for (const model of getPanel("production").models) {
+      expect(MODEL_PRICES[model], model).toBeDefined();
+    }
+  });
+  it("only production is frozen", () => {
+    for (const panel of listPanels()) {
+      expect(panel.frozen !== undefined, panel.id).toBe(
+        panel.id === "production",
+      );
+    }
   });
   it("throws BadRequestError on an unknown panel", () => {
     expect(() => getPanel("nobody")).toThrow(BadRequestError);

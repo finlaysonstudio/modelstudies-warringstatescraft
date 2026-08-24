@@ -8,6 +8,7 @@ import {
 import { CRISIS_40, CRISIS_INSTRUCTION, CRISIS_PROBE } from "./bank/crisis";
 import {
   CRISIS_SITUATED,
+  CRISIS_SITUATED_ARMS,
   CRISIS_SITUATED_CRUX,
   CRISIS_SITUATED_INSTRUCTION,
   CRISIS_SITUATED_PROBE,
@@ -17,6 +18,7 @@ import {
   PAPER_ROCK_SCISSORS_INSTRUCTION,
 } from "./bank/paperRockScissors";
 import type {
+  ArmDefinition,
   Instrument,
   InstrumentCategory,
   InstrumentFilter,
@@ -47,6 +49,7 @@ const PLANS: Record<
     probe?: string;
     optionOrder?: InstrumentOptionOrder;
     subsets?: Record<string, string[]>;
+    arms?: Record<string, ArmDefinition>;
   }
 > = {
   // crisis (40 forced-choice items, 7 groups) — escalation tolerance,
@@ -67,7 +70,8 @@ const PLANS: Record<
   // whose rungs are the options a seat sees, so a model's share of statement
   // 1 per item is its position on that ladder. Emitted from
   // var/instruments/crisis-situated.md by scripts/emit-instrument.ts; the
-  // `crux` subset is the twelve items the arms are fielded on.
+  // `crux` subset is the twelve items the arms (priorities, informed,
+  // dress-period, dress-modern, zh) are fielded on.
   "crisis-situated": {
     title: "Crisis Situated (88)",
     category: "internal",
@@ -76,6 +80,7 @@ const PLANS: Record<
     probe: CRISIS_SITUATED_PROBE,
     optionOrder: "balanced-random",
     subsets: { crux: CRISIS_SITUATED_CRUX },
+    arms: CRISIS_SITUATED_ARMS,
   },
   // model-values-96 (96 forced-choice items, 11 groups; groups have no
   // fielding significance). Protocol: balanced per-turn option-order
@@ -157,6 +162,7 @@ export function buildInstrument(
     probe,
     optionOrder,
     subsets,
+    arms,
     ...baseFilter
   } = base;
   const items = applyFilter(applyFilter(bank, baseFilter), filter);
@@ -170,8 +176,37 @@ export function buildInstrument(
     ...(probe !== undefined ? { probe } : {}),
     ...(optionOrder !== undefined ? { optionOrder } : {}),
     ...(subsets !== undefined ? { subsets } : {}),
+    ...(arms !== undefined ? { arms } : {}),
     items,
   };
+}
+
+/** The arm a plan declares under `id`; an unknown id refuses and names the known ones. */
+export function resolveArm(instrument: Instrument, id: string): ArmDefinition {
+  const arm = instrument.arms?.[id];
+  if (!arm) {
+    const known = Object.keys(instrument.arms ?? {});
+    throw new BadRequestError(
+      `Unknown arm for plan ${instrument.id}: ${id}` +
+        (known.length
+          ? ` (known: ${known.join(", ")})`
+          : " (the plan declares no arms)"),
+    );
+  }
+  return arm;
+}
+
+/** The item names an arm fields: its own list when it has one, else the whole plan. */
+export function armItems(instrument: Instrument, arm: ArmDefinition): string[] {
+  if (!arm.items) return instrument.items.map((item) => item.name);
+  const known = new Set(instrument.items.map((item) => item.name));
+  const unknown = arm.items.filter((name) => !known.has(name));
+  if (unknown.length > 0) {
+    throw new BadRequestError(
+      `Arm ${arm.title} names items plan ${instrument.id} lacks: ${unknown.join(", ")}`,
+    );
+  }
+  return [...arm.items];
 }
 
 /**

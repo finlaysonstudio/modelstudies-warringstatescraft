@@ -9,11 +9,11 @@
 import type { ModelPrice, Store, UsageTotals } from "@modelstudies/workflows";
 import { MODEL_PRICES, priceOf, roundUsd } from "@modelstudies/workflows";
 
-import { buildInstrument } from "./instrument";
+import { armItems, buildInstrument, resolveArm } from "./instrument";
 import { respondentOf } from "./cost";
 import type { InterviewEntity, ProbeEntity } from "./interview";
 import { APEX, INTERVIEW_MODEL, itemPrompt, PROBE_MODEL } from "./interview";
-import type { Instrument, InstrumentPlan } from "./types";
+import type { ArmDefinition, Instrument, InstrumentPlan } from "./types";
 
 export type TokenSource = "measured" | "heuristic";
 
@@ -33,6 +33,8 @@ export interface MeasuredUsage {
 
 export interface SittingEstimate {
   model: string;
+  /** the arm estimated, when one was named */
+  arm?: string;
   items: number;
   repetitions: number;
   explain: boolean;
@@ -48,6 +50,8 @@ export interface SittingEstimate {
 
 export interface FieldingEstimate {
   plan: string;
+  /** the arm estimated, when one was named */
+  arm?: string;
   repetitions: number;
   explain: boolean;
   sittings: SittingEstimate[];
@@ -138,16 +142,29 @@ export const measureUsage = async (options: {
   return result;
 };
 
-/** The stated heuristic: prompt characters over four in, a fixed reply out. */
-export const heuristicFigures = (instrument: Instrument): MeasuredUsage => {
-  const prompts = instrument.items.map((item) => itemPrompt(instrument, item));
+/**
+ * The stated heuristic: prompt characters over four in, a fixed reply out.
+ * In an arm the prompt is the arm's (its preamble, rendering, and, for the
+ * informed arm, the appended line).
+ */
+export const heuristicFigures = (
+  instrument: Instrument,
+  arm?: ArmDefinition,
+): MeasuredUsage => {
+  const prompts = instrument.items.map((item) =>
+    itemPrompt(instrument, item, {
+      ...(arm ? { arm } : {}),
+      ...(arm?.append === "majority" ? { majority: 1 as const } : {}),
+    }),
+  );
   const answerInput = Math.round(
     mean(prompts.map((prompt) => prompt.length)) / CHARS_PER_TOKEN,
   );
+  const probe = arm?.probe ?? instrument.probe;
   const probeInput =
     answerInput +
     HEURISTIC_ANSWER_OUTPUT +
-    Math.round((instrument.probe?.length ?? 40) / CHARS_PER_TOKEN);
+    Math.round((probe?.length ?? 40) / CHARS_PER_TOKEN);
   return {
     answer: {
       input: answerInput,
@@ -167,6 +184,8 @@ export const estimateSitting = (options: {
   model: string;
   repetitions: number;
   explain?: boolean;
+  /** the arm's id; the instrument passed is already scoped to its items */
+  arm?: string;
   measured?: MeasuredUsage;
   prices?: Record<string, ModelPrice>;
 }): SittingEstimate => {
@@ -175,10 +194,13 @@ export const estimateSitting = (options: {
     model,
     repetitions,
     explain = false,
+    arm,
     measured = {},
     prices = MODEL_PRICES,
   } = options;
-  const heuristic = heuristicFigures(instrument);
+  const definition =
+    arm === undefined ? undefined : resolveArm(instrument, arm);
+  const heuristic = heuristicFigures(instrument, definition);
   const answer = measured.answer ?? heuristic.answer!;
   const probe = explain ? (measured.probe ?? heuristic.probe!) : undefined;
   const turns = instrument.items.length * repetitions;
@@ -191,6 +213,7 @@ export const estimateSitting = (options: {
   );
   return {
     model,
+    ...(arm !== undefined ? { arm } : {}),
     items: instrument.items.length,
     repetitions,
     explain: !!probe,
@@ -208,6 +231,8 @@ export const estimateFielding = async (options: {
   models: string[];
   repetitions: number;
   explain?: boolean;
+  /** an arm the plan declares: its items, preamble, rendering, and probe */
+  arm?: string;
   items?: string[];
   store?: Store;
   prices?: Record<string, ModelPrice>;
@@ -217,13 +242,18 @@ export const estimateFielding = async (options: {
     models,
     repetitions,
     explain = false,
+    arm,
     items,
     store,
     prices,
   } = options;
+  const whole = buildInstrument({ plan });
+  const scope =
+    arm === undefined ? undefined : armItems(whole, resolveArm(whole, arm));
+  const include = items ?? scope;
   const instrument = buildInstrument({
     plan,
-    ...(items ? { include: items } : {}),
+    ...(include ? { include } : {}),
   });
   const sittings: SittingEstimate[] = [];
   for (const model of models) {
@@ -234,6 +264,7 @@ export const estimateFielding = async (options: {
         model,
         repetitions,
         explain,
+        ...(arm !== undefined ? { arm } : {}),
         measured,
         ...(prices ? { prices } : {}),
       }),
@@ -241,6 +272,7 @@ export const estimateFielding = async (options: {
   }
   return {
     plan,
+    ...(arm !== undefined ? { arm } : {}),
     repetitions,
     explain,
     sittings,

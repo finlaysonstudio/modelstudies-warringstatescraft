@@ -16,6 +16,8 @@ export interface FieldingEntity extends Entity {
   model: typeof FIELDING_MODEL;
   scope: string;
   plan: string;
+  /** the arm every sitting was fielded in, when one was named */
+  arm?: string;
   panel?: string;
   models: string[];
   repetitions: number;

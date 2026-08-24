@@ -78,4 +78,34 @@ describe("buildValuesScorecard", () => {
     // persisted for the app
     expect(await store.get("scorecards", "values-crisis")).toBeDefined();
   });
+
+  it("carries the arm on each row and orders rows by model then arm", async () => {
+    const store = new MemoryStore();
+    const sitting = (id: string, respondent: string, arm?: string) => ({
+      id,
+      model: "interview",
+      scope: "apex",
+      plan: "crisis-situated",
+      respondent,
+      status: "complete",
+      ...(arm ? { arm } : {}),
+      responses: { f2: { values: [1, 2] } },
+    });
+    await store.create(sitting("i-3", "model-b"));
+    await store.create(sitting("i-2", "model-a", "informed"));
+    await store.create(sitting("i-1", "model-a"));
+    const scorecard = await buildValuesScorecard({
+      plan: "crisis-situated",
+      store,
+    });
+    expect(
+      scorecard.models.map((row) => [row.model, row.arm ?? "default"]),
+    ).toEqual([
+      ["model-a", "default"],
+      ["model-a", "informed"],
+      ["model-b", "default"],
+    ]);
+    expect(scorecard.models[1]!.arm).toBe("informed");
+    expect(scorecard.models[0]!.arm).toBeUndefined();
+  });
 });
