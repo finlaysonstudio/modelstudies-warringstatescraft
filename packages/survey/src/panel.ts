@@ -36,9 +36,12 @@ export interface Panel {
 const DEV = [MODELS.SONNET, MODELS.GEMINI_FLASH, MODELS.LUNA];
 
 // Frozen: literal ids, not the mirror. Append on a Jaypie bump; never replace.
+// Sonnet holds the Anthropic seat (2026-08-23): Opus measured at about $0.059 per
+// crux call, $125 for the full battery alone, so it is proposed as the funded
+// extension rather than fielded on every arm.
 export const PRODUCTION_FROZEN = "2026-08-23";
 const PRODUCTION = [
-  "claude-opus-5",
+  "claude-sonnet-5",
   "gemini-3.7-flash",
   "gpt-5.6-sol",
   "grok-4.6",

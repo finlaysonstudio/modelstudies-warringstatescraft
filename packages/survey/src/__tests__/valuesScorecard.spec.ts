@@ -50,6 +50,7 @@ describe("buildValuesScorecard", () => {
             [{ input: 100, output: 5, reasoning: 0, total: 105, usd: 0.001 }],
             null,
           ],
+          ms: [1500, 2500],
         }, // escalation, both positive
         e2: { values: [2, 1] }, // escalation, half positive
         a1: { values: [2, 2] }, // alliance, none positive
@@ -72,8 +73,11 @@ describe("buildValuesScorecard", () => {
     expect(row.usage.calls).toBe(1);
     expect(row.usage.usd).toBeCloseTo(0.001, 6);
     expect(scorecard.usage.total.usd).toBeCloseTo(0.001, 6);
+    // latency counts every timed call, usage only the calls that reported
+    expect(row.latency).toEqual({ calls: 2, ms: 4000, maxMs: 2500 });
+    expect(scorecard.usage.latency).toEqual(row.latency);
     expect(scorecard.usage.byModel).toEqual([
-      { model: "model-a", totals: row.usage },
+      { model: "model-a", totals: row.usage, latency: row.latency },
     ]);
     // persisted for the app
     expect(await store.get("scorecards", "values-crisis")).toBeDefined();

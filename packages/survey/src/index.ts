@@ -37,16 +37,25 @@ export type {
   MarkdownRendering,
 } from "./bank/markdown";
 export {
+  addLatency,
+  addMs,
+  emptyLatency,
   groupInterviewUsage,
   interviewUsage,
+  latencyOfInterview,
+  latencyQuantiles,
+  meanMs,
   respondentOf,
   usageOfInterview,
   usageOfInterviews,
 } from "./cost";
 export type {
+  InterviewLatencyRow,
   InterviewUsage,
   InterviewUsageRole,
   InterviewUsageRow,
+  LatencyQuantiles,
+  LatencyTotals,
 } from "./cost";
 export {
   estimateFielding,

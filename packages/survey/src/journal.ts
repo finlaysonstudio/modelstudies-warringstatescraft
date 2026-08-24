@@ -118,9 +118,13 @@ export interface FoldedItem {
   majority: (1 | 2 | null)[];
   contents: unknown[];
   usage: (LlmUsage | null)[];
+  /** wall-clock milliseconds of each answer call; null where the record lacks it */
+  ms: (number | null)[];
   /** undefined = never probed, null = probed and no text */
   explanations: (string | null | undefined)[];
   probeUsage: (LlmUsage | null)[];
+  /** wall-clock milliseconds of each probe call; null where unprobed or unrecorded */
+  probeMs: (number | null)[];
   query?: string;
 }
 
@@ -141,8 +145,10 @@ const emptyItem = (): FoldedItem => ({
   majority: [],
   contents: [],
   usage: [],
+  ms: [],
   explanations: [],
   probeUsage: [],
+  probeMs: [],
 });
 
 const dollars = (usage: LlmUsage | undefined): number | null => {
@@ -167,8 +173,10 @@ export function discardReps(item: FoldedItem, reps: number[]): void {
   item.majority = item.majority.filter(keep);
   item.contents = item.contents.filter(keep);
   item.usage = item.usage.filter(keep);
+  item.ms = item.ms.filter(keep);
   item.explanations = item.explanations.filter(keep);
   item.probeUsage = item.probeUsage.filter(keep);
+  item.probeMs = item.probeMs.filter(keep);
 }
 
 /**
@@ -214,8 +222,10 @@ export function foldJournal(
         item.majority.push(event.majority ?? null);
         item.contents.push(event.content);
         item.usage.push(event.usage ?? null);
+        item.ms.push(typeof event.ms === "number" ? event.ms : null);
         item.explanations.push(undefined);
         item.probeUsage.push(null);
+        item.probeMs.push(null);
         count(event.usage);
         break;
       }
@@ -230,6 +240,8 @@ export function foldJournal(
         if (item.explanations[event.rep] != null) break;
         item.explanations[event.rep] = event.text;
         item.probeUsage[event.rep] = event.usage ?? null;
+        item.probeMs[event.rep] =
+          typeof event.ms === "number" ? event.ms : null;
         item.query = event.query;
         break;
       }

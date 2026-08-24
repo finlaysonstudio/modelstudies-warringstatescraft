@@ -89,6 +89,11 @@ export interface InterviewItemResponse {
   // The answer call's usage per repetition, priced at call time; null where
   // the call reported none. Index-aligned with `values`.
   usage?: (LlmUsage | null)[];
+  // Wall-clock milliseconds of the answer call per repetition, as the sitting
+  // timed it (retries and backoff the client absorbed are inside the figure);
+  // null where the record predates latency stamping. Index-aligned with
+  // `values`; `interview-verify --rebuild` fills it from the journal.
+  ms?: (number | null)[];
 }
 
 // One administration of an instrument to one respondent model.
@@ -154,6 +159,9 @@ export interface ProbeEntity extends Entity {
   responses: (string | null)[];
   // The probe call's usage per repetition; null where none was reported
   usage?: (LlmUsage | null)[];
+  // Wall-clock milliseconds of the probe call per repetition; null where the
+  // turn was not probed or the record predates latency stamping
+  ms?: (number | null)[];
 }
 
 // The journal is keyed by the interview model, so it sits beside the entity.
@@ -273,6 +281,19 @@ export function itemPrompt(
   return lines.join("\n");
 }
 
+// OpenAI strict structured outputs refuses a straight double quote inside a
+// schema string literal, so an enum label carrying one (h7's "protection")
+// is sent with typographic quotes instead. The prompt keeps the original
+// label; toCode folds both forms to one before matching, so either spelling
+// of the label maps to the same code.
+export function schemaLabel(label: string): string {
+  if (!label.includes('"')) return label;
+  return label.replace(/"([^"]*)"/g, "\u201c$1\u201d").replace(/"/g, "\u201d");
+}
+
+const foldQuotes = (value: string): string =>
+  value.replace(/[\u201c\u201d]/g, '"');
+
 // operate() format contract: a JSON object whose response is one of the
 // exact option labels ("Somewhat agree" — never a code or letter), or an
 // in-range number for open items.
@@ -284,7 +305,10 @@ export function itemFormat(
     return {
       type: "object",
       properties: {
-        response: { type: "string", enum: orderedLabels(item, options) },
+        response: {
+          type: "string",
+          enum: orderedLabels(item, options).map(schemaLabel),
+        },
       },
       required: ["response"],
     };
@@ -314,9 +338,9 @@ export function toCode(item: SurveyItem, response: unknown): number | null {
       : null;
   }
   if (typeof response !== "string") return null;
-  const wanted = response.trim().toLowerCase();
+  const wanted = foldQuotes(response).trim().toLowerCase();
   const match = item.options.find(
-    (option) => option.label.toLowerCase() === wanted,
+    (option) => foldQuotes(option.label).toLowerCase() === wanted,
   );
   return match ? match.code : null;
 }
@@ -394,6 +418,7 @@ async function saveProbe(options: {
   query: string;
   responses: (string | null)[];
   usage?: (LlmUsage | null)[];
+  ms?: (number | null)[];
   // Turns already recorded for this item. Given, `responses` covers only the
   // turns after them: the existing probe is padded with nulls out to this
   // length before the new entries land, so explanation index keeps matching
@@ -405,14 +430,18 @@ async function saveProbe(options: {
   const id = probeId(scope, name);
   let merged = responses;
   let usage = options.usage ?? responses.map(() => null);
+  let ms = options.ms ?? responses.map(() => null);
   if (priorTurns) {
     const existing = await store.get<ProbeEntity>(PROBE_MODEL, id);
     const head = [...(existing?.responses ?? [])].slice(0, priorTurns);
     const headUsage = [...(existing?.usage ?? [])].slice(0, priorTurns);
+    const headMs = [...(existing?.ms ?? [])].slice(0, priorTurns);
     while (head.length < priorTurns) head.push(null);
     while (headUsage.length < priorTurns) headUsage.push(null);
+    while (headMs.length < priorTurns) headMs.push(null);
     merged = [...head, ...responses];
     usage = [...headUsage, ...usage];
+    ms = [...headMs, ...ms];
   }
   await store.update<ProbeEntity>({
     id,
@@ -423,6 +452,7 @@ async function saveProbe(options: {
     query,
     responses: merged,
     usage,
+    ms,
   });
 }
 
@@ -466,6 +496,7 @@ export function responseOf(
   if (item.usage.some((usage) => usage !== null)) {
     response.usage = [...item.usage];
   }
+  if (item.ms.some((ms) => ms !== null)) response.ms = [...item.ms];
   return response;
 }
 
@@ -526,6 +557,7 @@ export function probesOf(options: {
       query,
       responses: item.explanations.map((text) => text ?? null),
       usage: [...item.probeUsage],
+      ms: [...item.probeMs],
     });
   }
   return probes;
@@ -804,10 +836,12 @@ export async function runSitting(
     banked: number;
     values: (number | null)[];
     usage: (LlmUsage | null)[];
+    ms: (number | null)[];
     orders: string[][];
     majority: (1 | 2)[];
     explanations: (string | null)[];
     probeUsage: (LlmUsage | null)[];
+    probeMs: (number | null)[];
     raw: string | undefined;
   }
   let current: ItemState | undefined;
@@ -818,10 +852,12 @@ export async function runSitting(
       banked,
       values,
       usage,
+      ms,
       orders,
       majority,
       explanations,
       probeUsage,
+      probeMs,
     } = state;
     const itemResponse: InterviewItemResponse = {
       name: item.name,
@@ -833,6 +869,7 @@ export async function runSitting(
     if (itemResponse.value === null) itemResponse.declined = true;
     if (state.raw !== undefined) itemResponse.raw = state.raw;
     if (usage.some((entry) => entry !== null)) itemResponse.usage = usage;
+    if (ms.some((entry) => entry !== null)) itemResponse.ms = ms;
     if (explanations.length > 0) {
       await saveProbe({
         store,
@@ -841,6 +878,7 @@ export async function runSitting(
         query: entity.explain!,
         responses: explanations,
         usage: probeUsage,
+        ms: probeMs,
         // A top-up's explanations follow the ones already recorded.
         priorTurns: banked,
       });
@@ -858,6 +896,8 @@ export async function runSitting(
       const values: (number | null)[] = [...(prior?.values ?? [])];
       const usage: (LlmUsage | null)[] = [...(prior?.usage ?? [])];
       while (usage.length < values.length) usage.push(null);
+      const ms: (number | null)[] = [...(prior?.ms ?? [])];
+      while (ms.length < values.length) ms.push(null);
       const banked = values.length;
       // The banked turns' orders, so a top-up's record stays aligned even when
       // the head predates order recording.
@@ -885,15 +925,18 @@ export async function runSitting(
       const shown = presentItem(item, arm);
       const explanations: (string | null)[] = [];
       const probeUsage: (LlmUsage | null)[] = [];
+      const probeMs: (number | null)[] = [];
       const state: ItemState = {
         item,
         banked,
         values,
         usage,
+        ms,
         orders,
         majority,
         explanations,
         probeUsage,
+        probeMs,
         raw: prior?.raw,
       };
       current = state;
@@ -937,6 +980,7 @@ export async function runSitting(
         const strict = toCode(shown, content?.response);
         // Fall back to the envelope walk only when the declared key misses.
         const code = strict ?? toResponseCode(shown, response.content);
+        const elapsed = Date.now() - started;
         await append({
           t: "turn",
           item: item.name,
@@ -947,12 +991,13 @@ export async function runSitting(
           content: response.content,
           code,
           ...(response.usage ? { usage: response.usage } : {}),
-          ms: Date.now() - started,
+          ms: elapsed,
           promptSha1: sha1(prompt),
         });
         spend(response.usage);
         values.push(code);
         usage.push(response.usage ?? null);
+        ms.push(elapsed);
         if (code === null && state.raw === undefined) {
           state.raw = rawOf(response.content);
         }
@@ -981,6 +1026,7 @@ export async function runSitting(
             typeof followUp.content === "string" && followUp.content.length > 0
               ? followUp.content
               : null;
+          const probeElapsed = Date.now() - probeStarted;
           await append({
             t: "probe",
             item: item.name,
@@ -988,12 +1034,13 @@ export async function runSitting(
             query: entity.explain,
             text,
             ...(followUp.usage ? { usage: followUp.usage } : {}),
-            ms: Date.now() - probeStarted,
+            ms: probeElapsed,
             replay: false,
           });
           spend(followUp.usage);
           explanations.push(text);
           probeUsage.push(followUp.usage ?? null);
+          probeMs.push(probeElapsed);
         }
       }
       await land(state);
@@ -1160,6 +1207,11 @@ export async function backfillExplanations(options: {
       values.length,
     );
     while (usage.length < values.length) usage.push(null);
+    const ms: (number | null)[] = [...(probe?.ms ?? [])].slice(
+      0,
+      values.length,
+    );
+    while (ms.length < values.length) ms.push(null);
     const orders = recordedOrders({
       entity,
       instrument,
@@ -1213,6 +1265,7 @@ export async function backfillExplanations(options: {
       chargeBudget(budget, result.usage);
       explanations[rep] = result.text;
       usage[rep] = result.usage ?? null;
+      ms[rep] = result.ms;
       added += 1;
     }
     if (added === 0) continue;
@@ -1223,6 +1276,7 @@ export async function backfillExplanations(options: {
       query,
       responses: explanations,
       usage,
+      ms,
     });
     asked += added;
   }
@@ -1486,6 +1540,9 @@ async function resumeOneModel(options: {
       if (response.usage) {
         next.usage = response.usage.filter((_, index) => !drop.has(index));
       }
+      if (response.ms) {
+        next.ms = response.ms.filter((_, index) => !drop.has(index));
+      }
       delete next.raw;
       responses[name] = next;
     }
@@ -1683,6 +1740,18 @@ export async function runInterviews(
         sittings.push({ id, tolerateIdle: false });
       }
     }
+    // A fielding resume keeps the recorded cap unless the caller names one:
+    // an uncapped resume of a capped fielding would otherwise ask on the
+    // roster's whole remaining scope.
+    let active = budget;
+    if (!active) {
+      const caps = fieldings
+        .map((fielding) => fielding.budgetUsd)
+        .filter((cap): cap is number => typeof cap === "number" && cap > 0);
+      if (caps.length > 0) {
+        active = createBudget(caps.reduce((sum, cap) => sum + cap, 0));
+      }
+    }
     // Sittings resume concurrently, as a roster of fresh runs would: each is
     // internally serial, so one call probes one item across a whole panel.
     const resumed = await Promise.all(
@@ -1697,7 +1766,7 @@ export async function runInterviews(
           llm,
           journal,
           signal,
-          budget,
+          budget: active,
           log,
         }),
       ),

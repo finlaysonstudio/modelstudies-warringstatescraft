@@ -490,6 +490,22 @@ const tokens = (value: number): string =>
       ? `${(value / 1_000).toFixed(1)}k`
       : String(value);
 
+/** milliseconds as seconds, minutes, or hours */
+const duration = (ms: number): string =>
+  ms >= 3_600_000
+    ? `${(ms / 3_600_000).toFixed(1)}h`
+    : ms >= 60_000
+      ? `${(ms / 60_000).toFixed(1)}m`
+      : `${(ms / 1000).toFixed(1)}s`;
+
+/** mean wall clock per timed call, blank when nothing was timed */
+const latencyLine = (
+  latency: import("@modelstudies/survey").LatencyTotals,
+): string =>
+  latency.calls
+    ? `  avg:${duration(Math.round(latency.ms / latency.calls)).padStart(6)}/call`
+    : "";
+
 program
   .command("game-list")
   .description("List recorded runs with each run's own calls and cost")
@@ -603,7 +619,8 @@ program
       `usage: ${scorecard.usage.total.calls} calls, ${usd(scorecard.usage.total.usd)}` +
         (scorecard.usage.total.unpriced
           ? ` (+${scorecard.usage.total.unpriced} unpriced)`
-          : ""),
+          : "") +
+        latencyLine(scorecard.usage.latency),
     );
     for (const row of scorecard.models) {
       console.log(
@@ -701,13 +718,14 @@ program
         `${interview.id}  ${String(interview.status).padEnd(9)}  ${(interview.respondent ?? "").padEnd(42)}` +
           (interview.arm ? `arm:${interview.arm}  ` : "") +
           `${interview.answered}/${interview.answered + interview.declined + interview.remaining}` +
-          `  ${usageLine(usage.total)}` +
+          `  ${usageLine(usage.total)}${latencyLine(usage.latency)}` +
           (detail ? `  ${detail}` : ""),
       );
     }
     if (interviews.length > 1) {
+      const roster = survey.usageOfInterviews(usages);
       console.log(
-        `roster  ${usageLine(survey.usageOfInterviews(usages).total)}`,
+        `roster  ${usageLine(roster.total)}${latencyLine(roster.latency)}`,
       );
     }
     const budgeted = interviews.some((interview) =>
@@ -753,7 +771,7 @@ program
         `  ${String(entity.answered).padStart(3)}/${String(entity.declined).padStart(2)}` +
         (entity.arm ? `  arm:${entity.arm}` : "") +
         (entity.items ? `  items:${entity.items.length}` : "") +
-        `  ${usageLine(usage.total)}` +
+        `  ${usageLine(usage.total)}${latencyLine(usage.latency)}` +
         (detail ? `  ${detail}` : "")
       );
     };
@@ -798,17 +816,31 @@ program
       import("@modelstudies/survey").InterviewEntity
     >(survey.INTERVIEW_MODEL, id);
     if (!entity) throw new NotFoundError(`No interview: ${id}`);
-    const usage = await survey.interviewUsage({ store, entity });
+    const probes = await store.queryByScope<
+      import("@modelstudies/survey").ProbeEntity
+    >(survey.PROBE_MODEL, entity.id);
+    const usage = survey.usageOfInterview({ entity, probes });
+    const latency = survey.latencyOfInterview({ entity, probes });
     if (options.json) {
-      console.log(JSON.stringify(usage, null, 2));
+      console.log(JSON.stringify({ ...usage, quantiles: latency }, null, 2));
       return;
     }
     console.log(
       `${id}: ${entity.plan} · ${survey.respondentOf(entity)} · ${entity.status}`,
     );
-    console.log(`total  ${usageLine(usage.total)}`);
+    console.log(
+      `total  ${usageLine(usage.total)}${latencyLine(usage.latency)}`,
+    );
     for (const row of usage.rows) {
-      console.log(`${row.role.padEnd(6)} ${usageLine(row)}`);
+      console.log(
+        `${row.role.padEnd(6)} ${usageLine(row)}${latencyLine(row.latency)}`,
+      );
+    }
+    for (const row of latency) {
+      console.log(
+        `${row.role.padEnd(6)} latency over ${row.calls} timed calls: mean ${duration(row.meanMs)}` +
+          `  median ${duration(row.medianMs)}  p90 ${duration(row.p90Ms)}  max ${duration(row.maxMs)}`,
+      );
     }
   });
 
@@ -889,7 +921,8 @@ program
             `  in:${tokens(sitting.input).padStart(8)}  out:${tokens(sitting.output).padStart(8)}` +
             `  ${(sitting.usd === null ? "unpriced" : usd(sitting.usd)).padStart(10)}` +
             `  answer ${figure(sitting.answer)}` +
-            (sitting.probe ? `  probe ${figure(sitting.probe)}` : ""),
+            (sitting.probe ? `  probe ${figure(sitting.probe)}` : "") +
+            (sitting.ms === null ? "" : `  ~${duration(sitting.ms)} serial`),
         );
       }
       console.log(
@@ -898,7 +931,10 @@ program
           `  ${usd(estimate.usd).padStart(10)}` +
           (estimate.unpriced.length
             ? `  (unpriced: ${estimate.unpriced.join(", ")})`
-            : ""),
+            : "") +
+          (estimate.wallMs === null
+            ? ""
+            : `  wall ~${duration(estimate.wallMs)} (longest sitting)`),
       );
     }
     if (estimates.length > 1) {

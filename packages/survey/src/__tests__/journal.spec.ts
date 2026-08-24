@@ -68,8 +68,10 @@ describe("foldJournal", () => {
         [{ input: 10, output: 2, reasoning: 0, total: 12, usd: 0.001 }],
         [{ input: 10, output: 2, reasoning: 0, total: 12 }],
       ],
+      ms: [10, 10],
       explanations: ["Because.", undefined],
       probeUsage: [null, null],
+      probeMs: [5, null],
       query: "Why?",
     });
     expect(fold.calls).toBe(3);

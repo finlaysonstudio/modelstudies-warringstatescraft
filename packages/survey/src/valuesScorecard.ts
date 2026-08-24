@@ -9,6 +9,7 @@ import {
   interviewUsage,
   usageOfInterviews,
   type InterviewUsageRow,
+  type LatencyTotals,
 } from "./cost";
 import { buildInstrument } from "./instrument";
 import type { InstrumentPlan } from "./types";
@@ -32,14 +33,18 @@ export interface ModelValuesRow {
   topics: TopicScore[];
   /** the sitting's own calls: answers and probes */
   usage: UsageTotals;
+  /** wall clock over the sitting's timed calls (mean = ms / calls) */
+  latency: LatencyTotals;
 }
 
 /** the scorecard's cost, the shape a study report carries */
 export interface ScorecardUsage {
   total: UsageTotals;
+  /** wall clock over every timed call in `rows` */
+  latency: LatencyTotals;
   /** one row per (role, model) */
   rows: InterviewUsageRow[];
-  byModel: { model: string; totals: UsageTotals }[];
+  byModel: { model: string; totals: UsageTotals; latency: LatencyTotals }[];
 }
 
 export interface ValuesScorecard {
@@ -108,6 +113,7 @@ export const buildValuesScorecard = async ({
       status: String(entity.status ?? "unknown"),
       topics: topics.map((topic) => score(topic, byTopic.get(topic) ?? [])),
       usage: usages[index]!.total,
+      latency: usages[index]!.latency,
     };
   });
   const combined = usageOfInterviews(usages);
@@ -127,9 +133,10 @@ export const buildValuesScorecard = async ({
     topics,
     usage: {
       total: combined.total,
+      latency: combined.latency,
       rows: combined.rows,
       byModel: groupInterviewUsage(combined.rows, (row) => row.model).map(
-        ({ key, totals }) => ({ model: key, totals }),
+        ({ key, totals, latency }) => ({ model: key, totals, latency }),
       ),
     },
   };

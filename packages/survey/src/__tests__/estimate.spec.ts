@@ -90,6 +90,7 @@ describe("estimateSitting", () => {
             [{ input: 300, output: 20, reasoning: 0, total: 320 }],
             [{ input: 500, output: 40, reasoning: 0, total: 540 }],
           ],
+          ms: [1000, 3000],
         },
       },
     });
@@ -102,6 +103,7 @@ describe("estimateSitting", () => {
       query: "Why?",
       responses: ["a", "b"],
       usage: [[{ input: 400, output: 200, reasoning: 0, total: 600 }], null],
+      ms: [4000, null],
     });
     const measured = await measureUsage({ store, model: "priced-model" });
     expect(measured.answer).toEqual({
@@ -116,6 +118,8 @@ describe("estimateSitting", () => {
       source: "measured",
       n: 1,
     });
+    expect(measured.answerMs).toBe(2000);
+    expect(measured.probeMs).toBe(4000);
     const estimate = await estimateFielding({
       plan: "paper-rock-scissors",
       models: ["priced-model", "other-model"],
@@ -127,6 +131,10 @@ describe("estimateSitting", () => {
     expect(estimate.sittings[0]!.answer.source).toBe("measured");
     expect(estimate.sittings[0]!.input).toBe(9 * 400 + 9 * 400);
     expect(estimate.sittings[1]!.answer.source).toBe("heuristic");
+    // serial wall clock at the measured rates; the fielding takes its longest sitting
+    expect(estimate.sittings[0]!.ms).toBe(9 * 2000 + 9 * 4000);
+    expect(estimate.sittings[1]!.ms).toBeNull();
+    expect(estimate.wallMs).toBe(54000);
   });
 
   it("estimates an arm on its own items with the arm's prompt", async () => {

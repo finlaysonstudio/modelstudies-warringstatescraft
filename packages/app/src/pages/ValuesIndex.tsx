@@ -20,6 +20,13 @@ interface UsageTotals {
   unpriced: number;
 }
 
+// wall clock over the timed calls (mean = ms / calls); mirrors survey LatencyTotals
+interface LatencyTotals {
+  calls: number;
+  ms: number;
+  maxMs: number;
+}
+
 interface ModelRow {
   interviewId: string;
   model: string;
@@ -30,6 +37,8 @@ interface ModelRow {
   topics: TopicScore[];
   // the sitting's own calls; absent on a scorecard built before cost folding
   usage?: UsageTotals;
+  // absent on a scorecard built before latency folding
+  latency?: LatencyTotals;
 }
 
 interface ValuesScorecard {
@@ -38,7 +47,7 @@ interface ValuesScorecard {
   plan: string;
   title: string;
   topics: string[];
-  usage?: { total: UsageTotals };
+  usage?: { total: UsageTotals; latency?: LatencyTotals };
 }
 
 function Cost({ usage }: { usage: UsageTotals | undefined }) {
@@ -52,6 +61,22 @@ function Cost({ usage }: { usage: UsageTotals | undefined }) {
     >
       {formatUsd(usage.usd)}
       {usage.unpriced > 0 && "+"}
+    </span>
+  );
+}
+
+const seconds = (ms: number): string => `${(ms / 1000).toFixed(1)}s`;
+
+function Latency({ latency }: { latency: LatencyTotals | undefined }) {
+  if (!latency || latency.calls === 0) {
+    return <span className="text-zinc-700">—</span>;
+  }
+  return (
+    <span
+      className="text-zinc-400"
+      title={`${latency.calls} timed calls · max ${seconds(latency.maxMs)}`}
+    >
+      {seconds(latency.ms / latency.calls)}
     </span>
   );
 }
@@ -134,6 +159,10 @@ export function ValuesIndex() {
               {state.scorecard.usage && state.scorecard.usage.total.calls > 0
                 ? ` · ${state.scorecard.usage.total.calls} calls · ${formatUsd(state.scorecard.usage.total.usd)}`
                 : ""}
+              {state.scorecard.usage?.latency &&
+              state.scorecard.usage.latency.calls > 0
+                ? ` · ${seconds(state.scorecard.usage.latency.ms / state.scorecard.usage.latency.calls)} per call`
+                : ""}
             </p>
             <div className="mt-2 overflow-x-auto">
               <table className="w-full border-collapse">
@@ -155,6 +184,9 @@ export function ValuesIndex() {
                     ))}
                     <th className="px-2 py-1.5 text-right font-plex-mono text-[10px] font-normal tracking-wide text-zinc-500 uppercase">
                       cost
+                    </th>
+                    <th className="px-2 py-1.5 text-right font-plex-mono text-[10px] font-normal tracking-wide text-zinc-500 uppercase">
+                      latency
                     </th>
                   </tr>
                 </thead>
@@ -194,6 +226,9 @@ export function ValuesIndex() {
                       ))}
                       <td className="px-2 py-1.5 text-right font-plex-mono text-xs">
                         <Cost usage={row.usage} />
+                      </td>
+                      <td className="px-2 py-1.5 text-right font-plex-mono text-xs">
+                        <Latency latency={row.latency} />
                       </td>
                     </tr>
                   ))}

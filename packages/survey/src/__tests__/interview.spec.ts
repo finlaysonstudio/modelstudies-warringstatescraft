@@ -10,12 +10,16 @@ import { describe, expect, it } from "vitest";
 
 import { FIELDING_MODEL, type FieldingEntity } from "../fielding";
 import { buildInstrument } from "../instrument";
+import { CRISIS_SITUATED } from "../bank/crisisSituated";
 import {
   INTERVIEW_JOURNAL,
+  itemFormat,
   itemPrompt,
   majorityLine,
   presentItem,
   runInterviews,
+  schemaLabel,
+  toCode,
   type InterviewEntity,
   type ProbeEntity,
 } from "../interview";
@@ -250,9 +254,15 @@ describe("runInterviews with a journal", () => {
     expect(first.promptSha1).toHaveLength(40);
     expect(events.at(-1)).toMatchObject({ t: "stop", reason: "complete" });
     expect(sitting!.responses.throw!.usage).toHaveLength(2);
+    // wall clock lands beside usage, on the record and on the artifact
+    expect(first.ms).toBeGreaterThanOrEqual(0);
+    expect(sitting!.responses.throw!.ms).toHaveLength(2);
+    expect(sitting!.responses.throw!.ms![1]).toBeGreaterThanOrEqual(0);
     const probe = await store.get<ProbeEntity>("probe", `${sitting!.id}#throw`);
     expect(probe?.responses).toEqual(["Because it wins.", "Because it wins."]);
     expect(probe?.usage?.[1]?.[0]?.usd).toBe(0.001);
+    expect(probe?.ms).toHaveLength(2);
+    expect(probe?.ms?.[0]).toBeGreaterThanOrEqual(0);
   });
 
   it("keeps every landed turn when a call fails, and resume asks only the missing pairs", async () => {
@@ -553,6 +563,15 @@ describe("runInterviews with a budget", () => {
     });
     expect(llm.calls).toBe(3);
     expect(still!.status).toBe("pending");
+    // A fielding resume with no cap named inherits the recorded one.
+    const [inherited] = await runInterviews({
+      resume: [fielding.id],
+      store,
+      llm,
+      journal,
+    });
+    expect(llm.calls).toBe(3);
+    expect(inherited!.status).toBe("pending");
     const [done] = await runInterviews({
       resume: [fielding.id],
       budgetUsd: 1,
@@ -872,5 +891,36 @@ describe("runInterviews with an item subset", () => {
         );
       }
     }
+  });
+});
+
+// OpenAI strict structured outputs refuses `"` inside schema string
+// literals; h7 is the one bank item whose statement carries them.
+describe("schemaLabel", () => {
+  const h7 = CRISIS_SITUATED.find((item) => item.name === "h7")!;
+
+  it("sends the enum without straight double quotes", () => {
+    const format = itemFormat(h7) as {
+      properties: { response: { enum: string[] } };
+    };
+    for (const label of format.properties.response.enum) {
+      expect(label).not.toContain('"');
+    }
+    expect(format.properties.response.enum[0]).toContain(
+      "\u201cprotection\u201d",
+    );
+  });
+
+  it("leaves a label without quotes untouched", () => {
+    expect(schemaLabel("Rock")).toBe("Rock");
+  });
+
+  it("maps either spelling of the label back to the same code", () => {
+    const straight = h7.options[0].label;
+    const curly = schemaLabel(straight);
+    expect(straight).toContain('"');
+    expect(curly).not.toContain('"');
+    expect(toCode(h7, straight)).toBe(1);
+    expect(toCode(h7, curly)).toBe(1);
   });
 });

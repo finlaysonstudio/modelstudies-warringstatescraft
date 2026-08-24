@@ -42,7 +42,7 @@ describe("panels", () => {
     expect(production.frozen).toBe(PRODUCTION_FROZEN);
     expect(production.frozen).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(production.models).toEqual([
-      "claude-opus-5",
+      "claude-sonnet-5",
       "gemini-3.7-flash",
       "gpt-5.6-sol",
       "grok-4.6",
@@ -57,7 +57,7 @@ describe("panels", () => {
     // PRODUCTION (keep the old one) and advance nothing else.
     const production = new Set(getPanel("production").models);
     for (const name of [
-      "OPUS",
+      "SONNET",
       "GEMINI_FLASH",
       "SOL",
       "GROK",

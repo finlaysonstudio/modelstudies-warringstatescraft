@@ -29,6 +29,10 @@ export interface TokenFigure {
 export interface MeasuredUsage {
   answer?: TokenFigure;
   probe?: TokenFigure;
+  /** mean wall-clock milliseconds per answer call, when a prior sitting timed one */
+  answerMs?: number;
+  /** mean wall-clock milliseconds per probe call, when a prior sitting timed one */
+  probeMs?: number;
 }
 
 export interface SittingEstimate {
@@ -46,6 +50,12 @@ export interface SittingEstimate {
   output: number;
   /** null when the model has no price in the table */
   usd: number | null;
+  /**
+   * serial wall clock in milliseconds at the model's measured latency (a
+   * sitting asks its calls one after another); null when no prior sitting
+   * timed the roles the estimate needs
+   */
+  ms: number | null;
 }
 
 export interface FieldingEstimate {
@@ -62,6 +72,11 @@ export interface FieldingEstimate {
   usd: number;
   /** models with no price in the table */
   unpriced: string[];
+  /**
+   * wall clock of the fielding in milliseconds: the longest sitting, since
+   * the roster sits in parallel; null when no sitting has a measured latency
+   */
+  wallMs: number | null;
 }
 
 /** answer replies are one option label in a JSON envelope */
@@ -103,6 +118,8 @@ export const measureUsage = async (options: {
   ).filter((entity) => respondentOf(entity) === model);
   const answer = { calls: 0, input: 0, output: 0 };
   const probe = { calls: 0, input: 0, output: 0 };
+  const answerMs = { calls: 0, ms: 0 };
+  const probeMs = { calls: 0, ms: 0 };
   const add = (into: typeof answer, usage: (unknown | null)[] | undefined) => {
     for (const entry of usage ?? []) {
       if (!Array.isArray(entry)) continue;
@@ -113,15 +130,26 @@ export const measureUsage = async (options: {
       }
     }
   };
+  const time = (into: typeof answerMs, ms: (number | null)[] | undefined) => {
+    for (const entry of ms ?? []) {
+      if (typeof entry !== "number") continue;
+      into.calls += 1;
+      into.ms += entry;
+    }
+  };
   for (const entity of interviews) {
     for (const response of Object.values(entity.responses ?? {})) {
       add(answer, response.usage);
+      time(answerMs, response.ms);
     }
     const probes = await store.queryByScope<ProbeEntity>(
       PROBE_MODEL,
       entity.id,
     );
-    for (const record of probes) add(probe, record.usage);
+    for (const record of probes) {
+      add(probe, record.usage);
+      time(probeMs, record.ms);
+    }
   }
   const asTotals = (t: typeof answer): UsageTotals => ({
     calls: t.calls,
@@ -139,6 +167,9 @@ export const measureUsage = async (options: {
   const probeFigure = figureOf(asTotals(probe), "measured");
   if (answerFigure) result.answer = answerFigure;
   if (probeFigure) result.probe = probeFigure;
+  if (answerMs.calls)
+    result.answerMs = Math.round(answerMs.ms / answerMs.calls);
+  if (probeMs.calls) result.probeMs = Math.round(probeMs.ms / probeMs.calls);
   return result;
 };
 
@@ -211,6 +242,12 @@ export const estimateSitting = (options: {
     { model, input, output, reasoning: 0, total: input + output },
     prices,
   );
+  // Serial: a sitting asks its calls one after another.
+  const ms =
+    measured.answerMs !== undefined &&
+    (!probe || measured.probeMs !== undefined)
+      ? turns * measured.answerMs + (probe ? turns * measured.probeMs! : 0)
+      : null;
   return {
     model,
     ...(arm !== undefined ? { arm } : {}),
@@ -223,6 +260,7 @@ export const estimateSitting = (options: {
     input,
     output,
     usd: usd === undefined ? null : usd,
+    ms,
   };
 };
 
@@ -281,5 +319,9 @@ export const estimateFielding = async (options: {
     output: sittings.reduce((sum, s) => sum + s.output, 0),
     usd: roundUsd(sittings.reduce((sum, s) => sum + (s.usd ?? 0), 0)),
     unpriced: sittings.filter((s) => s.usd === null).map((s) => s.model),
+    wallMs: sittings.reduce<number | null>(
+      (longest, s) => (s.ms === null ? longest : Math.max(longest ?? 0, s.ms)),
+      null,
+    ),
   };
 };
