@@ -1,10 +1,16 @@
+import clsx from "clsx";
 import { Fragment, useEffect, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { formatUsd } from "../../lib/usage";
-import type { FieldingIndexEntry, InstrumentSummary } from "../../lib/types";
+import type {
+  FieldingIndexEntry,
+  InstrumentSummary,
+  LadderModelRow,
+  LadderScorecardDoc,
+} from "../../lib/types";
 
 // Declared-values scorecard: models × modules, cell = construct-positive
 // share (the escalation-tolerant / hawkish pole is code 1 across the
@@ -508,12 +514,222 @@ function InstrumentCard({ instrument }: { instrument: InstrumentSummary }) {
 }
 
 // ---------------------------------------------------------------------------
+// Ladder scorecard
+
+const pct = (value: number | null): string =>
+  value === null ? "—" : `${Math.round(value * 100)}%`;
+
+function PctCell({ value }: { value: number | null }) {
+  if (value === null) return <span className="text-zinc-700">—</span>;
+  return <span style={{ color: shareColor(value) }}>{pct(value)}</span>;
+}
+
+function LadderRowDetail({ row }: { row: LadderModelRow }) {
+  const armIds = Object.keys(row.arms);
+  return (
+    <div className="space-y-3 py-2 pl-6">
+      {row.modules.map((module) => (
+        <div key={module.module}>
+          <p className="font-plex-mono text-[10px] text-zinc-500">
+            <span className="text-zinc-300 uppercase">{module.module}</span>
+            <span className="ml-2">{module.title}</span>
+            {module.hardestAccepted !== null && (
+              <span className="ml-2 text-zinc-600">
+                accepts to {module.hardestAccepted}
+              </span>
+            )}
+            {module.inconsistent && (
+              <span className="ml-2 text-amber-400">inconsistent</span>
+            )}
+            {module.censored && (
+              <span className="ml-2 text-zinc-600">censored</span>
+            )}
+          </p>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {module.strip.map((score) => (
+              <span
+                key={score.item}
+                title={`${score.item} · rung ${score.rung} · share ${
+                  score.share === null ? "—" : pct(score.share)
+                }${score.wilson ? ` [${pct(score.wilson[0])}, ${pct(score.wilson[1])}]` : ""}`}
+                className={clsx(
+                  "inline-flex h-5 min-w-8 items-center justify-center rounded-[2px] border px-1 font-plex-mono text-[10px]",
+                  score.accepted === true &&
+                    "border-brand-terminal/40 text-brand-terminal",
+                  score.accepted === false && "border-white/10 text-zinc-500",
+                  score.accepted === null && "border-white/5 text-zinc-700",
+                )}
+              >
+                {score.item}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+      {armIds.length > 0 && (
+        <div>
+          <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+            arm deltas on the crux (mean |Δ| vs the battery)
+          </p>
+          <p className="mt-1 flex flex-wrap gap-x-4 font-plex-mono text-[11px] text-zinc-400">
+            {armIds.map((armId) => {
+              const deltas = row.arms[armId].deltas.filter(
+                (delta) => delta.delta !== null,
+              );
+              const mean = deltas.length
+                ? deltas.reduce(
+                    (sum, delta) => sum + Math.abs(delta.delta ?? 0),
+                    0,
+                  ) / deltas.length
+                : null;
+              return (
+                <span key={armId}>
+                  {armId}:{" "}
+                  <span className="text-zinc-200">
+                    {mean === null ? "—" : pct(mean)}
+                  </span>
+                </span>
+              );
+            })}
+          </p>
+        </div>
+      )}
+      {row.dose.length > 0 && (
+        <p className="font-plex-mono text-[11px] text-zinc-400">
+          dose deltas:{" "}
+          {row.dose
+            .map(
+              (dose) =>
+                `${dose.pair} ${dose.delta === null ? "—" : pct(dose.delta)}`,
+            )
+            .join(" · ")}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function LadderSection({ scorecard }: { scorecard: LadderScorecardDoc }) {
+  const [open, setOpen] = useState<Set<string>>(new Set());
+  const toggle = (model: string) =>
+    setOpen((current) => {
+      const next = new Set(current);
+      if (next.has(model)) next.delete(model);
+      else next.add(model);
+      return next;
+    });
+  const composites = [
+    "covert",
+    "mobilization",
+    "commitment",
+    "hedging",
+    "extraction",
+    "deception",
+    "settlement",
+  ] as const;
+  return (
+    <section className="mt-14" aria-label={`Ladders · ${scorecard.plan}`}>
+      <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+        Ladders
+      </h2>
+      <p className="mt-1 max-w-2xl text-sm text-zinc-400">
+        The same sittings read as ladders: per model the force ceiling the
+        answers accept (mapped to a game rung), the document's composites, and
+        the module strips. Expand a model for its strips, arm deltas, and dose
+        deltas.
+      </p>
+      <div className="mt-3 rounded-sm border border-white/10 bg-black/20 p-4">
+        <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+          {scorecard.title}
+        </p>
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="py-1.5 pr-3 text-left font-plex-mono text-[10px] font-normal tracking-wide text-zinc-500 uppercase">
+                  model
+                </th>
+                <th className={headerCell}>game rung</th>
+                <th className={headerCell}>ceiling</th>
+                {composites.map((name) => (
+                  <th key={name} className={headerCell}>
+                    {name.slice(0, 6)}
+                  </th>
+                ))}
+                <th className={headerCell}>refusal</th>
+                <th className={headerCell}>usd</th>
+              </tr>
+            </thead>
+            <tbody>
+              {scorecard.models.map((row) => {
+                const expanded = open.has(row.model);
+                return (
+                  <Fragment key={row.model}>
+                    <tr className="border-b border-white/5">
+                      <td className="py-1.5 pr-3 font-plex-mono text-xs text-zinc-300">
+                        <button
+                          type="button"
+                          onClick={() => toggle(row.model)}
+                          aria-expanded={expanded}
+                          className="flex cursor-pointer items-center gap-1 text-left hover:text-white"
+                        >
+                          <ChevronRight
+                            size={12}
+                            className={`shrink-0 text-zinc-600 transition-transform ${expanded ? "rotate-90" : ""}`}
+                          />
+                          {row.model}
+                        </button>
+                      </td>
+                      <td className="px-2 py-1.5 text-right font-plex-mono text-xs text-zinc-200 uppercase">
+                        {row.composites.gameRung}
+                      </td>
+                      <td className="px-2 py-1.5 text-right font-plex-mono text-xs text-zinc-400">
+                        {row.composites.forceCeiling
+                          ? `${row.composites.forceCeiling.item} r${row.composites.forceCeiling.rung}`
+                          : "—"}
+                      </td>
+                      {composites.map((name) => (
+                        <td
+                          key={name}
+                          className="px-2 py-1.5 text-right font-plex-mono text-xs"
+                        >
+                          <PctCell value={row.composites[name]} />
+                        </td>
+                      ))}
+                      <td className="px-2 py-1.5 text-right font-plex-mono text-xs text-zinc-400">
+                        {pct(row.refusal.overall)}
+                      </td>
+                      <td className="px-2 py-1.5 text-right font-plex-mono text-xs text-zinc-400">
+                        {formatUsd(row.usage.usd)}
+                      </td>
+                    </tr>
+                    {expanded && (
+                      <tr className="border-b border-white/5 bg-white/[0.02]">
+                        <td colSpan={composites.length + 5}>
+                          <LadderRowDetail row={row} />
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // The page
 
 export function Survey() {
   const [state, setState] = useState<LoadState>({ phase: "loading" });
   const [fieldings, setFieldings] = useState<FieldingIndexEntry[]>([]);
   const [instruments, setInstruments] = useState<InstrumentSummary[]>([]);
+  const [ladders, setLadders] = useState<LadderScorecardDoc[]>([]);
+  const [params, setParams] = useSearchParams();
 
   useEffect(() => {
     let cancelled = false;
@@ -546,6 +762,33 @@ export function Survey() {
         );
       } catch {
         if (!cancelled) setState({ phase: "empty" });
+      }
+    })();
+    void (async () => {
+      try {
+        const res = await fetch("/data/scorecards.json");
+        if (!res.ok) return;
+        const entries = (await res.json()) as ScorecardIndexEntry[];
+        const loaded = await Promise.all(
+          entries
+            .filter((entry) => entry.kind === "ladder")
+            .map(async (entry) => {
+              try {
+                const card = await fetch(`/data/scorecards/${entry.id}.json`);
+                if (!card.ok) return null;
+                return (await card.json()) as LadderScorecardDoc;
+              } catch {
+                return null;
+              }
+            }),
+        );
+        if (!cancelled) {
+          setLadders(
+            loaded.filter((card): card is LadderScorecardDoc => card !== null),
+          );
+        }
+      } catch {
+        // no ladder scorecards on record
       }
     })();
     void (async () => {
@@ -646,6 +889,37 @@ export function Survey() {
             delay={60 + index * 40}
           />
         ))}
+
+      {ladders.length > 1 && (
+        <div className="mt-14 flex flex-wrap gap-2">
+          {ladders.map((ladder) => (
+            <button
+              key={ladder.plan}
+              type="button"
+              onClick={() => {
+                const next = new URLSearchParams(params);
+                next.set("plan", ladder.plan);
+                setParams(next, { replace: true });
+              }}
+              className={clsx(
+                "cursor-pointer rounded-sm border px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase",
+                (params.get("plan") ?? ladders[0].plan) === ladder.plan
+                  ? "border-brand-terminal/40 text-brand-terminal"
+                  : "border-white/10 text-zinc-500 hover:text-zinc-200",
+              )}
+            >
+              {ladder.plan}
+            </button>
+          ))}
+        </div>
+      )}
+      {(() => {
+        const selected =
+          ladders.find(
+            (ladder) => ladder.plan === (params.get("plan") ?? ""),
+          ) ?? ladders[0];
+        return selected ? <LadderSection scorecard={selected} /> : null;
+      })()}
 
       <Fieldings fieldings={fieldings} />
 

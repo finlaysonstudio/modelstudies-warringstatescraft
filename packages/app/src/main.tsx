@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { AwryHome } from "./pages/awry/AwryHome";
 import { Chapter } from "./pages/craft/Chapter";
+import { Interview } from "./pages/craft/Interview";
 import { CraftHome } from "./pages/craft/CraftHome";
 import { Play } from "./pages/craft/Play";
 import { Watch } from "./pages/craft/Watch";
@@ -26,6 +27,7 @@ if (root) {
             <Route path="/craft/chapters/:id" element={<Chapter />} />
             <Route path="/craft/studies/:id" element={<StudyView />} />
             <Route path="/craft/survey" element={<Survey />} />
+            <Route path="/craft/survey/:interviewId" element={<Interview />} />
             <Route path="/craft/play" element={<Play />} />
             <Route path="/craft/play/:id" element={<Watch />} />
             <Route path="/craft/replays/:id" element={<RunReplay />} />

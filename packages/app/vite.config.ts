@@ -323,6 +323,31 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       res.end(JSON.stringify(await buildFieldingIndex()));
       return;
     }
+    // every probe of one sitting: var/probe/<interviewId>#<item>.json
+    const probes = /^\/data\/probes\/([A-Za-z0-9._-]+)\.json$/.exec(url);
+    if (probes) {
+      const dir = modelDir("probe");
+      let files: string[] = [];
+      try {
+        files = (await readdir(dir)).filter(
+          (file) =>
+            file.startsWith(`${probes[1]}#`) && file.endsWith(".json"),
+        );
+      } catch {
+        // missing dir → empty list
+      }
+      const list: unknown[] = [];
+      for (const file of files) {
+        try {
+          list.push(JSON.parse(await readFile(path.join(dir, file), "utf8")));
+        } catch {
+          // unreadable file: skip it
+        }
+      }
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(list));
+      return;
+    }
     const match =
       /^\/data\/(runs|studies|scorecards|scenarios|reports|fielding|interview|instruments)\/([A-Za-z0-9._-]+)\.json$/.exec(
         url,

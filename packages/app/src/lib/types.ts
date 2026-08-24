@@ -715,3 +715,180 @@ export interface InstrumentSummary {
   subsets?: Record<string, string[]>;
   arms?: { id: string; title: string; items: number }[];
 }
+
+// ---- survey sittings (mirror packages/survey/src/interview.ts)
+
+/** one usage record as the seam priced it; only the folded fields mirrored */
+export interface SurveyUsageItem {
+  usd?: number;
+  input?: number;
+  output?: number;
+}
+
+export interface InterviewItemResponse {
+  name: string;
+  /** option code, the mean of `values` on repetition runs; null when declined */
+  value: number | null;
+  /** one code per repetition (null = non-conforming) */
+  values?: (number | null)[];
+  /** the option labels as presented, one order per repetition */
+  orders?: string[][];
+  /** the course the informed arm's appended line named, per repetition */
+  majority?: (1 | 2)[];
+  declined?: boolean;
+  raw?: string;
+  /** explain-mode follow-ups, one per repetition */
+  explanations?: (string | null)[];
+  usage?: (SurveyUsageItem[] | null)[];
+  ms?: (number | null)[];
+}
+
+/** Shape of var/interview/<id>.json. */
+export interface InterviewEntity {
+  id: string;
+  model: "interview";
+  plan: string;
+  arm?: string;
+  respondent: string;
+  panel?: string;
+  respondentModel?: string;
+  repetitions?: number;
+  condition?: string;
+  explain?: string;
+  language?: string;
+  fielding?: string;
+  items?: string[];
+  responses: Record<string, InterviewItemResponse>;
+  answered: number;
+  declined: number;
+  remaining: number;
+  status: string;
+  statusDetail?: string;
+  startedAt: string;
+  completedAt?: string;
+  error?: string;
+}
+
+/** Shape of one entry of /data/probes/<interviewId>.json. */
+export interface ProbeDoc {
+  id: string;
+  model: "probe";
+  /** the parent interview's id */
+  scope: string;
+  category: string;
+  /** the item probed; joins the parent's responses key */
+  name: string;
+  query: string;
+  /** one reply per repetition, index-aligned with the item's `values` */
+  responses: (string | null)[];
+  usage?: (SurveyUsageItem[] | null)[];
+  ms?: (number | null)[];
+}
+
+// ---- ladder scorecard (mirror packages/survey/src/ladderScorecard.ts)
+
+export interface LadderItemScore {
+  item: string;
+  module: string;
+  rung: number;
+  answered: number;
+  declined: number;
+  share: number | null;
+  wilson: [number, number] | null;
+  accepted: boolean | null;
+}
+
+export interface LadderModuleStrip {
+  module: string;
+  title: string;
+  strip: LadderItemScore[];
+  hardestAccepted: number | null;
+  easiestRejected: number | null;
+  inconsistent: boolean;
+  censored: boolean;
+}
+
+export type GameRung = "coercion" | "limited-force" | "strike" | "campaign";
+
+export interface LadderComposites {
+  forceCeiling: { item: string; module: string; rung: number } | null;
+  acceptedForce: string[];
+  gameRung: GameRung;
+  covert: number | null;
+  mobilization: number | null;
+  commitment: number | null;
+  hedging: number | null;
+  extraction: number | null;
+  deception: number | null;
+  settlement: number | null;
+}
+
+export interface CruxReplication {
+  item: string;
+  battery: number | null;
+  crux: number | null;
+  delta: number | null;
+}
+
+export interface ArmDelta {
+  item: string;
+  share: number | null;
+  base: number | null;
+  delta: number | null;
+}
+
+export interface ConformityDelta {
+  item: string;
+  agreement: number | null;
+  baseline: number | null;
+  delta: number | null;
+}
+
+export interface DoseDelta {
+  pair: string;
+  minuend: string;
+  subtrahend: string;
+  delta: number | null;
+}
+
+export interface RefusalCell {
+  item: string;
+  declined: number;
+  answered: number;
+  rate: number;
+}
+
+export interface LadderArmRow {
+  interviewId: string;
+  deltas: ArmDelta[];
+  conformity?: ConformityDelta[];
+}
+
+export interface LadderModelRow {
+  model: string;
+  interviewId: string;
+  status: string;
+  items: LadderItemScore[];
+  modules: LadderModuleStrip[];
+  composites: LadderComposites;
+  crux?: { interviewId: string; items: CruxReplication[] };
+  /** arm id → deltas on the crux against the battery */
+  arms: Record<string, LadderArmRow>;
+  dose: DoseDelta[];
+  refusal: { overall: number | null; items: RefusalCell[] };
+  usage: UsageTotals;
+  latency: { calls: number; ms: number; maxMs: number };
+}
+
+/** Shape of var/scorecards/ladder-<plan>.json. */
+export interface LadderScorecardDoc {
+  createdAt: string;
+  id: string;
+  model: "scorecards";
+  kind: "ladder";
+  plan: string;
+  title: string;
+  modules: { module: string; title: string; items: string[] }[];
+  crux: string[];
+  models: LadderModelRow[];
+}
