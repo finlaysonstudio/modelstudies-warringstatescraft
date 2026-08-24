@@ -644,6 +644,76 @@ program
   });
 
 program
+  .command("ladder-scorecard")
+  .description(
+    "Aggregate a plan's sittings into the ladder scorecard (strips, position, composites, arm deltas)",
+  )
+  .option("--plan <id>", "instrument plan", "crisis-situated")
+  .action(async (options) => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { buildLadderScorecard } = await import("@modelstudies/survey");
+    const scorecard = await buildLadderScorecard({
+      plan: options.plan,
+      store: new FileStore(varRoot()),
+    });
+    console.log(
+      `usage: ${scorecard.usage.total.calls} calls, ${usd(scorecard.usage.total.usd)}` +
+        latencyLine(scorecard.usage.latency),
+    );
+    for (const row of scorecard.models) {
+      const strips = row.modules
+        .map(
+          (module) =>
+            `${module.module}:${module.strip
+              .map((score) =>
+                score.accepted === null ? "." : score.accepted ? "#" : "-",
+              )
+              .join("")}${module.inconsistent ? "!" : ""}`,
+        )
+        .join(" ");
+      console.log(
+        `${row.model.padEnd(42)} ${row.composites.gameRung.padEnd(13)} ${strips}`,
+      );
+    }
+    console.error(`-> var/scorecards/${scorecard.id}.json`);
+  });
+
+program
+  .command("predict")
+  .description(
+    "Join a ladder scorecard's declared readings to a study's played choices (the prediction map)",
+  )
+  .requiredOption("--study <id>", "study id")
+  .option("--scorecard <id>", "ladder scorecard id", "ladder-crisis-situated")
+  .option("--no-save", "print only")
+  .action(async (options) => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { buildPredictionReport } = await import("./predict");
+    const store = new FileStore(varRoot());
+    const scorecard = await store.get<
+      import("./predict").PredictionShares &
+        import("@modelstudies/workflows").Entity
+    >("scorecards", options.scorecard);
+    if (!scorecard) {
+      console.error(
+        `Unknown scorecard: ${options.scorecard} (build it with ladder-scorecard)`,
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const report = await buildPredictionReport({
+      save: options.save,
+      scorecard,
+      store,
+      studyId: options.study,
+    });
+    console.log(JSON.stringify(report, null, 2));
+    if (options.save) {
+      console.error(`-> var/reports/${report.id}.json`);
+    }
+  });
+
+program
   .command("interview-run")
   .description("Run a values-instrument sitting across a panel")
   .option("--plan <id>", "instrument plan", "crisis")

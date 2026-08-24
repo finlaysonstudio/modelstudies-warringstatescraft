@@ -88,6 +88,48 @@ async function buildStudyIndex(): Promise<object[]> {
   );
 }
 
+interface ScorecardFile {
+  kind?: string;
+  id?: string;
+  plan?: string;
+  title?: string;
+  createdAt?: string;
+  models?: unknown[];
+}
+
+// one entry per scorecard on record; /values loads each by id
+async function buildScorecardIndex(): Promise<object[]> {
+  const dir = modelDir("scorecards");
+  let files: string[] = [];
+  try {
+    files = (await readdir(dir)).filter((file) => file.endsWith(".json"));
+  } catch {
+    return [];
+  }
+  const index: object[] = [];
+  for (const file of files) {
+    try {
+      const scorecard = JSON.parse(
+        await readFile(path.join(dir, file), "utf8"),
+      ) as ScorecardFile;
+      const id = scorecard.id ?? file.replace(/\.json$/, "");
+      index.push({
+        id,
+        kind: scorecard.kind ?? (id.startsWith("ladder-") ? "ladder" : "values"),
+        plan: scorecard.plan ?? "",
+        title: scorecard.title ?? "",
+        createdAt: scorecard.createdAt ?? "",
+        modelCount: Array.isArray(scorecard.models) ? scorecard.models.length : 0,
+      });
+    } catch {
+      // unreadable file: skip it
+    }
+  }
+  return (index as { plan: string }[]).sort((a, b) =>
+    a.plan.localeCompare(b.plan),
+  );
+}
+
 async function buildScenarioIndex(): Promise<object[]> {
   const dir = modelDir("scenarios");
   let files: string[] = [];
@@ -200,6 +242,11 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
     if (url === "/data/studies.json") {
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(await buildStudyIndex()));
+      return;
+    }
+    if (url === "/data/scorecards.json") {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(await buildScorecardIndex()));
       return;
     }
     const match =

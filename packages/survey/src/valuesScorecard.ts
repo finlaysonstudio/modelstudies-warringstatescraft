@@ -2,8 +2,11 @@
 // per-model, per-topic construct-positive shares. Code 1 is always the
 // construct-positive pole in internally authored forced-choice banks
 // (crisis, model-values-96), so the share of 1s is the construct score.
+import { NotFoundError } from "@jaypie/errors";
+
 import type { Store, UsageTotals } from "@modelstudies/workflows";
 
+import { CRISIS_SITUATED_MODULES } from "./bank/crisisSituated";
 import {
   groupInterviewUsage,
   interviewUsage,
@@ -28,6 +31,8 @@ export interface ModelValuesRow {
   model: string;
   /** the arm the sitting was fielded in; absent on the default arm */
   arm?: string;
+  /** distinct bank items this sitting answered (the battery = the whole bank) */
+  items: number;
   overall: TopicScore;
   status: string;
   topics: TopicScore[];
@@ -36,6 +41,34 @@ export interface ModelValuesRow {
   /** wall clock over the sitting's timed calls (mean = ms / calls) */
   latency: LatencyTotals;
 }
+
+/** a module column: its letter, short label, title, and item count */
+export interface ScorecardModule {
+  topic: string;
+  label: string;
+  title: string;
+  items: number;
+}
+
+/** three-to-four character column labels for the crisis-situated modules */
+const MODULE_LABELS: Record<string, string> = {
+  F: "FIRE",
+  D: "DELG",
+  P: "PERS",
+  R: "REPR",
+  A: "ATTR",
+  C: "CVRT",
+  M: "MOBL",
+  S: "SPCH",
+  E: "ECON",
+  H: "ALLY",
+  W: "HEDG",
+  I: "INTF",
+  K: "EXTR",
+  L: "HOST",
+  X: "DECP",
+  T: "SETL",
+};
 
 /** the scorecard's cost, the shape a study report carries */
 export interface ScorecardUsage {
@@ -51,10 +84,15 @@ export interface ValuesScorecard {
   createdAt: string;
   id: string;
   model: "scorecards";
+  kind: "values";
   models: ModelValuesRow[];
   plan: string;
   title: string;
   topics: string[];
+  /** one entry per topic column, with label and title for rendering */
+  modules: ScorecardModule[];
+  /** items in the plan's bank; a row answering all of them is the battery */
+  bankItems: number;
   usage: ScorecardUsage;
 }
 
@@ -89,6 +127,12 @@ export const buildValuesScorecard = async ({
   const interviews = (
     await store.queryByScope<InterviewEntity>("interview", "apex")
   ).filter((entity) => entity.plan === plan);
+  // Refuse rather than write an empty scorecard: a bare `values-scorecard`
+  // defaults to the `crisis` plan, and an empty artifact would shadow real
+  // scorecards on /values.
+  if (interviews.length === 0) {
+    throw new NotFoundError(`No sittings on record for plan "${plan}"`);
+  }
 
   const usages = await Promise.all(
     interviews.map((entity) => interviewUsage({ store, entity })),
@@ -109,6 +153,9 @@ export const buildValuesScorecard = async ({
       interviewId: entity.id,
       model: entity.respondent ?? entity.respondentModel ?? "unknown",
       ...(entity.arm !== undefined ? { arm: entity.arm } : {}),
+      items: Object.keys(entity.responses ?? {}).filter((name) =>
+        itemTopic.has(name),
+      ).length,
       overall: score("overall", all),
       status: String(entity.status ?? "unknown"),
       topics: topics.map((topic) => score(topic, byTopic.get(topic) ?? [])),
@@ -117,11 +164,23 @@ export const buildValuesScorecard = async ({
     };
   });
   const combined = usageOfInterviews(usages);
+  const modules: ScorecardModule[] = topics.map((topic) => ({
+    topic,
+    label: MODULE_LABELS[topic] ?? topic.slice(0, 4).toUpperCase(),
+    title:
+      plan === "crisis-situated"
+        ? (CRISIS_SITUATED_MODULES[topic]?.title ?? topic)
+        : topic,
+    items: instrument.items.filter(
+      (item) => (item.topic ?? "general") === topic,
+    ).length,
+  }));
 
   const scorecard: ValuesScorecard = {
     createdAt: new Date().toISOString(),
     id: `values-${plan}`,
     model: "scorecards",
+    kind: "values",
     // grouped by model, the default arm first, then the arms by id
     models: models.sort(
       (a, b) =>
@@ -131,6 +190,8 @@ export const buildValuesScorecard = async ({
     plan,
     title: instrument.title,
     topics,
+    modules,
+    bankItems: instrument.items.length,
     usage: {
       total: combined.total,
       latency: combined.latency,

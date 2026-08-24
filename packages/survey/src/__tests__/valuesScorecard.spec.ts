@@ -34,6 +34,13 @@ class MemoryStore implements Store {
 }
 
 describe("buildValuesScorecard", () => {
+  it("refuses a plan with no sittings on record", async () => {
+    const store = new MemoryStore();
+    await expect(
+      buildValuesScorecard({ plan: "crisis", store }),
+    ).rejects.toThrow('No sittings on record for plan "crisis"');
+  });
+
   it("aggregates construct-positive shares by topic", async () => {
     const store = new MemoryStore();
     await store.create({

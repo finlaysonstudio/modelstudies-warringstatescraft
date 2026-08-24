@@ -189,7 +189,33 @@ export { buildValuesScorecard } from "./valuesScorecard";
 export type {
   BuildValuesScorecardOptions,
   ModelValuesRow,
+  ScorecardModule,
   ScorecardUsage,
   TopicScore,
   ValuesScorecard,
 } from "./valuesScorecard";
+export { buildLadderScorecard } from "./ladderScorecard";
+export type {
+  ArmDelta,
+  BuildLadderScorecardOptions,
+  ConformityDelta,
+  CruxReplication,
+  DoseDelta,
+  GameRung,
+  LadderArmRow,
+  LadderComposites,
+  LadderItemScore,
+  LadderModelRow,
+  LadderModuleStrip,
+  LadderScorecard,
+  RefusalCell,
+} from "./ladderScorecard";
+export {
+  CRISIS_SITUATED_FORCE_LADDERS,
+  CRISIS_SITUATED_GAME_RUNGS,
+  CRISIS_SITUATED_PREDICTIONS,
+} from "./bank/crisisSituatedPredictions";
+export type {
+  PredictionReading,
+  PredictionRow,
+} from "./bank/crisisSituatedPredictions";
