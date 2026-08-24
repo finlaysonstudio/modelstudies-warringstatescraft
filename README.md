@@ -57,7 +57,7 @@ npm run cli -- study-run --resume <studyId>                        # play the ar
 npm run cli -- study-run --resume <studyId> --replicates 10        # grow a pilot: add replicates (or --models) and play the additions
 npm run cli -- study-list
 npm run cli -- study-report <studyId>                              # the study's report → var/reports/<studyId>.json
-npm run materials                                                  # export scenario cards + prompts, one file per rendering, to var/scenarios/ (npm run app does this first)
+npm run materials                                                  # export scenario cards + prompts to var/scenarios/ and instrument descriptions to var/instruments/ (npm run app does this first)
 npm run cli -- interview-run --plan crisis --panel dev --explain     # a fielding: one sitting per model, every call journaled; Ctrl-C stops between calls
 npm run cli -- interview-run --resume <fieldingId>                  # pick every sitting of a fielding back up (or --resume <interviewId>)
 npm run cli -- interview-verify <interviewId>                       # check a sitting against its journal; --rebuild rewrites it from the journal
@@ -113,7 +113,7 @@ Retrieval practice is documented as a skill in `.claude/skills/lake/`: which `us
 
 ### The site
 
-`npm run app` serves the campaign site. `/` introduces the two campaigns. **Warring States Craft** (`/craft`) presents the chronicle (each chapter's cards and prompts at `/craft/chapters/:id`), the saga studies (`/craft/studies/:id`), the Model Values Survey (`/craft/survey`), and replays (`/craft/replays/:id`). **AI Gone Awry 2026** (`/awry`) opens on the replication's summary, with every number read from the study report, then its studies (`/awry/studies/:id`) and replays. A run opened under the wrong campaign redirects to its own. Nothing in the UI constructs a game: games are played by the CLI (`game-run`, `study-run`), and the site shows what was played. The interactive play console and the play server stay on disk, unrouted, for a later registration-gated live-play deliverable.
+`npm run app` serves the campaign site. `/` introduces the two campaigns. **Warring States Craft** (`/craft`) presents the chronicle (each chapter at `/craft/chapters/:id`, results above the chapter's cards and prompts in every rendering), the saga studies (`/craft/studies/:id`), the Model Values Survey (`/craft/survey`: values scorecards, ladder scorecards, the fieldings on record, and the instrument description, with one sitting's full record — per-repetition codes and probed explanations — at `/craft/survey/:interviewId`), replays (`/craft/replays/:id`, matrix roots at `/craft/replays/:id/matrix`), and Play (`/craft/play`): choose a chapter, a seat to follow, and the models on the other seats, or take a game at random, then watch the recording reveal itself turn by turn from that seat's vantage at `/craft/play/:id`. **AI Gone Awry 2026** (`/awry`) opens on the replication's summary, every number read from the study report, then its studies (`/awry/studies/:id`) and replays. A run opened under the wrong campaign redirects to its own. Nothing in the UI constructs a game: games are played by the CLI (`game-run`, `study-run`), and the site shows what was played. The interactive play console and the play server stay on disk, unrouted, for a later registration-gated live-play deliverable.
 
 ### Read the matrix
 
