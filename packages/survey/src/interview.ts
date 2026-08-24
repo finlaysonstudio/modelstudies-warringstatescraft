@@ -16,7 +16,12 @@ import {
   fieldingStatus,
   type FieldingEntity,
 } from "./fielding";
-import { buildInstrument, DEFAULT_PLAN, EXPLAIN_PROMPT } from "./instrument";
+import {
+  buildInstrument,
+  DEFAULT_PLAN,
+  EXPLAIN_PROMPT,
+  resolveItems,
+} from "./instrument";
 import {
   discardReps,
   foldJournal,
@@ -101,6 +106,9 @@ export interface InterviewEntity extends Entity {
   language?: string;
   // The fielding (one interview-run) this sitting was opened by
   fielding?: string;
+  // The item names this sitting was scoped to (absent = the whole plan);
+  // a resume asks only these
+  items?: string[];
   responses: Record<string, InterviewItemResponse>;
   answered: number;
   declined: number;
@@ -514,6 +522,48 @@ export function recordedOrders(options: {
   return orders;
 }
 
+/**
+ * A dollar cap shared by every sitting of a fielding. Each landed call adds
+ * its priced `usd` (an unpriced call adds nothing and is counted, so a cap
+ * over an unpriced model is visibly not a cap); a sitting checks the running
+ * sum after every call and stops as pending once the limit is reached. A
+ * resumed sitting adds what its journal already holds before it asks
+ * anything, so the cap counts earlier processes.
+ */
+export interface SittingBudget {
+  limitUsd: number;
+  spentUsd: number;
+  unpriced: number;
+}
+
+export const createBudget = (limitUsd: number): SittingBudget => ({
+  limitUsd,
+  spentUsd: 0,
+  unpriced: 0,
+});
+
+export const chargeBudget = (
+  budget: SittingBudget | undefined,
+  usage: LlmUsage | undefined,
+): void => {
+  if (!budget) return;
+  let priced = false;
+  for (const item of usage ?? []) {
+    if (typeof item.usd === "number") {
+      priced = true;
+      budget.spentUsd = Math.round((budget.spentUsd + item.usd) * 1e6) / 1e6;
+    }
+  }
+  if (!priced) budget.unpriced += 1;
+};
+
+export const budgetExhausted = (budget: SittingBudget | undefined): boolean =>
+  budget !== undefined && budget.spentUsd >= budget.limitUsd;
+
+export const budgetDetail = (budget: SittingBudget): string =>
+  `budget exhausted at $${budget.spentUsd.toFixed(2)} of $${budget.limitUsd.toFixed(2)}` +
+  (budget.unpriced ? ` (${budget.unpriced} unpriced calls counted at $0)` : "");
+
 export interface RunSittingOptions {
   entity: InterviewEntity;
   instrument: Instrument;
@@ -525,6 +575,8 @@ export interface RunSittingOptions {
   journal?: Journal;
   /** checked between calls; an in-flight call lands, then the sitting stops */
   signal?: AbortSignal;
+  /** checked after every call; the sitting stops as pending once it is spent */
+  budget?: SittingBudget;
   log?: Logger;
 }
 
@@ -548,6 +600,7 @@ export async function runSitting(
     llm,
     journal,
     signal,
+    budget,
   } = options;
   const log = options.log ?? noopLog;
   const { id } = entity;
@@ -573,6 +626,7 @@ export async function runSitting(
   let usd = 0;
   const spend = (usage: LlmUsage | undefined) => {
     for (const item of usage ?? []) usd += item.usd ?? 0;
+    chargeBudget(budget, usage);
   };
   const checkpoint = async (
     status: InterviewStatus,
@@ -686,10 +740,15 @@ export async function runSitting(
         raw: prior?.raw,
       };
       current = state;
-      let interrupted = false;
+      let stopped: "interrupt" | "budget" | undefined;
       for (let rep = values.length; rep < repetitions; rep += 1) {
         if (aborted()) {
-          interrupted = true;
+          stopped = "interrupt";
+          where = `${item.name} rep ${rep}`;
+          break;
+        }
+        if (budgetExhausted(budget)) {
+          stopped = "budget";
           where = `${item.name} rep ${rep}`;
           break;
         }
@@ -736,6 +795,7 @@ export async function runSitting(
         if (code === null && state.raw === undefined) {
           state.raw = rawOf(response.content);
         }
+        // A probe belongs to its answer; the cap is checked after the pair.
         if (entity.explain) {
           // Second turn in the same conversation: the model explains the
           // answer it just gave. Free text — no format constraint.
@@ -777,10 +837,17 @@ export async function runSitting(
       }
       await land(state);
       current = undefined;
-      if (interrupted) {
+      if (stopped === "interrupt") {
         log.warn(`interview ${id} (${modelId}) interrupted at ${where}`);
         const pending = await checkpoint("pending", `interrupted at ${where}`);
         await stop("interrupt", where);
+        return pending;
+      }
+      if (stopped === "budget") {
+        const detail = budgetDetail(budget!);
+        log.warn(`interview ${id} (${modelId}) stopped at ${where}: ${detail}`);
+        const pending = await checkpoint("pending", detail);
+        await stop("budget", `${where}: ${detail}`);
         return pending;
       }
       // the last item's checkpoint is the complete one, written next
@@ -889,14 +956,24 @@ export async function backfillExplanations(options: {
   llm: LlmClient;
   journal?: Journal;
   signal?: AbortSignal;
+  budget?: SittingBudget;
   log?: Logger;
 }): Promise<number> {
-  const { entity, instrument, items, query, store, llm, journal, signal } =
-    options;
+  const {
+    entity,
+    instrument,
+    items,
+    query,
+    store,
+    llm,
+    journal,
+    signal,
+    budget,
+  } = options;
   const scope = calculateScope(entity);
   let asked = 0;
   for (const item of items) {
-    if (signal?.aborted) break;
+    if (signal?.aborted || budgetExhausted(budget)) break;
     const values = entity.responses[item.name]?.values ?? [];
     if (values.length === 0) continue;
     const probe = await store.get<ProbeEntity>(
@@ -922,7 +999,7 @@ export async function backfillExplanations(options: {
     let added = 0;
     for (const [rep, value] of values.entries()) {
       if (value === null || explanations[rep] !== null) continue;
-      if (signal?.aborted) break;
+      if (signal?.aborted || budgetExhausted(budget)) break;
       let result: ReplayProbeResult;
       try {
         result = await replayProbe({
@@ -956,6 +1033,7 @@ export async function backfillExplanations(options: {
         ms: result.ms,
         replay: true,
       });
+      chargeBudget(budget, result.usage);
       explanations[rep] = result.text;
       usage[rep] = result.usage ?? null;
       added += 1;
@@ -984,10 +1062,13 @@ interface RunOneModelOptions {
   panel?: string;
   language?: string;
   fielding?: string;
+  /** the subset the sitting is scoped to, when it is one */
+  subset?: string[];
   store: Store;
   llm: LlmClient;
   journal?: Journal;
   signal?: AbortSignal;
+  budget?: SittingBudget;
   log?: Logger;
 }
 
@@ -1005,10 +1086,12 @@ async function runOneModel(
     panel,
     language,
     fielding,
+    subset,
     store,
     llm,
     journal,
     signal,
+    budget,
     log,
   } = options;
   const id = randomUUID();
@@ -1032,6 +1115,7 @@ async function runOneModel(
   if (panel !== undefined) entity.panel = panel;
   if (language !== undefined) entity.language = language;
   if (fielding !== undefined) entity.fielding = fielding;
+  if (subset !== undefined) entity.items = subset;
   await store.create(entity);
   await journal?.append(INTERVIEW_JOURNAL, id, {
     t: "start",
@@ -1045,6 +1129,7 @@ async function runOneModel(
     ...(language !== undefined ? { language } : {}),
     ...(panel !== undefined ? { panel } : {}),
     ...(fielding !== undefined ? { fielding } : {}),
+    ...(subset !== undefined ? { subset } : {}),
   });
   return runSitting({
     entity,
@@ -1055,6 +1140,7 @@ async function runOneModel(
     llm,
     journal,
     signal,
+    budget,
     log,
   });
 }
@@ -1118,10 +1204,20 @@ async function resumeOneModel(options: {
   llm: LlmClient;
   journal?: Journal;
   signal?: AbortSignal;
+  budget?: SittingBudget;
   log?: Logger;
 }): Promise<InterviewEntity> {
-  const { id, repetitions, retry, tolerateIdle, store, llm, journal, signal } =
-    options;
+  const {
+    id,
+    repetitions,
+    retry,
+    tolerateIdle,
+    store,
+    llm,
+    journal,
+    signal,
+    budget,
+  } = options;
   const log = options.log ?? noopLog;
   const stored = await store.get<InterviewEntity>(INTERVIEW_MODEL, id);
   if (!stored || stored.model !== INTERVIEW_MODEL) {
@@ -1138,6 +1234,29 @@ async function resumeOneModel(options: {
     );
   }
   const instrument = buildInstrument({ plan: entity.plan as InstrumentPlan });
+  // The cap counts what earlier processes spent on this sitting: the
+  // journal's sum when there is one, the checkpoint's usage otherwise.
+  if (budget) {
+    if (fold) {
+      budget.spentUsd = Math.round((budget.spentUsd + fold.usd) * 1e6) / 1e6;
+      budget.unpriced += fold.unpriced;
+    } else {
+      for (const response of Object.values(entity.responses)) {
+        for (const usage of response.usage ?? []) {
+          if (usage) chargeBudget(budget, usage);
+        }
+      }
+      const probes = await store.queryByScope<ProbeEntity>(
+        PROBE_MODEL,
+        entity.id,
+      );
+      for (const probe of probes) {
+        for (const usage of probe.usage ?? []) {
+          if (usage) chargeBudget(budget, usage);
+        }
+      }
+    }
+  }
   const explain = explainPrompt(options.explain, { probe: instrument.probe });
   const reps =
     repetitions && repetitions > 0
@@ -1186,7 +1305,10 @@ async function resumeOneModel(options: {
       responses[name] = next;
     }
   }
-  const scoped = instrument.items;
+  // A sitting scoped to a subset stays scoped to it.
+  const scoped = entity.items
+    ? instrument.items.filter((item) => entity.items!.includes(item.name))
+    : instrument.items;
   const banked = (name: string) => responses[name]?.values?.length ?? 0;
   const items = scoped.filter((item) => banked(item.name) < reps);
   const query = explain ?? entity.explain;
@@ -1247,11 +1369,27 @@ async function resumeOneModel(options: {
       llm,
       journal,
       signal,
+      budget,
       log,
     });
     log.debug(`interview ${id}: backfilled ${probed} explanations`);
   }
-  if (items.length === 0) return pending;
+  if (items.length === 0) {
+    if (budgetExhausted(budget)) {
+      const detail = budgetDetail(budget!);
+      log.warn(`interview ${id}: backfill stopped: ${detail}`);
+      const stopped: InterviewEntity = { ...pending, statusDetail: detail };
+      await store.update(stopped);
+      await journal?.append(INTERVIEW_JOURNAL, id, {
+        t: "stop",
+        at: stamp(),
+        reason: "budget",
+        message: detail,
+      });
+      return stopped;
+    }
+    return pending;
+  }
   return runSitting({
     entity: pending,
     instrument,
@@ -1261,6 +1399,7 @@ async function resumeOneModel(options: {
     llm,
     journal,
     signal,
+    budget,
     log,
   });
 }
@@ -1290,6 +1429,10 @@ export interface RunInterviewsOptions {
   journal?: Journal;
   /** checked between calls; in-flight calls land, then every sitting stops as pending */
   signal?: AbortSignal;
+  /** Item names to field (or one name of a subset the plan declares, e.g. "crux"); the sitting records the subset and a resume keeps to it. */
+  items?: string[];
+  /** Dollar cap shared by the roster: every sitting checks the running sum after each call and stops as pending once it is reached; a resume counts what its journal already holds. */
+  budgetUsd?: number;
   log?: Logger;
 }
 
@@ -1317,8 +1460,18 @@ export async function runInterviews(
     llm,
     journal,
     signal,
+    budgetUsd,
     log,
   } = options;
+  if (budgetUsd !== undefined && !(budgetUsd > 0)) {
+    throw new BadRequestError("budgetUsd must be a positive number");
+  }
+  const budget = budgetUsd === undefined ? undefined : createBudget(budgetUsd);
+  if (options.items && resume) {
+    throw new BadRequestError(
+      "items applies to a fresh fielding; a resumed sitting keeps its own scope",
+    );
+  }
   if (resume) {
     const ids = resume.map((entry) => entry.trim()).filter(Boolean);
     if (ids.length === 0) {
@@ -1353,6 +1506,7 @@ export async function runInterviews(
           llm,
           journal,
           signal,
+          budget,
           log,
         }),
       ),
@@ -1367,6 +1521,12 @@ export async function runInterviews(
       ? Math.floor(repetitions)
       : DEFAULT_REPETITIONS;
   const instrument = buildInstrument({ plan: plan ?? DEFAULT_PLAN });
+  const subset = options.items
+    ? resolveItems(instrument, options.items)
+    : undefined;
+  const items = subset
+    ? instrument.items.filter((item) => subset.includes(item.name))
+    : instrument.items;
   // An explicit roster wins; otherwise the run is fielded to a panel —
   // the one named, the instrument's own, or the registry default — so a
   // sitting always records which cohort it belongs to.
@@ -1397,22 +1557,26 @@ export async function runInterviews(
   if (probe !== undefined) fielding.explain = probe;
   if (condition !== undefined) fielding.condition = condition;
   if (language !== undefined) fielding.language = language;
+  if (subset !== undefined) fielding.items = subset;
+  if (budgetUsd !== undefined) fielding.budgetUsd = budgetUsd;
   await store.create(fielding);
   const sittings = await Promise.all(
     roster.map((modelId) =>
       runOneModel({
         modelId,
         instrument,
-        items: instrument.items,
+        items,
         repetitions: reps,
         condition,
         explain: probe,
         language,
         fielding: fielding.id,
+        ...(subset !== undefined ? { subset } : {}),
         store,
         llm,
         journal,
         signal,
+        budget,
         log,
         ...(cohort === undefined ? {} : { panel: cohort }),
       }),

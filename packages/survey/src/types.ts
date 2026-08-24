@@ -49,7 +49,7 @@ export interface ItemNorms {
 }
 
 export type InstrumentPlan =
-  "crisis" | "model-values-96" | "paper-rock-scissors";
+  "crisis" | "crisis-situated" | "model-values-96" | "paper-rock-scissors";
 
 /**
  * Where an instrument comes from. `external` instruments are fielded
@@ -101,6 +101,8 @@ export interface Instrument {
    * respondents on the same turn). Absent means fixed bank order.
    */
   optionOrder?: InstrumentOptionOrder;
+  /** Named item subsets the plan declares (e.g. a crux subset for arms). */
+  subsets?: Record<string, string[]>;
   items: SurveyItem[];
 }
 

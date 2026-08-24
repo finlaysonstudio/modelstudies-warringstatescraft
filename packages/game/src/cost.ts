@@ -10,9 +10,15 @@
  * call once.
  */
 import { NotFoundError } from "@jaypie/errors";
-import type { Store } from "@modelstudies/workflows";
+import {
+  addItem,
+  addTotals,
+  emptyTotals,
+  type Store,
+  type UsageTotals,
+} from "@modelstudies/workflows";
 
-import type { Run, Usage, UsageItem } from "./types";
+import type { Run, Usage } from "./types";
 import { HUMAN_MODEL, SCRIPTED_MODEL } from "./types";
 
 export type UsageRole = "seat" | "judge" | "narrator" | "debrief";
@@ -24,20 +30,8 @@ export const USAGE_ROLES: UsageRole[] = [
   "debrief",
 ];
 
-export interface UsageTotals {
-  /** model calls (dialog rounds count one each) */
-  calls: number;
-  input: number;
-  output: number;
-  reasoning: number;
-  cacheRead: number;
-  cacheWrite: number;
-  total: number;
-  /** dollars across priced calls */
-  usd: number;
-  /** calls with no price at call time (their tokens still count above) */
-  unpriced: number;
-}
+export type { UsageTotals } from "@modelstudies/workflows";
+export { addItem, addTotals, emptyTotals } from "@modelstudies/workflows";
 
 export interface UsageRow extends UsageTotals {
   role: UsageRole;
@@ -51,49 +45,6 @@ export interface RunUsage {
   /** one row per (role, seat, model), in first-seen order */
   rows: UsageRow[];
 }
-
-export const emptyTotals = (): UsageTotals => ({
-  calls: 0,
-  input: 0,
-  output: 0,
-  reasoning: 0,
-  cacheRead: 0,
-  cacheWrite: 0,
-  total: 0,
-  usd: 0,
-  unpriced: 0,
-});
-
-const round = (usd: number): number => Math.round(usd * 1e6) / 1e6;
-
-export const addItem = (totals: UsageTotals, item: UsageItem): UsageTotals => {
-  totals.calls += 1;
-  totals.input += item.input;
-  totals.output += item.output;
-  totals.reasoning += item.reasoning;
-  totals.cacheRead += item.cacheRead ?? 0;
-  totals.cacheWrite += item.cacheWrite ?? 0;
-  totals.total += item.total;
-  if (item.usd === undefined) totals.unpriced += 1;
-  else totals.usd = round(totals.usd + item.usd);
-  return totals;
-};
-
-export const addTotals = (
-  into: UsageTotals,
-  from: UsageTotals,
-): UsageTotals => {
-  into.calls += from.calls;
-  into.input += from.input;
-  into.output += from.output;
-  into.reasoning += from.reasoning;
-  into.cacheRead += from.cacheRead;
-  into.cacheWrite += from.cacheWrite;
-  into.total += from.total;
-  into.usd = round(into.usd + from.usd);
-  into.unpriced += from.unpriced;
-  return into;
-};
 
 const rowKey = (role: UsageRole, seat: string | null, model: string) =>
   `${role} ${seat ?? ""} ${model}`;

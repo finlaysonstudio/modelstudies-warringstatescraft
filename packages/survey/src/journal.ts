@@ -15,6 +15,8 @@ export interface StartEvent extends JournalEvent {
   repetitions: number;
   /** items the sitting was scoped to */
   items: number;
+  /** their names, when the sitting was scoped to a subset of the plan */
+  subset?: string[];
   explain?: string;
   condition?: string;
   language?: string;

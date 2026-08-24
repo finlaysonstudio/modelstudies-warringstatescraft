@@ -1,7 +1,7 @@
 import { BadRequestError } from "@jaypie/errors";
 import { describe, expect, it } from "vitest";
 
-import { buildInstrument, listPlans } from "../instrument";
+import { buildInstrument, listPlans, resolveItems } from "../instrument";
 
 describe("buildInstrument", () => {
   it("defaults to the paper-rock-scissors plan", () => {
@@ -39,6 +39,7 @@ describe("buildInstrument", () => {
   it("lists plans", () => {
     expect(listPlans()).toEqual([
       "crisis",
+      "crisis-situated",
       "model-values-96",
       "paper-rock-scissors",
     ]);
@@ -83,5 +84,17 @@ describe("buildInstrument", () => {
         expect(instrument.references?.length).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe("resolveItems", () => {
+  it("expands a declared subset, keeps item names, refuses unknown ones", () => {
+    const situated = buildInstrument({ plan: "crisis-situated" });
+    expect(resolveItems(situated, ["crux"])).toHaveLength(12);
+    expect(resolveItems(situated, ["f1", " d2 ", "f1"])).toEqual(["f1", "d2"]);
+    expect(() => resolveItems(situated, ["nope"])).toThrow(BadRequestError);
+    expect(() => resolveItems(situated, [])).toThrow(BadRequestError);
+    const debug = buildInstrument({ plan: "paper-rock-scissors" });
+    expect(() => resolveItems(debug, ["crux"])).toThrow(/Unknown items/);
   });
 });

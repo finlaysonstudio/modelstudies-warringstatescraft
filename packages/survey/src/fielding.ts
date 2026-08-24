@@ -22,6 +22,10 @@ export interface FieldingEntity extends Entity {
   explain?: string;
   condition?: string;
   language?: string;
+  /** the item subset every sitting was scoped to, when one was named */
+  items?: string[];
+  /** the dollar cap the roster shared, when one was set */
+  budgetUsd?: number;
   /** model id → interview id */
   interviews: Record<string, string>;
   status: FieldingStatus;

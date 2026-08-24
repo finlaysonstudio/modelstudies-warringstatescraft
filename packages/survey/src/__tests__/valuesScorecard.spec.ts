@@ -44,7 +44,13 @@ describe("buildValuesScorecard", () => {
       respondent: "model-a",
       status: "complete",
       responses: {
-        e1: { values: [1, 1] }, // escalation, both positive
+        e1: {
+          values: [1, 1],
+          usage: [
+            [{ input: 100, output: 5, reasoning: 0, total: 105, usd: 0.001 }],
+            null,
+          ],
+        }, // escalation, both positive
         e2: { values: [2, 1] }, // escalation, half positive
         a1: { values: [2, 2] }, // alliance, none positive
         w1: { values: [1, null] }, // autonomy, one declined
@@ -63,6 +69,12 @@ describe("buildValuesScorecard", () => {
     expect(topic("autonomy").declined).toBe(1);
     expect(topic("deterrence").positiveShare).toBeNull();
     expect(row.overall.answered).toBe(7);
+    expect(row.usage.calls).toBe(1);
+    expect(row.usage.usd).toBeCloseTo(0.001, 6);
+    expect(scorecard.usage.total.usd).toBeCloseTo(0.001, 6);
+    expect(scorecard.usage.byModel).toEqual([
+      { model: "model-a", totals: row.usage },
+    ]);
     // persisted for the app
     expect(await store.get("scorecards", "values-crisis")).toBeDefined();
   });

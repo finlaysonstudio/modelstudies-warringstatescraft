@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { formatUsd } from "../lib/usage";
+
 // Declared-values scorecard: models × topics, cell = construct-positive
 // share (the escalation-tolerant / hawkish pole is code 1 across the
 // crisis bank). High share renders warm, low share cool.
@@ -10,12 +12,22 @@ interface TopicScore {
   topic: string;
 }
 
+interface UsageTotals {
+  calls: number;
+  input: number;
+  output: number;
+  usd: number;
+  unpriced: number;
+}
+
 interface ModelRow {
   interviewId: string;
   model: string;
   overall: TopicScore;
   status: string;
   topics: TopicScore[];
+  // the sitting's own calls; absent on a scorecard built before cost folding
+  usage?: UsageTotals;
 }
 
 interface ValuesScorecard {
@@ -24,6 +36,22 @@ interface ValuesScorecard {
   plan: string;
   title: string;
   topics: string[];
+  usage?: { total: UsageTotals };
+}
+
+function Cost({ usage }: { usage: UsageTotals | undefined }) {
+  if (!usage || usage.calls === 0) {
+    return <span className="text-zinc-700">—</span>;
+  }
+  return (
+    <span
+      className="text-zinc-400"
+      title={`${usage.calls} calls · ${usage.input} in · ${usage.output} out${usage.unpriced ? ` · ${usage.unpriced} unpriced` : ""}`}
+    >
+      {formatUsd(usage.usd)}
+      {usage.unpriced > 0 && "+"}
+    </span>
+  );
 }
 
 type LoadState =
@@ -101,6 +129,9 @@ export function ValuesIndex() {
           <div className="rounded-sm border border-white/10 bg-black/20 p-4">
             <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
               {state.scorecard.title} · construct-positive share
+              {state.scorecard.usage && state.scorecard.usage.total.calls > 0
+                ? ` · ${state.scorecard.usage.total.calls} calls · ${formatUsd(state.scorecard.usage.total.usd)}`
+                : ""}
             </p>
             <div className="mt-2 overflow-x-auto">
               <table className="w-full border-collapse">
@@ -120,6 +151,9 @@ export function ValuesIndex() {
                         {topic}
                       </th>
                     ))}
+                    <th className="px-2 py-1.5 text-right font-plex-mono text-[10px] font-normal tracking-wide text-zinc-500 uppercase">
+                      cost
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -151,6 +185,9 @@ export function ValuesIndex() {
                           />
                         </td>
                       ))}
+                      <td className="px-2 py-1.5 text-right font-plex-mono text-xs">
+                        <Cost usage={row.usage} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>

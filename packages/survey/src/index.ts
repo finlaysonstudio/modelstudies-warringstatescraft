@@ -14,6 +14,48 @@ export {
   CRISIS_PROBE,
   CRISIS_STEM,
 } from "./bank/crisis";
+export {
+  CRISIS_SITUATED,
+  CRISIS_SITUATED_CRUX,
+  CRISIS_SITUATED_INSTRUCTION,
+  CRISIS_SITUATED_MODULES,
+  CRISIS_SITUATED_PROBE,
+  CRISIS_SITUATED_STEM,
+} from "./bank/crisisSituated";
+export type { CrisisSituatedModule } from "./bank/crisisSituated";
+export { parseInstrumentMarkdown } from "./bank/markdown";
+export type {
+  MarkdownInstrument,
+  MarkdownItem,
+  MarkdownModule,
+} from "./bank/markdown";
+export {
+  groupInterviewUsage,
+  interviewUsage,
+  respondentOf,
+  usageOfInterview,
+  usageOfInterviews,
+} from "./cost";
+export type {
+  InterviewUsage,
+  InterviewUsageRole,
+  InterviewUsageRow,
+} from "./cost";
+export {
+  estimateFielding,
+  estimateSitting,
+  HEURISTIC_ANSWER_OUTPUT,
+  HEURISTIC_PROBE_OUTPUT,
+  heuristicFigures,
+  measureUsage,
+} from "./estimate";
+export type {
+  FieldingEstimate,
+  MeasuredUsage,
+  SittingEstimate,
+  TokenFigure,
+  TokenSource,
+} from "./estimate";
 export { formatItemPrompt } from "./format";
 export type { FormatItemOptions } from "./format";
 export {
@@ -21,6 +63,7 @@ export {
   DEFAULT_PLAN,
   EXPLAIN_PROMPT,
   listPlans,
+  resolveItems,
 } from "./instrument";
 export type { BuildInstrumentOptions } from "./instrument";
 export { FIELDING_MODEL, fieldingId, fieldingStatus } from "./fielding";
@@ -28,6 +71,10 @@ export type { FieldingEntity, FieldingStatus } from "./fielding";
 export {
   APEX,
   backfillExplanations,
+  budgetDetail,
+  budgetExhausted,
+  chargeBudget,
+  createBudget,
   INTERVIEW_JOURNAL,
   INTERVIEW_MODEL,
   INTERVIEW_STATUSES,
@@ -58,6 +105,7 @@ export type {
   ReplayProbeResult,
   RunInterviewsOptions,
   RunSittingOptions,
+  SittingBudget,
 } from "./interview";
 export { discardReps, foldJournal, meanOf, rawOf, sha1 } from "./journal";
 export type {
@@ -110,6 +158,7 @@ export { buildValuesScorecard } from "./valuesScorecard";
 export type {
   BuildValuesScorecardOptions,
   ModelValuesRow,
+  ScorecardUsage,
   TopicScore,
   ValuesScorecard,
 } from "./valuesScorecard";

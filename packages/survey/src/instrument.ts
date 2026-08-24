@@ -7,6 +7,12 @@ import {
 } from "./bank/modelValues";
 import { CRISIS_40, CRISIS_INSTRUCTION, CRISIS_PROBE } from "./bank/crisis";
 import {
+  CRISIS_SITUATED,
+  CRISIS_SITUATED_CRUX,
+  CRISIS_SITUATED_INSTRUCTION,
+  CRISIS_SITUATED_PROBE,
+} from "./bank/crisisSituated";
+import {
   PAPER_ROCK_SCISSORS,
   PAPER_ROCK_SCISSORS_INSTRUCTION,
 } from "./bank/paperRockScissors";
@@ -40,6 +46,7 @@ const PLANS: Record<
     instruction?: string;
     probe?: string;
     optionOrder?: InstrumentOptionOrder;
+    subsets?: Record<string, string[]>;
   }
 > = {
   // crisis (40 forced-choice items, 7 groups) — escalation tolerance,
@@ -54,6 +61,21 @@ const PLANS: Record<
     instruction: CRISIS_INSTRUCTION,
     probe: CRISIS_PROBE,
     optionOrder: "balanced-random",
+  },
+  // crisis-situated (88 forced-choice items, 16 modules) — situated
+  // ladders anchored to the games' decision menus: each module is a ladder
+  // whose rungs are the options a seat sees, so a model's share of statement
+  // 1 per item is its position on that ladder. Emitted from
+  // var/instruments/crisis-situated.md by scripts/emit-instrument.ts; the
+  // `crux` subset is the twelve items the arms are fielded on.
+  "crisis-situated": {
+    title: "Crisis Situated (88)",
+    category: "internal",
+    bank: CRISIS_SITUATED,
+    instruction: CRISIS_SITUATED_INSTRUCTION,
+    probe: CRISIS_SITUATED_PROBE,
+    optionOrder: "balanced-random",
+    subsets: { crux: CRISIS_SITUATED_CRUX },
   },
   // model-values-96 (96 forced-choice items, 11 groups; groups have no
   // fielding significance). Protocol: balanced per-turn option-order
@@ -134,6 +156,7 @@ export function buildInstrument(
     instruction,
     probe,
     optionOrder,
+    subsets,
     ...baseFilter
   } = base;
   const items = applyFilter(applyFilter(bank, baseFilter), filter);
@@ -146,8 +169,32 @@ export function buildInstrument(
     ...(instruction !== undefined ? { instruction } : {}),
     ...(probe !== undefined ? { probe } : {}),
     ...(optionOrder !== undefined ? { optionOrder } : {}),
+    ...(subsets !== undefined ? { subsets } : {}),
     items,
   };
+}
+
+/**
+ * Item names from a `--items` spec: one entry naming a subset the plan
+ * declares expands to it; otherwise every entry is an item name, and an
+ * unknown name refuses rather than silently fielding fewer items.
+ */
+export function resolveItems(instrument: Instrument, spec: string[]): string[] {
+  const names = spec.map((entry) => entry.trim()).filter(Boolean);
+  if (names.length === 0) {
+    throw new BadRequestError("items must name at least one item or subset");
+  }
+  const subset =
+    names.length === 1 ? instrument.subsets?.[names[0]!] : undefined;
+  const resolved = subset ?? names;
+  const known = new Set(instrument.items.map((item) => item.name));
+  const unknown = resolved.filter((name) => !known.has(name));
+  if (unknown.length > 0) {
+    throw new BadRequestError(
+      `Unknown items for plan ${instrument.id}: ${unknown.join(", ")}`,
+    );
+  }
+  return [...new Set(resolved)];
 }
 
 export function listPlans(): InstrumentPlan[] {

@@ -53,6 +53,13 @@ export {
   priceUsage,
   type ModelPrice,
 } from "./llm/pricing";
+export {
+  addItem,
+  addTotals,
+  emptyTotals,
+  roundUsd,
+  type UsageTotals,
+} from "./llm/usage";
 
 // Provider selection seam over @jaypie/llm
 export {

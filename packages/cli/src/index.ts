@@ -470,6 +470,14 @@ program
 
 const usd = (value: number): string => `$${value.toFixed(4)}`;
 
+/** one line of totals: calls, tokens in and out, dollars, unpriced count */
+const usageLine = (
+  totals: import("@modelstudies/workflows").UsageTotals,
+): string =>
+  `calls:${String(totals.calls).padStart(4)}  in:${tokens(totals.input).padStart(7)}` +
+  `  out:${tokens(totals.output).padStart(7)}  ${usd(totals.usd).padStart(9)}` +
+  (totals.unpriced ? `  (+${totals.unpriced} unpriced)` : "");
+
 const tokens = (value: number): string =>
   value >= 1_000_000
     ? `${(value / 1_000_000).toFixed(2)}M`
@@ -586,6 +594,12 @@ program
       plan: options.plan,
       store: new FileStore(varRoot()),
     });
+    console.log(
+      `usage: ${scorecard.usage.total.calls} calls, ${usd(scorecard.usage.total.usd)}` +
+        (scorecard.usage.total.unpriced
+          ? ` (+${scorecard.usage.total.unpriced} unpriced)`
+          : ""),
+    );
     for (const row of scorecard.models) {
       console.log(
         `${row.model.padEnd(22)} ${row.status.padEnd(9)} overall:${
@@ -619,6 +633,14 @@ program
   .option("--explain", "probe an explanation for each answer", false)
   .option("--retry", "re-ask nonconforming turns", false)
   .option(
+    "--items <spec>",
+    "comma-separated item names, or a subset the plan declares (crisis-situated: crux); the sitting keeps to it on resume",
+  )
+  .option(
+    "--budget-usd <n>",
+    "dollar cap shared by the roster; every sitting stops as pending once the running sum reaches it (resume continues)",
+  )
+  .option(
     "--resume <ids>",
     "comma-separated fielding or interview ids to resume (a fielding resumes every sitting it opened)",
   )
@@ -628,8 +650,9 @@ program
     const log = createCliLog("interview-run");
     const controller = interruptible(log);
     console.error(`log → ${log.file}`);
+    const store = new FileStore(varRoot());
     const models = options.panel.includes(",")
-      ? options.panel.split(",").map((m: string) => m.trim())
+      ? await resolveModels(options.panel)
       : undefined;
     const interviews = await survey.runInterviews({
       explain: options.explain,
@@ -648,27 +671,196 @@ program
         ? options.resume.split(",").map((id: string) => id.trim())
         : undefined,
       retry: options.retry,
+      ...(options.items ? { items: String(options.items).split(",") } : {}),
+      ...(options.budgetUsd !== undefined
+        ? { budgetUsd: Number(options.budgetUsd) }
+        : {}),
       signal: controller.signal,
-      store: new FileStore(varRoot()),
+      store,
     });
     const fieldings = new Set(
       interviews.map((interview) => interview.fielding).filter(Boolean),
     );
     for (const fielding of fieldings) console.log(`fielding ${fielding}`);
+    const usages = [];
     for (const interview of interviews) {
       const detail = interview.error ?? interview.statusDetail;
+      const usage = await survey.interviewUsage({ store, entity: interview });
+      usages.push(usage);
       console.log(
         `${interview.id}  ${String(interview.status).padEnd(9)}  ${(interview.respondent ?? "").padEnd(28)}` +
           `${interview.answered}/${interview.answered + interview.declined + interview.remaining}` +
+          `  ${usageLine(usage.total)}` +
           (detail ? `  ${detail}` : ""),
       );
     }
-    if (controller.signal.aborted) {
+    if (interviews.length > 1) {
+      console.log(
+        `roster  ${usageLine(survey.usageOfInterviews(usages).total)}`,
+      );
+    }
+    const budgeted = interviews.some((interview) =>
+      interview.statusDetail?.startsWith("budget exhausted"),
+    );
+    if (controller.signal.aborted || budgeted) {
       const ids =
         [...fieldings].join(",") || interviews.map((i) => i.id).join(",");
-      console.log(`interrupted; resume with --resume ${ids}`);
-      process.exitCode = 130;
+      console.log(
+        `${controller.signal.aborted ? "interrupted" : "budget exhausted"}; resume with --resume ${ids}` +
+          (budgeted ? " --budget-usd <n>" : ""),
+      );
+      if (controller.signal.aborted) process.exitCode = 130;
     }
+  });
+
+program
+  .command("interview-list")
+  .description(
+    "List fieldings and their sittings (plan, model, status, reps, answered/declined, cost); sittings fielded singly follow",
+  )
+  .action(async () => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const survey = await import("@modelstudies/survey");
+    const store = new FileStore(varRoot());
+    const fieldings = await store.list<
+      import("@modelstudies/survey").FieldingEntity
+    >(survey.FIELDING_MODEL);
+    const interviews = await store.list<
+      import("@modelstudies/survey").InterviewEntity
+    >(survey.INTERVIEW_MODEL);
+    const byId = new Map(interviews.map((entity) => [entity.id, entity]));
+    const listed = new Set<string>();
+    const sittingLine = async (
+      entity: import("@modelstudies/survey").InterviewEntity,
+    ) => {
+      listed.add(entity.id);
+      const usage = await survey.interviewUsage({ store, entity });
+      const detail = entity.error ?? entity.statusDetail;
+      return (
+        `  ${entity.id}  ${String(entity.status).padEnd(9)}  ${entity.plan.padEnd(20)}` +
+        `  ${survey.respondentOf(entity).padEnd(28)}  reps:${String(entity.repetitions ?? 1).padStart(2)}` +
+        `  ${String(entity.answered).padStart(3)}/${String(entity.declined).padStart(2)}` +
+        (entity.items ? `  items:${entity.items.length}` : "") +
+        `  ${usageLine(usage.total)}` +
+        (detail ? `  ${detail}` : "")
+      );
+    };
+    for (const fielding of fieldings.sort((a, b) =>
+      a.startedAt.localeCompare(b.startedAt),
+    )) {
+      console.log(
+        `${fielding.id}  ${fielding.status.padEnd(9)}  ${fielding.plan}  ${fielding.panel ?? fielding.models.join(",")}` +
+          `  reps:${fielding.repetitions}` +
+          (fielding.items ? `  items:${fielding.items.length}` : "") +
+          (fielding.budgetUsd !== undefined
+            ? `  budget:${usd(fielding.budgetUsd)}`
+            : "") +
+          (fielding.statusDetail ? `  ${fielding.statusDetail}` : ""),
+      );
+      for (const id of Object.values(fielding.interviews)) {
+        const entity = byId.get(id);
+        console.log(entity ? await sittingLine(entity) : `  ${id}  (missing)`);
+      }
+    }
+    const loose = interviews
+      .filter((entity) => !listed.has(entity.id))
+      .sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+    if (loose.length) {
+      console.log("(no fielding)");
+      for (const entity of loose) console.log(await sittingLine(entity));
+    }
+  });
+
+program
+  .command("interview-cost")
+  .description("Usage and cost of one sitting, by role (answer, probe)")
+  .argument("<id>", "interview id")
+  .option("--json", "print the fold as JSON")
+  .action(async (id: string, options) => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { NotFoundError } = await import("@jaypie/errors");
+    const survey = await import("@modelstudies/survey");
+    const store = new FileStore(varRoot());
+    const entity = await store.get<
+      import("@modelstudies/survey").InterviewEntity
+    >(survey.INTERVIEW_MODEL, id);
+    if (!entity) throw new NotFoundError(`No interview: ${id}`);
+    const usage = await survey.interviewUsage({ store, entity });
+    if (options.json) {
+      console.log(JSON.stringify(usage, null, 2));
+      return;
+    }
+    console.log(
+      `${id}: ${entity.plan} · ${survey.respondentOf(entity)} · ${entity.status}`,
+    );
+    console.log(`total  ${usageLine(usage.total)}`);
+    for (const row of usage.rows) {
+      console.log(`${row.role.padEnd(6)} ${usageLine(row)}`);
+    }
+  });
+
+program
+  .command("interview-estimate")
+  .description(
+    "Estimate calls, tokens, and cost of a fielding before fielding it (tokens per call from prior sittings of each model when any exist, else a stated heuristic; prices from the table today)",
+  )
+  .option("--plan <id>", "instrument plan", "crisis")
+  .option("--panel <name>", "panel name or comma-separated model ids", "dev")
+  .option("--repetitions <n>", "repetitions per item", "1")
+  .option("--explain", "probe an explanation for each answer", false)
+  .option("--items <spec>", "item names or a subset the plan declares")
+  .option("--json", "print the estimate as JSON")
+  .action(async (options) => {
+    const { FileStore } = await import("@modelstudies/workflows");
+    const survey = await import("@modelstudies/survey");
+    const store = new FileStore(varRoot());
+    const models = options.panel.includes(",")
+      ? await resolveModels(options.panel)
+      : survey.resolvePanel({ panel: options.panel }).models;
+    const instrument = survey.buildInstrument({ plan: options.plan });
+    const estimate = await survey.estimateFielding({
+      plan: options.plan,
+      models,
+      repetitions: Number(options.repetitions),
+      explain: options.explain,
+      ...(options.items
+        ? {
+            items: survey.resolveItems(
+              instrument,
+              String(options.items).split(","),
+            ),
+          }
+        : {}),
+      store,
+    });
+    if (options.json) {
+      console.log(JSON.stringify(estimate, null, 2));
+      return;
+    }
+    const figure = (f: import("@modelstudies/survey").TokenFigure) =>
+      `${f.input}/${f.output} ${f.source}${f.n ? `(n=${f.n})` : ""}`;
+    console.log(
+      `${estimate.plan}: ${estimate.sittings[0]?.items ?? 0} items × ${estimate.repetitions} reps` +
+        (estimate.explain ? " × (answer + probe)" : "") +
+        ` over ${models.length} model(s)`,
+    );
+    for (const sitting of estimate.sittings) {
+      console.log(
+        `  ${sitting.model.padEnd(28)}  calls:${String(sitting.calls).padStart(5)}` +
+          `  in:${tokens(sitting.input).padStart(8)}  out:${tokens(sitting.output).padStart(8)}` +
+          `  ${(sitting.usd === null ? "unpriced" : usd(sitting.usd)).padStart(10)}` +
+          `  answer ${figure(sitting.answer)}` +
+          (sitting.probe ? `  probe ${figure(sitting.probe)}` : ""),
+      );
+    }
+    console.log(
+      `  ${"total".padEnd(28)}  calls:${String(estimate.calls).padStart(5)}` +
+        `  in:${tokens(estimate.input).padStart(8)}  out:${tokens(estimate.output).padStart(8)}` +
+        `  ${usd(estimate.usd).padStart(10)}` +
+        (estimate.unpriced.length
+          ? `  (unpriced: ${estimate.unpriced.join(", ")})`
+          : ""),
+    );
   });
 
 program

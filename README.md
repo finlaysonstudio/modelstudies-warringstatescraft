@@ -61,6 +61,11 @@ npm run materials                                                  # export scen
 npm run cli -- interview-run --plan crisis --panel dev --explain     # a fielding: one sitting per model, every call journaled; Ctrl-C stops between calls
 npm run cli -- interview-run --resume <fieldingId>                  # pick every sitting of a fielding back up (or --resume <interviewId>)
 npm run cli -- interview-verify <interviewId>                       # check a sitting against its journal; --rebuild rewrites it from the journal
+npm run cli -- interview-estimate --plan crisis-situated --panel production --repetitions 12 --explain   # calls, tokens, and dollars before fielding (per model, source named)
+npm run cli -- interview-run --plan crisis-situated --panel production --repetitions 12 --explain --budget-usd 40   # the battery, capped; --items crux for the twelve-item subset
+npm run cli -- interview-list                                       # fieldings and their sittings, with cost
+npm run cli -- interview-cost <interviewId>                         # one sitting's usage by role (answer, probe); --json
+npx tsx scripts/emit-instrument.ts var/instruments/crisis-situated.md packages/survey/src/bank/crisisSituated.ts   # re-emit the bank after editing the markdown
 npm run cli -- lake-search "hostage prince" --use prompt --limit 5   # the corpus; --use is required
 npm run cli -- lake-get zuozhuan-legge-en --use prompt --from 1348 --lines 40
 npm run cli -- lake-list --collection period                        # what the lake holds, with rights
@@ -80,6 +85,10 @@ Every model call records its tokens (input, output, reasoning, cache reads and w
 ### Sittings, journals, and logs
 
 A survey sitting is journaled: every model call lands as one JSON line in `var/interview/<id>.jsonl` (the item, the repetition, the option order shown, the verbatim reply, its code, its usage and price, and a hash of the prompt) before the reply is used, and the entity in `var/interview/<id>.json` is a checkpoint written after every item. Resume folds the journal and asks only the (item, repetition) pairs it lacks, so the most an interrupt, a crash, or a provider outage can lose is the call in flight. The first Ctrl-C stops every sitting between calls (calls in flight land and are recorded) and leaves each as `pending` with where it stopped; a second Ctrl-C exits at once. One `interview-run` is a fielding (`var/fielding/<id>.json`: plan, roster, repetitions, and each model's interview id), so `--resume <fieldingId>` picks the whole roster back up. `interview-verify` recomputes every prompt hash and compares the entity and its probes with the journal; `--rebuild` rewrites them from it, including an entity the store has lost. Store writes are atomic (temp file, then rename). Transient provider faults are retried inside `@jaypie/llm` and again by an outer layer with a longer clock; a 429 that names an exhausted quota is not. Every CLI run also tees its log to `var/log/<date>-<time>-<command>.jsonl`; the log is diagnostic, the journal is the record.
+
+Every survey call is priced at call time and kept on the record (answers on the interview, probes on the probe entity), so a sitting's cost is a fold over what it holds, never a re-rating. `interview-run` prints each sitting's calls, tokens, and dollars and the roster's total; `interview-list` and `interview-cost` read them back; the values scorecard carries a cost per model and in total, and `/values` shows it. `interview-estimate` prices a fielding before it is fielded: calls are arithmetic, tokens per call come from a prior sitting of the same model when one exists and from a stated heuristic otherwise (the output names which), and dollars come from the price table today. `--budget-usd` caps a fielding: the roster shares one running sum, every sitting stops as `pending` once it is reached (an answer and its probe are a pair), the stop is journaled, and `--resume` continues under the same or a raised cap, counting what the journal already holds. `--items` fields a subset (item names, or a subset the plan declares such as `crux` on `crisis-situated`); the sitting records it and a resume keeps to it.
+
+The `crisis-situated` plan (88 situated forced-choice items in 16 ladders anchored to the games' decision menus) is emitted from `var/instruments/crisis-situated.md`, the source of truth, by `scripts/emit-instrument.ts`; a spec holds the emitted bank to the document wherever the document is checked out.
 
 ### Studies and reports
 

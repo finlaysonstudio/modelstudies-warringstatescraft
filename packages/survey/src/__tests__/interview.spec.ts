@@ -501,3 +501,131 @@ describe("runInterviews with a journal", () => {
     expect(report.entity.responses).toEqual(sitting!.responses);
   });
 });
+
+describe("runInterviews with a budget", () => {
+  it("stops every sitting as pending once the roster's cap is spent, and resume continues", async () => {
+    const store = new MemoryStore();
+    const journal = new MemoryJournal();
+    // Each stub call costs $0.001; a $0.0025 cap over 3 items × 2 reps lands
+    // three calls (the third crosses the line) and stops before the fourth.
+    const llm = stubLlm();
+    const [sitting] = await runInterviews({
+      plan: "paper-rock-scissors",
+      models: ["stub-model"],
+      repetitions: 2,
+      budgetUsd: 0.0025,
+      store,
+      llm,
+      journal,
+    });
+    expect(llm.calls).toBe(3);
+    expect(sitting!.status).toBe("pending");
+    expect(sitting!.statusDetail).toMatch(
+      /^budget exhausted at \$0\.00 of \$0\.00/,
+    );
+    const events = await eventsOf(journal, sitting!.id);
+    expect(events.at(-1)).toMatchObject({ t: "stop", reason: "budget" });
+    expect(events.filter((event) => event.t === "turn")).toHaveLength(3);
+    const fielding = (
+      await store.queryByScope<FieldingEntity>(FIELDING_MODEL, "apex")
+    )[0]!;
+    expect(fielding.budgetUsd).toBe(0.0025);
+    expect(fielding.status).toBe("active");
+    expect(fielding.statusDetail).toContain("budget exhausted");
+
+    // A resume under a cap counts the journal's $0.003 first: the same cap
+    // asks nothing more; a raised cap finishes the sitting.
+    const [still] = await runInterviews({
+      resume: [fielding.id],
+      budgetUsd: 0.0025,
+      store,
+      llm,
+      journal,
+    });
+    expect(llm.calls).toBe(3);
+    expect(still!.status).toBe("pending");
+    const [done] = await runInterviews({
+      resume: [fielding.id],
+      budgetUsd: 1,
+      store,
+      llm,
+      journal,
+    });
+    expect(done!.status).toBe("complete");
+    expect(llm.calls).toBe(6);
+    expect(done!.statusDetail).toBeUndefined();
+  });
+
+  it("refuses a cap that is not a positive number", async () => {
+    await expect(
+      runInterviews({
+        plan: "paper-rock-scissors",
+        models: ["stub-model"],
+        budgetUsd: 0,
+        store: new MemoryStore(),
+        llm: stubLlm(),
+      }),
+    ).rejects.toThrow(/positive/);
+  });
+});
+
+describe("runInterviews with an item subset", () => {
+  it("fields only the named items, records the subset, and keeps to it on resume", async () => {
+    const store = new MemoryStore();
+    const journal = new MemoryJournal();
+    const llm = stubLlm();
+    const [sitting] = await runInterviews({
+      plan: "paper-rock-scissors",
+      models: ["stub-model"],
+      repetitions: 1,
+      items: ["throw", "rounds"],
+      store,
+      llm,
+      journal,
+    });
+    expect(sitting!.status).toBe("complete");
+    expect(sitting!.items).toEqual(["throw", "rounds"]);
+    expect(Object.keys(sitting!.responses).sort()).toEqual(["rounds", "throw"]);
+    expect(sitting!.answered + sitting!.declined).toBe(2);
+    expect(sitting!.remaining).toBe(0);
+    const events = await eventsOf(journal, sitting!.id);
+    expect(events[0]).toMatchObject({
+      t: "start",
+      items: 2,
+      subset: ["throw", "rounds"],
+    });
+    const [topped] = await runInterviews({
+      resume: [sitting!.id],
+      repetitions: 2,
+      store,
+      llm,
+      journal,
+    });
+    expect(topped!.status).toBe("complete");
+    expect(Object.keys(topped!.responses).sort()).toEqual(["rounds", "throw"]);
+    expect(llm.calls).toBe(4);
+  });
+
+  it("expands a plan's declared subset and refuses items on resume", async () => {
+    const store = new MemoryStore();
+    const llm = stubLlm();
+    const [sitting] = await runInterviews({
+      plan: "crisis-situated",
+      models: ["stub-model"],
+      repetitions: 1,
+      items: ["crux"],
+      store,
+      llm,
+    });
+    expect(sitting!.items).toHaveLength(12);
+    expect(llm.calls).toBe(12);
+    await expect(
+      runInterviews({
+        resume: [sitting!.id],
+        items: ["f1"],
+        store,
+        llm,
+      }),
+    ).rejects.toThrow(/fresh fielding/);
+  });
+});
