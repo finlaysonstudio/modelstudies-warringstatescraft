@@ -153,8 +153,10 @@ async function buildScenarioIndex(): Promise<object[]> {
           summary?: string;
           simulates?: string;
           chapter?: { order: number; date: string };
+          report?: string;
+          decisionPoints?: { turn: number; seat: string }[];
         };
-        seats?: unknown[];
+        seats?: { id?: string; name?: string }[];
         turns?: unknown[];
       };
       const id = materials.id ?? file.replace(/\.json$/, "");
@@ -170,6 +172,12 @@ async function buildScenarioIndex(): Promise<object[]> {
         turnCount: Array.isArray(materials.turns) ? materials.turns.length : 0,
         renderings: materials.renderings ?? [{ id, naming: "chronicle", language: "en" }],
         ...(materials.scenario?.chapter ? { chapter: materials.scenario.chapter } : {}),
+        report: materials.scenario?.report ?? "basic",
+        seats: (materials.seats ?? []).map((seat) => ({
+          id: seat.id ?? "",
+          name: seat.name ?? seat.id ?? "",
+        })),
+        decisionPoints: materials.scenario?.decisionPoints ?? [],
       });
     } catch {
       // unreadable file: skip it

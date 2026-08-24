@@ -2,46 +2,62 @@ import clsx from "clsx";
 import { GitFork } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Bar, Section } from "../components/PonyBenchPrimitives";
+import { Bar, Section } from "../../components/PonyBenchPrimitives";
+import { libraryOf, type LibraryGame } from "../../lib/library";
 import type {
+  BasicReport,
+  Estimate,
   MaterialsRendering,
-  ScenarioChapter,
+  Report,
+  RunIndexEntry,
+  ScenarioIndexEntry,
   ScenarioMaterials,
-} from "../lib/types";
+} from "../../lib/types";
 
-// The reading room: every card and instruction the engine hands to a model,
-// rendered as the model sees it. Source is var/scenarios/<id>.json, written
-// by `cli materials`. Left rail jumps between blocks; each block opens to
-// the verbatim prompt beneath the human-readable card.
+// One chapter of the chronicle: results first (what happened when models
+// played it), then the reading room — every card and instruction the engine
+// hands to a model, rendered as the model sees it. Materials come from
+// var/scenarios/<id>.json, written by `cli materials`; results come from the
+// run index, the study index, and the newest complete basic report.
+
+interface StudyRow {
+  id: string;
+  title: string;
+  createdAt: string;
+  status: string;
+  report: string;
+  scenarios: string[];
+  models: string[];
+  replicates: number;
+}
 
 type LoadState =
   | { phase: "loading" }
   | { phase: "empty" }
-  | { phase: "ready"; materials: ScenarioMaterials };
-
-interface ScenarioIndexEntry {
-  id: string;
-  title: string;
-  summary: string;
-  simulates: string;
-  order: number;
-  seatCount: number;
-  turnCount: number;
-  /** every rendering the scenario has, the default first */
-  renderings: MaterialsRendering[];
-  /** the chapter's place in the chronicle, when it is one */
-  chapter?: ScenarioChapter;
-}
+  | {
+      phase: "ready";
+      materials: ScenarioMaterials;
+      runs: RunIndexEntry[];
+      studies: StudyRow[];
+      report: BasicReport | null;
+    };
 
 /** the rendering's label in the switch: "masked · 中文" */
 const renderingLabel = ({ naming, language }: MaterialsRendering): string =>
   [naming, language === "zh" ? "中文" : "English"].join(" · ");
 
-export function ScenarioMaterialsPage() {
+const shortModel = (model: string) => model.split("/").pop() ?? model;
+
+const fmt = (value: number, digits = 2) =>
+  Number.isFinite(value) ? value.toFixed(digits) : "—";
+
+const est = (estimate: Estimate) =>
+  `${fmt(estimate.value)} [${fmt(estimate.ci[0])}, ${fmt(estimate.ci[1])}]`;
+
+export function Chapter() {
   const { id: routeId } = useParams();
   const [index, setIndex] = useState<ScenarioIndexEntry[]>([]);
   const [state, setState] = useState<LoadState>({ phase: "loading" });
-  // no id in the route: the first exported scenario
   const id = routeId ?? index[0]?.id ?? "";
 
   useEffect(() => {
@@ -70,7 +86,43 @@ export function ScenarioMaterialsPage() {
         const res = await fetch(`/data/scenarios/${id}.json`);
         if (!res.ok) throw new Error(String(res.status));
         const materials = (await res.json()) as ScenarioMaterials;
-        if (!cancelled) setState({ phase: "ready", materials });
+        const base = materials.base ?? materials.id;
+        // results: the chapter's games, its studies, and the newest complete
+        // basic report that covers it; each is optional and fails soft
+        let runs: RunIndexEntry[] = [];
+        let studies: StudyRow[] = [];
+        let report: BasicReport | null = null;
+        try {
+          const [runsRes, studiesRes] = await Promise.all([
+            fetch("/data/runs.json"),
+            fetch("/data/studies.json"),
+          ]);
+          if (runsRes.ok) runs = (await runsRes.json()) as RunIndexEntry[];
+          if (studiesRes.ok) {
+            const all = (await studiesRes.json()) as StudyRow[];
+            studies = all.filter((study) => study.scenarios.includes(base));
+          }
+          const reported = studies
+            .filter(
+              (study) =>
+                study.status === "complete" && study.report === "basic",
+            )
+            .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+          for (const study of reported) {
+            const reportRes = await fetch(`/data/reports/${study.id}.json`);
+            if (!reportRes.ok) continue;
+            const candidate = (await reportRes.json()) as Report;
+            if (candidate.report === "basic") {
+              report = candidate;
+              break;
+            }
+          }
+        } catch {
+          // results stay empty; the materials still render
+        }
+        if (!cancelled) {
+          setState({ phase: "ready", materials, runs, studies, report });
+        }
       } catch {
         if (!cancelled) setState({ phase: "empty" });
       }
@@ -80,8 +132,8 @@ export function ScenarioMaterialsPage() {
     };
   }, [id]);
 
-  // the switcher lists scenarios by base id; a rendering id (`land-register.zh`)
-  // highlights its scenario
+  // the switcher lists chapters by base id; a rendering id (`land-register.zh`)
+  // highlights its chapter
   const base =
     state.phase === "ready"
       ? state.materials.base
@@ -90,7 +142,7 @@ export function ScenarioMaterialsPage() {
         )?.id ?? id);
   const switcher = index.length > 0 && (
     <nav
-      aria-label="Scenarios"
+      aria-label="Chapters"
       className="mb-8 flex flex-wrap items-center gap-2"
     >
       {index.map((entry) => (
@@ -133,15 +185,19 @@ export function ScenarioMaterialsPage() {
     );
   }
 
-  const { materials } = state;
+  const { materials, runs, studies, report } = state;
   const { scenario } = materials;
+  const chapterBase = materials.base ?? materials.id;
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
       {switcher}
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          Scenario materials
+          <Link to="/craft" className="hover:text-white">
+            Warring States Craft
+          </Link>
+          {" › "}Chronicle
         </p>
         <h1 className="mt-1 text-3xl font-medium tracking-tight text-white">
           {scenario.title}
@@ -196,7 +252,17 @@ export function ScenarioMaterialsPage() {
         </p>
       </header>
 
-      <div className="mt-12 grid gap-x-12 lg:grid-cols-[11rem_1fr]">
+      <Results
+        base={chapterBase}
+        runs={runs}
+        studies={studies}
+        report={report}
+      />
+
+      <p className="mt-16 font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+        Materials · every card and prompt as a model sees it
+      </p>
+      <div className="mt-6 grid gap-x-12 lg:grid-cols-[11rem_1fr]">
         <Rail materials={materials} />
         <div className="min-w-0 space-y-12">
           <Block id="rules" title="Rules of the game">
@@ -414,6 +480,157 @@ export function ScenarioMaterialsPage() {
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Results
+
+function Results({
+  base,
+  runs,
+  studies,
+  report,
+}: {
+  base: string;
+  runs: RunIndexEntry[];
+  studies: StudyRow[];
+  report: BasicReport | null;
+}) {
+  const library = libraryOf(runs, base);
+  const rows = (report?.cells ?? []).filter((cell) => cell.scenario === base);
+  const turnIndexes = [
+    ...new Set(rows.flatMap((row) => row.turns.map((turn) => turn.index))),
+  ].sort((a, b) => a - b);
+  const played = library.length > 0 || studies.length > 0;
+
+  return (
+    <section className="mt-12" aria-label="Results">
+      <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+        Results
+      </h2>
+      {!played && (
+        <p className="mt-3 text-sm text-zinc-400">
+          Not yet played. Games land here when a study or a matrix run plays
+          this chapter.
+        </p>
+      )}
+
+      {rows.length > 0 && (
+        <div className="mt-3 overflow-x-auto">
+          <p className="font-plex-mono text-[10px] text-zinc-600">
+            escalation per turn, peak, and final across replicates ·{" "}
+            {report?.study}
+          </p>
+          <table className="mt-2 w-full border-collapse text-left text-xs">
+            <thead>
+              <tr className="border-b border-white/10 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                <th className="py-2 pr-4 font-normal">Model</th>
+                <th className="py-2 pr-4 font-normal">Games</th>
+                {turnIndexes.map((index) => (
+                  <th key={index} className="py-2 pr-4 font-normal">
+                    Turn {index}
+                  </th>
+                ))}
+                <th className="py-2 pr-4 font-normal">Peak</th>
+                <th className="py-2 pr-4 font-normal">Final</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.model} className="border-b border-white/5">
+                  <td className="py-2 pr-4 text-zinc-200">
+                    {shortModel(row.model)}
+                  </td>
+                  <td className="py-2 pr-4 font-plex-mono text-zinc-400">
+                    {row.games}
+                  </td>
+                  {turnIndexes.map((index) => {
+                    const turn = row.turns.find((t) => t.index === index);
+                    return (
+                      <td
+                        key={index}
+                        className="py-2 pr-4 font-plex-mono text-zinc-400"
+                      >
+                        {turn ? est(turn.escalation) : "—"}
+                      </td>
+                    );
+                  })}
+                  <td className="py-2 pr-4 font-plex-mono text-zinc-200">
+                    {est(row.peak)}
+                  </td>
+                  <td className="py-2 pr-4 font-plex-mono text-zinc-200">
+                    {est(row.final)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {studies.length > 0 && (
+        <div className="mt-6">
+          <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+            Studies
+          </p>
+          <ul className="mt-2 space-y-1">
+            {studies
+              .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+              .map((study) => (
+                <li key={study.id} className="text-sm">
+                  <Link
+                    to={`/craft/studies/${study.id}`}
+                    className="text-zinc-200 hover:text-white"
+                  >
+                    {study.title || study.id}
+                  </Link>
+                  <span className="ml-2 font-plex-mono text-[10px] text-zinc-500">
+                    {study.models.length} models × {study.replicates} ·{" "}
+                    {study.status}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+
+      {library.length > 0 && (
+        <div className="mt-6">
+          <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+            Replay library · {library.length}{" "}
+            {library.length === 1 ? "game" : "games"}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {library.slice(0, 24).map((game: LibraryGame) => (
+              <Link
+                key={game.id}
+                to={`/craft/replays/${game.id}`}
+                className="cursor-pointer rounded-sm border border-white/10 bg-white/[0.03] px-2 py-1 font-plex-mono text-[10px] text-zinc-400 hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+              >
+                {Object.entries(game.roster)
+                  .map(([seat, model]) => `${seat}=${shortModel(model)}`)
+                  .join(" ")}
+              </Link>
+            ))}
+            {library.length > 24 && (
+              <span className="px-2 py-1 font-plex-mono text-[10px] text-zinc-600">
+                +{library.length - 24} more
+              </span>
+            )}
+          </div>
+          <Link
+            to={`/craft/play?chapter=${base}`}
+            className="mt-3 inline-block cursor-pointer rounded-sm border border-brand-terminal/40 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-brand-terminal uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+          >
+            ▶ watch a game of this chapter
+          </Link>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Materials pieces
 
 const RAIL = [
   ["rules", "Rules"],

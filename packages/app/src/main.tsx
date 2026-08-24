@@ -3,11 +3,11 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { AwryHome } from "./pages/awry/AwryHome";
+import { Chapter } from "./pages/craft/Chapter";
 import { CraftHome } from "./pages/craft/CraftHome";
 import { Home } from "./pages/Home";
 import { MatrixView } from "./pages/MatrixView";
 import { RunReplay } from "./pages/RunReplay";
-import { ScenarioMaterialsPage } from "./pages/ScenarioMaterials";
 import { StudyView } from "./pages/StudyView";
 import { ValuesIndex } from "./pages/ValuesIndex";
 import "./globals.css";
@@ -21,10 +21,7 @@ if (root) {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/craft" element={<CraftHome />} />
-            <Route
-              path="/craft/chapters/:id"
-              element={<ScenarioMaterialsPage />}
-            />
+            <Route path="/craft/chapters/:id" element={<Chapter />} />
             <Route path="/craft/studies/:id" element={<StudyView />} />
             <Route path="/craft/survey" element={<ValuesIndex />} />
             <Route path="/craft/replays/:id" element={<RunReplay />} />
