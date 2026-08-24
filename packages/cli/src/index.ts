@@ -574,16 +574,58 @@ program
 program
   .command("materials")
   .description(
-    "Export every scenario's cards and prompts to var/scenarios/<id>.json",
+    "Export every scenario's cards and prompts to var/scenarios/<id>.json and every instrument plan's description to var/instruments/<plan>.json",
   )
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
     const { buildAllMaterials } = await import("@modelstudies/game");
+    const { buildInstrument, listPlans } = await import("@modelstudies/survey");
     const store = new FileStore(varRoot());
     for (const materials of buildAllMaterials()) {
       await store.create(materials);
       console.log(
         `${materials.id}  seats:${materials.seats.length}  turns:${materials.turns.length}  → var/scenarios/${materials.id}.json`,
+      );
+    }
+    for (const plan of listPlans()) {
+      const instrument = buildInstrument({ plan });
+      const topics = new Map<string, number>();
+      for (const item of instrument.items) {
+        const topic = item.topic ?? "—";
+        topics.set(topic, (topics.get(topic) ?? 0) + 1);
+      }
+      await store.create({
+        id: plan,
+        model: "instruments",
+        createdAt: new Date().toISOString(),
+        title: instrument.title,
+        category: instrument.category,
+        ...(instrument.instruction
+          ? { instruction: instrument.instruction }
+          : {}),
+        ...(instrument.probe ? { probe: instrument.probe } : {}),
+        ...(instrument.optionOrder
+          ? { optionOrder: instrument.optionOrder }
+          : {}),
+        items: instrument.items.length,
+        topics: [...topics.entries()].map(([topic, items]) => ({
+          topic,
+          items,
+        })),
+        ...(instrument.subsets ? { subsets: instrument.subsets } : {}),
+        ...(instrument.arms
+          ? {
+              arms: Object.entries(instrument.arms).map(([id, arm]) => ({
+                id,
+                title: arm.title,
+                items: (arm.items ?? instrument.items.map((i) => i.name))
+                  .length,
+              })),
+            }
+          : {}),
+      });
+      console.log(
+        `${plan}  items:${instrument.items.length}  → var/instruments/${plan}.json`,
       );
     }
   });

@@ -11,7 +11,7 @@ import { Home } from "./pages/Home";
 import { MatrixView } from "./pages/MatrixView";
 import { RunReplay } from "./pages/RunReplay";
 import { StudyView } from "./pages/StudyView";
-import { ValuesIndex } from "./pages/ValuesIndex";
+import { Survey } from "./pages/craft/Survey";
 import "./globals.css";
 
 const root = document.getElementById("root");
@@ -25,7 +25,7 @@ if (root) {
             <Route path="/craft" element={<CraftHome />} />
             <Route path="/craft/chapters/:id" element={<Chapter />} />
             <Route path="/craft/studies/:id" element={<StudyView />} />
-            <Route path="/craft/survey" element={<ValuesIndex />} />
+            <Route path="/craft/survey" element={<Survey />} />
             <Route path="/craft/play" element={<Play />} />
             <Route path="/craft/play/:id" element={<Watch />} />
             <Route path="/craft/replays/:id" element={<RunReplay />} />

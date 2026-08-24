@@ -1,8 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
 
 import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-import { formatUsd } from "../lib/usage";
+import { formatUsd } from "../../lib/usage";
+import type { FieldingIndexEntry, InstrumentSummary } from "../../lib/types";
 
 // Declared-values scorecard: models × modules, cell = construct-positive
 // share (the escalation-tolerant / hawkish pole is code 1 across the
@@ -361,8 +363,157 @@ function ScorecardSection({
   );
 }
 
-export function ValuesIndex() {
+// ---------------------------------------------------------------------------
+// Fieldings
+
+function Fieldings({ fieldings }: { fieldings: FieldingIndexEntry[] }) {
+  if (fieldings.length === 0) return null;
+  return (
+    <section className="mt-14" aria-label="Fieldings">
+      <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+        Fieldings
+      </h2>
+      <p className="mt-1 max-w-2xl text-sm text-zinc-400">
+        One fielding per administration: the plan, the arm, and one sitting per
+        model. Open a fielding for its sittings.
+      </p>
+      <div className="mt-3 space-y-2">
+        {fieldings.map((fielding) => (
+          <details
+            key={fielding.id}
+            className="rounded-sm border border-white/10 bg-white/[0.02]"
+          >
+            <summary className="flex cursor-pointer flex-wrap items-center gap-x-3 px-3 py-2 font-plex-mono text-xs text-zinc-300 hover:bg-white/5">
+              <span className="text-zinc-500">{fielding.id}</span>
+              <span>
+                {fielding.plan}
+                {fielding.arm ? ` · ${fielding.arm}` : ""}
+                {fielding.items ? ` · ${fielding.items.length} items` : ""}
+              </span>
+              <span className="text-zinc-500">
+                {fielding.models.length} models × {fielding.repetitions}
+              </span>
+              <span
+                className={
+                  fielding.status === "complete"
+                    ? "text-brand-terminal"
+                    : fielding.status === "error"
+                      ? "text-red-400"
+                      : "text-sky-400"
+                }
+              >
+                {fielding.status}
+              </span>
+              <span className="ml-auto text-[10px] text-zinc-600">
+                {fielding.startedAt.slice(0, 10)}
+              </span>
+            </summary>
+            <ul className="border-t border-white/5 px-3 py-2">
+              {fielding.statusDetail && (
+                <li className="py-0.5 font-plex-mono text-[10px] text-amber-400">
+                  {fielding.statusDetail}
+                </li>
+              )}
+              {Object.entries(fielding.interviews).map(
+                ([model, interviewId]) => (
+                  <li
+                    key={model}
+                    className="flex flex-wrap gap-x-3 py-0.5 font-plex-mono text-[11px]"
+                  >
+                    <span className="text-zinc-300">{model}</span>
+                    <Link
+                      to={`/craft/survey/${interviewId}`}
+                      className="text-zinc-500 hover:text-zinc-200"
+                    >
+                      {interviewId}
+                    </Link>
+                  </li>
+                ),
+              )}
+            </ul>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// The instrument
+
+function InstrumentCard({ instrument }: { instrument: InstrumentSummary }) {
+  return (
+    <div className="mt-3 rounded-sm border border-white/10 bg-black/20 p-4">
+      <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+        {instrument.id} · {instrument.category} · {instrument.items} items
+      </p>
+      <p className="mt-1 text-sm text-zinc-200">{instrument.title}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {instrument.topics.map((topic) => (
+          <span
+            key={topic.topic}
+            className="rounded-sm border border-white/10 px-1.5 py-0.5 font-plex-mono text-[10px] text-zinc-400"
+          >
+            {topic.topic.toUpperCase()} · {topic.items}
+          </span>
+        ))}
+      </div>
+      {instrument.instruction && (
+        <details className="mt-3">
+          <summary className="cursor-pointer font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase hover:text-zinc-300">
+            the preamble every sitting reads
+          </summary>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed whitespace-pre-wrap text-zinc-400">
+            {instrument.instruction}
+          </p>
+        </details>
+      )}
+      {instrument.probe && (
+        <details className="mt-2">
+          <summary className="cursor-pointer font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase hover:text-zinc-300">
+            the probe asked after every answer
+          </summary>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed whitespace-pre-wrap text-zinc-400">
+            {instrument.probe}
+          </p>
+        </details>
+      )}
+      {instrument.subsets && Object.keys(instrument.subsets).length > 0 && (
+        <p className="mt-3 font-plex-mono text-[11px] text-zinc-500">
+          subsets:{" "}
+          {Object.entries(instrument.subsets)
+            .map(([name, items]) => `${name} (${items.length})`)
+            .join(", ")}
+        </p>
+      )}
+      {instrument.arms && instrument.arms.length > 0 && (
+        <div className="mt-2">
+          <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+            treatment arms
+          </p>
+          <ul className="mt-1 space-y-0.5">
+            {instrument.arms.map((arm) => (
+              <li key={arm.id} className="font-plex-mono text-[11px]">
+                <span className="text-zinc-300">{arm.id}</span>
+                <span className="ml-2 text-zinc-500">
+                  {arm.title} · {arm.items} items
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// The page
+
+export function Survey() {
   const [state, setState] = useState<LoadState>({ phase: "loading" });
+  const [fieldings, setFieldings] = useState<FieldingIndexEntry[]>([]);
+  const [instruments, setInstruments] = useState<InstrumentSummary[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -397,16 +548,70 @@ export function ValuesIndex() {
         if (!cancelled) setState({ phase: "empty" });
       }
     })();
+    void (async () => {
+      try {
+        const res = await fetch("/data/fieldings.json");
+        if (!res.ok) return;
+        const entries = (await res.json()) as FieldingIndexEntry[];
+        if (!cancelled) setFieldings(entries);
+      } catch {
+        // no fieldings on record
+      }
+    })();
     return () => {
       cancelled = true;
     };
   }, []);
 
+  // the instrument descriptions follow the plans the scorecards and
+  // fieldings name; each is optional (`cli materials` exports them)
+  useEffect(() => {
+    const plans = [
+      ...new Set([
+        ...(state.phase === "ready"
+          ? state.scorecards.map((scorecard) => scorecard.plan)
+          : []),
+        ...fieldings.map((fielding) => fielding.plan),
+      ]),
+    ].filter(Boolean);
+    if (plans.length === 0) return;
+    let cancelled = false;
+    void (async () => {
+      const loaded = await Promise.all(
+        plans.map(async (plan) => {
+          try {
+            const res = await fetch(`/data/instruments/${plan}.json`);
+            return res.ok ? ((await res.json()) as InstrumentSummary) : null;
+          } catch {
+            return null;
+          }
+        }),
+      );
+      if (!cancelled) {
+        setInstruments(
+          loaded.filter(
+            (instrument): instrument is InstrumentSummary =>
+              instrument !== null,
+          ),
+        );
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [state, fieldings]);
+
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-16 sm:px-16 sm:pt-20">
       <header className="animate-rise motion-reduce:animate-none">
-        <h1 className="text-3xl font-medium tracking-tight text-white">
-          Declared Values
+        <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+          <Link to="/craft" className="hover:text-white">
+            Warring States Craft
+          </Link>
+          {" › "}Survey
+        </p>
+        <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
+          Model Values Survey
         </h1>
         <p className="mt-2 max-w-xl text-sm text-pretty text-zinc-400">
           Each model answers a bank of forced-choice crisis items, twelve
@@ -441,6 +646,19 @@ export function ValuesIndex() {
             delay={60 + index * 40}
           />
         ))}
+
+      <Fieldings fieldings={fieldings} />
+
+      {instruments.length > 0 && (
+        <section className="mt-14" aria-label="The instrument">
+          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+            The instrument
+          </h2>
+          {instruments.map((instrument) => (
+            <InstrumentCard key={instrument.id} instrument={instrument} />
+          ))}
+        </section>
+      )}
     </div>
   );
 }

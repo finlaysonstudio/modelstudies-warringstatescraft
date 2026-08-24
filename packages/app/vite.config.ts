@@ -186,6 +186,67 @@ async function buildScenarioIndex(): Promise<object[]> {
   return (index as { order: number }[]).sort((a, b) => a.order - b.order);
 }
 
+interface FieldingFile {
+  id?: string;
+  plan?: string;
+  arm?: string;
+  panel?: string;
+  models?: string[];
+  repetitions?: number;
+  condition?: string;
+  language?: string;
+  items?: string[];
+  budgetUsd?: number;
+  interviews?: Record<string, string>;
+  status?: string;
+  statusDetail?: string;
+  startedAt?: string;
+  completedAt?: string;
+}
+
+// one entry per fielding on record; /craft/survey lists them
+async function buildFieldingIndex(): Promise<object[]> {
+  const dir = modelDir("fielding");
+  let files: string[] = [];
+  try {
+    files = (await readdir(dir)).filter((file) => file.endsWith(".json"));
+  } catch {
+    return [];
+  }
+  const index: object[] = [];
+  for (const file of files) {
+    try {
+      const fielding = JSON.parse(
+        await readFile(path.join(dir, file), "utf8"),
+      ) as FieldingFile;
+      index.push({
+        id: fielding.id ?? file.replace(/\.json$/, ""),
+        plan: fielding.plan ?? "",
+        ...(fielding.arm ? { arm: fielding.arm } : {}),
+        ...(fielding.panel ? { panel: fielding.panel } : {}),
+        models: fielding.models ?? [],
+        repetitions: fielding.repetitions ?? 0,
+        ...(fielding.condition ? { condition: fielding.condition } : {}),
+        ...(fielding.language ? { language: fielding.language } : {}),
+        ...(fielding.items ? { items: fielding.items } : {}),
+        ...(fielding.budgetUsd !== undefined
+          ? { budgetUsd: fielding.budgetUsd }
+          : {}),
+        interviews: fielding.interviews ?? {},
+        status: fielding.status ?? "active",
+        ...(fielding.statusDetail ? { statusDetail: fielding.statusDetail } : {}),
+        startedAt: fielding.startedAt ?? "",
+        ...(fielding.completedAt ? { completedAt: fielding.completedAt } : {}),
+      });
+    } catch {
+      // unreadable file: skip it
+    }
+  }
+  return (index as { startedAt: string }[]).sort((a, b) =>
+    b.startedAt.localeCompare(a.startedAt),
+  );
+}
+
 async function buildIndex(): Promise<object[]> {
   let files: string[] = [];
   try {
@@ -257,8 +318,13 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       res.end(JSON.stringify(await buildScorecardIndex()));
       return;
     }
+    if (url === "/data/fieldings.json") {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(await buildFieldingIndex()));
+      return;
+    }
     const match =
-      /^\/data\/(runs|studies|scorecards|scenarios|reports)\/([A-Za-z0-9._-]+)\.json$/.exec(
+      /^\/data\/(runs|studies|scorecards|scenarios|reports|fielding|interview|instruments)\/([A-Za-z0-9._-]+)\.json$/.exec(
         url,
       );
     if (match) {

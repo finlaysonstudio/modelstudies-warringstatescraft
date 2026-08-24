@@ -697,3 +697,21 @@ export interface FieldingIndexEntry {
   startedAt: string;
   completedAt?: string;
 }
+
+/** Shape of var/instruments/<plan>.json, exported by `cli materials`. */
+export interface InstrumentSummary {
+  id: string;
+  model: "instruments";
+  createdAt: string;
+  title: string;
+  category: string;
+  instruction?: string;
+  probe?: string;
+  optionOrder?: string;
+  /** items in the bank */
+  items: number;
+  /** module letter → item count, in bank order */
+  topics: { topic: string; items: number }[];
+  subsets?: Record<string, string[]>;
+  arms?: { id: string; title: string; items: number }[];
+}
