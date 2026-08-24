@@ -1,3 +1,4 @@
+import { appendFileSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { config as loadEnv } from "dotenv";
@@ -46,6 +47,120 @@ const consoleLog = {
   debug: (...args: unknown[]) => console.log("[debug]", ...args),
   warn: (...args: unknown[]) => console.warn("[warn]", ...args),
   error: (...args: unknown[]) => console.error("[error]", ...args),
+};
+
+type CliLogger = typeof consoleLog & { file: string };
+
+/**
+ * The console log teed to `var/log/<yyyymmdd>-<hhmmss>-<command>.jsonl`,
+ * one `{ at, level, msg, ...context }` per line: the first string argument
+ * is the message, object arguments merge as context, anything else joins the
+ * message. Diagnostic and deletable; the journal beside each sitting is the
+ * record.
+ */
+const createCliLog = (command: string): CliLogger => {
+  const dir = resolve(varRoot(), "log");
+  mkdirSync(dir, { recursive: true });
+  const started = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const name =
+    `${started.getFullYear()}${pad(started.getMonth() + 1)}${pad(started.getDate())}` +
+    `-${pad(started.getHours())}${pad(started.getMinutes())}${pad(started.getSeconds())}` +
+    `-${command}.jsonl`;
+  const file = resolve(dir, name);
+  const write = (level: string, args: unknown[]) => {
+    const context: Record<string, unknown> = {};
+    const parts: string[] = [];
+    for (const arg of args) {
+      if (arg instanceof Error) {
+        parts.push(arg.message);
+        context.stack = arg.stack;
+      } else if (typeof arg === "object" && arg !== null) {
+        Object.assign(context, arg);
+      } else {
+        parts.push(String(arg));
+      }
+    }
+    const line = {
+      at: new Date().toISOString(),
+      level,
+      msg: parts.join(" "),
+      ...context,
+      pid: process.pid,
+    };
+    try {
+      appendFileSync(file, `${JSON.stringify(line)}\n`);
+    } catch {
+      // the console line still goes out; a log that cannot be written is not
+      // worth stopping the run for
+    }
+  };
+  return {
+    file,
+    trace: (...args: unknown[]) => {
+      consoleLog.trace(...args);
+      write("trace", args);
+    },
+    debug: (...args: unknown[]) => {
+      consoleLog.debug(...args);
+      write("debug", args);
+    },
+    warn: (...args: unknown[]) => {
+      consoleLog.warn(...args);
+      write("warn", args);
+    },
+    error: (...args: unknown[]) => {
+      consoleLog.error(...args);
+      write("error", args);
+    },
+  };
+};
+
+/**
+ * The default client with its outer retry reporting into the log, and a
+ * signal that ends a backoff wait when the run is interrupted.
+ */
+const llmFor = async (log: CliLogger, signal?: AbortSignal) => {
+  const { createLlmClient } = await import("@modelstudies/workflows");
+  return createLlmClient({
+    retry: {
+      ...(signal ? { signal } : {}),
+      onRetry: (attempt) =>
+        log.warn(
+          `retry ${attempt.attempt}/${attempt.attempts} (${attempt.reason}) in ${Math.round(attempt.delayMs / 1000)}s: ${attempt.error instanceof Error ? attempt.error.message : String(attempt.error)}`,
+          {
+            model: attempt.model,
+            reason: attempt.reason,
+            delayMs: attempt.delayMs,
+          },
+        ),
+    },
+  });
+};
+
+/**
+ * One controller for the run: the first SIGINT or SIGTERM aborts it (every
+ * sitting stops between calls and checkpoints); a second exits at once. The
+ * journal holds everything up to the last landed call either way.
+ */
+const interruptible = (log: CliLogger): AbortController => {
+  const controller = new AbortController();
+  let signals = 0;
+  const onSignal = (signal: string) => {
+    signals += 1;
+    if (signals === 1) {
+      log.warn(
+        `${signal}: stopping after the calls in flight land (again to exit now)`,
+      );
+      controller.abort();
+      return;
+    }
+    log.error(`${signal} again: exiting; the journals hold every landed call`);
+    process.exit(130);
+  };
+  process.on("SIGINT", onSignal);
+  process.on("SIGTERM", onSignal);
+  return controller;
 };
 
 const parsePanelMode = async (mode: string) => {
@@ -130,17 +245,17 @@ program
   .option("--judge-mode <mode>", "how judge verdicts combine", "median")
   .option("--resume <runId>", "resume an existing run")
   .action(async (options) => {
-    const { FileStore, defaultLlmClient } =
-      await import("@modelstudies/workflows");
+    const { FileStore } = await import("@modelstudies/workflows");
     const { GameEngine } = await import("@modelstudies/game");
+    const log = createCliLog("game-run");
     const roster = await resolveRoster(options.panel);
     const engine = new GameEngine({
       dialog: options.dialog ? Number(options.dialog) : undefined,
       dialogWords: options.dialogWords
         ? Number(options.dialogWords)
         : undefined,
-      llm: defaultLlmClient,
-      log: consoleLog,
+      llm: await llmFor(log),
+      log,
       maxTurns: options.turns ? Number(options.turns) : undefined,
       priorities: options.priorities,
       language: await parseLanguage(options.language),
@@ -227,10 +342,10 @@ program
     "play the incomplete arms of an existing study; with --replicates or --models, extend it first",
   )
   .action(async (options) => {
-    const { FileStore, defaultLlmClient } =
-      await import("@modelstudies/workflows");
+    const { FileStore } = await import("@modelstudies/workflows");
     const { extendStudy, planStudy, runStudy } =
       await import("@modelstudies/game");
+    const log = createCliLog("study-run");
     const store = new FileStore(varRoot());
     let id: string = options.resume;
     if (id && (options.replicates || options.models)) {
@@ -293,8 +408,8 @@ program
     const study = await runStudy({
       concurrency: Number(options.concurrency),
       id,
-      llm: defaultLlmClient,
-      log: consoleLog,
+      llm: await llmFor(log),
+      log,
       store,
     });
     console.log(
@@ -497,35 +612,113 @@ program
   .description("Run a values-instrument sitting across a panel")
   .option("--plan <id>", "instrument plan", "crisis")
   .option("--panel <name>", "panel name or comma-separated model ids", "dev")
-  .option("--repetitions <n>", "target total repetitions per item", "1")
+  .option(
+    "--repetitions <n>",
+    "target total repetitions per item (default 1; with --resume, the record's target unless given)",
+  )
   .option("--explain", "probe an explanation for each answer", false)
   .option("--retry", "re-ask nonconforming turns", false)
-  .option("--resume <ids>", "comma-separated interview ids to resume")
+  .option(
+    "--resume <ids>",
+    "comma-separated fielding or interview ids to resume (a fielding resumes every sitting it opened)",
+  )
   .action(async (options) => {
-    const { FileStore, defaultLlmClient } =
-      await import("@modelstudies/workflows");
+    const { FileJournal, FileStore } = await import("@modelstudies/workflows");
     const survey = await import("@modelstudies/survey");
+    const log = createCliLog("interview-run");
+    const controller = interruptible(log);
+    console.error(`log → ${log.file}`);
     const models = options.panel.includes(",")
       ? options.panel.split(",").map((m: string) => m.trim())
       : undefined;
     const interviews = await survey.runInterviews({
       explain: options.explain,
-      llm: defaultLlmClient,
-      log: consoleLog,
+      journal: new FileJournal(varRoot()),
+      llm: await llmFor(log, controller.signal),
+      log,
       models,
       panel: models ? undefined : options.panel,
       plan: options.plan,
-      repetitions: Number(options.repetitions),
+      repetitions: options.repetitions
+        ? Number(options.repetitions)
+        : options.resume
+          ? undefined
+          : 1,
       resume: options.resume
         ? options.resume.split(",").map((id: string) => id.trim())
         : undefined,
       retry: options.retry,
+      signal: controller.signal,
       store: new FileStore(varRoot()),
     });
+    const fieldings = new Set(
+      interviews.map((interview) => interview.fielding).filter(Boolean),
+    );
+    for (const fielding of fieldings) console.log(`fielding ${fielding}`);
     for (const interview of interviews) {
+      const detail = interview.error ?? interview.statusDetail;
       console.log(
-        `${interview.id}  ${String(interview.status).padEnd(9)}  ${interview.respondent ?? interview.llm ?? ""}`,
+        `${interview.id}  ${String(interview.status).padEnd(9)}  ${(interview.respondent ?? "").padEnd(28)}` +
+          `${interview.answered}/${interview.answered + interview.declined + interview.remaining}` +
+          (detail ? `  ${detail}` : ""),
       );
+    }
+    if (controller.signal.aborted) {
+      const ids =
+        [...fieldings].join(",") || interviews.map((i) => i.id).join(",");
+      console.log(`interrupted; resume with --resume ${ids}`);
+      process.exitCode = 130;
+    }
+  });
+
+program
+  .command("interview-verify")
+  .description(
+    "Check a sitting against its journal (prompt hashes, entity, probes); --rebuild rewrites the entity and probes from the journal",
+  )
+  .argument("<id>", "interview id")
+  .option("--rebuild", "rewrite the entity and its probes from the journal")
+  .option("--json", "print the report as JSON")
+  .action(async (id: string, options) => {
+    const { FileJournal, FileStore } = await import("@modelstudies/workflows");
+    const { verifyInterview } = await import("@modelstudies/survey");
+    const report = await verifyInterview({
+      id,
+      journal: new FileJournal(varRoot()),
+      rebuild: !!options.rebuild,
+      store: new FileStore(varRoot()),
+    });
+    if (options.json) {
+      console.log(JSON.stringify(report, null, 2));
+      return;
+    }
+    const { entity } = report;
+    console.log(
+      `${id}  ${entity.status}${entity.statusDetail ? ` (${entity.statusDetail})` : ""}${entity.error ? ` error: ${entity.error}` : ""}`,
+    );
+    console.log(
+      `journal: ${report.events} events, ${report.calls} calls, ${usd(report.usd)}${report.unpriced ? ` (+${report.unpriced} unpriced)` : ""}` +
+        (report.stop ? `, stopped: ${report.stop.reason}` : ", no stop line"),
+    );
+    console.log(
+      `prompts: ${report.promptsChecked} checked, ${report.promptMismatches.length} mismatched` +
+        (report.promptMismatches.length
+          ? ` (${report.promptMismatches.map((m) => `${m.item}#${m.rep}`).join(", ")})`
+          : ""),
+    );
+    for (const fragment of report.torn) {
+      console.log(
+        `torn: ${fragment.slice(0, 80)}${fragment.length > 80 ? "…" : ""}`,
+      );
+    }
+    for (const line of report.drift) console.log(`drift: ${line}`);
+    for (const line of report.probeDrift) console.log(`probe: ${line}`);
+    if (report.drift.length === 0 && report.probeDrift.length === 0) {
+      console.log("entity and probes match the journal");
+    }
+    if (report.rebuilt) console.log("rebuilt from the journal");
+    else if (report.drift.length || report.probeDrift.length) {
+      console.log("pass --rebuild to rewrite them from the journal");
     }
   });
 

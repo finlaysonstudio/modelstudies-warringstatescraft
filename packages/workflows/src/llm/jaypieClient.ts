@@ -7,7 +7,10 @@
  * Every call requests `effort: highest`; adapters translate it per provider
  * and ignore it where a model has no reasoning control. A legacy OpenAI model
  * id (`isLegacyOpenAiModel`) bypasses Jaypie for the Chat Completions client,
- * the only path those models answer a `format` on.
+ * the only path those models answer a `format` on. Both paths sit under one
+ * outer {@link withRetry} (`retry: false` removes it): `Llm.operate` and the
+ * legacy client each retry inside their own budget, and the wrapper covers
+ * the outage that outlasts it.
  */
 import { LLM, Llm } from "@jaypie/llm";
 import type { LlmClient, LlmOperateOptions, LlmOperateResult } from "./client";
@@ -17,6 +20,7 @@ import {
 } from "./legacyOpenAiClient";
 import { priceUsage } from "./pricing";
 import { llmSelector, toLlmHistory } from "./providers";
+import { withRetry, type RetryOptions } from "./retry";
 
 type JaypieOperateOptions = NonNullable<Parameters<typeof Llm.operate>[1]>;
 type JaypieHistory = NonNullable<JaypieOperateOptions["history"]>;
@@ -46,11 +50,18 @@ function normalizeHistory(
   return history as unknown as JaypieHistory;
 }
 
+export interface CreateLlmClientOptions {
+  model?: string;
+  provider?: string;
+  /** outer retry over both paths; `false` leaves only the clients' own loops */
+  retry?: RetryOptions | false;
+}
+
 export function createLlmClient(
-  defaults: { model?: string; provider?: string } = {},
+  defaults: CreateLlmClientOptions = {},
 ): LlmClient {
   const legacy = createLegacyOpenAiClient();
-  return {
+  const client: LlmClient = {
     async operate(
       prompt: string,
       options: LlmOperateOptions = {},
@@ -84,6 +95,9 @@ export function createLlmClient(
       };
     },
   };
+  return defaults.retry === false
+    ? client
+    : withRetry(client, defaults.retry ?? {});
 }
 
 export const defaultLlmClient: LlmClient = createLlmClient();

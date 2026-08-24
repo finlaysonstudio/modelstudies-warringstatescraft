@@ -315,7 +315,12 @@ const postWithRetry = async ({
       await sleep(RETRY_BASE_MS * 2 ** attempt);
       continue;
     }
-    if (result.status === 429) throw new TooManyRequestsError(detail);
+    // the marker is what `classifyRetry` reads to refuse a further wait
+    if (result.status === 429) {
+      throw new TooManyRequestsError(
+        quota ? `insufficient_quota: ${detail}` : detail,
+      );
+    }
     if (result.status >= 500) throw new UnavailableError(detail);
     throw new BadGatewayError(`OpenAI ${result.status}: ${detail}`);
   }

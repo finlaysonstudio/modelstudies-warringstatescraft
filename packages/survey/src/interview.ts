@@ -2,13 +2,32 @@ import { BadRequestError, NotFoundError } from "@jaypie/errors";
 import {
   calculateScope,
   type Entity,
+  type Journal,
   type LlmClient,
   type LlmTurn,
+  type LlmUsage,
   type Store,
 } from "@modelstudies/workflows";
 import { randomUUID } from "node:crypto";
 
+import {
+  FIELDING_MODEL,
+  fieldingId,
+  fieldingStatus,
+  type FieldingEntity,
+} from "./fielding";
 import { buildInstrument, DEFAULT_PLAN, EXPLAIN_PROMPT } from "./instrument";
+import {
+  discardReps,
+  foldJournal,
+  meanOf,
+  rawOf,
+  sha1,
+  type FoldedItem,
+  type SittingEvent,
+  type SittingFold,
+  type StopReason,
+} from "./journal";
 import { noopLog, type Logger } from "./log";
 import { balancedOrders, seededShuffle, turnSeed } from "./order";
 import { resolvePanel } from "./panel";
@@ -52,6 +71,9 @@ export interface InterviewItemResponse {
   // Explain-mode follow-ups: one per repetition on LLM runs (null when the
   // follow-up produced no text)
   explanations?: (string | null)[];
+  // The answer call's usage per repetition, priced at call time; null where
+  // the call reported none. Index-aligned with `values`.
+  usage?: (LlmUsage | null)[];
 }
 
 // One administration of an instrument to one respondent model.
@@ -77,11 +99,15 @@ export interface InterviewEntity extends Entity {
   explain?: string;
   // Language the sitting was requested in, when one was named
   language?: string;
+  // The fielding (one interview-run) this sitting was opened by
+  fielding?: string;
   responses: Record<string, InterviewItemResponse>;
   answered: number;
   declined: number;
   remaining: number;
   status: InterviewStatus;
+  // Why a pending sitting stopped: "interrupted at f2 rep 3", "budget …"
+  statusDetail?: string;
   startedAt: string;
   completedAt?: string;
   error?: string;
@@ -104,7 +130,14 @@ export interface ProbeEntity extends Entity {
   // One reply per repetition, index-aligned with the item response's
   // `values`; null when the follow-up produced no text
   responses: (string | null)[];
+  // The probe call's usage per repetition; null where none was reported
+  usage?: (LlmUsage | null)[];
 }
+
+// The journal is keyed by the interview model, so it sits beside the entity.
+export const INTERVIEW_JOURNAL = INTERVIEW_MODEL;
+
+const stamp = () => new Date().toISOString();
 
 export interface ItemPresentationOptions {
   reverseOptions?: boolean;
@@ -272,6 +305,7 @@ async function saveProbe(options: {
   name: string;
   query: string;
   responses: (string | null)[];
+  usage?: (LlmUsage | null)[];
   // Turns already recorded for this item. Given, `responses` covers only the
   // turns after them: the existing probe is padded with nulls out to this
   // length before the new entries land, so explanation index keeps matching
@@ -282,11 +316,15 @@ async function saveProbe(options: {
   const scope = calculateScope(interviewId);
   const id = probeId(scope, name);
   let merged = responses;
+  let usage = options.usage ?? responses.map(() => null);
   if (priorTurns) {
     const existing = await store.get<ProbeEntity>(PROBE_MODEL, id);
     const head = [...(existing?.responses ?? [])].slice(0, priorTurns);
+    const headUsage = [...(existing?.usage ?? [])].slice(0, priorTurns);
     while (head.length < priorTurns) head.push(null);
+    while (headUsage.length < priorTurns) headUsage.push(null);
     merged = [...head, ...responses];
+    usage = [...headUsage, ...usage];
   }
   await store.update<ProbeEntity>({
     id,
@@ -296,7 +334,109 @@ async function saveProbe(options: {
     name,
     query,
     responses: merged,
+    usage,
   });
+}
+
+// Counters are derived, never incremented — a topped-up item may cross from
+// declined to answered, and only a recount tracks that.
+function tallyOf(
+  responses: Record<string, InterviewItemResponse>,
+  target: number,
+): { answered: number; declined: number; remaining: number } {
+  const recorded = Object.values(responses);
+  const declined = recorded.filter((response) => response.declined).length;
+  const answered = recorded.length - declined;
+  return {
+    answered,
+    declined,
+    remaining: Math.max(0, target - recorded.length),
+  };
+}
+
+/** An item's response as the fold holds it. */
+export function responseOf(
+  name: string,
+  item: FoldedItem,
+): InterviewItemResponse {
+  const response: InterviewItemResponse = {
+    name,
+    value: meanOf(item.values),
+    values: [...item.values],
+  };
+  const orders = item.orders.filter(
+    (order): order is string[] => order !== null,
+  );
+  if (orders.length > 0) response.orders = orders;
+  if (response.value === null) response.declined = true;
+  const missed = item.values.findIndex((value) => value === null);
+  if (missed >= 0) response.raw = rawOf(item.contents[missed]);
+  if (item.usage.some((usage) => usage !== null)) {
+    response.usage = [...item.usage];
+  }
+  return response;
+}
+
+/**
+ * The entity's responses with the fold laid over them: every item the
+ * journal holds is rebuilt from it; an item only the entity holds (a sitting
+ * older than the journal) stays. Returns the differences, for the log.
+ */
+export function materializeResponses(options: {
+  entity: InterviewEntity;
+  fold: SittingFold;
+}): { responses: Record<string, InterviewItemResponse>; drift: string[] } {
+  const { entity, fold } = options;
+  const responses: Record<string, InterviewItemResponse> = {
+    ...entity.responses,
+  };
+  const drift: string[] = [];
+  for (const [name, item] of Object.entries(fold.items)) {
+    if (item.values.length === 0) {
+      delete responses[name];
+      if (entity.responses[name]) drift.push(`${name}: journal holds no turns`);
+      continue;
+    }
+    const next = responseOf(name, item);
+    const prior = entity.responses[name];
+    if (!prior) {
+      drift.push(`${name}: entity lacks ${next.values!.length} turns`);
+    } else if (
+      JSON.stringify(prior.values ?? []) !== JSON.stringify(next.values)
+    ) {
+      drift.push(
+        `${name}: entity holds ${JSON.stringify(prior.values ?? [])}, journal ${JSON.stringify(next.values)}`,
+      );
+    }
+    responses[name] = next;
+  }
+  return { responses, drift };
+}
+
+/** The probe children the fold implies, aligned to each item's turns. */
+export function probesOf(options: {
+  entity: InterviewEntity;
+  fold: SittingFold;
+}): ProbeEntity[] {
+  const { entity, fold } = options;
+  const scope = calculateScope(entity.id);
+  const probes: ProbeEntity[] = [];
+  for (const [name, item] of Object.entries(fold.items)) {
+    if (!item.explanations.some((text) => text !== undefined)) continue;
+    const query = item.query ?? entity.explain;
+    if (!query) continue;
+    probes.push({
+      id: probeId(scope, name),
+      model: PROBE_MODEL,
+      scope,
+      category: PROBE_CATEGORY_EXPLANATION,
+      name,
+      query,
+      responses: item.explanations.map((text) => text ?? null),
+      usage: [...item.probeUsage],
+    });
+  }
+  return probes;
 }
 
 // The option order each turn is shown, for turns [from, turns). Derived in one
@@ -381,21 +521,45 @@ export interface RunSittingOptions {
   repetitions: number;
   store: Store;
   llm: LlmClient;
+  /** every call lands here before its reply is used; absent = entity only */
+  journal?: Journal;
+  /** checked between calls; an in-flight call lands, then the sitting stops */
+  signal?: AbortSignal;
   log?: Logger;
 }
 
 // Carry each item to `repetitions` total turns and land the (already
-// persisted) entity as complete or error. Shared by fresh runs and resume:
-// responses accumulate onto whatever the entity already holds, an item that
-// already has turns recorded is topped up rather than restarted, and because
-// update is a full put a successful resume clears a prior error.
+// persisted) entity as complete, pending (interrupted), or error. Shared by
+// fresh runs and resume: responses accumulate onto whatever the entity
+// already holds, an item that already has turns recorded is topped up rather
+// than restarted, and because update is a full put a successful resume
+// clears a prior error. Every call is journaled before its reply is used and
+// the entity is checkpointed after every item, so the most an interrupt or a
+// crash can lose is the call in flight.
 export async function runSitting(
   options: RunSittingOptions,
 ): Promise<InterviewEntity> {
-  const { entity, instrument, items, repetitions, store, llm } = options;
+  const {
+    entity,
+    instrument,
+    items,
+    repetitions,
+    store,
+    llm,
+    journal,
+    signal,
+  } = options;
   const log = options.log ?? noopLog;
   const { id } = entity;
   const modelId = entity.respondentModel!;
+  const append = async (event: Omit<SittingEvent, "at">) => {
+    if (!journal) return;
+    await journal.append(INTERVIEW_JOURNAL, id, {
+      t: event.t,
+      at: stamp(),
+      ...event,
+    } as SittingEvent);
+  };
   // Items already on the record plus the ones this pass touches: a top-up
   // re-lists items that are already counted, so the total is the union.
   const target = new Set([
@@ -405,20 +569,94 @@ export async function runSitting(
   const responses: Record<string, InterviewItemResponse> = {
     ...entity.responses,
   };
-  // Counters are derived, never incremented — a topped-up item may cross from
-  // declined to answered, and only a recount tracks that.
-  const tally = () => {
-    const recorded = Object.values(responses);
-    const declined = recorded.filter((response) => response.declined).length;
-    return { answered: recorded.length - declined, declined };
-  };
-  let { answered, declined } = tally();
   let provider: string | undefined = entity.provider;
+  let usd = 0;
+  const spend = (usage: LlmUsage | undefined) => {
+    for (const item of usage ?? []) usd += item.usd ?? 0;
+  };
+  const checkpoint = async (
+    status: InterviewStatus,
+    detail?: string,
+  ): Promise<InterviewEntity> => {
+    const next: InterviewEntity = {
+      ...entity,
+      responses,
+      ...tallyOf(responses, target),
+      status,
+    };
+    delete next.statusDetail;
+    delete next.error;
+    delete next.completedAt;
+    if (provider !== undefined) next.provider = provider;
+    if (status === "error") next.error = detail;
+    else if (detail !== undefined) next.statusDetail = detail;
+    if (status === "complete") {
+      next.remaining = 0;
+      next.completedAt = stamp();
+    }
+    await store.update(next);
+    await append({
+      t: "checkpoint",
+      answered: next.answered,
+      declined: next.declined,
+      usd: Math.round(usd * 1e6) / 1e6,
+    });
+    return next;
+  };
+  const stop = async (reason: StopReason, message?: string) =>
+    append({ t: "stop", reason, ...(message ? { message } : {}) });
+  const aborted = () => signal?.aborted === true;
+  // The item in progress: what has landed so far, so a thrown call or an
+  // interrupt still lands its turns on the checkpoint.
+  interface ItemState {
+    item: SurveyItem;
+    banked: number;
+    values: (number | null)[];
+    usage: (LlmUsage | null)[];
+    orders: string[][];
+    explanations: (string | null)[];
+    probeUsage: (LlmUsage | null)[];
+    raw: string | undefined;
+  }
+  let current: ItemState | undefined;
+  const land = async (state: ItemState | undefined) => {
+    if (!state || state.values.length <= state.banked) return;
+    const { item, banked, values, usage, orders, explanations, probeUsage } =
+      state;
+    const itemResponse: InterviewItemResponse = {
+      name: item.name,
+      value: meanOf(values),
+      values,
+    };
+    if (orders.length > 0) itemResponse.orders = orders;
+    if (itemResponse.value === null) itemResponse.declined = true;
+    if (state.raw !== undefined) itemResponse.raw = state.raw;
+    if (usage.some((entry) => entry !== null)) itemResponse.usage = usage;
+    if (explanations.length > 0) {
+      await saveProbe({
+        store,
+        interviewId: id,
+        name: item.name,
+        query: entity.explain!,
+        responses: explanations,
+        usage: probeUsage,
+        // A top-up's explanations follow the ones already recorded.
+        priorTurns: banked,
+      });
+    }
+    responses[item.name] = itemResponse;
+    log.trace(
+      `interview ${id}: ${item.name} avg ${itemResponse.value} over ${values.filter((value) => value !== null).length}/${repetitions}`,
+    );
+  };
+  let where = "";
   try {
     for (const item of items) {
       // Turns already banked for this item; a top-up appends to them.
       const prior = entity.responses[item.name];
       const values: (number | null)[] = [...(prior?.values ?? [])];
+      const usage: (LlmUsage | null)[] = [...(prior?.usage ?? [])];
+      while (usage.length < values.length) usage.push(null);
       const banked = values.length;
       // The banked turns' orders, so a top-up's record stays aligned even when
       // the head predates order recording.
@@ -436,103 +674,138 @@ export async function runSitting(
         from: banked,
       });
       const explanations: (string | null)[] = [];
-      let raw: string | undefined = prior?.raw;
+      const probeUsage: (LlmUsage | null)[] = [];
+      const state: ItemState = {
+        item,
+        banked,
+        values,
+        usage,
+        orders,
+        explanations,
+        probeUsage,
+        raw: prior?.raw,
+      };
+      current = state;
+      let interrupted = false;
       for (let rep = values.length; rep < repetitions; rep += 1) {
+        if (aborted()) {
+          interrupted = true;
+          where = `${item.name} rep ${rep}`;
+          break;
+        }
         const presentation = schedule[rep - banked]!;
         if (item.options.length > 0) {
           orders[rep] = orderedLabels(item, presentation);
         }
         const prompt = itemPrompt(instrument, item, presentation);
         const format = itemFormat(item, presentation);
-        const response = await llm.operate(prompt, { model: modelId, format });
+        const started = Date.now();
+        let response;
+        try {
+          response = await llm.operate(prompt, { model: modelId, format });
+        } catch (error) {
+          await append({
+            t: "fail",
+            item: item.name,
+            rep,
+            phase: "answer",
+            message: error instanceof Error ? error.message : String(error),
+          });
+          throw error;
+        }
         provider = (response as { provider?: string }).provider ?? provider;
         const content = response.content as { response?: unknown } | null;
         const strict = toCode(item, content?.response);
         // Fall back to the envelope walk only when the declared key misses.
         const code = strict ?? toResponseCode(item, response.content);
+        await append({
+          t: "turn",
+          item: item.name,
+          rep,
+          ...(orders[rep] ? { order: orders[rep] } : {}),
+          ...(provider ? { provider } : {}),
+          content: response.content,
+          code,
+          ...(response.usage ? { usage: response.usage } : {}),
+          ms: Date.now() - started,
+          promptSha1: sha1(prompt),
+        });
+        spend(response.usage);
         values.push(code);
-        if (code === null && raw === undefined) {
-          raw =
-            typeof content?.response === "string"
-              ? content.response
-              : JSON.stringify(response.content);
+        usage.push(response.usage ?? null);
+        if (code === null && state.raw === undefined) {
+          state.raw = rawOf(response.content);
         }
         if (entity.explain) {
           // Second turn in the same conversation: the model explains the
           // answer it just gave. Free text — no format constraint.
-          const followUp = await llm.operate(entity.explain, {
-            model: modelId,
-            history: (response as { history?: LlmTurn[] }).history,
-          });
+          const probeStarted = Date.now();
+          let followUp;
+          try {
+            followUp = await llm.operate(entity.explain, {
+              model: modelId,
+              history: (response as { history?: LlmTurn[] }).history,
+            });
+          } catch (error) {
+            await append({
+              t: "fail",
+              item: item.name,
+              rep,
+              phase: "probe",
+              message: error instanceof Error ? error.message : String(error),
+            });
+            throw error;
+          }
           const text =
             typeof followUp.content === "string" && followUp.content.length > 0
               ? followUp.content
               : null;
+          await append({
+            t: "probe",
+            item: item.name,
+            rep,
+            query: entity.explain,
+            text,
+            ...(followUp.usage ? { usage: followUp.usage } : {}),
+            ms: Date.now() - probeStarted,
+            replay: false,
+          });
+          spend(followUp.usage);
           explanations.push(text);
+          probeUsage.push(followUp.usage ?? null);
         }
       }
-      const scored = values.filter((value): value is number => value !== null);
-      const mean = scored.length
-        ? Math.round(
-            (scored.reduce((sum, value) => sum + value, 0) / scored.length) *
-              100,
-          ) / 100
-        : null;
-      const itemResponse: InterviewItemResponse = {
-        name: item.name,
-        value: mean,
-        values,
-      };
-      if (orders.length > 0) itemResponse.orders = orders;
-      if (mean === null) itemResponse.declined = true;
-      if (raw !== undefined) itemResponse.raw = raw;
-      if (explanations.length > 0) {
-        await saveProbe({
-          store,
-          interviewId: id,
-          name: item.name,
-          query: entity.explain!,
-          responses: explanations,
-          // A top-up's explanations follow the ones already recorded.
-          priorTurns: banked,
-        });
+      await land(state);
+      current = undefined;
+      if (interrupted) {
+        log.warn(`interview ${id} (${modelId}) interrupted at ${where}`);
+        const pending = await checkpoint("pending", `interrupted at ${where}`);
+        await stop("interrupt", where);
+        return pending;
       }
-      responses[item.name] = itemResponse;
-      ({ answered, declined } = tally());
-      log.trace(
-        `interview ${id}: ${item.name} avg ${mean} over ${scored.length}/${repetitions}`,
-      );
+      // the last item's checkpoint is the complete one, written next
+      if (item !== items.at(-1)) await checkpoint("pending");
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log.error(`interview ${id} (${modelId}) failed: ${message}`);
-    const failed: InterviewEntity = {
-      ...entity,
-      responses,
-      answered,
-      declined,
-      remaining: target - answered - declined,
-      status: "error",
-      error: message,
-    };
-    if (provider !== undefined) failed.provider = provider;
-    await store.update(failed);
+    try {
+      await land(current);
+    } catch (landError) {
+      // the journal still holds the turns; the checkpoint just lags them
+      log.warn(
+        `interview ${id}: could not checkpoint the item in progress: ${landError instanceof Error ? landError.message : String(landError)}`,
+      );
+    }
+    const failed = await checkpoint("error", message);
+    await stop("error", message);
     return failed;
   }
 
-  const complete: InterviewEntity = {
-    ...entity,
-    responses,
-    answered,
-    declined,
-    remaining: 0,
-    status: "complete",
-    completedAt: new Date().toISOString(),
-  };
-  delete complete.error;
-  if (provider !== undefined) complete.provider = provider;
   try {
-    await store.update(complete);
+    const complete = await checkpoint("complete");
+    await stop("complete");
+    return complete;
   } catch (error) {
     // Every answer is already collected (and probes persisted); a failed
     // final put must not crash out leaving the entity stuck at "pending"
@@ -540,15 +813,17 @@ export async function runSitting(
     const message = error instanceof Error ? error.message : String(error);
     log.error(`interview ${id} (${modelId}) failed to persist: ${message}`);
     const failed: InterviewEntity = {
-      ...complete,
+      ...entity,
+      responses,
+      ...tallyOf(responses, target),
       status: "error",
       error: message,
     };
     delete failed.completedAt;
+    if (provider !== undefined) failed.provider = provider;
     await store.update(failed);
     return failed;
   }
-  return complete;
 }
 
 // Probe an answer already on the record. The turn is replayed rather than
@@ -557,6 +832,12 @@ export async function runSitting(
 // as the second turn of that conversation without spending another answer.
 // The respondent's own reasoning trace is not in that context — it explains an
 // answer attributed to it rather than one it has just produced.
+export interface ReplayProbeResult {
+  text: string | null;
+  usage?: LlmUsage;
+  ms: number;
+}
+
 export async function replayProbe(options: {
   entity: InterviewEntity;
   instrument: Instrument;
@@ -565,8 +846,9 @@ export async function replayProbe(options: {
   value: number;
   query: string;
   llm: LlmClient;
-}): Promise<string | null> {
+}): Promise<ReplayProbeResult> {
   const { entity, instrument, item, order, value, query, llm } = options;
+  const started = Date.now();
   const answer =
     item.options.length > 0
       ? item.options.find((option) => option.code === value)!.label
@@ -585,9 +867,14 @@ export async function replayProbe(options: {
     model: entity.respondentModel!,
     history,
   });
-  return typeof followUp.content === "string" && followUp.content.length > 0
-    ? followUp.content
-    : null;
+  return {
+    text:
+      typeof followUp.content === "string" && followUp.content.length > 0
+        ? followUp.content
+        : null,
+    ...(followUp.usage ? { usage: followUp.usage } : {}),
+    ms: Date.now() - started,
+  };
 }
 
 // Fill in explanations for turns already recorded, one replay per unprobed
@@ -600,12 +887,16 @@ export async function backfillExplanations(options: {
   query: string;
   store: Store;
   llm: LlmClient;
+  journal?: Journal;
+  signal?: AbortSignal;
   log?: Logger;
 }): Promise<number> {
-  const { entity, instrument, items, query, store, llm } = options;
+  const { entity, instrument, items, query, store, llm, journal, signal } =
+    options;
   const scope = calculateScope(entity);
   let asked = 0;
   for (const item of items) {
+    if (signal?.aborted) break;
     const values = entity.responses[item.name]?.values ?? [];
     if (values.length === 0) continue;
     const probe = await store.get<ProbeEntity>(
@@ -617,6 +908,11 @@ export async function backfillExplanations(options: {
       values.length,
     );
     while (explanations.length < values.length) explanations.push(null);
+    const usage: (LlmUsage | null)[] = [...(probe?.usage ?? [])].slice(
+      0,
+      values.length,
+    );
+    while (usage.length < values.length) usage.push(null);
     const orders = recordedOrders({
       entity,
       instrument,
@@ -626,16 +922,42 @@ export async function backfillExplanations(options: {
     let added = 0;
     for (const [rep, value] of values.entries()) {
       if (value === null || explanations[rep] !== null) continue;
-      const text = await replayProbe({
-        entity,
-        instrument,
-        item,
-        order: orders[rep],
-        value,
+      if (signal?.aborted) break;
+      let result: ReplayProbeResult;
+      try {
+        result = await replayProbe({
+          entity,
+          instrument,
+          item,
+          order: orders[rep],
+          value,
+          query,
+          llm,
+        });
+      } catch (error) {
+        await journal?.append(INTERVIEW_JOURNAL, entity.id, {
+          t: "fail",
+          at: stamp(),
+          item: item.name,
+          rep,
+          phase: "probe",
+          message: error instanceof Error ? error.message : String(error),
+        });
+        throw error;
+      }
+      await journal?.append(INTERVIEW_JOURNAL, entity.id, {
+        t: "probe",
+        at: stamp(),
+        item: item.name,
+        rep,
         query,
-        llm,
+        text: result.text,
+        ...(result.usage ? { usage: result.usage } : {}),
+        ms: result.ms,
+        replay: true,
       });
-      explanations[rep] = text;
+      explanations[rep] = result.text;
+      usage[rep] = result.usage ?? null;
       added += 1;
     }
     if (added === 0) continue;
@@ -645,6 +967,7 @@ export async function backfillExplanations(options: {
       name: item.name,
       query,
       responses: explanations,
+      usage,
     });
     asked += added;
   }
@@ -660,8 +983,11 @@ interface RunOneModelOptions {
   explain?: string;
   panel?: string;
   language?: string;
+  fielding?: string;
   store: Store;
   llm: LlmClient;
+  journal?: Journal;
+  signal?: AbortSignal;
   log?: Logger;
 }
 
@@ -678,8 +1004,11 @@ async function runOneModel(
     explain,
     panel,
     language,
+    fielding,
     store,
     llm,
+    journal,
+    signal,
     log,
   } = options;
   const id = randomUUID();
@@ -702,7 +1031,21 @@ async function runOneModel(
   if (explain !== undefined) entity.explain = explain;
   if (panel !== undefined) entity.panel = panel;
   if (language !== undefined) entity.language = language;
+  if (fielding !== undefined) entity.fielding = fielding;
   await store.create(entity);
+  await journal?.append(INTERVIEW_JOURNAL, id, {
+    t: "start",
+    at: stamp(),
+    plan: instrument.id,
+    model: modelId,
+    repetitions,
+    items: items.length,
+    ...(explain !== undefined ? { explain } : {}),
+    ...(condition !== undefined ? { condition } : {}),
+    ...(language !== undefined ? { language } : {}),
+    ...(panel !== undefined ? { panel } : {}),
+    ...(fielding !== undefined ? { fielding } : {}),
+  });
   return runSitting({
     entity,
     instrument,
@@ -710,8 +1053,48 @@ async function runOneModel(
     repetitions,
     store,
     llm,
+    journal,
+    signal,
     log,
   });
+}
+
+/**
+ * Read a sitting's journal and lay it over the entity: the journal is the
+ * record, the entity its checkpoint, so wherever they differ the journal
+ * wins and the difference is logged. A sitting without a journal (older than
+ * journaling, or run without one) keeps its entity as is.
+ */
+export async function loadSitting(options: {
+  entity: InterviewEntity;
+  journal?: Journal;
+  log?: Logger;
+}): Promise<{ entity: InterviewEntity; fold?: SittingFold; torn: string[] }> {
+  const { entity, journal } = options;
+  const log = options.log ?? noopLog;
+  if (!journal || !(await journal.exists(INTERVIEW_JOURNAL, entity.id))) {
+    return { entity, torn: [] };
+  }
+  const { events, torn = [] } = await journal.read<SittingEvent>(
+    INTERVIEW_JOURNAL,
+    entity.id,
+  );
+  for (const fragment of torn) {
+    log.warn(
+      `interview ${entity.id}: journal has a torn line (${fragment.length} chars), dropped`,
+    );
+  }
+  const fold = foldJournal(events, { name: `interview ${entity.id}` });
+  const { responses, drift } = materializeResponses({ entity, fold });
+  for (const line of drift) {
+    log.warn(`interview ${entity.id}: ${line} (journal wins)`);
+  }
+  const target = Object.keys(responses).length + entity.remaining;
+  return {
+    entity: { ...entity, responses, ...tallyOf(responses, target) },
+    fold,
+    torn,
+  };
 }
 
 // Pick a model sitting back up in place: same interview id, same plan and
@@ -729,16 +1112,26 @@ async function resumeOneModel(options: {
   repetitions?: number;
   explain?: boolean | string;
   retry?: boolean;
+  /** a sitting with nothing to do returns as is instead of throwing (a fielding resume) */
+  tolerateIdle?: boolean;
   store: Store;
   llm: LlmClient;
+  journal?: Journal;
+  signal?: AbortSignal;
   log?: Logger;
 }): Promise<InterviewEntity> {
-  const { id, repetitions, retry, store, llm } = options;
+  const { id, repetitions, retry, tolerateIdle, store, llm, journal, signal } =
+    options;
   const log = options.log ?? noopLog;
-  const entity = await store.get<InterviewEntity>(INTERVIEW_MODEL, id);
-  if (!entity || entity.model !== INTERVIEW_MODEL) {
+  const stored = await store.get<InterviewEntity>(INTERVIEW_MODEL, id);
+  if (!stored || stored.model !== INTERVIEW_MODEL) {
     throw new NotFoundError(`No interview: ${id}`);
   }
+  const { entity, fold } = await loadSitting({
+    entity: stored,
+    journal,
+    log,
+  });
   if (!entity.respondentModel) {
     throw new BadRequestError(
       `Interview ${id} is not a model sitting — resume re-asks items with the recorded model`,
@@ -753,22 +1146,46 @@ async function resumeOneModel(options: {
   // A null turn is a real finding on a contested instrument (the respondent
   // refused) and a provider defect on a model that cannot hold its own
   // output format. Only `retry` discards them, and then the turn is re-asked
-  // rather than counted toward the target.
-  const responses = retry
-    ? Object.fromEntries(
-        Object.entries(entity.responses).map(([name, response]) => {
-          const kept = (response.values ?? []).filter(
-            (value) => value !== null,
-          );
-          if (kept.length === (response.values?.length ?? 0)) {
-            return [name, response];
-          }
-          const next: InterviewItemResponse = { ...response, values: kept };
-          delete next.raw;
-          return [name, next];
-        }),
-      )
-    : entity.responses;
+  // rather than counted toward the target. The discard is journaled so the
+  // fold drops the same turns the entity does.
+  let responses = entity.responses;
+  if (retry) {
+    responses = {};
+    for (const [name, response] of Object.entries(entity.responses)) {
+      const reps = (response.values ?? [])
+        .map((value, index) => (value === null ? index : -1))
+        .filter((index) => index >= 0);
+      if (reps.length === 0) {
+        responses[name] = response;
+        continue;
+      }
+      await journal?.append(INTERVIEW_JOURNAL, id, {
+        t: "discard",
+        at: stamp(),
+        item: name,
+        reps,
+      });
+      const held = fold?.items[name];
+      if (held) {
+        discardReps(held, reps);
+        if (held.values.length > 0) responses[name] = responseOf(name, held);
+        continue;
+      }
+      const drop = new Set(reps);
+      const next: InterviewItemResponse = {
+        ...response,
+        values: (response.values ?? []).filter((_, index) => !drop.has(index)),
+      };
+      if (response.orders) {
+        next.orders = response.orders.filter((_, index) => !drop.has(index));
+      }
+      if (response.usage) {
+        next.usage = response.usage.filter((_, index) => !drop.has(index));
+      }
+      delete next.raw;
+      responses[name] = next;
+    }
+  }
   const scoped = instrument.items;
   const banked = (name: string) => responses[name]?.values?.length ?? 0;
   const items = scoped.filter((item) => banked(item.name) < reps);
@@ -779,6 +1196,10 @@ async function resumeOneModel(options: {
     ? scoped.filter((item) => banked(item.name) > 0).length > 0
     : false;
   if (items.length === 0 && !unprobed) {
+    if (tolerateIdle && entity.status === "complete") {
+      log.debug(`interview ${id} is complete; nothing to resume`);
+      return entity;
+    }
     throw new BadRequestError(
       `Interview ${id} already holds ${reps} turns for every item — pass a higher repetitions to add more, or explain to probe the turns it has`,
     );
@@ -787,9 +1208,19 @@ async function resumeOneModel(options: {
     (sum, item) => sum + (reps - banked(item.name)),
     0,
   );
+  const backfill = query
+    ? scoped.reduce((sum, item) => sum + banked(item.name), 0)
+    : 0;
   log.debug(
     `resuming interview ${id}: ${items.length} items short of ${reps} turns (${added} to ask)`,
   );
+  await journal?.append(INTERVIEW_JOURNAL, id, {
+    t: "resume",
+    at: stamp(),
+    repetitions: reps,
+    asked: added,
+    backfill,
+  });
   // A backfill-only pass asks no items, so it leaves status alone: a sitting
   // scoped to one item must not read complete on the strength of that item.
   const pending: InterviewEntity = {
@@ -799,7 +1230,10 @@ async function resumeOneModel(options: {
     status: items.length > 0 ? "pending" : entity.status,
   };
   if (explain !== undefined) pending.explain = explain;
-  if (items.length > 0) delete pending.error;
+  if (items.length > 0) {
+    delete pending.error;
+    delete pending.statusDetail;
+  }
   await store.update(pending);
   // Backfill first: the replayed turns precede any new ones, so explanation
   // index keeps matching repetition index when both run in the same pass.
@@ -811,6 +1245,8 @@ async function resumeOneModel(options: {
       query,
       store,
       llm,
+      journal,
+      signal,
       log,
     });
     log.debug(`interview ${id}: backfilled ${probed} explanations`);
@@ -823,6 +1259,8 @@ async function resumeOneModel(options: {
     repetitions: reps,
     store,
     llm,
+    journal,
+    signal,
     log,
   });
 }
@@ -844,10 +1282,14 @@ export interface RunInterviewsOptions {
   explain?: boolean | string;
   /** With resume, ask non-conforming turns again instead of counting them toward the target (they are kept by default — a refusal is a finding). */
   retry?: boolean;
-  /** Interview ids to pick back up, resumed concurrently. Every item short of the repetition target is asked the difference into the same record; plan, model, and condition come from each record, repetitions and explain may override. Banked turns are always kept. */
+  /** Interview or fielding ids to pick back up, resumed concurrently (a fielding expands to every sitting it opened). Every item short of the repetition target is asked the difference into the same record; plan, model, and condition come from each record, repetitions and explain may override. Banked turns are always kept. */
   resume?: string[];
   store: Store;
   llm: LlmClient;
+  /** every call lands in `var/interview/<id>.jsonl` before its reply is used */
+  journal?: Journal;
+  /** checked between calls; in-flight calls land, then every sitting stops as pending */
+  signal?: AbortSignal;
   log?: Logger;
 }
 
@@ -873,6 +1315,8 @@ export async function runInterviews(
     resume,
     store,
     llm,
+    journal,
+    signal,
     log,
   } = options;
   if (resume) {
@@ -880,13 +1324,43 @@ export async function runInterviews(
     if (ids.length === 0) {
       throw new BadRequestError("resume must name at least one interview id");
     }
+    // A fielding id stands for every sitting it opened; the ones with
+    // nothing left to do return as they are.
+    const fieldings: FieldingEntity[] = [];
+    const sittings: { id: string; tolerateIdle: boolean }[] = [];
+    for (const id of ids) {
+      const fielding = await store.get<FieldingEntity>(FIELDING_MODEL, id);
+      if (fielding && fielding.model === FIELDING_MODEL) {
+        fieldings.push(fielding);
+        for (const interviewId of Object.values(fielding.interviews)) {
+          sittings.push({ id: interviewId, tolerateIdle: true });
+        }
+      } else {
+        sittings.push({ id, tolerateIdle: false });
+      }
+    }
     // Sittings resume concurrently, as a roster of fresh runs would: each is
     // internally serial, so one call probes one item across a whole panel.
-    return Promise.all(
-      ids.map((id) =>
-        resumeOneModel({ id, repetitions, explain, retry, store, llm, log }),
+    const resumed = await Promise.all(
+      sittings.map(({ id, tolerateIdle }) =>
+        resumeOneModel({
+          id,
+          repetitions,
+          explain,
+          retry,
+          tolerateIdle,
+          store,
+          llm,
+          journal,
+          signal,
+          log,
+        }),
       ),
     );
+    for (const fielding of fieldings) {
+      await settleFielding({ fielding, sittings: resumed, store });
+    }
+    return resumed;
   }
   const reps =
     repetitions && repetitions > 0
@@ -905,7 +1379,26 @@ export async function runInterviews(
   const cohort = models
     ? undefined
     : resolvePanel({ panel, instrumentPanel: instrument.panel }).id;
-  return Promise.all(
+  const probe = explainPrompt(explain, { probe: instrument.probe });
+  // The fielding record goes down first, so an interrupted roster has one id
+  // to resume by; each sitting's id is filled in as the sitting opens.
+  const fielding: FieldingEntity = {
+    id: fieldingId(),
+    model: FIELDING_MODEL,
+    scope: APEX,
+    plan: instrument.id,
+    models: roster,
+    repetitions: reps,
+    interviews: {},
+    status: "active",
+    startedAt: stamp(),
+  };
+  if (cohort !== undefined) fielding.panel = cohort;
+  if (probe !== undefined) fielding.explain = probe;
+  if (condition !== undefined) fielding.condition = condition;
+  if (language !== undefined) fielding.language = language;
+  await store.create(fielding);
+  const sittings = await Promise.all(
     roster.map((modelId) =>
       runOneModel({
         modelId,
@@ -913,13 +1406,42 @@ export async function runInterviews(
         items: instrument.items,
         repetitions: reps,
         condition,
-        explain: explainPrompt(explain, { probe: instrument.probe }),
+        explain: probe,
         language,
+        fielding: fielding.id,
         store,
         llm,
+        journal,
+        signal,
         log,
         ...(cohort === undefined ? {} : { panel: cohort }),
       }),
     ),
   );
+  await settleFielding({ fielding, sittings, store });
+  return sittings;
+}
+
+// Record which sittings the fielding opened and how the roster stands.
+async function settleFielding(options: {
+  fielding: FieldingEntity;
+  sittings: InterviewEntity[];
+  store: Store;
+}): Promise<FieldingEntity> {
+  const { fielding, sittings, store } = options;
+  const own = sittings.filter((sitting) => sitting.fielding === fielding.id);
+  const interviews = { ...fielding.interviews };
+  for (const sitting of own) interviews[sitting.respondent] = sitting.id;
+  const standing = fieldingStatus(own);
+  const next: FieldingEntity = {
+    ...fielding,
+    interviews,
+    status: standing.status,
+  };
+  delete next.statusDetail;
+  delete next.completedAt;
+  if (standing.statusDetail) next.statusDetail = standing.statusDetail;
+  if (standing.status === "complete") next.completedAt = stamp();
+  await store.update(next);
+  return next;
 }

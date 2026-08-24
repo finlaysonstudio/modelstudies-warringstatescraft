@@ -58,3 +58,20 @@ describe("FileStore", () => {
     ]);
   });
 });
+
+describe("FileStore durability", () => {
+  it("replaces the file atomically and leaves no temp file behind", async () => {
+    const { readdir, readFile } = await import("node:fs/promises");
+    await store.create({ id: "probe-1", model: "probe", value: 1 });
+    await Promise.all(
+      Array.from({ length: 20 }, (_, index) =>
+        store.update({ id: "probe-1", model: "probe", value: index }),
+      ),
+    );
+    const files = await readdir(join(root, "probe"));
+    expect(files).toEqual(["probe-1.json"]);
+    const raw = await readFile(join(root, "probe", "probe-1.json"), "utf8");
+    expect(() => JSON.parse(raw)).not.toThrow();
+    expect(await store.list("probe")).toHaveLength(1);
+  });
+});

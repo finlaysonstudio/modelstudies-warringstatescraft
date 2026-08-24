@@ -22,4 +22,12 @@ export default [
       "no-console": "off",
     },
   },
+  {
+    // vitest accepts a message as expect's second argument; the specs use it
+    // to name the rendering or chapter under test.
+    files: ["packages/*/src/**/__tests__/**/*.ts"],
+    rules: {
+      "vitest/valid-expect": ["error", { maxArgs: 2 }],
+    },
+  },
 ];

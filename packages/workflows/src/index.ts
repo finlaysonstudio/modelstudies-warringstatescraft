@@ -24,7 +24,21 @@ export type {
   LlmUsage,
   LlmUsageItem,
 } from "./llm/client";
-export { createLlmClient, defaultLlmClient } from "./llm/jaypieClient";
+export {
+  createLlmClient,
+  defaultLlmClient,
+  type CreateLlmClientOptions,
+} from "./llm/jaypieClient";
+export {
+  classifyRetry,
+  DEFAULT_RETRY,
+  retryDelay,
+  withRetry,
+  type RetryAttempt,
+  type RetryOptions,
+  type RetryReason,
+  type RetryVerdict,
+} from "./llm/retry";
 export {
   createLegacyOpenAiClient,
   isLegacyOpenAiModel,
@@ -50,7 +64,7 @@ export {
   type LlmProviderName,
 } from "./llm/providers";
 
-// Persistence seam
+// Persistence seams: entities as full puts, journals as appended events
 export {
   calculateScope,
   FileStore,
@@ -58,3 +72,11 @@ export {
   type EntityLike,
   type Store,
 } from "./store/store";
+export {
+  FileJournal,
+  MemoryJournal,
+  parseJournal,
+  type Journal,
+  type JournalEvent,
+  type JournalRead,
+} from "./store/journal";

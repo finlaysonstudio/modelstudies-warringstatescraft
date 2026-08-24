@@ -23,7 +23,8 @@ packages/
   lake/       @modelstudies/lake       — document lake seam: rights-aware retrieval over the source corpus
   cli/        @modelstudies/cli        — command-line verbs
   app/        @modelstudies/app        — replay viewer (port 3175)
-var/<model>/  — every stored model as JSON: runs, studies, interview, probe, scorecards, reports, scenarios (git-ignored)
+var/<model>/  — every stored model as JSON: runs, studies, interview (+ <id>.jsonl journal), probe, fielding, scorecards, reports, scenarios (git-ignored)
+var/log/      — one jsonl log per CLI run (git-ignored)
 var/lake/     — the document corpus and its ingesters (git-ignored)
 var/          — plans and meta materials (git-ignored)
 ```
@@ -57,7 +58,9 @@ npm run cli -- study-run --resume <studyId> --replicates 10        # grow a pilo
 npm run cli -- study-list
 npm run cli -- study-report <studyId>                              # the study's report → var/reports/<studyId>.json
 npm run materials                                                  # export scenario cards + prompts, one file per rendering, to var/scenarios/ (npm run app does this first)
-npm run cli -- interview-run --plan crisis --panel dev --explain
+npm run cli -- interview-run --plan crisis --panel dev --explain     # a fielding: one sitting per model, every call journaled; Ctrl-C stops between calls
+npm run cli -- interview-run --resume <fieldingId>                  # pick every sitting of a fielding back up (or --resume <interviewId>)
+npm run cli -- interview-verify <interviewId>                       # check a sitting against its journal; --rebuild rewrites it from the journal
 npm run cli -- lake-search "hostage prince" --use prompt --limit 5   # the corpus; --use is required
 npm run cli -- lake-get zuozhuan-legge-en --use prompt --from 1348 --lines 40
 npm run cli -- lake-list --collection period                        # what the lake holds, with rights
@@ -73,6 +76,10 @@ Adjudication: each turn the judge panel scores the combined actions on the scena
 ### Usage and cost
 
 Every model call records its tokens (input, output, reasoning, cache reads and writes, as the provider reported them) and the list-price dollars in force when the call was made, on the artifact it produced: each decision brief (dialog rounds included), each judge's verdict, the narrator's narrative, and each debrief. Prices are `@jaypie/llm`'s `LLM.COST` table, supplemented locally for the Lamparth-era OpenAI subjects (`gpt-3.5-turbo-0125`, `gpt-4-0613`, `gpt-4o-2024-08-06`); a model neither lists is recorded with tokens but no dollars and shows as `+` beside a sum. `game-cost` and the run page fold a run and its branches into cost by role (seats, judges, narrator, debriefs), by model, and by seat (which model sat where and what it cost there), each call counted once across a tree. Reports carry the same fold for the whole study plus cost per game for every cell. Runs played before this capture show no usage; their cost cannot be recovered from the record (reasoning tokens were never stored).
+
+### Sittings, journals, and logs
+
+A survey sitting is journaled: every model call lands as one JSON line in `var/interview/<id>.jsonl` (the item, the repetition, the option order shown, the verbatim reply, its code, its usage and price, and a hash of the prompt) before the reply is used, and the entity in `var/interview/<id>.json` is a checkpoint written after every item. Resume folds the journal and asks only the (item, repetition) pairs it lacks, so the most an interrupt, a crash, or a provider outage can lose is the call in flight. The first Ctrl-C stops every sitting between calls (calls in flight land and are recorded) and leaves each as `pending` with where it stopped; a second Ctrl-C exits at once. One `interview-run` is a fielding (`var/fielding/<id>.json`: plan, roster, repetitions, and each model's interview id), so `--resume <fieldingId>` picks the whole roster back up. `interview-verify` recomputes every prompt hash and compares the entity and its probes with the journal; `--rebuild` rewrites them from it, including an entity the store has lost. Store writes are atomic (temp file, then rename). Transient provider faults are retried inside `@jaypie/llm` and again by an outer layer with a longer clock; a 429 that names an exhausted quota is not. Every CLI run also tees its log to `var/log/<date>-<time>-<command>.jsonl`; the log is diagnostic, the journal is the record.
 
 ### Studies and reports
 

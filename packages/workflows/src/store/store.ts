@@ -3,7 +3,8 @@
  * (create/get/update are full puts; queryByScope filters children).
  * FileStore keeps one JSON file per entity under root/<model>/<id>.json.
  */
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export interface Entity {
@@ -85,12 +86,16 @@ export class FileStore implements Store {
     return all.filter((entity) => entity.scope === scope);
   }
 
+  // Atomic replace: the JSON lands in a sibling temp file and is renamed
+  // over the entity, so a reader (or a crash) sees the old file or the new
+  // one, never a truncated one. `list` filters on `.json`, which the temp
+  // name does not end in.
   async update<T extends EntityLike>(entity: T): Promise<T> {
     await mkdir(this.dir(entity.model), { recursive: true });
-    await writeFile(
-      this.path(entity.model, entity.id),
-      JSON.stringify(entity, null, 2),
-    );
+    const target = this.path(entity.model, entity.id);
+    const temp = `${target}.${randomUUID().slice(0, 8)}.tmp`;
+    await writeFile(temp, JSON.stringify(entity, null, 2));
+    await rename(temp, target);
     return entity;
   }
 }

@@ -23,19 +23,26 @@ export {
   listPlans,
 } from "./instrument";
 export type { BuildInstrumentOptions } from "./instrument";
+export { FIELDING_MODEL, fieldingId, fieldingStatus } from "./fielding";
+export type { FieldingEntity, FieldingStatus } from "./fielding";
 export {
   APEX,
   backfillExplanations,
+  INTERVIEW_JOURNAL,
   INTERVIEW_MODEL,
   INTERVIEW_STATUSES,
   itemFormat,
   itemPrompt,
+  loadSitting,
+  materializeResponses,
   orderedLabels,
   PROBE_CATEGORY_EXPLANATION,
   PROBE_MODEL,
   probeId,
+  probesOf,
   recordedOrders,
   replayProbe,
+  responseOf,
   runInterviews,
   runSitting,
   toCode,
@@ -48,9 +55,27 @@ export type {
   InterviewStatus,
   ItemPresentationOptions,
   ProbeEntity,
+  ReplayProbeResult,
   RunInterviewsOptions,
   RunSittingOptions,
 } from "./interview";
+export { discardReps, foldJournal, meanOf, rawOf, sha1 } from "./journal";
+export type {
+  CheckpointEvent,
+  DiscardEvent,
+  FailEvent,
+  FoldedItem,
+  ProbeEvent,
+  ResumeEvent,
+  SittingEvent,
+  SittingFold,
+  StartEvent,
+  StopEvent,
+  StopReason,
+  TurnEvent,
+} from "./journal";
+export { verifyInterview } from "./verify";
+export type { VerifyReport } from "./verify";
 export { noopLog } from "./log";
 export type { Logger } from "./log";
 export { balancedOrders, seededShuffle, turnSeed } from "./order";
