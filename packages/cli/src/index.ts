@@ -607,7 +607,7 @@ program
     );
     for (const row of scorecard.models) {
       console.log(
-        `${row.model.padEnd(22)} ${(row.arm ?? "default").padEnd(13)} ${row.status.padEnd(9)} overall:${
+        `${row.model.padEnd(42)} ${(row.arm ?? "default").padEnd(13)} ${row.status.padEnd(9)} overall:${
           row.overall.positiveShare === null
             ? "—"
             : Math.round(row.overall.positiveShare * 100) + "%"
@@ -698,7 +698,7 @@ program
       const usage = await survey.interviewUsage({ store, entity: interview });
       usages.push(usage);
       console.log(
-        `${interview.id}  ${String(interview.status).padEnd(9)}  ${(interview.respondent ?? "").padEnd(28)}` +
+        `${interview.id}  ${String(interview.status).padEnd(9)}  ${(interview.respondent ?? "").padEnd(42)}` +
           (interview.arm ? `arm:${interview.arm}  ` : "") +
           `${interview.answered}/${interview.answered + interview.declined + interview.remaining}` +
           `  ${usageLine(usage.total)}` +
@@ -749,7 +749,7 @@ program
       const detail = entity.error ?? entity.statusDetail;
       return (
         `  ${entity.id}  ${String(entity.status).padEnd(9)}  ${entity.plan.padEnd(20)}` +
-        `  ${survey.respondentOf(entity).padEnd(28)}  reps:${String(entity.repetitions ?? 1).padStart(2)}` +
+        `  ${survey.respondentOf(entity).padEnd(42)}  reps:${String(entity.repetitions ?? 1).padStart(2)}` +
         `  ${String(entity.answered).padStart(3)}/${String(entity.declined).padStart(2)}` +
         (entity.arm ? `  arm:${entity.arm}` : "") +
         (entity.items ? `  items:${entity.items.length}` : "") +
@@ -885,7 +885,7 @@ program
       );
       for (const sitting of estimate.sittings) {
         console.log(
-          `  ${sitting.model.padEnd(28)}  calls:${String(sitting.calls).padStart(5)}` +
+          `  ${sitting.model.padEnd(42)}  calls:${String(sitting.calls).padStart(5)}` +
             `  in:${tokens(sitting.input).padStart(8)}  out:${tokens(sitting.output).padStart(8)}` +
             `  ${(sitting.usd === null ? "unpriced" : usd(sitting.usd)).padStart(10)}` +
             `  answer ${figure(sitting.answer)}` +
@@ -893,7 +893,7 @@ program
         );
       }
       console.log(
-        `  ${"total".padEnd(28)}  calls:${String(estimate.calls).padStart(5)}` +
+        `  ${"total".padEnd(42)}  calls:${String(estimate.calls).padStart(5)}` +
           `  in:${tokens(estimate.input).padStart(8)}  out:${tokens(estimate.output).padStart(8)}` +
           `  ${usd(estimate.usd).padStart(10)}` +
           (estimate.unpriced.length
@@ -905,7 +905,7 @@ program
       const calls = estimates.reduce((sum, e) => sum + e.calls, 0);
       const total = estimates.reduce((sum, e) => sum + e.usd, 0);
       console.log(
-        `${"all arms".padEnd(30)}  calls:${String(calls).padStart(5)}  ${usd(total).padStart(30)}`,
+        `${"all arms".padEnd(42)}  calls:${String(calls).padStart(5)}  ${usd(total).padStart(30)}`,
       );
     }
   });
