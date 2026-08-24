@@ -1,7 +1,11 @@
+// The interactive play console for the registration-gated live-play
+// deliverable. Unrouted in this build: nothing links here, and the matrix
+// builder that used to feed it is gone. It stays compiled so the gated
+// deliverable starts from working code (see the UI reset plan §9).
 import clsx from "clsx";
-import { Feather, Gavel, GitFork, Play as PlayIcon, User } from "lucide-react";
+import { Feather, Gavel, User } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { LaneChip, StatusChip } from "../components/chips";
 import { Bar } from "../components/PonyBenchPrimitives";
 import {
@@ -12,488 +16,11 @@ import {
   type JudgePrompt,
   type JudgeVerdict,
   type NarratePrompt,
-  type PanelMode,
-  type PlayCatalog,
-  type PlayRequest,
   type PlaySession,
   type TurnRecord,
 } from "../lib/types";
 
-// ---------------------------------------------------------------- setup page
-
-type CatalogState =
-  | { phase: "loading" }
-  | { phase: "error"; message: string }
-  | { phase: "ready"; catalog: PlayCatalog; sessions: PlaySession[] };
-
-type Matrix = Record<string, string[]>;
-
 const shortModel = (model: string) => model.split("/").pop() ?? model;
-
-const shuffle = <T,>(items: T[]): T[] => {
-  const out = [...items];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-};
-
-/** Deal the starting models across seats as evenly as possible, at random. */
-const defaultMatrix = (seats: { id: string }[], models: string[]): Matrix => {
-  const matrix: Matrix = {};
-  seats.forEach((seat) => (matrix[seat.id] = []));
-  if (!seats.length) return matrix;
-  shuffle(models).forEach((model, index) => {
-    matrix[seats[index % seats.length].id].push(model);
-  });
-  return matrix;
-};
-
-const branchCount = (matrix: Matrix, seats: { id: string }[]) =>
-  seats.reduce((total, seat) => total * (matrix[seat.id]?.length ?? 0), 1);
-
-export function PlaySetup() {
-  const navigate = useNavigate();
-  const [state, setState] = useState<CatalogState>({ phase: "loading" });
-  const [scenarioId, setScenarioId] = useState("");
-  const [matrix, setMatrix] = useState<Matrix>({});
-  const [narrator, setNarrator] = useState("");
-  const [judges, setJudges] = useState<string[]>([]);
-  const [panelMode, setPanelMode] = useState<PanelMode>("median");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const [catalogRes, sessionsRes] = await Promise.all([
-          fetch("/api/play/catalog"),
-          fetch("/api/play"),
-        ]);
-        if (!catalogRes.ok) throw new Error(`catalog ${catalogRes.status}`);
-        const catalog = (await catalogRes.json()) as PlayCatalog;
-        const sessions = sessionsRes.ok
-          ? ((await sessionsRes.json()) as PlaySession[])
-          : [];
-        if (cancelled) return;
-        setState({ phase: "ready", catalog, sessions });
-        const first = catalog.scenarios[0];
-        if (first) {
-          setScenarioId(first.id);
-          setMatrix(defaultMatrix(first.seats, catalog.starting));
-        }
-        setJudges(catalog.starting);
-        setNarrator(catalog.narrator);
-      } catch (err) {
-        if (!cancelled)
-          setState({
-            phase: "error",
-            message: err instanceof Error ? err.message : "fetch failed",
-          });
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const scenario =
-    state.phase === "ready"
-      ? state.catalog.scenarios.find((s) => s.id === scenarioId)
-      : undefined;
-
-  const focalSeats = new Set(
-    scenario?.decisionPoints.map((point) => point.seat) ?? [],
-  );
-
-  const chooseScenario = (id: string) => {
-    if (state.phase !== "ready") return;
-    const next = state.catalog.scenarios.find((s) => s.id === id);
-    if (!next) return;
-    setScenarioId(id);
-    setMatrix(defaultMatrix(next.seats, state.catalog.starting));
-  };
-
-  const toggleJudge = (model: string) =>
-    setJudges((current) =>
-      current.includes(model)
-        ? current.filter((m) => m !== model)
-        : [...current, model],
-    );
-
-  const toggle = (seatId: string, model: string) =>
-    setMatrix((current) => {
-      const picks = current[seatId] ?? [];
-      return {
-        ...current,
-        [seatId]: picks.includes(model)
-          ? picks.filter((m) => m !== model)
-          : [...picks, model],
-      };
-    });
-
-  const start = async () => {
-    if (!scenario) return;
-    setSubmitting(true);
-    setError(null);
-    const body: PlayRequest = {
-      scenario: scenario.id,
-      matrix,
-      narrator: narrator || undefined,
-      panel: { judges, mode: panelMode },
-    };
-    try {
-      const res = await fetch("/api/play", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const json = (await res.json()) as PlaySession | { error: string };
-      if (!res.ok || "error" in json) {
-        throw new Error(
-          "error" in json ? json.error : `responded ${res.status}`,
-        );
-      }
-      navigate(`/play/${json.id}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "request failed");
-      setSubmitting(false);
-    }
-  };
-
-  const seats = scenario?.seats ?? [];
-  const branches = branchCount(matrix, seats);
-  // branches with you in at least one seat: all minus the all-model ones
-  const modelOnlyBranches = seats.reduce(
-    (total, seat) =>
-      total *
-      (matrix[seat.id] ?? []).filter((model) => model !== HUMAN_MODEL).length,
-    1,
-  );
-  const humanBranches = branches - modelOnlyBranches;
-  const humanSeated = seats.some((seat) =>
-    matrix[seat.id]?.includes(HUMAN_MODEL),
-  );
-  const humanJudge = judges.includes(HUMAN_MODEL);
-  const humanNarrator = narrator === HUMAN_MODEL;
-  const models = [
-    ...new Set(
-      Object.values(matrix)
-        .flat()
-        .filter((model) => model !== HUMAN_MODEL),
-    ),
-  ];
-  const ready = branches > 0 && models.length > 0;
-
-  return (
-    <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-16 sm:px-16 sm:pt-20">
-      <header className="animate-rise motion-reduce:animate-none">
-        <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          Warring States Bench
-        </p>
-        <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
-          Play
-        </h1>
-        <p className="mt-2 max-w-xl text-pretty text-zinc-400">
-          Pick the candidates for every seat. The game forks at the start into
-          one branch per seat assignment, and each branch plays the whole
-          scenario. Seat yourself anywhere to play every turn of the branches
-          you sit in, take a chair on the panel, or narrate.
-        </p>
-      </header>
-
-      {state.phase === "loading" && (
-        <p className="mt-12 font-plex-mono text-xs text-zinc-600">loading…</p>
-      )}
-      {state.phase === "error" && (
-        <p className="mt-12 font-plex-mono text-xs text-red-400">
-          failed to load the play catalog — {state.message}
-        </p>
-      )}
-
-      {state.phase === "ready" && scenario && (
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_18rem]">
-          <div className="space-y-6">
-            <Card label="Scenario">
-              <select
-                value={scenarioId}
-                onChange={(event) => chooseScenario(event.target.value)}
-                className={selectClass}
-              >
-                {state.catalog.scenarios.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.title}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-3 text-sm text-zinc-400">{scenario.summary}</p>
-              <p className="mt-3 border-l border-brand-terminal/40 pl-3 text-sm text-zinc-300">
-                <span className="mr-2 font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
-                  Simulates
-                </span>
-                {scenario.simulates}
-              </p>
-              <p className="mt-3 font-plex-mono text-[11px] text-zinc-500">
-                {scenario.turnCount} turns · {scenario.seats.length} seats
-                {" · "}
-                <Link
-                  to={`/scenarios/${scenario.id}`}
-                  className="text-card-accent hover:text-white"
-                >
-                  read the materials
-                </Link>
-              </p>
-            </Card>
-
-            <Card label="Seats: candidates per seat">
-              <div className="space-y-5">
-                {scenario.seats.map((seat) => (
-                  <div
-                    key={seat.id}
-                    className="grid gap-x-4 gap-y-2 sm:grid-cols-[10rem_1fr]"
-                  >
-                    <span className="flex items-start gap-x-2 pt-0.5 text-sm text-zinc-200">
-                      <GitFork
-                        className="mt-1 size-3 text-brand-terminal"
-                        strokeWidth={2}
-                      />
-                      <span>
-                        {seat.name}
-                        {focalSeats.has(seat.id) && (
-                          <span className="ml-2 font-plex-mono text-[10px] uppercase tracking-wide text-brand-terminal">
-                            focal
-                          </span>
-                        )}
-                        <span className="block font-plex-mono text-[10px] text-zinc-600">
-                          {matrix[seat.id]?.length ?? 0} candidates
-                        </span>
-                      </span>
-                    </span>
-                    <div className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
-                      {state.catalog.models.map((model) => (
-                        <Pick
-                          key={model}
-                          checked={matrix[seat.id]?.includes(model) ?? false}
-                          onChange={() => toggle(seat.id, model)}
-                        >
-                          {model}
-                        </Pick>
-                      ))}
-                      <Pick
-                        checked={
-                          matrix[seat.id]?.includes(HUMAN_MODEL) ?? false
-                        }
-                        onChange={() => toggle(seat.id, HUMAN_MODEL)}
-                        accent
-                      >
-                        <User
-                          className="size-3 text-brand-terminal"
-                          strokeWidth={2}
-                        />
-                        you
-                      </Pick>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-5 border-t border-white/5 pt-4 font-plex-mono text-[11px] text-zinc-500">
-                {seats.map((seat) => matrix[seat.id]?.length ?? 0).join(" × ")}{" "}
-                = {branches} branches
-                {humanSeated && ` · you play ${humanBranches} of them`}.
-                {humanSeated &&
-                  " Who holds the other seats stays hidden from you until the game completes."}
-              </p>
-            </Card>
-
-            <Card label="Panel: who adjudicates each turn">
-              <div className="grid gap-x-4 gap-y-2 sm:grid-cols-[10rem_1fr]">
-                <span className="flex items-start gap-x-2 pt-0.5 text-sm text-zinc-200">
-                  <Gavel
-                    className="mt-1 size-3 text-brand-terminal"
-                    strokeWidth={2}
-                  />
-                  <span>
-                    Judges
-                    <span className="block font-plex-mono text-[10px] text-zinc-600">
-                      {judges.length
-                        ? `${judges.length} picked`
-                        : `default: the ${models.length} seated models`}
-                    </span>
-                  </span>
-                </span>
-                <div className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
-                  {state.catalog.models.map((model) => (
-                    <Pick
-                      key={model}
-                      checked={judges.includes(model)}
-                      onChange={() => toggleJudge(model)}
-                    >
-                      {model}
-                    </Pick>
-                  ))}
-                  <Pick
-                    checked={humanJudge}
-                    onChange={() => toggleJudge(HUMAN_MODEL)}
-                    accent
-                  >
-                    <User
-                      className="size-3 text-brand-terminal"
-                      strokeWidth={2}
-                    />
-                    you
-                  </Pick>
-                  <label className="block sm:col-span-2">
-                    <span className={eyebrow}>Mode</span>
-                    <select
-                      value={panelMode}
-                      onChange={(event) =>
-                        setPanelMode(event.target.value as PanelMode)
-                      }
-                      className={selectClass}
-                    >
-                      {state.catalog.panelModes.map((mode) => (
-                        <option key={mode} value={mode}>
-                          {mode}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="mt-1 block font-plex-mono text-[10px] text-zinc-600">
-                      how the judges' escalation scores combine
-                    </span>
-                  </label>
-                </div>
-              </div>
-              <div className="mt-5 grid gap-x-4 gap-y-2 border-t border-white/5 pt-4 sm:grid-cols-[10rem_1fr]">
-                <span className="flex items-start gap-x-2 pt-0.5 text-sm text-zinc-200">
-                  <Feather
-                    className="mt-1 size-3 text-brand-terminal"
-                    strokeWidth={2}
-                  />
-                  <span>
-                    Narrator
-                    <span className="block font-plex-mono text-[10px] text-zinc-600">
-                      resolves each turn after the panel scores it
-                    </span>
-                  </span>
-                </span>
-                <div className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
-                  {state.catalog.models.map((model) => (
-                    <Pick
-                      key={model}
-                      kind="radio"
-                      checked={narrator === model}
-                      onChange={() => setNarrator(model)}
-                    >
-                      {model}
-                    </Pick>
-                  ))}
-                  <Pick
-                    kind="radio"
-                    checked={humanNarrator}
-                    onChange={() => setNarrator(HUMAN_MODEL)}
-                    accent
-                  >
-                    <User
-                      className="size-3 text-brand-terminal"
-                      strokeWidth={2}
-                    />
-                    you
-                  </Pick>
-                </div>
-              </div>
-              {(humanJudge || humanNarrator) && (
-                <p className="mt-5 border-t border-white/5 pt-4 font-plex-mono text-[11px] text-zinc-500">
-                  Every turn of every branch waits for you to{" "}
-                  {humanJudge && "score it"}
-                  {humanJudge && humanNarrator && " and "}
-                  {humanNarrator && "narrate it"}.
-                </p>
-              )}
-            </Card>
-
-            {error && (
-              <p className="font-plex-mono text-xs text-red-400">{error}</p>
-            )}
-            <button
-              type="button"
-              disabled={submitting || !ready}
-              onClick={() => void start()}
-              className="flex cursor-pointer items-center gap-x-2 rounded-sm bg-brand-terminal px-4 py-2 text-sm font-medium text-white hover:bg-brand-terminal/80 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <PlayIcon className="size-4" strokeWidth={2} />
-              {submitting
-                ? "starting…"
-                : `Start ${branches} ${branches === 1 ? "branch" : "branches"}`}
-            </button>
-          </div>
-
-          <aside className="space-y-3">
-            <p className={eyebrow}>Sessions</p>
-            {state.sessions.length === 0 && (
-              <p className="text-sm text-zinc-500">
-                None yet this server session.
-              </p>
-            )}
-            {state.sessions.map((session) => (
-              <Link
-                key={session.id}
-                to={`/play/${session.id}`}
-                className="block rounded-sm border border-white/10 bg-surface-ink/40 px-3 py-2 hover:border-white/20"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-plex-mono text-xs text-zinc-200">
-                    {session.id}
-                  </span>
-                  <StatusChip status={session.status} />
-                </div>
-                <p className="mt-1 text-xs text-zinc-500">
-                  {session.scenarioTitle} · {session.branchCount} branches
-                  {session.pending.length > 0 &&
-                    ` · ${session.pending.length} waiting on you`}
-                </p>
-              </Link>
-            ))}
-          </aside>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Pick({
-  checked,
-  onChange,
-  accent = false,
-  kind = "checkbox",
-  children,
-}: {
-  checked: boolean;
-  onChange: () => void;
-  accent?: boolean;
-  kind?: "checkbox" | "radio";
-  children: ReactNode;
-}) {
-  return (
-    <label
-      className={clsx(
-        "flex cursor-pointer items-center gap-x-2 font-plex-mono text-xs hover:text-white",
-        accent ? "text-zinc-200" : "text-zinc-300",
-      )}
-    >
-      <input
-        type={kind}
-        checked={checked}
-        onChange={onChange}
-        className="accent-brand-terminal"
-      />
-      {children}
-    </label>
-  );
-}
-
-// -------------------------------------------------------------- console page
 
 type SessionState =
   | { phase: "loading" }
@@ -596,7 +123,7 @@ export function PlayConsole() {
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-16 sm:px-16 sm:pt-20">
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          <Link to="/play" className="hover:text-white">
+          <Link to="/craft/play" className="hover:text-white">
             Play
           </Link>{" "}
           / {session.id}
@@ -697,7 +224,10 @@ export function PlayConsole() {
                   className="font-plex-mono text-xs text-zinc-300"
                 >
                   {revealed || !session.human ? (
-                    <Link to={`/runs/${runId}`} className="hover:text-white">
+                    <Link
+                      to={`/craft/replays/${runId}`}
+                      className="hover:text-white"
+                    >
                       {runId}
                     </Link>
                   ) : (
@@ -863,7 +393,7 @@ function PromptCard({
             {showTable && (
               <div className="mt-2 grid gap-3 md:grid-cols-2">
                 {prompt.table.map((brief) => (
-                  <BriefCard
+                  <PlayBriefCard
                     key={brief.seat}
                     brief={brief}
                     title={seatName(brief.seat)}
@@ -1062,7 +592,7 @@ function History({
                   )}
                   <div className="grid gap-3 md:grid-cols-2">
                     {turn.briefs.map((brief) => (
-                      <BriefCard
+                      <PlayBriefCard
                         key={`${brief.seat}:${brief.model}`}
                         brief={brief}
                         title={brief.seat}
@@ -1081,7 +611,7 @@ function History({
   );
 }
 
-function BriefCard({
+function PlayBriefCard({
   brief,
   title,
   model,
@@ -1147,10 +677,41 @@ function TurnTable({
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         {turn.briefs.map((brief) => (
-          <BriefCard key={brief.seat} brief={brief} title={brief.seat} />
+          <PlayBriefCard key={brief.seat} brief={brief} title={brief.seat} />
         ))}
       </div>
     </>
+  );
+}
+
+function Pick({
+  checked,
+  onChange,
+  accent = false,
+  kind = "checkbox",
+  children,
+}: {
+  checked: boolean;
+  onChange: () => void;
+  accent?: boolean;
+  kind?: "checkbox" | "radio";
+  children: ReactNode;
+}) {
+  return (
+    <label
+      className={clsx(
+        "flex cursor-pointer items-center gap-x-2 font-plex-mono text-xs hover:text-white",
+        accent ? "text-zinc-200" : "text-zinc-300",
+      )}
+    >
+      <input
+        type={kind}
+        checked={checked}
+        onChange={onChange}
+        className="accent-brand-terminal"
+      />
+      {children}
+    </label>
   );
 }
 
@@ -1382,21 +943,8 @@ function NarrateCard({
 
 const eyebrow =
   "font-plex-mono text-xs tracking-wide text-card-accent uppercase";
-const selectClass =
-  "mt-1 w-full rounded-sm border border-white/10 bg-surface-base px-2 py-1.5 font-plex-mono text-xs text-zinc-200 focus:border-brand-terminal focus:outline-none";
 const inputClass =
   "mt-1 w-full rounded-sm border border-white/10 bg-surface-base px-3 py-2 text-sm text-zinc-100 focus:border-brand-terminal focus:outline-none";
-
-function Card({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="rounded-sm border border-white/10 bg-surface-ink/40">
-      <div className="border-b border-white/5 px-4 pt-3 pb-2">
-        <span className={eyebrow}>{label}</span>
-      </div>
-      <div className="px-4 py-4">{children}</div>
-    </div>
-  );
-}
 
 function Field({
   label,

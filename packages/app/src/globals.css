@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Warring States Bench — design tokens (Cloud Agent Studio style)
+ * Warring States Craft — design tokens (Cloud Agent Studio style)
  * Typography: Geist (display + body), IBM Plex Mono (eyebrow + nav + logo)
  * Surface: near-black background, white/10 hairlines, sharp radii (rounded-sm)
  * Accent: --color-brand-terminal — single-accent rule; use on the active

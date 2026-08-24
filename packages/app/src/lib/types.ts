@@ -654,3 +654,46 @@ export interface PlaySession {
   narrations: NarratePrompt[];
   log: string[];
 }
+
+// ---- campaign-facing indexes (mirror the builders in vite.config.ts)
+
+/** Shape of one entry in the generated /data/scenarios.json index. */
+export interface ScenarioIndexEntry {
+  id: string;
+  order: number;
+  title: string;
+  summary: string;
+  simulates: string;
+  seatCount: number;
+  turnCount: number;
+  /** every rendering the scenario has, the default first */
+  renderings: MaterialsRendering[];
+  /** the chapter's place in the chronicle, when it is one */
+  chapter?: ScenarioChapter;
+  /** reporting definition a study of this scenario builds */
+  report?: ReportId;
+  /** the seats of the default rendering */
+  seats?: { id: string; name: string }[];
+  decisionPoints?: DecisionPoint[];
+}
+
+/** Shape of one entry in the generated /data/fieldings.json index
+ * (mirrors FieldingEntity in packages/survey/src/fielding.ts). */
+export interface FieldingIndexEntry {
+  id: string;
+  plan: string;
+  arm?: string;
+  panel?: string;
+  models: string[];
+  repetitions: number;
+  condition?: string;
+  language?: string;
+  items?: string[];
+  budgetUsd?: number;
+  /** model id → interview id */
+  interviews: Record<string, string>;
+  status: "active" | "complete" | "error";
+  statusDetail?: string;
+  startedAt: string;
+  completedAt?: string;
+}

@@ -96,7 +96,7 @@ export function ScenarioMaterialsPage() {
       {index.map((entry) => (
         <Link
           key={entry.id}
-          to={`/scenarios/${entry.id}`}
+          to={`/craft/chapters/${entry.id}`}
           className={clsx(
             "cursor-pointer rounded-sm border px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
             entry.id === base
@@ -162,7 +162,7 @@ export function ScenarioMaterialsPage() {
             {materials.renderings.map((rendering) => (
               <Link
                 key={rendering.id}
-                to={`/scenarios/${rendering.id}`}
+                to={`/craft/chapters/${rendering.id}`}
                 className={clsx(
                   "cursor-pointer rounded-sm border px-2 py-0.5 font-plex-mono text-[10px] tracking-wide focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
                   rendering.id === materials.id
@@ -436,8 +436,8 @@ function Rail({ materials }: { materials: ScenarioMaterials }) {
         </a>
       ))}
       <p className="mt-6 hidden font-plex-mono text-[10px] text-zinc-700 lg:block">
-        <Link to="/" className="hover:text-zinc-400">
-          ← replays
+        <Link to="/craft" className="hover:text-zinc-400">
+          ← warring states craft
         </Link>
         <br />
         {materials.id}

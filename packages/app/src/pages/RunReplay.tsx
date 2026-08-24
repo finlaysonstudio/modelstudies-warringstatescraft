@@ -1,17 +1,22 @@
 import { clsx } from "clsx";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
+import { CAMPAIGNS, campaignOf } from "../campaigns";
 import { LaneChip, StatusChip } from "../components/chips";
-import { Bar, Section } from "../components/PonyBenchPrimitives";
+import { Bar } from "../components/PonyBenchPrimitives";
+import { AdjudicationBlock } from "../components/replay/AdjudicationBlock";
+import { BriefCard } from "../components/replay/BriefCard";
+import { DebriefBlock } from "../components/replay/DebriefBlock";
+import { EscalationOverview } from "../components/replay/EscalationOverview";
 import { ScorecardSection } from "../components/ScorecardSection";
 import { UsageSection } from "../components/UsageSection";
+import { useCampaign } from "../lib/useCampaign";
 import { usageOfRuns } from "../lib/usage";
-import type {
-  DecisionBrief,
-  Run,
-  RunIndexEntry,
-  TurnAdjudication,
-  TurnRecord,
+import {
+  HUMAN_MODEL,
+  type Run,
+  type RunIndexEntry,
+  type TurnRecord,
 } from "../lib/types";
 
 type LoadState =
@@ -21,7 +26,8 @@ type LoadState =
 
 // Replay: one run, turn by turn — inject, decision briefs per seat,
 // adjudication, then debriefs. Branch links point up (parent timeline) and
-// down (child runs forked at this run's decision point).
+// down (child runs forked at this run's decision point). The route carries
+// the campaign; a run reached under the wrong campaign redirects to its own.
 export function RunReplay() {
   const { id } = useParams<{ id: string }>();
   const [state, setState] = useState<LoadState>({ phase: "loading" });
@@ -108,6 +114,13 @@ function ReplayBody({
   index: RunIndexEntry[];
   branches: Run[];
 }) {
+  const routeCampaign = useCampaign();
+  const campaign = campaignOf(run.scenario);
+  if (routeCampaign && routeCampaign.id !== campaign) {
+    return <Navigate to={`/${campaign}/replays/${run.id}`} replace />;
+  }
+  const base = `/${campaign}`;
+
   const turns = run.turns ?? [];
   const usage = usageOfRuns([run, ...branches]);
   const latest = turns.length > 0 ? turns[turns.length - 1].index : -1;
@@ -115,12 +128,31 @@ function ReplayBody({
     (childId) => index.find((entry) => entry.id === childId) ?? childId,
   );
   const adjudicated = turns.filter((turn) => turn.adjudication);
+  const watchable =
+    campaign === "craft" &&
+    run.status === "complete" &&
+    turns.length > 0 &&
+    !Object.values(run.roster ?? {}).includes(HUMAN_MODEL);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-16 sm:px-16 sm:pt-20">
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          Replay · {run.id}
+          <Link to={base} className="hover:text-white">
+            {CAMPAIGNS[campaign].title}
+          </Link>
+          {run.study && (
+            <>
+              {" › "}
+              <Link
+                to={`${base}/studies/${run.study}`}
+                className="hover:text-white"
+              >
+                {run.study}
+              </Link>
+            </>
+          )}
+          {" › "}Replay · {run.id}
         </p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
           {run.scenarioTitle || run.scenario}
@@ -156,16 +188,24 @@ function ReplayBody({
             ))}
           {run.branch?.parent && (
             <Link
-              to={`/runs/${run.branch.parent}`}
+              to={`${base}/replays/${run.branch.parent}`}
               className="cursor-pointer rounded-sm border border-white/10 bg-white/[0.03] px-2 py-0.5 font-plex-mono text-[10px] tracking-wide text-zinc-400 uppercase hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
             >
               ↩ parent timeline
             </Link>
           )}
+          {watchable && (
+            <Link
+              to={`/craft/play/${run.id}`}
+              className="cursor-pointer rounded-sm border border-brand-terminal/40 px-2 py-0.5 font-plex-mono text-[10px] tracking-wide text-brand-terminal uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+            >
+              ▶ watch this game
+            </Link>
+          )}
         </div>
-        {run.matrix && (
+        {run.matrix && campaign === "craft" && (
           <Link
-            to={`/runs/${run.id}/matrix`}
+            to={`/craft/replays/${run.id}/matrix`}
             className="mt-3 inline-block cursor-pointer rounded-sm border border-amber-400/40 px-2 py-0.5 font-plex-mono text-[10px] tracking-wide text-amber-300 uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
           >
             ⊞ matrix view
@@ -204,7 +244,7 @@ function ReplayBody({
               typeof child === "string" ? (
                 <Link
                   key={child}
-                  to={`/runs/${child}`}
+                  to={`${base}/replays/${child}`}
                   className="cursor-pointer rounded-sm border border-white/10 bg-white/[0.03] px-2 py-1 font-plex-mono text-[10px] tracking-wide text-zinc-400 uppercase hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
                 >
                   {child}
@@ -212,7 +252,7 @@ function ReplayBody({
               ) : (
                 <Link
                   key={child.id}
-                  to={`/runs/${child.id}`}
+                  to={`${base}/replays/${child.id}`}
                   className={clsx(
                     "flex cursor-pointer items-center gap-x-2 rounded-sm border px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
                     child.branch.lane === "consensus"
@@ -300,89 +340,6 @@ function ReplayBody({
 }
 
 // ---------------------------------------------------------------------------
-// Escalation
-
-function EscalationOverview({
-  turns,
-  ladder,
-}: {
-  turns: TurnRecord[];
-  ladder?: string[];
-}) {
-  const levels = turns.map((turn) => turn.adjudication?.escalation ?? 0);
-  const maxLevel = Math.max(ladder ? ladder.length - 1 : 0, ...levels, 1);
-  return (
-    <section
-      className="animate-rise mt-10 motion-reduce:animate-none"
-      style={{ animationDelay: "120ms" }}
-      aria-label="Escalation overview"
-    >
-      <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-        Escalation
-      </p>
-      <div className="mt-3 flex items-end gap-x-3">
-        {turns.map((turn) => {
-          const level = turn.adjudication?.escalation ?? 0;
-          return (
-            <div
-              key={turn.index}
-              className="flex flex-col items-center gap-y-1"
-            >
-              <span
-                className="size-4 rounded-[2px] bg-brand-terminal"
-                style={{ opacity: Math.max(level / maxLevel, 0.12) }}
-                title={
-                  ladder?.[level]
-                    ? `T${turn.index} · ${ladder[level]}`
-                    : `T${turn.index} · escalation ${level}`
-                }
-              />
-              <span className="font-plex-mono text-[10px] text-zinc-600">
-                T{turn.index}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function LadderStrip({
-  escalation,
-  ladder,
-}: {
-  escalation: number;
-  ladder?: string[];
-}) {
-  if (!ladder || ladder.length === 0) {
-    return (
-      <span className="font-plex-mono text-[10px] tracking-wide text-zinc-400 uppercase">
-        ESC {escalation}
-      </span>
-    );
-  }
-  return (
-    <div
-      className="flex gap-x-0.5"
-      role="img"
-      aria-label={`escalation ${escalation} of ${ladder.length - 1}: ${ladder[escalation] ?? ""}`}
-    >
-      {ladder.map((label, level) => (
-        <span
-          key={level}
-          title={label}
-          className={clsx(
-            "h-3 flex-1 rounded-[2px]",
-            level <= escalation ? "bg-brand-terminal" : "bg-white/5",
-          )}
-        />
-      ))}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Turns
 
 function TurnBlock({
@@ -438,236 +395,5 @@ function TurnBlock({
         </div>
       )}
     </section>
-  );
-}
-
-function BriefCard({ brief }: { brief: DecisionBrief }) {
-  const [expanded, setExpanded] = useState(false);
-  const memo = brief.memo;
-  return (
-    <div className="rounded-sm border border-white/10 bg-white/[0.015] p-4">
-      <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-        {brief.seat}{" "}
-        <span className="text-zinc-500 normal-case">{brief.model}</span>
-        {brief.retries ? (
-          <span className="ml-2 text-zinc-500 normal-case">
-            {brief.retries} {brief.retries === 1 ? "retry" : "retries"}
-          </span>
-        ) : null}
-        {brief.unusable ? (
-          <span className="ml-2 text-amber-400 normal-case">
-            unusable: {brief.unusable}
-          </span>
-        ) : null}
-      </p>
-      {brief.error ? (
-        <p className="mt-2 font-plex-mono text-xs text-red-400">
-          {brief.error}
-        </p>
-      ) : (
-        <>
-          {(memo?.answers ?? []).map((answer, index) => (
-            <p
-              key={index}
-              className="mt-2 text-xs leading-relaxed text-zinc-300"
-            >
-              {answer}
-            </p>
-          ))}
-          {(memo?.choices ?? []).length > 0 ? (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {memo.choices!.map((id) => (
-                <span
-                  key={id}
-                  className="rounded-sm border border-brand-terminal/40 bg-brand-terminal/10 px-1.5 py-0.5 font-plex-mono text-[10px] text-brand-terminal"
-                >
-                  {id}
-                </span>
-              ))}
-            </div>
-          ) : null}
-          <p className="mt-2 text-sm font-medium text-white">
-            {memo?.decision ?? "—"}
-          </p>
-          {memo?.rationale && (
-            <>
-              <p
-                className={clsx(
-                  "mt-2 text-xs leading-relaxed text-zinc-400",
-                  !expanded && "line-clamp-6",
-                )}
-              >
-                {memo.rationale}
-              </p>
-              {memo.rationale.length > 360 && (
-                <button
-                  type="button"
-                  onClick={() => setExpanded((value) => !value)}
-                  className="mt-1 cursor-pointer font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase hover:text-zinc-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
-                >
-                  {expanded ? "less" : "more"}
-                </button>
-              )}
-            </>
-          )}
-          {(memo?.redLines ?? []).length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1">
-              {memo.redLines.map((redLine) => (
-                <span
-                  key={redLine}
-                  className="rounded-sm border border-white/10 bg-white/[0.03] px-1.5 py-0.5 font-plex-mono text-[10px] text-zinc-400"
-                >
-                  {redLine}
-                </span>
-              ))}
-            </div>
-          )}
-          {(brief.dialog ?? []).length > 0 && (
-            <details className="mt-3">
-              <summary className="cursor-pointer font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase hover:text-zinc-300">
-                dialog · {brief.dialog!.length} rounds
-              </summary>
-              <div className="mt-2 space-y-2">
-                {brief.dialog!.map((round, index) => (
-                  <p
-                    key={index}
-                    className="text-xs leading-relaxed whitespace-pre-wrap text-zinc-400"
-                  >
-                    {round}
-                  </p>
-                ))}
-              </div>
-            </details>
-          )}
-          {brief.consensus && (
-            <div className="mt-3 space-y-0.5">
-              {brief.consensus.deferredOn.length > 0 && (
-                <p className="font-plex-mono text-[10px] text-zinc-500">
-                  deferred: {brief.consensus.deferredOn.join(", ")}
-                </p>
-              )}
-              {brief.consensus.brokeOn.length > 0 && (
-                <p className="font-plex-mono text-[10px] text-accent-yellow">
-                  broke: {brief.consensus.brokeOn.join(", ")}
-                </p>
-              )}
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Adjudication
-
-function compactVerdict(verdict: Record<string, unknown>): string {
-  try {
-    return Object.entries(verdict)
-      .map(([key, value]) => {
-        const rendered =
-          typeof value === "object" && value !== null
-            ? JSON.stringify(value)
-            : String(value);
-        return `${key}: ${rendered}`;
-      })
-      .join(" · ");
-  } catch {
-    return String(verdict);
-  }
-}
-
-function AdjudicationBlock({
-  adjudication,
-  ladder,
-}: {
-  adjudication: TurnAdjudication;
-  ladder?: string[];
-}) {
-  return (
-    <div className="border-t border-white/5">
-      <Section label="Adjudication" />
-      <div className="space-y-4 px-4 py-4">
-        <LadderStrip escalation={adjudication.escalation} ladder={ladder} />
-        {adjudication.narrative && (
-          <p className="max-w-3xl text-sm leading-relaxed text-zinc-300">
-            {adjudication.narrative}
-          </p>
-        )}
-        {(adjudication.panel ?? []).length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-white/10 text-left">
-                  <th className="px-2 py-1.5 font-plex-mono text-[10px] font-normal tracking-wide text-zinc-500 uppercase">
-                    Judge
-                  </th>
-                  <th className="px-2 py-1.5 font-plex-mono text-[10px] font-normal tracking-wide text-zinc-500 uppercase">
-                    Model
-                  </th>
-                  <th className="px-2 py-1.5 font-plex-mono text-[10px] font-normal tracking-wide text-zinc-500 uppercase">
-                    Verdict
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* One judge spec fans out across models: key by both. */}
-                {adjudication.panel.map((verdict) => (
-                  <tr
-                    key={`${verdict.judge}:${verdict.model}`}
-                    className="border-b border-white/5"
-                  >
-                    <td className="px-2 py-1.5 text-xs whitespace-nowrap text-zinc-300">
-                      {verdict.judge}
-                    </td>
-                    <td className="px-2 py-1.5 font-plex-mono text-xs whitespace-nowrap text-zinc-500">
-                      {verdict.model}
-                    </td>
-                    <td className="px-2 py-1.5 text-xs text-zinc-400">
-                      {verdict.error ? (
-                        <span className="font-plex-mono text-red-400">
-                          {verdict.error}
-                        </span>
-                      ) : (
-                        compactVerdict(verdict.verdict ?? {})
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Debriefs
-
-function DebriefBlock({
-  debrief,
-}: {
-  debrief: { seat: string; model: string; text: string };
-}) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="rounded-sm border border-white/10 bg-black/20">
-      <Bar
-        open={open}
-        onToggle={() => setOpen((value) => !value)}
-        label={debrief.seat}
-        detail={debrief.model}
-      />
-      {open && (
-        <div className="border-t border-white/5 px-4 py-4">
-          <p className="max-w-3xl text-sm leading-relaxed whitespace-pre-line text-zinc-300">
-            {debrief.text}
-          </p>
-        </div>
-      )}
-    </div>
   );
 }

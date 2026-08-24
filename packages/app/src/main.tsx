@@ -2,12 +2,12 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
+import { AwryHome } from "./pages/awry/AwryHome";
+import { CraftHome } from "./pages/craft/CraftHome";
+import { Home } from "./pages/Home";
 import { MatrixView } from "./pages/MatrixView";
-import { PlayConsole, PlaySetup } from "./pages/Play";
 import { RunReplay } from "./pages/RunReplay";
-import { RunsIndex } from "./pages/RunsIndex";
 import { ScenarioMaterialsPage } from "./pages/ScenarioMaterials";
-import { StudiesIndex } from "./pages/StudiesIndex";
 import { StudyView } from "./pages/StudyView";
 import { ValuesIndex } from "./pages/ValuesIndex";
 import "./globals.css";
@@ -19,16 +19,20 @@ if (root) {
       <BrowserRouter>
         <AppShell>
           <Routes>
-            <Route path="/" element={<RunsIndex />} />
-            <Route path="/runs/:id" element={<RunReplay />} />
-            <Route path="/runs/:id/matrix" element={<MatrixView />} />
-            <Route path="/studies" element={<StudiesIndex />} />
-            <Route path="/studies/:id" element={<StudyView />} />
-            <Route path="/values" element={<ValuesIndex />} />
-            <Route path="/scenarios" element={<ScenarioMaterialsPage />} />
-            <Route path="/scenarios/:id" element={<ScenarioMaterialsPage />} />
-            <Route path="/play" element={<PlaySetup />} />
-            <Route path="/play/:id" element={<PlayConsole />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/craft" element={<CraftHome />} />
+            <Route
+              path="/craft/chapters/:id"
+              element={<ScenarioMaterialsPage />}
+            />
+            <Route path="/craft/studies/:id" element={<StudyView />} />
+            <Route path="/craft/survey" element={<ValuesIndex />} />
+            <Route path="/craft/replays/:id" element={<RunReplay />} />
+            <Route path="/craft/replays/:id/matrix" element={<MatrixView />} />
+            <Route path="/awry" element={<AwryHome />} />
+            <Route path="/awry/studies/:id" element={<StudyView />} />
+            <Route path="/awry/replays/:id" element={<RunReplay />} />
+            <Route path="*" element={<Home notFound />} />
           </Routes>
         </AppShell>
       </BrowserRouter>

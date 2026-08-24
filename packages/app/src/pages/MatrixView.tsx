@@ -448,7 +448,7 @@ function MatrixBody({
           {roots.length > 1 ? ` from ${roots.length} roots` : ""} ·{" "}
           {visible.length} shown ·{" "}
           <Link
-            to={`/runs/${primary.id}`}
+            to={`/craft/replays/${primary.id}`}
             className="cursor-pointer text-zinc-400 hover:text-zinc-200"
           >
             ↩ root replay
@@ -681,7 +681,7 @@ function MatrixBody({
                   >
                     <td className="py-1.5 pr-4">
                       <Link
-                        to={`/runs/${run.id}`}
+                        to={`/craft/replays/${run.id}`}
                         className="flex cursor-pointer items-center gap-x-2 text-zinc-300 hover:text-white"
                       >
                         <span

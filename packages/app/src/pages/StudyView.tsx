@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
+import { CAMPAIGNS, campaignOf } from "../campaigns";
 import { StatusChip } from "../components/chips";
 import { UsageSection } from "../components/UsageSection";
 import type {
@@ -15,6 +16,7 @@ import type {
   StudyUsage,
 } from "../lib/types";
 import { formatUsd } from "../lib/usage";
+import { useCampaign } from "../lib/useCampaign";
 
 type LoadState =
   | { phase: "loading" }
@@ -26,6 +28,7 @@ type LoadState =
 // the page never computes statistics.
 export function StudyView() {
   const { id = "" } = useParams();
+  const routeCampaign = useCampaign();
   const [state, setState] = useState<LoadState>({ phase: "loading" });
 
   useEffect(() => {
@@ -71,16 +74,22 @@ export function StudyView() {
   }
 
   const { study, report } = state;
+  const campaign = campaignOf(study.scenarios[0] ?? "");
+  if (routeCampaign && routeCampaign.id !== campaign) {
+    return <Navigate to={`/${campaign}/studies/${study.id}`} replace />;
+  }
+  const base = `/${campaign}`;
   const complete = study.arms.filter((arm) => arm.status === "complete").length;
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          <Link to="/studies" className="hover:text-white">
-            Studies
-          </Link>{" "}
-          / {study.id}
+          <Link to={base} className="hover:text-white">
+            {CAMPAIGNS[campaign].title}
+          </Link>
+          {" › "}
+          {study.id}
         </p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
           {study.title}
@@ -111,8 +120,6 @@ export function StudyView() {
         </div>
       </header>
 
-      <ArmGrid study={study} />
-
       {report?.usage && (
         <UsageSection
           total={report.usage.total}
@@ -142,11 +149,13 @@ export function StudyView() {
           <LamparthReportView report={report} />
         )}
       </section>
+
+      <ArmGrid study={study} base={base} />
     </div>
   );
 }
 
-function ArmGrid({ study }: { study: Study }) {
+function ArmGrid({ study, base }: { study: Study; base: string }) {
   return (
     <section className="mt-12" aria-label="Arms">
       <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
@@ -168,12 +177,16 @@ function ArmGrid({ study }: { study: Study }) {
             {study.scenarios.map((scenario) => (
               <tr key={scenario} className="border-b border-white/5">
                 <td className="py-2 pr-4 align-top font-plex-mono text-zinc-400">
-                  <Link
-                    to={`/scenarios/${scenario}`}
-                    className="hover:text-white"
-                  >
-                    {scenario}
-                  </Link>
+                  {campaignOf(scenario) === "craft" ? (
+                    <Link
+                      to={`/craft/chapters/${scenario}`}
+                      className="hover:text-white"
+                    >
+                      {scenario}
+                    </Link>
+                  ) : (
+                    <span>{scenario}</span>
+                  )}
                 </td>
                 {study.models.map((model) => (
                   <td key={model} className="py-2 pr-4 align-top">
@@ -205,7 +218,7 @@ function ArmGrid({ study }: { study: Study }) {
                           return arm.runId ? (
                             <Link
                               key={arm.replicate}
-                              to={`/runs/${arm.runId}`}
+                              to={`${base}/replays/${arm.runId}`}
                               className="cursor-pointer hover:opacity-80"
                             >
                               {chip}

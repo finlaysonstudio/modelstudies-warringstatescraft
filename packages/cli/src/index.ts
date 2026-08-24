@@ -9,7 +9,7 @@ loadEnv({ path: resolve(process.cwd(), ".env"), quiet: true });
 const program = new Command();
 program
   .name("warringstates")
-  .description("Warring States Bench: war game runs, instruments, analysis");
+  .description("Warring States Craft: war game runs, instruments, analysis");
 
 /** every stored model lands under git-ignored var/<model>/ */
 const varRoot = () => resolve(process.cwd(), "var");
