@@ -13,10 +13,12 @@ import { fileURLToPath } from "node:url";
 import type { StageArchetype, StageEffect } from "../../src/lib/types";
 import {
   ARCHETYPES,
+  DECOR,
   EFFECTS,
   MARKERS,
   TERRAINS,
   WATERS,
+  type Decor,
   type Marker,
   type Terrain,
   type Water,
@@ -55,9 +57,11 @@ const TERRAIN_COLORS: Record<
 > = {
   grass: { fill: "#5f8f3f", rim: "#5f8f3f", dots: "#578538" },
   loess: { fill: "#c9a86a", rim: "#a3844c" },
+  steppe: { fill: "#b3ab66", rim: "#8f884e", dots: "#a49d5c" },
   road: { fill: "#8a6a45", rim: "#6b4f31" },
   cobble: { fill: "#8c8c88", rim: "#63635f", dots: "#7a7a76" },
   forest: { fill: "#2f6b2f", rim: "#1f4a1f", dots: "#255a25" },
+  bamboo: { fill: "#7fae3c", rim: "#5e872b", dots: "#71a034" },
   mountain: { fill: "#7d7468", rim: "#4e463d", dots: "#6a6257" },
   marsh: { fill: "#4f7a5a", rim: "#3a5c44", dots: "#436a4e" },
   field: { fill: "#9bb04a", rim: "#7a8c34", dots: "#889a3e" },
@@ -602,6 +606,114 @@ const marker = (kind: Marker): Image => {
   }
 };
 
+const decor = (kind: Decor): Image => {
+  const wood = rgba("#8b5a2b");
+  const stone = rgba("#8c8c88");
+  const earth = rgba("#c9a86a");
+  const green = rgba("#2f6b2f");
+  switch (kind) {
+    case "pine": {
+      const out = blankImage(32, 32);
+      for (const [cx, cy] of [
+        [9, 18],
+        [20, 14],
+        [24, 24],
+      ] as const) {
+        rect(out, cx - 1, cy, 2, 6, wood);
+        triangle(
+          out,
+          [
+            [cx - 6, cy + 1],
+            [cx + 6, cy + 1],
+            [cx, cy - 9],
+          ],
+          green,
+        );
+      }
+      return out;
+    }
+    case "bamboo": {
+      const out = blankImage(32, 32);
+      const stalk = rgba("#7fae3c");
+      for (let i = 0; i < 5; i += 1) {
+        const x = 8 + i * 4;
+        line(out, x, 28, x + (i % 2 ? 2 : -1), 8, stalk);
+        line(out, x, 12 + i, x + 4, 9 + i, shade(stalk, 1.2));
+      }
+      return out;
+    }
+    case "beacon": {
+      const out = blankImage(32, 48);
+      rect(out, 10, 16, 12, 28, earth);
+      rect(out, 10, 16, 12, 2, shade(earth, 0.8));
+      rect(out, 8, 10, 16, 6, shade(earth, 1.1));
+      rect(out, 12, 4, 8, 6, wood);
+      return out;
+    }
+    case "tumulus": {
+      const out = blankImage(40, 32);
+      disc(out, 20, 30, 15, shade(earth, 0.9));
+      disc(out, 20, 24, 12, earth);
+      disc(out, 18, 20, 7, shade(earth, 1.1));
+      rect(out, 32, 26, 3, 5, stone);
+      return out;
+    }
+    case "stele": {
+      const out = blankImage(32, 32);
+      disc(out, 16, 27, 6, shade(earth, 0.9));
+      rect(out, 13, 6, 6, 21, stone);
+      rect(out, 13, 6, 6, 2, shade(stone, 1.2));
+      line(out, 16, 10, 16, 22, shade(stone, 0.7));
+      return out;
+    }
+    case "boat": {
+      const out = blankImage(32, 32);
+      rect(out, 6, 18, 20, 6, wood);
+      rect(out, 8, 24, 16, 2, shade(wood, 0.7));
+      line(out, 16, 6, 16, 18, shade(wood, 0.8));
+      return out;
+    }
+    case "horses": {
+      const out = blankImage(40, 32);
+      const horse = rgba("#5b3a1e");
+      for (const [hx, hy] of [
+        [8, 14],
+        [22, 10],
+        [28, 20],
+      ] as const) {
+        rect(out, hx, hy, 10, 5, horse);
+        rect(out, hx + 8, hy - 3, 3, 4, horse);
+        rect(out, hx + 1, hy + 5, 1, 3, shade(horse, 0.7));
+        rect(out, hx + 8, hy + 5, 1, 3, shade(horse, 0.7));
+      }
+      return out;
+    }
+    case "grove": {
+      const out = blankImage(40, 32);
+      for (const [gx, gy] of [
+        [8, 12],
+        [20, 10],
+        [32, 12],
+        [14, 22],
+        [26, 24],
+      ] as const) {
+        rect(out, gx, gy + 4, 2, 4, wood);
+        disc(out, gx + 1, gy, 4.5, shade(green, 1.3));
+      }
+      return out;
+    }
+    case "rocks": {
+      const out = blankImage(32, 32);
+      disc(out, 12, 20, 7, stone);
+      disc(out, 22, 24, 5, shade(stone, 0.85));
+      disc(out, 20, 14, 4, shade(stone, 1.1));
+      return out;
+    }
+    default:
+      return blankImage(16, 16);
+  }
+};
+
 const here = dirname(fileURLToPath(import.meta.url));
 const out = resolve(here, "../../public/stage/fallback");
 mkdirSync(out, { recursive: true });
@@ -677,6 +789,9 @@ for (const effect of EFFECTS) {
 }
 for (const kind of MARKERS) {
   emitImage(`image.${kind}`, marker(kind), { kind: "image" });
+}
+for (const kind of DECOR) {
+  emitImage(`decor.${kind}`, decor(kind), { kind: "image" });
 }
 
 const manifest: VendorManifest = { version: 1, source: "fallback", assets };

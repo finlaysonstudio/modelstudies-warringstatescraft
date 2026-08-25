@@ -35,12 +35,21 @@ export interface PlaceSpec {
   state?: string;
 }
 
+export interface DecorSpec {
+  /** A catalog decor name (`pine`, `beacon`, …); the object's type is `decor.<id>`. */
+  id: string;
+  x: number;
+  y: number;
+}
+
 export interface Geography {
   width: number;
   height: number;
   /** Painted in order; a later fill overwrites an earlier one. */
   fills: Fill[];
   places: Record<string, PlaceSpec>;
+  /** Set dressing: unlabeled images the scene scatters for visual interest. */
+  decor?: DecorSpec[];
 }
 
 export const GROUNDS: readonly Ground[] = [...TERRAINS, ...WATERS];
@@ -48,8 +57,10 @@ export const GROUNDS: readonly Ground[] = [...TERRAINS, ...WATERS];
 /** Blob layers above the grass ground, bottom to top. */
 export const DRAW_ORDER: readonly Ground[] = [
   "loess",
+  "steppe",
   "field",
   "forest",
+  "bamboo",
   "marsh",
   "mountain",
   "cobble",
@@ -61,9 +72,11 @@ export const DRAW_ORDER: readonly Ground[] = [
 export const LETTERS: Record<Ground, string> = {
   grass: ".",
   loess: ":",
+  steppe: ",",
   road: "-",
   cobble: "#",
   forest: "T",
+  bamboo: "y",
   mountain: "^",
   marsh: "%",
   field: '"',
@@ -269,6 +282,36 @@ export const buildTiledMap = ({
     tileLayer(ground, data);
   }
   let objectId = 1;
+  if (geo.decor?.length) {
+    const decorObjects: TiledObject[] = geo.decor.map((decor, index) => {
+      const object: TiledObject = {
+        id: objectId,
+        name: `decor-${index + 1}`,
+        type: `decor.${decor.id}`,
+        x: (decor.x + 0.5) * tile,
+        y: (decor.y + 0.5) * tile,
+        width: 0,
+        height: 0,
+        rotation: 0,
+        visible: true,
+        point: true,
+      };
+      objectId += 1;
+      return object;
+    });
+    layers.push({
+      id: layerId,
+      name: "decor",
+      type: "objectgroup",
+      draworder: "topdown",
+      x: 0,
+      y: 0,
+      opacity: 1,
+      visible: true,
+      objects: decorObjects,
+    });
+    layerId += 1;
+  }
   const objects: TiledObject[] = Object.entries(geo.places).map(
     ([key, place]) => {
       const properties: TiledObject["properties"] = [];

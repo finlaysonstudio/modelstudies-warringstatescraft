@@ -13,6 +13,12 @@ import {
   type Image,
 } from "../vendor/png";
 import { FACINGS, type SpriteMeta } from "../vendor/slice";
+import {
+  greyBlue,
+  wangBlobSheet,
+  wangFillSheet,
+  type WangMetadata,
+} from "./tileset";
 
 /**
  * The period layer: art generated on PixelLab for this project (the terms
@@ -49,7 +55,20 @@ export interface PeriodSpriteItem extends PeriodRecord {
   frames: number;
 }
 
-export type PeriodItem = PeriodImageItem | PeriodSpriteItem;
+export interface PeriodTilesetItem extends PeriodRecord {
+  id: string;
+  kind: "tileset";
+  /** the raw 4x4 Wang sheet, relative to the source root */
+  file: string;
+  /** the tileset metadata JSON beside it (corner map and bounding boxes) */
+  metadata: string;
+  /** `lower` builds a plain fill sheet of the lower terrain (the ground) */
+  fill?: "lower" | "upper";
+  /** grey blue-dominant pixels toward luminance by this amount (0..1) */
+  desaturate?: number;
+}
+
+export type PeriodItem = PeriodImageItem | PeriodSpriteItem | PeriodTilesetItem;
 
 export interface PeriodSpec {
   version: 1;
@@ -120,6 +139,26 @@ export const buildPeriod = async ({
   const assets: Record<string, AssetEntry> = {};
   for (const item of spec.items) {
     const file = `${item.id}.png`;
+    if (item.kind === "tileset") {
+      let sheet = await readPng(path.join(root, item.file));
+      if (item.desaturate) sheet = greyBlue(sheet, item.desaturate);
+      const meta = JSON.parse(
+        await readFile(path.join(root, item.metadata), "utf8"),
+      ) as WangMetadata;
+      const image = item.fill
+        ? wangFillSheet({ sheet, meta, fill: item.fill })
+        : wangBlobSheet({ sheet, meta });
+      await writePng(path.join(outDir, file), image);
+      assets[item.id] = {
+        file,
+        kind: "blob",
+        width: image.width,
+        height: image.height,
+        pack: "pixellab",
+      };
+      log(`${item.id}  ${image.width}x${image.height}  ← ${item.file}`);
+      continue;
+    }
     if (item.kind === "image") {
       const image = await readPng(path.join(root, item.file));
       await writePng(path.join(outDir, file), image);

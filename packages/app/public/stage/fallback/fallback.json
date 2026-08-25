@@ -18,6 +18,14 @@
       "kind": "blob",
       "tileset": "terrain.loess.tsj"
     },
+    "terrain.steppe": {
+      "file": "terrain.steppe.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.steppe.tsj"
+    },
     "terrain.road": {
       "file": "terrain.road.png",
       "width": 128,
@@ -41,6 +49,14 @@
       "pack": "fallback",
       "kind": "blob",
       "tileset": "terrain.forest.tsj"
+    },
+    "terrain.bamboo": {
+      "file": "terrain.bamboo.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.bamboo.tsj"
     },
     "terrain.mountain": {
       "file": "terrain.mountain.png",
@@ -867,6 +883,69 @@
       "file": "image.weir.png",
       "width": 16,
       "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.pine": {
+      "file": "decor.pine.png",
+      "width": 32,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.bamboo": {
+      "file": "decor.bamboo.png",
+      "width": 32,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.beacon": {
+      "file": "decor.beacon.png",
+      "width": 32,
+      "height": 48,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.tumulus": {
+      "file": "decor.tumulus.png",
+      "width": 40,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.stele": {
+      "file": "decor.stele.png",
+      "width": 32,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.boat": {
+      "file": "decor.boat.png",
+      "width": 32,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.horses": {
+      "file": "decor.horses.png",
+      "width": 40,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.grove": {
+      "file": "decor.grove.png",
+      "width": 40,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.rocks": {
+      "file": "decor.rocks.png",
+      "width": 32,
+      "height": 32,
       "pack": "fallback",
       "kind": "image"
     }

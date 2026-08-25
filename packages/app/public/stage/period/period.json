@@ -619,6 +619,139 @@
       "width": 40,
       "height": 40,
       "pack": "pixellab"
+    },
+    "terrain.grass": {
+      "file": "terrain.grass.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.forest": {
+      "file": "terrain.forest.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.loess": {
+      "file": "terrain.loess.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.steppe": {
+      "file": "terrain.steppe.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.marsh": {
+      "file": "terrain.marsh.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.mountain": {
+      "file": "terrain.mountain.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.field": {
+      "file": "terrain.field.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.bamboo": {
+      "file": "terrain.bamboo.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "image.town-b": {
+      "file": "image.town-b.png",
+      "kind": "image",
+      "width": 40,
+      "height": 40,
+      "pack": "pixellab"
+    },
+    "image.town-c": {
+      "file": "image.town-c.png",
+      "kind": "image",
+      "width": 40,
+      "height": 40,
+      "pack": "pixellab"
+    },
+    "decor.pine": {
+      "file": "decor.pine.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "decor.bamboo": {
+      "file": "decor.bamboo.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "decor.beacon": {
+      "file": "decor.beacon.png",
+      "kind": "image",
+      "width": 32,
+      "height": 48,
+      "pack": "pixellab"
+    },
+    "decor.tumulus": {
+      "file": "decor.tumulus.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "decor.stele": {
+      "file": "decor.stele.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "decor.boat": {
+      "file": "decor.boat.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "decor.horses": {
+      "file": "decor.horses.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "decor.grove": {
+      "file": "decor.grove.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "decor.rocks": {
+      "file": "decor.rocks.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab"
     }
   }
 }

@@ -13,14 +13,18 @@ import {
 } from "./beats";
 import {
   ARCHETYPES,
+  DECOR,
   EFFECTS,
+  MARKER_VARIANTS,
   MARKERS,
   TERRAINS,
   WATERS,
+  decorId,
   effectId,
   markerId,
   terrainId,
   waterId,
+  type Marker,
 } from "./catalog";
 import type { StageAsset, StageManifest } from "./manifest";
 
@@ -39,6 +43,27 @@ const WHEEL_ZOOM_RATE = 0.0015;
 
 const clamp = (value: number, low: number, high: number): number =>
   Math.max(low, Math.min(high, value));
+
+/** stable per-place hash, used to vary repeated marker buildings */
+const hashOf = (key: string): number => {
+  let hash = 0;
+  for (let i = 0; i < key.length; i += 1) {
+    hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+};
+
+/**
+ * Label tiers by zoom, so the zoomed-out map stays legible: majors (the
+ * seats of power) always show and grow to hold their on-screen size, region
+ * names show until the camera is close, and minor places (fords, passes,
+ * towns) label only once the camera is near enough to read them. The
+ * thresholds are ratios against the whole-map fit zoom, so they hold at any
+ * canvas density or map size.
+ */
+type LabelTier = "major" | "region" | "minor";
+const MINOR_LABEL_RATIO = 1.6;
+const REGION_LABEL_MAX_RATIO = 4;
 
 export interface OverworldCallbacks {
   onReady?: () => void;
@@ -100,6 +125,9 @@ export class OverworldScene extends Phaser.Scene {
   private live: Phaser.GameObjects.GameObject[] = [];
   private loadedSprites = new Map<string, StageAsset>();
   private minZoom = ZOOMS[ZOOMS.length - 1];
+  private fitZoom = 1;
+  private labels: { text: Phaser.GameObjects.Text; tier: LabelTier }[] = [];
+  private labelZoom = 0;
   /** whether the camera flies to each beat; the explorer toggles it live */
   follow: boolean;
 
@@ -126,6 +154,10 @@ export class OverworldScene extends Phaser.Scene {
     TERRAINS.forEach((terrain) => image(terrainId(terrain)));
     WATERS.forEach((water) => image(waterId(water)));
     MARKERS.forEach((marker) => image(markerId(marker)));
+    Object.values(MARKER_VARIANTS)
+      .flat()
+      .forEach((id) => image(id));
+    DECOR.forEach((decor) => image(decorId(decor)));
     EFFECTS.forEach((effect) => {
       const asset = manifest.assets[effectId(effect)];
       if (!asset?.frame) return;
@@ -178,6 +210,16 @@ export class OverworldScene extends Phaser.Scene {
       });
     }
 
+    for (const object of (map.getObjectLayer("decor")?.objects ??
+      []) as TiledPoint[]) {
+      const id = object.type || object.class || "";
+      if (!this.textures.exists(id)) continue;
+      this.add
+        .image(object.x, object.y, id)
+        .setOrigin(0.5, 0.85)
+        .setDepth(object.y);
+    }
+
     const objects = (map.getObjectLayer("places")?.objects ??
       []) as TiledPoint[];
     for (const object of objects) {
@@ -186,14 +228,22 @@ export class OverworldScene extends Phaser.Scene {
       const kind = object.type || object.class || "region";
       const label = this.config.names[key] ?? key;
       if (kind !== "region") {
-        const id = markerId(kind as never);
-        if (this.textures.exists(id)) {
+        const candidates = MARKER_VARIANTS[kind as Marker] ?? [
+          markerId(kind as Marker),
+        ];
+        const pool = candidates.filter((id) => this.textures.exists(id));
+        const id = pool.length ? pool[hashOf(key) % pool.length] : undefined;
+        if (id) {
           this.add
             .image(object.x, object.y, id)
             .setOrigin(0.5, 0.85)
             .setDepth(object.y);
         }
-        this.add
+        const tier: LabelTier =
+          kind === "court" || kind === "altar" || kind === "hall"
+            ? "major"
+            : "minor";
+        const text = this.add
           .text(object.x, object.y + 4, label, {
             fontFamily: FONT,
             fontSize: "8px",
@@ -204,8 +254,9 @@ export class OverworldScene extends Phaser.Scene {
           .setOrigin(0.5, 0)
           .setResolution(3)
           .setDepth(5000);
+        this.labels.push({ text, tier });
       } else {
-        this.add
+        const text = this.add
           .text(object.x, object.y, label, {
             fontFamily: FONT,
             fontSize: "10px",
@@ -218,6 +269,7 @@ export class OverworldScene extends Phaser.Scene {
           .setAlpha(0.8)
           .setResolution(3)
           .setDepth(4999);
+        this.labels.push({ text, tier: "region" });
       }
       const state = propertiesOf(object).state;
       if (typeof state === "string") this.homes[state] = key;
@@ -263,11 +315,12 @@ export class OverworldScene extends Phaser.Scene {
 
     const camera = this.cameras.main;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    this.fitZoom = Math.max(
+      this.view.width / map.widthInPixels,
+      this.view.height / map.heightInPixels,
+    );
     if (this.config.interactive) {
-      this.minZoom = Math.max(
-        this.view.width / map.widthInPixels,
-        this.view.height / map.heightInPixels,
-      );
+      this.minZoom = this.fitZoom;
       camera.setZoom(this.minZoom);
       camera.centerOn(map.widthInPixels / 2, map.heightInPixels / 2);
       this.enableCameraControls();
@@ -281,8 +334,33 @@ export class OverworldScene extends Phaser.Scene {
         firstHome?.y ?? map.heightInPixels / 2,
       );
     }
+    this.updateLabels();
     this.config.onReady?.();
     this.pump();
+  }
+
+  update(): void {
+    this.updateLabels();
+  }
+
+  /** Applies the label tiers for the camera's zoom (no-op until it changes). */
+  private updateLabels(): void {
+    const zoom = this.cameras.main.zoom;
+    if (zoom === this.labelZoom) return;
+    this.labelZoom = zoom;
+    const ratio = zoom / this.fitZoom;
+    const majorScale = clamp(1 / zoom, 1, 2.6);
+    const regionScale = clamp(1 / zoom, 1, 2.2);
+    const minorScale = clamp(1 / zoom, 1, 1.4);
+    for (const { text, tier } of this.labels) {
+      if (tier === "major") {
+        text.setVisible(true).setScale(majorScale);
+      } else if (tier === "region") {
+        text.setVisible(ratio <= REGION_LABEL_MAX_RATIO).setScale(regionScale);
+      } else {
+        text.setVisible(ratio >= MINOR_LABEL_RATIO).setScale(minorScale);
+      }
+    }
   }
 
   /** Drag pans, the wheel zooms at the cursor, and a beat's pan is cancelled

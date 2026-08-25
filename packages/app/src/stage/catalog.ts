@@ -13,9 +13,11 @@ import type {
 export const TERRAINS = [
   "grass",
   "loess",
+  "steppe",
   "road",
   "cobble",
   "forest",
+  "bamboo",
   "mountain",
   "marsh",
   "field",
@@ -48,6 +50,32 @@ export const MARKERS = [
   "weir",
 ] as const;
 export type Marker = (typeof MARKERS)[number];
+
+/**
+ * Decorative set dressing, `decor.<name>`: images the map scatters for
+ * visual interest. Not places — they carry no label and no game meaning.
+ */
+export const DECOR = [
+  "pine",
+  "bamboo",
+  "beacon",
+  "tumulus",
+  "stele",
+  "boat",
+  "horses",
+  "grove",
+  "rocks",
+] as const;
+export type Decor = (typeof DECOR)[number];
+
+/**
+ * Markers with more than one rendering: the scene picks per place by a hash
+ * of the place key, among the ids the loaded manifests actually carry, so
+ * repeated buildings vary across the map without any data change.
+ */
+export const MARKER_VARIANTS: Partial<Record<Marker, string[]>> = {
+  town: ["image.town", "image.town-b", "image.town-c"],
+};
 
 export const EFFECTS: readonly StageEffect[] = [
   "scroll",
@@ -110,6 +138,7 @@ export const ARCHETYPE_SPRITES: Record<StageArchetype, string[]> = {
 export const terrainId = (terrain: Terrain): string => `terrain.${terrain}`;
 export const waterId = (water: Water): string => `water.${water}`;
 export const markerId = (marker: Marker): string => `image.${marker}`;
+export const decorId = (decor: Decor): string => `decor.${decor}`;
 export const effectId = (effect: StageEffect): string => `effect.${effect}`;
 
 /** Seat colours by roster order (flags above a seat's actors). */
