@@ -31,8 +31,6 @@ import { BASE_TILE, DEFAULT_STAGE_SET, stageSet } from "./sets";
 
 /** the map of the set the stage plays on unless a caller names another */
 export const MAP_URL = stageSet(DEFAULT_STAGE_SET).map;
-export const WATER_FRAME_STRIDE = 48;
-export const WATER_FRAME_MS = 400;
 export const VIEW_WIDTH = 960;
 export const VIEW_HEIGHT = 400;
 
@@ -122,8 +120,6 @@ export class OverworldScene extends Phaser.Scene {
   private homes: Record<string, string> = {};
   private queue: StageBeat[] = [];
   private playing = false;
-  private waterTiles: { tile: Phaser.Tilemaps.Tile; base: number }[] = [];
-  private waterFrame = 0;
   private live: Phaser.GameObjects.GameObject[] = [];
   private loadedSprites = new Map<string, StageAsset>();
   private minZoom = ZOOMS[ZOOMS.length - 1];
@@ -207,27 +203,11 @@ export class OverworldScene extends Phaser.Scene {
       .filter(
         (tileset): tileset is Phaser.Tilemaps.Tileset => tileset !== null,
       );
+    // what moves is the map's own business: a water tileset declares its frames
+    // as a Tiled animation, which Phaser plays, and no other ground declares one
     map.layers.forEach((layerData) => {
-      const layer = map.createLayer(layerData.name, tilesets, 0, 0);
-      if (!layer) return;
-      if (WATERS.some((water) => water === layerData.name)) {
-        layer.forEachTile((tile) => {
-          if (tile.index > 0) this.waterTiles.push({ tile, base: tile.index });
-        });
-      }
+      map.createLayer(layerData.name, tilesets, 0, 0);
     });
-    if (this.waterTiles.length) {
-      this.time.addEvent({
-        delay: WATER_FRAME_MS,
-        loop: true,
-        callback: () => {
-          this.waterFrame = (this.waterFrame + 1) % 3;
-          for (const { tile, base } of this.waterTiles) {
-            tile.index = base + this.waterFrame * WATER_FRAME_STRIDE;
-          }
-        },
-      });
-    }
 
     for (const object of (map.getObjectLayer("decor")?.objects ??
       []) as TiledPoint[]) {

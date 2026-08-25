@@ -300,7 +300,10 @@ export const buildTiledMap = ({
       name: id,
       image: `${imageDir}/${id}.png`,
       tile,
-      frames: blocks,
+      blocks,
+      // a ground's stacked blocks are rearrangements the builder picks between,
+      // not frames: only water is asked to move
+      frames: isWater(ground) ? blocks : 1,
     });
     tilesets.push({ firstgid: next, ...set });
     firstgid[ground] = next;
@@ -353,7 +356,8 @@ export const buildTiledMap = ({
       for (let x = 0; x < geo.width; x += 1) {
         if (grid[y][x] !== ground) continue;
         const index = blobIndexOf(maskOf(same(ground)(x, y)));
-        // water animates by advancing the tile index, so leave its gids plain
+        // a water tile's art is a wave that reads in one direction, and its
+        // three frames have to agree, so leave its gids plain
         const flip = index === BLOB_FULL && !isWater(ground) ? flipAt(x, y) : 0;
         data[y * geo.width + x] = (firstgid[ground] ?? 0) + index + flip;
       }
@@ -442,6 +446,3 @@ export const buildTiledMap = ({
     layers,
   };
 };
-
-/** Tiles per water frame: the scene advances a water tile's index by this much per frame. */
-export const WATER_FRAME_STRIDE = BLOB_TILE_COUNT;

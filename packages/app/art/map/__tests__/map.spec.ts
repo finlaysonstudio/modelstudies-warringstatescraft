@@ -15,6 +15,7 @@ import {
   W,
 } from "../../vendor/blob";
 import {
+  GROUND_VARIANTS,
   asciiOf,
   buildTiledMap,
   flipAt,
@@ -131,6 +132,19 @@ describe("buildTiledMap", () => {
     const river = map.tilesets.find((set) => set.name === "water.river")!;
     expect(river.tilecount).toBe(144);
     expect(river.tiles?.[0].animation).toHaveLength(3);
+  });
+
+  it("declares an animation for water alone", () => {
+    // grass stacks its blocks too, but they are rearrangements the builder
+    // picks between per cell; declaring them as frames makes every cell that
+    // lands on the first block cycle while its neighbours sit still
+    const animated = map.tilesets
+      .filter((set) => set.tiles?.some((tile) => tile.animation))
+      .map((set) => set.name);
+    expect(animated).toEqual(["water.river", "water.sea"]);
+    const grass = map.tilesets.find((set) => set.name === "terrain.grass")!;
+    expect(grass.tilecount).toBe(BLOB_TILE_COUNT * GROUND_VARIANTS);
+    expect(grass.tiles ?? []).toEqual([]);
   });
 });
 

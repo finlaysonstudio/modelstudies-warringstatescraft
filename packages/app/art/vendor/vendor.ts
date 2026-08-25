@@ -123,7 +123,7 @@ export const buildVendor = ({
                 name: sheet.id,
                 image: file,
                 tile,
-                frames: blocks,
+                blocks,
               }),
               null,
               2,
@@ -158,7 +158,13 @@ export const buildVendor = ({
           emit(
             tileset,
             JSON.stringify(
-              blobTileset({ name: sheet.id, image: file, tile, frames }),
+              blobTileset({
+                name: sheet.id,
+                image: file,
+                tile,
+                blocks: frames,
+                frames,
+              }),
               null,
               2,
             ),

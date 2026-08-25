@@ -754,13 +754,13 @@ for (const terrain of TERRAINS) {
     },
   ]);
   // the ground layer picks a variant per cell, so grass carries the stack
-  const frames = blocksOf(terrain);
-  const image = frames > 1 ? variantSheet(sheet, frames) : sheet;
+  const blocks = blocksOf(terrain);
+  const image = blocks > 1 ? variantSheet(sheet, blocks) : sheet;
   const tileset = `${id}.tsj`;
   writeFileSync(
     join(out, tileset),
     JSON.stringify(
-      blobTileset({ name: id, image: `${id}.png`, frames }),
+      blobTileset({ name: id, image: `${id}.png`, blocks }),
       null,
       2,
     ),
@@ -778,7 +778,12 @@ for (const water of WATERS) {
   writeFileSync(
     join(out, tileset),
     JSON.stringify(
-      blobTileset({ name: id, image: `${id}.png`, frames: frames.length }),
+      blobTileset({
+        name: id,
+        image: `${id}.png`,
+        blocks: frames.length,
+        frames: frames.length,
+      }),
       null,
       2,
     ),

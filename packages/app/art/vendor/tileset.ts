@@ -10,6 +10,18 @@ export interface BlobTilesetOptions {
   name: string;
   image: string;
   tile?: number;
+  /**
+   * How many blob blocks the sheet stacks. A block is a frame for water and a
+   * rearrangement for the ground the map is laid on, so this sizes the image
+   * and the tile count without saying anything about time.
+   */
+  blocks?: number;
+  /**
+   * How many of those blocks are an animation. Only water animates: a stacked
+   * rearrangement is addressed per cell by the map builder, and declaring it
+   * as an animation makes every cell that lands on the first block cycle
+   * through the rest while its neighbours sit still.
+   */
   frames?: number;
   /** Milliseconds per water frame. */
   frameMs?: number;
@@ -49,11 +61,12 @@ export interface TiledTileset {
   }[];
 }
 
-/** A Tiled tileset for a 47-tile blob sheet (one block per water frame stacked below). */
+/** A Tiled tileset for a 47-tile blob sheet, with `blocks` of them stacked below. */
 export const blobTileset = ({
   name,
   image,
   tile = 16,
+  blocks = 1,
   frames = 1,
   frameMs = 400,
 }: BlobTilesetOptions): TiledTileset => {
@@ -76,10 +89,10 @@ export const blobTileset = ({
     tiledversion: "1.11.0",
     image,
     imagewidth: BLOB_COLUMNS * tile,
-    imageheight: BLOB_ROWS * tile * frames,
+    imageheight: BLOB_ROWS * tile * blocks,
     tilewidth: tile,
     tileheight: tile,
-    tilecount: BLOB_TILE_COUNT * frames,
+    tilecount: BLOB_TILE_COUNT * blocks,
     columns: BLOB_COLUMNS,
     margin: 0,
     spacing: 0,
