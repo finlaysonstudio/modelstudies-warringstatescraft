@@ -6,7 +6,15 @@ import type { StageBeat, StageScript } from "../lib/types";
 import { loadStageManifest } from "./assets";
 import type { StagePlan } from "./beats";
 import { DIRECTION_CAPTIONS } from "./catalog";
-import { OverworldScene, VIEW_HEIGHT, VIEW_WIDTH } from "./OverworldScene";
+import { KIND_LABELS, legendFor } from "./legend";
+import {
+  OverworldScene,
+  VIEW_HEIGHT,
+  VIEW_WIDTH,
+  ZOOM_STEP,
+  type StagePick,
+  type StageZoom,
+} from "./OverworldScene";
 import { DEFAULT_STAGE_SET, stageSet, type StageSetId } from "./sets";
 
 export interface StageProps {
@@ -23,7 +31,10 @@ export interface StageProps {
   className?: string;
   /** the game canvas in logical pixels (defaults to the watch page's 960 × 400) */
   view?: { width: number; height: number };
-  /** drag pans and the wheel zooms; the camera opens on the whole map */
+  /**
+   * The explorer: scrolling pans, the zoom control shows, every feature on
+   * the map is clickable, and the camera opens on the whole country.
+   */
   interactive?: boolean;
   /** whether the camera flies to each beat (default true) */
   follow?: boolean;
@@ -81,6 +92,7 @@ export function Stage({
 }: StageProps) {
   const set = stageSet(setId);
   const host = useRef<HTMLDivElement>(null);
+  const frame = useRef<HTMLElement>(null);
   const sceneRef = useRef<OverworldScene | null>(null);
   const queued = useRef(new Set<string>());
   const [status, setStatus] = useState<Status>({ phase: "loading" });
@@ -89,6 +101,8 @@ export function Stage({
     plan: StagePlan;
   } | null>(null);
   const [idle, setIdle] = useState(true);
+  const [pick, setPick] = useState<StagePick | null>(null);
+  const [zoom, setZoom] = useState<StageZoom | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,6 +110,8 @@ export function Stage({
     queued.current = new Set();
     setStatus({ phase: "loading" });
     setCurrent(null);
+    setPick(null);
+    setZoom(null);
     void loadStageManifest({ set })
       .then((manifest) => {
         if (cancelled || !host.current) return;
@@ -123,6 +139,12 @@ export function Stage({
           },
           onIdle: () => {
             if (!cancelled) setIdle(true);
+          },
+          onPick: (picked) => {
+            if (!cancelled) setPick(picked);
+          },
+          onZoom: (state) => {
+            if (!cancelled) setZoom(state);
           },
           onError: (message) => {
             if (!cancelled) setStatus({ phase: "error", message });
@@ -175,12 +197,44 @@ export function Stage({
     if (sceneRef.current) sceneRef.current.follow = follow;
   }, [follow, status]);
 
+  const close = (): void => {
+    sceneRef.current?.clearPick();
+    setPick(null);
+  };
+
+  // clicking away closes what is open: the scene reports bare ground as
+  // nothing picked, and anything outside the stage is handled here
+  useEffect(() => {
+    if (!pick) return;
+    const onPointerDown = (event: PointerEvent): void => {
+      const target = event.target;
+      if (target instanceof Node && frame.current?.contains(target)) return;
+      close();
+    };
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === "Escape") close();
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [pick]);
+
   const captions = current
     ? captionOf(current.beat, names, seatNames, language)
     : [];
+  const note = pick
+    ? legendFor(
+        pick.kind,
+        pick.kind === "place" ? (pick.marker ?? "region") : pick.id,
+      )
+    : null;
 
   return (
     <section
+      ref={frame}
       aria-label="Stage"
       className={clsx(
         "relative overflow-hidden rounded-sm border border-white/10 bg-[#0b0d10]",
@@ -243,6 +297,100 @@ export function Stage({
           )}
         </div>
       )}
+      {interactive && zoom && (
+        <div className="absolute right-3 bottom-3 flex w-10 flex-col overflow-hidden rounded-sm border border-white/10 bg-black/75">
+          <ZoomButton
+            label="+"
+            title="Zoom in"
+            disabled={zoom.zoom >= zoom.max - EPSILON}
+            onClick={() => sceneRef.current?.zoomBy(ZOOM_STEP)}
+          />
+          <p className="border-y border-white/10 py-1 text-center font-plex-mono text-[10px] text-zinc-400">
+            {(zoom.zoom / zoom.min).toFixed(1)}×
+          </p>
+          <ZoomButton
+            label="−"
+            title="Zoom out"
+            disabled={zoom.zoom <= zoom.min + EPSILON}
+            onClick={() => sceneRef.current?.zoomBy(1 / ZOOM_STEP)}
+          />
+          <ZoomButton
+            label="fit"
+            title="The whole map"
+            small
+            className="border-t border-white/10"
+            onClick={() => sceneRef.current?.zoomToFit()}
+          />
+        </div>
+      )}
+      {pick && note && (
+        <div className="absolute top-10 left-3 max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3">
+          <div className="flex items-start justify-between gap-x-3">
+            <p className="font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
+              {KIND_LABELS[pick.kind][language]}
+              {pick.kind === "place" ? ` · ${note.title[language]}` : ""}
+            </p>
+            <button
+              type="button"
+              onClick={close}
+              aria-label={language === "zh" ? "关闭" : "Close"}
+              className="-mt-1 cursor-pointer px-1 leading-none text-zinc-500 hover:text-white"
+            >
+              ×
+            </button>
+          </div>
+          <h3 className="mt-1 text-sm font-medium text-white">
+            {pick.kind === "place"
+              ? (names[pick.id] ?? pick.id)
+              : note.title[language]}
+          </h3>
+          <p className="mt-2 text-xs text-pretty text-zinc-300">
+            {note.what[language]}
+          </p>
+          <p className="mt-2 text-xs text-pretty text-zinc-500">
+            {note.history[language]}
+          </p>
+        </div>
+      )}
     </section>
+  );
+}
+
+/** floating-point slack, so a button at the stop reads as at the stop */
+const EPSILON = 1e-6;
+
+function ZoomButton({
+  label,
+  title,
+  onClick,
+  disabled = false,
+  small = false,
+  className,
+}: {
+  label: string;
+  title: string;
+  onClick: () => void;
+  disabled?: boolean;
+  small?: boolean;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      onClick={onClick}
+      disabled={disabled}
+      className={clsx(
+        "py-1 text-center font-plex-mono leading-none",
+        className,
+        small ? "text-[9px] tracking-wide uppercase" : "text-sm",
+        disabled
+          ? "cursor-not-allowed text-zinc-700"
+          : "cursor-pointer text-zinc-300 hover:bg-white/10 hover:text-white",
+      )}
+    >
+      {label}
+    </button>
   );
 }

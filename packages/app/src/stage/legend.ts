@@ -1,0 +1,516 @@
+import type { Language } from "../lib/types";
+import type { Decor, Marker, Terrain, Water } from "./catalog";
+
+/**
+ * What the map means. Every ground the geography paints, every piece of set
+ * dressing it scatters, and every kind of place it marks carries a note: what
+ * the thing is on the map, and how it fits the country the chronicle is set
+ * in (c. 250 BCE, the Warring States). The explorer reads it when a reader
+ * clicks the map.
+ *
+ * Grass is deliberately absent. It is the ground everything else is laid over
+ * rather than a feature, so clicking it closes whatever was open.
+ *
+ * The notes are written, not translated: the two languages say the same thing
+ * about the same object, but neither is a rendering of the other.
+ */
+
+export type Localized = Record<Language, string>;
+
+export interface LegendNote {
+  /** what to call it, in the reader's language */
+  title: Localized;
+  /** what it is on this map */
+  what: Localized;
+  /** how it fits the period */
+  history: Localized;
+}
+
+/** The four things a reader can pick out of the map. */
+export type LegendKind = "terrain" | "water" | "decor" | "place";
+
+/** What to call each of them above the note. */
+export const KIND_LABELS: Record<LegendKind, Localized> = {
+  terrain: { en: "terrain", zh: "地形" },
+  water: { en: "water", zh: "水" },
+  decor: { en: "landmark", zh: "景物" },
+  place: { en: "place", zh: "地名" },
+};
+
+/** The ground the whole map is laid on; picking it closes the panel. */
+export const BARE_GROUND = "grass";
+
+export const TERRAIN_NOTES: Partial<Record<Terrain, LegendNote>> = {
+  tallgrass: {
+    title: { en: "Tall grass", zh: "茂草" },
+    what: {
+      en: "Waist-high grass and reed on the wet bottomland of the river plains.",
+      zh: "河原低湿之地，草苇没膝。",
+    },
+    history: {
+      en: "The flood plains carried coarse grass no plough had taken. It gave thatch and grazing, slowed a column to a crawl, and hid an ambush well enough that campaign accounts name it.",
+      zh: "泛滥之原，未经耕垦。可刈以为苫、以牧马，行军其中甚缓，亦足伏兵。",
+    },
+  },
+  scrub: {
+    title: { en: "Scrub", zh: "灌丛" },
+    what: {
+      en: "Thorn and low brush on the dry margins where the rainfall falls away.",
+      zh: "雨少之地，荆棘丛生。",
+    },
+    history: {
+      en: "The band between farmed and herded country. Poor for grain, fair for goats and horses, and the ground a frontier wall was built along rather than through.",
+      zh: "农牧之交。不宜五谷，可牧羊马，长城多循此界而筑。",
+    },
+  },
+  loess: {
+    title: { en: "Loess", zh: "黄土" },
+    what: {
+      en: "Wind-laid yellow silt, cut into terraces and gullies.",
+      zh: "风积黄壤，沟壑台地相间。",
+    },
+    history: {
+      en: "The soil of the north-west. Deep, soft, and workable with the simplest tools, it let the western states feed large armies. It is also the silt that turned the River yellow and piled its bed above the plain.",
+      zh: "西北之壤。土松易耕，故西方之国足以养兵。其土入水，即大河所以浊而善溢者。",
+    },
+  },
+  steppe: {
+    title: { en: "Steppe", zh: "草原" },
+    what: {
+      en: "Open short grass beyond the northern walls.",
+      zh: "北垣之外，旷野短草。",
+    },
+    history: {
+      en: "Horse country. The mounted peoples of the north raided it and lived off it, and it is the reason a northern court took up riding dress and mounted archery against the advice of its own ministers.",
+      zh: "牧马之地。北狄游骑出没其间，赵武灵王胡服骑射之由此起。",
+    },
+  },
+  road: {
+    title: { en: "Post road", zh: "驰道" },
+    what: {
+      en: "Rammed-earth highway between courts, with stations along it.",
+      zh: "夯土大道，沿途置驿。",
+    },
+    history: {
+      en: "A state's reach was measured in days of march. Couriers, grain carts, and columns all moved on these, and a court that could not keep its roads could not tax the country at the far end of them.",
+      zh: "国力所及，以行程日数计。传车、粮车、行伍皆由之；道不治则远地之赋不入。",
+    },
+  },
+  cobble: {
+    title: { en: "Paved way", zh: "石道" },
+    what: {
+      en: "Stone and gravel surfacing inside a city and at the approaches to a gate or ford.",
+      zh: "城中及关津之口，铺石砾以为路。",
+    },
+    history: {
+      en: "Cart traffic cut ruts a hand deep in earth within a season. Where the traffic could not be moved, the surface was.",
+      zh: "车辙经时即深数寸。不能徙其车，则易其地。",
+    },
+  },
+  forest: {
+    title: { en: "Woodland", zh: "林" },
+    what: {
+      en: "Mixed broadleaf standing timber.",
+      zh: "杂木成林。",
+    },
+    history: {
+      en: "Timber was a fiscal resource: chariots, siege towers, palace beams, and coffins all came out of it, and writers of the period already complain of hills cut bare and grazed after.",
+      zh: "材木亦国用：车乘、攻具、宫室、棺椁皆取于此。时人已叹山林濯濯、牛羊继之。",
+    },
+  },
+  bamboo: {
+    title: { en: "Bamboo", zh: "竹" },
+    what: {
+      en: "Southern stands of standing cane.",
+      zh: "南方竹林。",
+    },
+    history: {
+      en: "The most useful plant in the country: crossbow stocks and arrow shafts, scaffolding and water pipe, and the strips on which every register, law, and treaty was written and tied.",
+      zh: "用之至广：弩臂矢笴、架木水管，而简牍所以书律令图籍者，皆出于竹。",
+    },
+  },
+  hills: {
+    title: { en: "Hills", zh: "丘陵" },
+    what: {
+      en: "Low rolling swell above the plain.",
+      zh: "平野之上，冈阜起伏。",
+    },
+    history: {
+      en: "The ground a defensive line takes and a tomb is raised on. Terraces climbed the slopes where the plain below was already under the register.",
+      zh: "守则据之，葬则封之。平田既尽，则辟坡为梯田。",
+    },
+  },
+  mountain: {
+    title: { en: "Range", zh: "山" },
+    what: {
+      en: "A lesser chain: the wall between one basin and the next.",
+      zh: "小山连绵，隔盆地而为界。",
+    },
+    history: {
+      en: "Armies did not fight for peaks. They fought for the few defiles through them, which is why a pass in a range was worth more than the range.",
+      zh: "兵不争峰，而争其隘。故一关之得失，重于万山。",
+    },
+  },
+  qinling: {
+    title: { en: "The Qinling", zh: "秦岭" },
+    what: {
+      en: "The folded southern wall dividing the loess north from the warm, wet south.",
+      zh: "南障重岭，分黄土之北与温湿之南。",
+    },
+    history: {
+      en: "Crossed by plank roads pegged into the cliff faces, a few carts wide and cut at need. Those galleries are the whole connection between the western basin and the vale beyond, and every campaign south of the range turns on them.",
+      zh: "栈道凿石架木，缘崖而行，宽仅容车，急则焚之。关中与汉中相通者，唯此而已，南征之成败系焉。",
+    },
+  },
+  taihang: {
+    title: { en: "The Taihang", zh: "太行山" },
+    what: {
+      en: "The eastern scarp dividing the uplands from the great plain.",
+      zh: "东向陡崖，隔高原与大平原。",
+    },
+    history: {
+      en: "A wall four hundred li long broken by a handful of gorge routes. The uplands on top of it command everything below, which is why the surrender of one upland commandery drew two great states into the worst battle of the age.",
+      zh: "绵亘数百里，唯数陉可通。据其上则俯瞰平原，故上党之降，遂致两强大战。",
+    },
+  },
+  shu: {
+    title: { en: "The Shu crags", zh: "蜀山" },
+    what: {
+      en: "The broken western country walling in the far basin.",
+      zh: "西方崇山，环抱远盆。",
+    },
+    history: {
+      en: "Proverbially hard to enter. The state that finally took the basin behind them gained an irrigated plain that fed its armies for a century and a river road to float the grain down.",
+      zh: "蜀道之难，自古而然。既取其地，则得沃野灌溉之利，百年之粮，且可浮江而下。",
+    },
+  },
+  marsh: {
+    title: { en: "Marsh", zh: "沼泽" },
+    what: {
+      en: "Standing water and reed bed.",
+      zh: "积水生苇之地。",
+    },
+    history: {
+      en: "Fish, fowl, reed, and in places salt, all of it outside the register. Chariots could not enter, so the marsh sheltered whoever wished not to be counted, and a court that drained one gained fields and taxpayers together.",
+      zh: "有鱼鳖蒲苇，或产盐，皆不入籍。车不能入，故逃役者匿焉；一旦泄水成田，则地与民并得。",
+    },
+  },
+  field: {
+    title: { en: "Cropland", zh: "田" },
+    what: {
+      en: "Ploughed and ditched fields under millet, wheat, or rice.",
+      zh: "已耕之田，沟洫具备，种黍麦稻。",
+    },
+    history: {
+      en: "The unit the whole state apparatus is built on. Fields were measured, entered on the register, taxed by area, and granted outright for heads taken in battle: land was the currency in which military merit was paid.",
+      zh: "国之根本。田有顷亩，著于版籍，按亩而税，以军功赐田：功名之酬，尽在于此。",
+    },
+  },
+};
+
+export const WATER_NOTES: Record<Water, LegendNote> = {
+  river: {
+    title: { en: "River", zh: "川" },
+    what: {
+      en: "A running channel: boundary, highway, and works all at once.",
+      zh: "流水之道，既为疆界，亦为舟路、灌溉之源。",
+    },
+    history: {
+      en: "Rivers set where a campaign could go, because the crossings were few and known. The same channels were cut for irrigation on a scale that made whole basins arable, and at the extreme a dyke was opened deliberately against a city.",
+      zh: "津渡有数，故行军之路由水而定。开渠溉田，可使一方尽为沃壤；至于决堤灌城，则兵之酷者。",
+    },
+  },
+  sea: {
+    title: { en: "Sea", zh: "海" },
+    what: {
+      en: "The eastern water and its shallow gulf.",
+      zh: "东海及其浅湾。",
+    },
+    history: {
+      en: "Salt and fish. The eastern court's oldest revenue came off this shore, boiled out of sea water in iron pans, and the argument over whether a state should hold that trade itself begins here.",
+      zh: "鱼盐之利。东国之富，始于煮海为盐；盐铁当官当民之议，肇端于此。",
+    },
+  },
+};
+
+export const DECOR_NOTES: Record<Decor, LegendNote> = {
+  pine: {
+    title: { en: "Pines", zh: "松" },
+    what: {
+      en: "Standing pine, usually planted rather than wild.",
+      zh: "松树，多为人植。",
+    },
+    history: {
+      en: "Pine and cypress were set at graves and altars, and cut for coffins and siege engines. A tree that keeps its colour through winter was already the stock emblem of someone who does not change with the season.",
+      zh: "松柏植于墓社，材以为棺椁、攻具。岁寒不凋，古以喻士之不移。",
+    },
+  },
+  bamboo: {
+    title: { en: "Bamboo stand", zh: "竹丛" },
+    what: {
+      en: "A clump of cane beside a house or watercourse.",
+      zh: "宅旁水边之竹。",
+    },
+    history: {
+      en: "A household asset rather than scenery: arrow shafts, baskets, pipe, and the writing strips a clerk needed by the bundle.",
+      zh: "非徒景物，乃家之财：矢笴、筐器、水管，及吏所需之简牍，皆取焉。",
+    },
+  },
+  beacon: {
+    title: { en: "Beacon tower", zh: "烽燧" },
+    what: {
+      en: "A rammed-earth mound carrying a brazier and a woodpile.",
+      zh: "夯土为台，上置薪火。",
+    },
+    history: {
+      en: "Set in a line along a frontier within sight of one another. Smoke by day and fire by night carried word of a raid to the court faster than any rider could.",
+      zh: "沿边列置，相望而设。昼举烟，夜举火，警报之速，过于驿骑。",
+    },
+  },
+  tumulus: {
+    title: { en: "Burial mound", zh: "冢" },
+    what: {
+      en: "A raised earth mound over a tomb.",
+      zh: "封土为丘，下有墓室。",
+    },
+    history: {
+      en: "Rulers and ministers of this age built high mounds with approach ramps and pits for chariots and horses. The mound is a lineage's standing claim on the ground around it.",
+      zh: "时之君卿，封土甚高，设墓道，瘗车马。丘存则族之有其地明矣。",
+    },
+  },
+  stele: {
+    title: { en: "Boundary stone", zh: "界石" },
+    what: {
+      en: "An upright cut stone at a field corner, a road, or a covenant site.",
+      zh: "立石于田角、道旁、盟所。",
+    },
+    history: {
+      en: "A register is only as good as the stone that fixes the corner it describes. Moving one was theft of a kind the law named specifically.",
+      zh: "版籍所载，恃界石以定。移石侵地，律有专条。",
+    },
+  },
+  boat: {
+    title: { en: "River boat", zh: "舟" },
+    what: {
+      en: "A flat-bottomed craft working a river or the shore.",
+      zh: "平底之舟，行于江河海滨。",
+    },
+    history: {
+      en: "Water carried what a road could not. Grain that would have taken a month by cart came down in days, and the southern states kept standing boat corps as other states kept chariots.",
+      zh: "陆运一月之粮，浮水数日可至。南国有舟师，犹北国之有车乘。",
+    },
+  },
+  horses: {
+    title: { en: "Horse herd", zh: "马群" },
+    what: {
+      en: "Grazing stock on open ground.",
+      zh: "旷地牧马。",
+    },
+    history: {
+      en: "The north-western and steppe margins were the stud country every court depended on. A state's strength was still quoted in thousands of four-horse chariots, and after the northern reform in mounted archers as well.",
+      zh: "西北及塞下为牧地，诸侯资之。国之强弱，犹以千乘计；胡服之后，复以骑射计。",
+    },
+  },
+  grove: {
+    title: { en: "Orchard", zh: "果林" },
+    what: {
+      en: "Planted trees: mulberry above all, with jujube, chestnut, and peach.",
+      zh: "所植之木，桑为先，兼有枣、栗、桃。",
+    },
+    history: {
+      en: "Mulberry fed the silkworms, and silk was tax, tribute, gift, and in practice currency. An orchard was a taxable asset, which is exactly why burning one was a recognized act of war.",
+      zh: "桑以饲蚕，帛为赋、为贡、为币。果林入税，故伐桑焚林，兵事之常。",
+    },
+  },
+  rocks: {
+    title: { en: "Outcrop", zh: "岩" },
+    what: {
+      en: "Bare stone standing out of the ground.",
+      zh: "裸露之石。",
+    },
+    history: {
+      en: "Quarried for wall footings, mill stones, and the standard weights a market officer kept. Where no stone was set, an outcrop served as the boundary it marked.",
+      zh: "采以为墙基、碾磑、市官之权衡。无立石处，则以自然之岩为界。",
+    },
+  },
+};
+
+/**
+ * Place kinds, keyed by the marker the map draws (a place with no marker is a
+ * `region`: a named country rather than a settlement).
+ */
+export const MARKER_NOTES: Record<Marker | "region", LegendNote> = {
+  court: {
+    title: { en: "Court", zh: "都" },
+    what: {
+      en: "The walled seat of a ruling house.",
+      zh: "诸侯之城，宗庙所在。",
+    },
+    history: {
+      en: "A capital of this age is two enclosures: an inner city holding the palace and the ancestral temple, and an outer city of markets, workshops, and the households the register counts. The archives, the granaries, and the mint are all inside the wall.",
+      zh: "时之国都，内城有宫室宗庙，外郭有市肆工坊、编户之民。图籍、仓廪、铸钱之官，皆在城中。",
+    },
+  },
+  town: {
+    title: { en: "Town", zh: "邑" },
+    what: {
+      en: "A walled settlement held under a court.",
+      zh: "属于国都之城邑。",
+    },
+    history: {
+      en: "Where the county replaced the granted fief: a governor appointed from the capital and dismissed from it, with the town's households entered on the register rather than owed to a lord.",
+      zh: "废封建而置县：令长由中央除授，亦由中央免之；民著于籍，不属私门。",
+    },
+  },
+  pass: {
+    title: { en: "Pass", zh: "关" },
+    what: {
+      en: "A gated defile through a range.",
+      zh: "山间隘口，设关而守。",
+    },
+    history: {
+      en: "Holding a pass substituted for holding a border. It is where a state searched travellers, checked their permits, taxed the goods, and closed the country outright when it chose to.",
+      zh: "有关则不必守境。稽察行人，验其传符，征其货税，闭关则国自绝于外。",
+    },
+  },
+  ford: {
+    title: { en: "Ford", zh: "津" },
+    what: {
+      en: "A crossing place on a river.",
+      zh: "可渡之处。",
+    },
+    history: {
+      en: "Crossings were few and every general knew them, so the route of a campaign was chosen by them. A garrison sitting on a ford was worth an army in the open field.",
+      zh: "津渡有限，将帅尽知，故进兵之路由此而定。守津之卒，胜于野战之师。",
+    },
+  },
+  field: {
+    title: { en: "Field station", zh: "田官" },
+    what: {
+      en: "Marked cropland held and worked under the register.",
+      zh: "著籍之田，官为经理。",
+    },
+    history: {
+      en: "Land measured by area, taxed by area, and granted for military merit. The clerk who walked the boundary mattered as much to the state's revenue as the peasant who ploughed it.",
+      zh: "计亩而税，以功赐田。行界之吏，于国用之重，不减耕者。",
+    },
+  },
+  works: {
+    title: { en: "Works", zh: "工" },
+    what: {
+      en: "A state work site: waterworks, walls, or a foundry.",
+      zh: "官营工地：水利、城垣、冶铸。",
+    },
+    history: {
+      en: "Raised by corvée. The same conscript gangs that cut a canal one season built a frontier wall the next, and the labour owed was recorded against a household exactly as the grain was.",
+      zh: "皆以徭役成之。今岁凿渠，明岁筑塞，力役之数，与租谷同著于籍。",
+    },
+  },
+  harbour: {
+    title: { en: "Harbour", zh: "港" },
+    what: {
+      en: "A shore anchorage for coastal craft.",
+      zh: "海滨泊舟之所。",
+    },
+    history: {
+      en: "Traffic hugged the coast rather than crossing open water. Salt, fish, and timber moved along the shore, and a harbour was as much a customs post as a haven.",
+      zh: "舟行循岸，不越大洋。盐鱼材木由此转输，港亦榷税之地。",
+    },
+  },
+  camp: {
+    title: { en: "Camp", zh: "营" },
+    what: {
+      en: "A field encampment, ditched and palisaded.",
+      zh: "野营，掘沟立栅。",
+    },
+    history: {
+      en: "The army of this age is a conscript host counted in hundreds of thousands, and it fortifies the ground it stands on every night. A campaign is mostly two such camps facing each other while the grain behind them runs down.",
+      zh: "时之兵，动辄数十万，宿则营垒必固。两军相持，实相待其粮尽而已。",
+    },
+  },
+  hall: {
+    title: { en: "Hall", zh: "堂" },
+    what: {
+      en: "A meeting hall: the seat of a council or a school, not of a state.",
+      zh: "议事之所，属会盟或学派，非一国之都。",
+    },
+    history: {
+      en: "Bodies without land still had somewhere to sit. A league's hall or a school's gate could summon envoys from courts that would not receive one another.",
+      zh: "无土之众，亦有其所。盟府学门，能致诸国之使，虽其国不相往来。",
+    },
+  },
+  saltern: {
+    title: { en: "Saltern", zh: "盐场" },
+    what: {
+      en: "Evaporation pans and boiling sheds on the shore.",
+      zh: "海滨盐池煮盐之场。",
+    },
+    history: {
+      en: "Sea water boiled down in iron pans. Salt is the one commodity every household must buy, which is what makes it the first thing a state proposes to sell itself.",
+      zh: "以铁釜煮海。盐者家家必市之物，故国之榷利，未有不自盐始者。",
+    },
+  },
+  market: {
+    title: { en: "Market", zh: "市" },
+    what: {
+      en: "The enclosed market quarter of a city.",
+      zh: "城中之市，有垣有门。",
+    },
+    history: {
+      en: "Markets were walled, opened and closed by drum, watched by an officer with standard weights, and taxed at the gate. The great merchant houses of the age grew up inside them, wealthy enough to lend to courts.",
+      zh: "市有墙垣，鼓声启闭，市官掌其权衡，入门而税。巨贾生于其中，其富足以贷于诸侯。",
+    },
+  },
+  academy: {
+    title: { en: "Academy", zh: "学宫" },
+    what: {
+      en: "A school of scholars kept at a court's expense.",
+      zh: "国养学士之所。",
+    },
+    history: {
+      en: "Stipends and rank without office, on the condition that the holders argue policy where the ruler could hear it. Rival schools sat in the same compound and their disputes are much of what survives of the period's thought.",
+      zh: "受禄赐爵而不任职，惟议国事以闻于君。诸家并处，其争辩即百家之言所由传。",
+    },
+  },
+  altar: {
+    title: { en: "Altar", zh: "社" },
+    what: {
+      en: "The altar of soil and grain: a state's own existence, in one place.",
+      zh: "社稷之坛，国之所以为国。",
+    },
+    history: {
+      en: "To extinguish a state was to level its altar and carry off what stood on it. The tripods of the old royal house held the same relation to the realm, which is why asking their weight was treason rather than curiosity.",
+      zh: "灭国者夷其社，迁其重器。九鼎之于天下亦然，故问鼎轻重，非问也，僭也。",
+    },
+  },
+  weir: {
+    title: { en: "Weir", zh: "堰" },
+    what: {
+      en: "A dam or sluice thrown across a channel.",
+      zh: "横截水道之坝闸。",
+    },
+    history: {
+      en: "The great works of the age are weirs and the canals they feed, and they raised harvests enough to decide which states could field armies. A weir is also the fastest way to drown a province, and both uses are on the record.",
+      zh: "时之大工，堰渠而已，成则岁入倍增，足以决国之强弱。然启闭之间，亦可沉一方之地：二者皆见于史。",
+    },
+  },
+  region: {
+    title: { en: "Region", zh: "域" },
+    what: {
+      en: "A named country: a stretch of land rather than a settlement.",
+      zh: "地域之名，非城邑。",
+    },
+    history: {
+      en: "Some of these names are older than any state now holding them and outlast the ones that follow. A court can be moved and a wall rebuilt; the name of the country between two ranges tends to stay where it is.",
+      zh: "其名或先于今之诸侯，亦后于将来之国。都可迁，城可改，而两山之间地名不易。",
+    },
+  },
+};
+
+/** The note for one picked thing, or null when nothing is said about it. */
+export const legendFor = (kind: LegendKind, id: string): LegendNote | null => {
+  if (kind === "terrain") return TERRAIN_NOTES[id as Terrain] ?? null;
+  if (kind === "water") return WATER_NOTES[id as Water] ?? null;
+  if (kind === "decor") return DECOR_NOTES[id as Decor] ?? null;
+  return MARKER_NOTES[id as Marker | "region"] ?? null;
+};

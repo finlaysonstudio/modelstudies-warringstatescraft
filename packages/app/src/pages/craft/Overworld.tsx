@@ -346,9 +346,14 @@ export function Overworld() {
         </h1>
         <p className="mt-3 max-w-2xl text-pretty text-zinc-400">
           The whole known world of the chronicle on one map: every court, pass,
-          ford, river, and work a chapter names. Drag to pan and scroll to zoom,
-          then choreograph a move below — the panel plays any direction from the
-          same closed vocabulary the stage coder writes for recorded games.
+          ford, river, and work a chapter names. Drag or scroll to move the map;
+          pinch the trackpad, hold control and scroll, or press the zoom control
+          at its corner to move in and out. Click anything on it — a range, a
+          marsh, a saltern, a herd of horses — to read what it is and how it
+          fits the country; clicking it again, clicking bare grass, clicking
+          away from the map, or pressing Escape closes the note. Then
+          choreograph a move below: the panel plays any direction from the same
+          closed vocabulary the stage coder writes for recorded games.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           <ToggleGroup
@@ -398,7 +403,7 @@ export function Overworld() {
           interactive
           follow={follow}
           set={set.id}
-          eyebrow="Overworld · drag pans · scroll zooms"
+          eyebrow="Overworld · drag or scroll · pinch zooms · click to read"
         />
       </section>
 
