@@ -1,10 +1,12 @@
+import clsx from "clsx";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { BLOB_COLUMNS, BLOB_FULL, BLOB_ROWS } from "../../../art/vendor/blob";
 import { orientationOf, variantOf } from "../../../art/map/map";
 import { loadStageManifest } from "../../stage/assets";
 import type { StageAsset, StageFacing } from "../../stage/manifest";
+import { STAGE_SETS, stageSetOf } from "../../stage/sets";
 import {
   PATCH,
   islandShape,
@@ -17,15 +19,17 @@ import {
 // with the map's own rules and shown beside the prompt it was asked for. The
 // purchased packs are named nowhere and rendered nowhere: their licence keeps
 // them out of anything that travels, so what a reader sees here is ours.
+//
+// One art set at a time, chosen by `?set=`: a set is its own resolution, so
+// every card draws at the tile the manifest names rather than at a constant.
 
-const TILE = 16;
 const SHAPE = islandShape();
 const INDEXES = patchIndexes(SHAPE);
 const FACINGS: StageFacing[] = ["down", "left", "right", "up"];
-/** the field a marker stands in, in tiles (wide enough to hold a 48 px marker) */
+/** the field a marker stands in, in tiles (wide enough to hold a 3-tile marker) */
 const STAGE_TILES = { width: 9, height: 5 };
-/** the field the four facings walk in, and the gap between them, in pixels */
-const STRIP = { width: 11 * 16, height: 3 * 16, gap: 8 };
+/** the field the four facings walk in, in tiles, and the gap between them */
+const STRIP_TILES = { width: 11, height: 3, gap: 0.5 };
 
 type LoadState =
   | { phase: "loading" }
@@ -33,23 +37,29 @@ type LoadState =
   | {
       phase: "ready";
       showcase: Showcase;
+      /** the pixels one tile of this set is drawn at */
+      tile: number;
       /** the beds a card stands its art on */
       grass?: StageAsset;
       river?: StageAsset;
     };
 
 export function Tiles() {
+  const [params, setParams] = useSearchParams();
+  const set = stageSetOf(params.get("set"));
   const [state, setState] = useState<LoadState>({ phase: "loading" });
 
   useEffect(() => {
     let cancelled = false;
+    setState({ phase: "loading" });
     void (async () => {
       try {
-        const manifest = await loadStageManifest();
+        const manifest = await loadStageManifest({ set });
         if (cancelled) return;
         setState({
           phase: "ready",
           showcase: showcaseOf(manifest),
+          tile: manifest.tile,
           grass: manifest.assets["terrain.grass"],
           river: manifest.assets["water.river"],
         });
@@ -65,24 +75,12 @@ export function Tiles() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [set.id]);
 
-  if (state.phase === "loading") {
-    return (
-      <p className="px-6 pt-16 font-plex-mono text-xs text-zinc-600 sm:px-16">
-        loading…
-      </p>
-    );
-  }
-  if (state.phase === "error") {
-    return (
-      <p className="px-6 pt-16 font-plex-mono text-xs text-red-400 sm:px-16">
-        failed to load the art manifest: {state.message}
-      </p>
-    );
-  }
-
-  const { showcase, grass, river } = state;
+  const showcase = state.phase === "ready" ? state.showcase : null;
+  const tile = state.phase === "ready" ? state.tile : set.tile;
+  const grass = state.phase === "ready" ? state.grass : undefined;
+  const river = state.phase === "ready" ? state.river : undefined;
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
@@ -106,24 +104,65 @@ export function Tiles() {
           Each patch is autotiled here by the same rule the map uses, so what a
           card shows is the transition rather than a swatch.
         </p>
-        <p className="mt-4 font-plex-mono text-xs text-zinc-500">
-          <span className="text-zinc-200">{showcase.count}</span> ids ·{" "}
-          <span className="text-zinc-200">{showcase.generations}</span>{" "}
-          generations, failed attempts included · pixellab
+        <div className="mt-5 flex flex-wrap gap-2">
+          {STAGE_SETS.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() =>
+                setParams(
+                  (next) => {
+                    next.set("set", option.id);
+                    return next;
+                  },
+                  { replace: true },
+                )
+              }
+              className={clsx(
+                "cursor-pointer rounded-sm border px-3 py-1.5 font-plex-mono text-xs transition-colors",
+                option.id === set.id
+                  ? "border-brand-terminal/40 text-brand-terminal"
+                  : "border-white/10 text-zinc-500 hover:border-white/20 hover:text-zinc-300",
+              )}
+              aria-pressed={option.id === set.id}
+            >
+              {option.title}
+              <span className="ml-2 text-zinc-600">{option.tile} px</span>
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 max-w-2xl text-pretty text-sm text-zinc-500">
+          {set.blurb}
         </p>
+        {showcase && (
+          <p className="mt-4 font-plex-mono text-xs text-zinc-500">
+            <span className="text-zinc-200">{showcase.count}</span> ids ·{" "}
+            <span className="text-zinc-200">{showcase.generations}</span>{" "}
+            generations, failed attempts included · pixellab
+          </p>
+        )}
       </header>
 
-      {showcase.count === 0 && (
+      {state.phase === "loading" && (
+        <p className="mt-10 font-plex-mono text-xs text-zinc-600">loading…</p>
+      )}
+      {state.phase === "error" && (
+        <p className="mt-10 font-plex-mono text-xs text-red-400">
+          failed to load the art manifest: {state.message}
+        </p>
+      )}
+
+      {showcase?.count === 0 && (
         <p className="mt-10 text-sm text-zinc-400">
-          The period layer is not built. Run{" "}
+          The {showcase.own} layer is not built. Run{" "}
           <code className="font-plex-mono text-xs text-zinc-300">
-            npm run stage:period
+            npm run stage:{showcase.own}
           </code>
           .
         </p>
       )}
 
-      {showcase.sections.map((section) => (
+      {showcase?.sections.map((section) => (
         <section
           key={section.group}
           className="mt-14 scroll-mt-8"
@@ -143,11 +182,11 @@ export function Tiles() {
               return (
                 <Card key={asset.id} asset={asset}>
                   {section.group === "ground" ? (
-                    <GroundPatch asset={asset} bed={grass} />
+                    <GroundPatch asset={asset} bed={grass} tile={tile} />
                   ) : section.group === "figure" ? (
-                    <FigureStrip asset={asset} bed={bed} />
+                    <FigureStrip asset={asset} bed={bed} tile={tile} />
                   ) : (
-                    <MarkerPlot asset={asset} bed={bed} />
+                    <MarkerPlot asset={asset} bed={bed} tile={tile} />
                   )}
                 </Card>
               );
@@ -156,20 +195,27 @@ export function Tiles() {
         </section>
       ))}
 
-      {showcase.borrowed.length > 0 && (
+      {showcase && showcase.borrowed.length > 0 && (
         <section className="mt-14" aria-label="Not ours yet">
           <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
             Not ours yet
           </h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">
-            {showcase.borrowed.length} ids the stage may still ask for come from
-            a lower layer: the procedural fallback, or a purchased pack. The
-            packs are named here and rendered nowhere, because their licence
-            forbids their art travelling with a project like this one.
+            {showcase.borrowed.length} ids the stage may still ask for are not
+            drawn by this set; each is named below with the layer standing in
+            for it. A purchased pack is named here and rendered nowhere, because
+            its licence forbids that art travelling with a project like this
+            one.
           </p>
           <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-plex-mono text-[11px] text-zinc-600">
-            {showcase.borrowed.map((id) => (
-              <span key={id}>{id}</span>
+            {showcase.borrowed.map((borrowed) => (
+              <span key={borrowed.id}>
+                {borrowed.id}
+                <span className="text-zinc-700">
+                  {" "}
+                  ← {borrowed.from ?? "nothing"}
+                </span>
+              </span>
             ))}
           </p>
         </section>
@@ -272,74 +318,133 @@ function finishChips(finish?: Record<string, unknown>): string[] {
 }
 
 /** An island of one ground on the field the whole map is laid on. */
-function GroundPatch({ asset, bed }: { asset: StageAsset; bed?: StageAsset }) {
+function GroundPatch({
+  asset,
+  bed,
+  tile,
+}: {
+  asset: StageAsset;
+  bed?: StageAsset;
+  tile: number;
+}) {
   const image = useImage(asset.url);
   const ground = useImage(bed?.url);
   const water = asset.id.startsWith("water.");
   const tick = useTick(water ? 420 : 0);
   const isGround = asset.id === "terrain.grass";
   const draw = (ctx: CanvasRenderingContext2D) => {
-    if (ground) drawField(ctx, ground, PATCH.width, PATCH.height);
+    if (ground) drawField(ctx, ground, PATCH.width, PATCH.height, tile);
     if (!image || isGround) return;
-    const blocks = blocksIn(image);
+    const blocks = blocksIn(image, tile);
     const block = water ? tick % blocks : 0;
     for (let y = 0; y < PATCH.height; y += 1) {
       for (let x = 0; x < PATCH.width; x += 1) {
         const index = INDEXES[y][x];
         if (index < 0) continue;
-        drawTile(ctx, image, block * BLOB_COLUMNS * BLOB_ROWS + index, x, y);
+        drawTile(
+          ctx,
+          image,
+          block * BLOB_COLUMNS * BLOB_ROWS + index,
+          x,
+          y,
+          tile,
+        );
       }
     }
   };
   return (
     <Plot
-      width={PATCH.width * TILE}
-      height={PATCH.height * TILE}
+      width={PATCH.width * tile}
+      height={PATCH.height * tile}
       draw={draw}
-      deps={[image, ground, tick]}
+      deps={[image, ground, tick, tile]}
     />
   );
 }
 
 /** A marker or a piece of decor standing on the ground, as the map places it. */
-function MarkerPlot({ asset, bed }: { asset: StageAsset; bed?: StageAsset }) {
+function MarkerPlot({
+  asset,
+  bed,
+  tile,
+}: {
+  asset: StageAsset;
+  bed?: StageAsset;
+  tile: number;
+}) {
   const image = useImage(asset.url);
   const ground = useImage(bed?.url);
   const still = isWaterBed(bed);
-  const width = STAGE_TILES.width * TILE;
-  const height = STAGE_TILES.height * TILE;
+  const width = STAGE_TILES.width * tile;
+  const height = STAGE_TILES.height * tile;
+  // a marker of a lower layer is drawn at its own tile, so the card scales it
+  // the way the scene does
+  const scale = tile / (asset.tile || tile);
   const draw = (ctx: CanvasRenderingContext2D) => {
     if (ground) {
-      drawField(ctx, ground, STAGE_TILES.width, STAGE_TILES.height, still);
+      drawField(
+        ctx,
+        ground,
+        STAGE_TILES.width,
+        STAGE_TILES.height,
+        tile,
+        still,
+      );
     }
     if (!image) return;
+    const drawn = { width: image.width * scale, height: image.height * scale };
     ctx.drawImage(
       image,
-      Math.round((width - image.width) / 2),
-      Math.round((height - image.height) / 2),
+      Math.round((width - drawn.width) / 2),
+      Math.round((height - drawn.height) / 2),
+      Math.round(drawn.width),
+      Math.round(drawn.height),
     );
   };
   return (
-    <Plot width={width} height={height} draw={draw} deps={[image, ground]} />
+    <Plot
+      width={width}
+      height={height}
+      draw={draw}
+      deps={[image, ground, tile]}
+    />
   );
 }
 
 /** The four facings of one archetype, walking. */
-function FigureStrip({ asset, bed }: { asset: StageAsset; bed?: StageAsset }) {
+function FigureStrip({
+  asset,
+  bed,
+  tile,
+}: {
+  asset: StageAsset;
+  bed?: StageAsset;
+  tile: number;
+}) {
   const image = useImage(asset.url);
   const ground = useImage(bed?.url);
   const still = isWaterBed(bed);
   const tick = useTick(200);
   const meta = asset.sprite;
-  const frameWidth = meta?.frameWidth ?? TILE;
-  const frameHeight = meta?.frameHeight ?? TILE;
-  const { width, height, gap } = STRIP;
+  const scale = tile / (asset.tile || tile);
+  const frameWidth = (meta?.frameWidth ?? tile) * scale;
+  const frameHeight = (meta?.frameHeight ?? tile) * scale;
+  const width = STRIP_TILES.width * tile;
+  const height = STRIP_TILES.height * tile;
+  const gap = STRIP_TILES.gap * tile;
   const span = frameWidth * FACINGS.length + gap * (FACINGS.length - 1);
   const left = Math.round((width - span) / 2);
   const top = Math.round((height - frameHeight) / 2);
   const draw = (ctx: CanvasRenderingContext2D) => {
     if (ground) {
-      drawField(ctx, ground, width / TILE, height / TILE, still);
+      drawField(
+        ctx,
+        ground,
+        STRIP_TILES.width,
+        STRIP_TILES.height,
+        tile,
+        still,
+      );
     }
     if (!image || !meta) return;
     FACINGS.forEach((facing, column) => {
@@ -348,14 +453,14 @@ function FigureStrip({ asset, bed }: { asset: StageAsset; bed?: StageAsset }) {
       const frame = frames[tick % frames.length];
       ctx.drawImage(
         image,
-        (frame % meta.columns) * frameWidth,
-        Math.floor(frame / meta.columns) * frameHeight,
-        frameWidth,
-        frameHeight,
-        left + column * (frameWidth + gap),
+        (frame % meta.columns) * meta.frameWidth,
+        Math.floor(frame / meta.columns) * meta.frameHeight,
+        meta.frameWidth,
+        meta.frameHeight,
+        Math.round(left + column * (frameWidth + gap)),
         top,
-        frameWidth,
-        frameHeight,
+        Math.round(frameWidth),
+        Math.round(frameHeight),
       );
     });
   };
@@ -364,7 +469,7 @@ function FigureStrip({ asset, bed }: { asset: StageAsset; bed?: StageAsset }) {
       width={width}
       height={height}
       draw={draw}
-      deps={[image, ground, tick]}
+      deps={[image, ground, tick, tile]}
     />
   );
 }
@@ -417,9 +522,10 @@ function drawField(
   image: HTMLImageElement,
   width: number,
   height: number,
+  tile: number,
   still = false,
 ): void {
-  const blocks = blocksIn(image);
+  const blocks = blocksIn(image, tile);
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const block = still ? 0 : variantOf(x, y) % blocks;
@@ -429,6 +535,7 @@ function drawField(
         block * BLOB_COLUMNS * BLOB_ROWS + BLOB_FULL,
         x,
         y,
+        tile,
         still ? 0 : orientationOf(x, y),
       );
     }
@@ -436,8 +543,8 @@ function drawField(
 }
 
 /** How many blob blocks a loaded sheet stacks (a frame or a rearrangement each). */
-function blocksIn(image: HTMLImageElement): number {
-  return Math.max(1, Math.floor(image.height / (BLOB_ROWS * TILE)));
+function blocksIn(image: HTMLImageElement, tile: number): number {
+  return Math.max(1, Math.floor(image.height / (BLOB_ROWS * tile)));
 }
 
 function drawTile(
@@ -446,20 +553,21 @@ function drawTile(
   index: number,
   x: number,
   y: number,
+  tile: number,
   orientation = 0,
 ): void {
-  const sx = (index % BLOB_COLUMNS) * TILE;
-  const sy = Math.floor(index / BLOB_COLUMNS) * TILE;
-  const dx = x * TILE;
-  const dy = y * TILE;
+  const sx = (index % BLOB_COLUMNS) * tile;
+  const sy = Math.floor(index / BLOB_COLUMNS) * tile;
+  const dx = x * tile;
+  const dy = y * tile;
   if (!orientation) {
-    ctx.drawImage(image, sx, sy, TILE, TILE, dx, dy, TILE, TILE);
+    ctx.drawImage(image, sx, sy, tile, tile, dx, dy, tile, tile);
     return;
   }
   ctx.save();
-  ctx.translate(dx + TILE / 2, dy + TILE / 2);
+  ctx.translate(dx + tile / 2, dy + tile / 2);
   ctx.scale(orientation & 1 ? -1 : 1, orientation & 2 ? -1 : 1);
-  ctx.drawImage(image, sx, sy, TILE, TILE, -TILE / 2, -TILE / 2, TILE, TILE);
+  ctx.drawImage(image, sx, sy, tile, tile, -tile / 2, -tile / 2, tile, tile);
   ctx.restore();
 }
 

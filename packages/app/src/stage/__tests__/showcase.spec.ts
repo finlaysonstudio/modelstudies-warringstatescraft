@@ -20,6 +20,7 @@ const asset = (
   url: `/stage/${source}/${id}.png`,
   file: `${id}.png`,
   kind: id.startsWith("sprite.") ? "sprite" : "image",
+  tile: 16,
   width: 16,
   height: 16,
   pack: source === "period" ? "pixellab" : "test",
@@ -32,6 +33,8 @@ const manifestOf = (assets: StageAsset[]): StageManifest => ({
   assets: Object.fromEntries(assets.map((entry) => [entry.id, entry])),
   sources: ["fallback", "period"],
   vendor: false,
+  set: "period-16",
+  tile: 16,
 });
 
 describe("groupOf", () => {
@@ -85,11 +88,25 @@ describe("showcaseOf", () => {
     expect(showcaseOf(manifest).generations).toBe(10);
   });
 
-  it("names what the map still borrows rather than rendering it", () => {
+  it("names what the set still borrows, and the layer standing in", () => {
     const { borrowed } = showcaseOf(manifest);
-    expect(borrowed).toContain("terrain.road");
-    expect(borrowed).toContain("effect.fire");
-    expect(borrowed).not.toContain("terrain.grass");
+    const ids = borrowed.map((entry) => entry.id);
+    expect(ids).toContain("terrain.road");
+    expect(ids).toContain("effect.fire");
+    expect(ids).not.toContain("terrain.grass");
+    expect(borrowed.find((entry) => entry.id === "terrain.road")?.from).toBe(
+      "fallback",
+    );
+    // nothing answers an id no layer supplies
+    expect(
+      borrowed.find((entry) => entry.id === "effect.fire")?.from,
+    ).toBeNull();
+  });
+
+  it("shows the set the manifest names, and the layer that set draws", () => {
+    const showcase = showcaseOf(manifest);
+    expect(showcase.set.id).toBe("period-16");
+    expect(showcase.own).toBe("period");
   });
 });
 

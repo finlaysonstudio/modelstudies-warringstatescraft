@@ -27,8 +27,10 @@ import {
   type Marker,
 } from "./catalog";
 import type { StageAsset, StageManifest } from "./manifest";
+import { BASE_TILE, DEFAULT_STAGE_SET, stageSet } from "./sets";
 
-export const MAP_URL = "/stage/overworld.tmj";
+/** the map of the set the stage plays on unless a caller names another */
+export const MAP_URL = stageSet(DEFAULT_STAGE_SET).map;
 export const WATER_FRAME_STRIDE = 48;
 export const WATER_FRAME_MS = 400;
 export const VIEW_WIDTH = 960;
@@ -128,6 +130,13 @@ export class OverworldScene extends Phaser.Scene {
   private fitZoom = 1;
   private labels: { text: Phaser.GameObjects.Text; tier: LabelTier }[] = [];
   private labelZoom = 0;
+  /**
+   * The map's tile over the base tile. Every constant below is written for a
+   * sixteen-pixel world and multiplied by this, so a set drawn at a larger
+   * tile shows the same country at the same size rather than half of it twice
+   * as close.
+   */
+  private unit = 1;
   /** whether the camera flies to each beat; the explorer toggles it live */
   follow: boolean;
 
@@ -177,8 +186,18 @@ export class OverworldScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * How much to scale an asset drawn for a lower layer: a sixteen-pixel
+   * effect on a thirty-two-pixel map doubles, and art from the set's own
+   * layer is left alone.
+   */
+  private scaleOf(asset: StageAsset): number {
+    return (this.unit * BASE_TILE) / (asset.tile || BASE_TILE);
+  }
+
   create(): void {
     const map = this.make.tilemap({ key: "overworld" });
+    this.unit = map.tileWidth / BASE_TILE;
     const tilesets = map.tilesets
       .map((tileset) =>
         this.textures.exists(tileset.name)
@@ -213,10 +232,12 @@ export class OverworldScene extends Phaser.Scene {
     for (const object of (map.getObjectLayer("decor")?.objects ??
       []) as TiledPoint[]) {
       const id = object.type || object.class || "";
-      if (!this.textures.exists(id)) continue;
+      const asset = this.config.manifest.assets[id];
+      if (!asset || !this.textures.exists(id)) continue;
       this.add
         .image(object.x, object.y, id)
         .setOrigin(0.5, 0.85)
+        .setScale(this.scaleOf(asset))
         .setDepth(object.y);
     }
 
@@ -233,10 +254,12 @@ export class OverworldScene extends Phaser.Scene {
         ];
         const pool = candidates.filter((id) => this.textures.exists(id));
         const id = pool.length ? pool[hashOf(key) % pool.length] : undefined;
-        if (id) {
+        const asset = id ? this.config.manifest.assets[id] : undefined;
+        if (id && asset) {
           this.add
             .image(object.x, object.y, id)
             .setOrigin(0.5, 0.85)
+            .setScale(this.scaleOf(asset))
             .setDepth(object.y);
         }
         const tier: LabelTier =
@@ -244,9 +267,9 @@ export class OverworldScene extends Phaser.Scene {
             ? "major"
             : "minor";
         const text = this.add
-          .text(object.x, object.y + 4, label, {
+          .text(object.x, object.y + 4 * this.unit, label, {
             fontFamily: FONT,
-            fontSize: "8px",
+            fontSize: `${8 * this.unit}px`,
             color: "#f4f1ea",
             stroke: "#0b0d10",
             strokeThickness: 3,
@@ -259,7 +282,7 @@ export class OverworldScene extends Phaser.Scene {
         const text = this.add
           .text(object.x, object.y, label, {
             fontFamily: FONT,
-            fontSize: "10px",
+            fontSize: `${10 * this.unit}px`,
             fontStyle: "italic",
             color: "#cfc9b8",
             stroke: "#0b0d10",
@@ -279,11 +302,12 @@ export class OverworldScene extends Phaser.Scene {
       const point = this.places[home.home];
       const color = this.config.colors[seat];
       if (point && color !== undefined) {
+        const u = this.unit;
         this.add
-          .rectangle(point.x - 14, point.y - 18, 6, 4, color)
+          .rectangle(point.x - 14 * u, point.y - 18 * u, 6 * u, 4 * u, color)
           .setDepth(6000);
         this.add
-          .rectangle(point.x - 17, point.y - 16, 1, 8, 0x0b0d10)
+          .rectangle(point.x - 17 * u, point.y - 16 * u, 1 * u, 8 * u, 0x0b0d10)
           .setDepth(6000);
       }
     }
@@ -325,7 +349,7 @@ export class OverworldScene extends Phaser.Scene {
       camera.centerOn(map.widthInPixels / 2, map.heightInPixels / 2);
       this.enableCameraControls();
     } else {
-      camera.setZoom(1.5);
+      camera.setZoom(1.5 / this.unit);
       const firstHome = Object.values(this.homes)
         .map((key) => this.places[key])
         .find((point) => point !== undefined);
@@ -391,7 +415,7 @@ export class OverworldScene extends Phaser.Scene {
         const next = clamp(
           prev * Math.exp(-dy * WHEEL_ZOOM_RATE),
           this.minZoom,
-          MAX_ZOOM,
+          MAX_ZOOM / this.unit,
         );
         if (next === prev) return;
         camera.panEffect.reset();
@@ -436,14 +460,20 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   private zoomFor(plan: StagePlan): number {
-    const width = plan.bounds.width + 200;
-    const height = plan.bounds.height + 140;
+    const width = plan.bounds.width + 200 * this.unit;
+    const height = plan.bounds.height + 140 * this.unit;
     const fit = Math.min(this.view.width / width, this.view.height / height);
-    return ZOOMS.find((zoom) => zoom <= fit) ?? ZOOMS[ZOOMS.length - 1];
+    const ladder = ZOOMS.map((zoom) => zoom / this.unit);
+    return ladder.find((zoom) => zoom <= fit) ?? ladder[ladder.length - 1];
   }
 
   private playBeat(beat: StageBeat, done: () => void): void {
-    const plan = planBeat({ beat, places: this.places, homes: this.homes });
+    const plan = planBeat({
+      beat,
+      places: this.places,
+      homes: this.homes,
+      unit: this.unit,
+    });
     this.clearLive();
     this.config.onBeatStart?.(beat, plan);
     if (this.follow) {
@@ -469,14 +499,17 @@ export class OverworldScene extends Phaser.Scene {
     const { direction, from, to, travels, count, walkMs, totalMs } = action;
     const asset = spriteFor(this.config.manifest, direction.actor.archetype);
     const color = this.config.colors[direction.actor.seat] ?? 0xffffff;
-    const offsets = formation(count);
+    const offsets = formation(count, 10 * this.unit);
     const facing = travels ? facingOf(from, to) : "down";
     const actors: Phaser.GameObjects.Sprite[] = [];
     if (asset?.sprite) {
+      const scale = this.scaleOf(asset);
+      const stands = asset.sprite.frameHeight * scale;
       offsets.forEach((offset, i) => {
         const sprite = this.add
           .sprite(from.x + offset.x, from.y + offset.y, asset.id)
           .setOrigin(0.5, 1)
+          .setScale(scale)
           .setDepth(1000 + from.y + offset.y);
         sprite.play(`${asset.id}:${facing}`);
         actors.push(sprite);
@@ -506,21 +539,22 @@ export class OverworldScene extends Phaser.Scene {
       });
       const lead = actors[0];
       if (lead) {
+        const u = this.unit;
         const flag = this.add
           .rectangle(
-            lead.x + 6,
-            lead.y - (asset.sprite.frameHeight + 4),
-            6,
-            4,
+            lead.x + 6 * u,
+            lead.y - (stands + 4 * u),
+            6 * u,
+            4 * u,
             color,
           )
           .setDepth(7000);
         const pole = this.add
           .rectangle(
-            lead.x + 3,
-            lead.y - (asset.sprite.frameHeight + 1),
-            1,
-            9,
+            lead.x + 3 * u,
+            lead.y - (stands + 1 * u),
+            1 * u,
+            9 * u,
             0x0b0d10,
           )
           .setDepth(6999);
@@ -528,15 +562,15 @@ export class OverworldScene extends Phaser.Scene {
         if (travels) {
           this.tweens.add({
             targets: flag,
-            x: to.x + offsets[0].x + 6,
-            y: to.y + offsets[0].y - (asset.sprite.frameHeight + 4),
+            x: to.x + offsets[0].x + 6 * u,
+            y: to.y + offsets[0].y - (stands + 4 * u),
             duration: walkMs,
             ease: "Linear",
           });
           this.tweens.add({
             targets: pole,
-            x: to.x + offsets[0].x + 3,
-            y: to.y + offsets[0].y - (asset.sprite.frameHeight + 1),
+            x: to.x + offsets[0].x + 3 * u,
+            y: to.y + offsets[0].y - (stands + 1 * u),
             duration: walkMs,
             ease: "Linear",
           });
@@ -545,16 +579,18 @@ export class OverworldScene extends Phaser.Scene {
     }
     if (action.effect) {
       const id = effectId(action.effect);
-      if (this.textures.exists(id)) {
+      const effectAsset = this.config.manifest.assets[id];
+      if (effectAsset && this.textures.exists(id)) {
+        const scale =
+          this.scaleOf(effectAsset) *
+          (action.effect === "flood" || action.effect === "grey" ? 2 : 1.5);
         this.time.delayedCall(travels ? walkMs : 200, () => {
           if (!this.sys.isActive()) return;
           const effect = this.add
-            .sprite(to.x, to.y - 10, id)
+            .sprite(to.x, to.y - 10 * this.unit, id)
             .setOrigin(0.5, 1)
             .setDepth(8000)
-            .setScale(
-              action.effect === "flood" || action.effect === "grey" ? 2 : 1.5,
-            );
+            .setScale(scale);
           effect.play(id);
           this.live.push(effect);
         });

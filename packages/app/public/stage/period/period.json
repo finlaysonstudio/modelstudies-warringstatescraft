@@ -1,6 +1,7 @@
 {
   "version": 1,
   "source": "period",
+  "tile": 16,
   "assets": {
     "image.court": {
       "file": "image.court.png",

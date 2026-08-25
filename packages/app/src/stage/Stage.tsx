@@ -7,6 +7,7 @@ import { loadStageManifest } from "./assets";
 import type { StagePlan } from "./beats";
 import { DIRECTION_CAPTIONS } from "./catalog";
 import { OverworldScene, VIEW_HEIGHT, VIEW_WIDTH } from "./OverworldScene";
+import { DEFAULT_STAGE_SET, stageSet, type StageSetId } from "./sets";
 
 export interface StageProps {
   script: StageScript;
@@ -28,6 +29,8 @@ export interface StageProps {
   follow?: boolean;
   /** replaces the "Stage · source" part of the eyebrow */
   eyebrow?: string;
+  /** which art set to play on (default `DEFAULT_STAGE_SET`) */
+  set?: StageSetId;
 }
 
 type Status =
@@ -74,7 +77,9 @@ export function Stage({
   interactive = false,
   follow = true,
   eyebrow,
+  set: setId = DEFAULT_STAGE_SET,
 }: StageProps) {
+  const set = stageSet(setId);
   const host = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<OverworldScene | null>(null);
   const queued = useRef(new Set<string>());
@@ -91,7 +96,7 @@ export function Stage({
     queued.current = new Set();
     setStatus({ phase: "loading" });
     setCurrent(null);
-    void loadStageManifest()
+    void loadStageManifest({ set })
       .then((manifest) => {
         if (cancelled || !host.current) return;
         const scene = new OverworldScene({
@@ -102,6 +107,7 @@ export function Stage({
           view,
           interactive,
           follow,
+          mapUrl: set.map,
           onReady: () => {
             if (cancelled) return;
             sceneRef.current = scene;
@@ -153,8 +159,8 @@ export function Stage({
       sceneRef.current = null;
       game?.destroy(true);
     };
-    // the scene is built once per script; names and colours travel with it
-  }, [script.id]);
+    // the scene is built once per script and set; names and colours travel with it
+  }, [script.id, set.id]);
 
   useEffect(() => {
     if (status.phase !== "ready" || !sceneRef.current) return;
@@ -192,7 +198,9 @@ export function Stage({
             `Stage · ${script.source}${
               script.seed !== undefined ? ` · seed ${script.seed}` : ""
             }`}
-          {status.phase === "ready" ? ` · ${status.sources} art` : ""}
+          {status.phase === "ready"
+            ? ` · ${set.title} · ${status.sources} art`
+            : ""}
         </p>
         {status.phase === "loading" && (
           <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] text-zinc-500">

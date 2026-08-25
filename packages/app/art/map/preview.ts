@@ -2,8 +2,6 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { BadRequestError } from "@jaypie/errors";
-
 import {
   blobIndexOf,
   BLOB_COLUMNS,
@@ -54,11 +52,9 @@ const sheetsOf = (layers: string[], tile: number): Map<Ground, Image> => {
       const file = path.join(dir, `${tilesetIdOf(ground)}.png`);
       if (!existsSync(file)) continue;
       const sheet = readPng(file);
-      if (sheet.width !== BLOB_COLUMNS * tile) {
-        throw new BadRequestError(
-          `${file} is ${sheet.width}px wide, not ${BLOB_COLUMNS * tile}`,
-        );
-      }
+      // a sheet of another set's tile belongs to another map; the map build's
+      // coverage check is what reports a ground this set leaves unanswered
+      if (sheet.width !== BLOB_COLUMNS * tile) continue;
       sheets.set(ground, sheet);
     }
   }
@@ -162,19 +158,23 @@ if (isMain) {
     ).readFile(path.join(here, "geography.json"), "utf8"),
   ) as Geography;
   const stage = path.join(repo, "packages/app/public/stage");
-  const layers = ["fallback", "vendor", "period"]
+  const { stageSetOf } = await import("../../src/stage/sets");
+  const set = stageSetOf(flag("set"));
+  const layers = set.sources
     .map((name) => path.join(stage, name))
     .filter((dir) => existsSync(dir));
   const windowArg = flag("window");
   const image = previewMap({
     geo,
     layers,
+    tile: set.tile,
     zoom: Number(flag("zoom") ?? 1),
     window: windowArg
       ? (windowArg.split(",").map(Number) as [number, number, number, number])
       : undefined,
   });
-  const out = flag("out") ?? path.join(repo, "var/preview/overworld.png");
+  const out =
+    flag("out") ?? path.join(repo, `var/preview/overworld-${set.id}.png`);
   await (
     await import("node:fs/promises")
   ).mkdir(path.dirname(out), {

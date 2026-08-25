@@ -9,6 +9,13 @@ import {
   type StageManifestFile,
   type StageSource,
 } from "./manifest";
+import {
+  BASE_TILE,
+  DEFAULT_STAGE_SET,
+  stageSet,
+  type StageSet,
+  type StageSetId,
+} from "./sets";
 
 export const STAGE_BASE = "/stage";
 
@@ -19,7 +26,13 @@ const resolveFile = (
   Object.fromEntries(
     Object.entries(file.assets).map(([id, entry]) => [
       id,
-      { ...entry, id, source, url: `${STAGE_BASE}/${source}/${entry.file}` },
+      {
+        ...entry,
+        id,
+        source,
+        tile: file.tile ?? BASE_TILE,
+        url: `${STAGE_BASE}/${source}/${entry.file}`,
+      },
     ]),
   );
 
@@ -35,17 +48,22 @@ const fetchManifest = async (
 };
 
 /**
- * Loads the layers in order: the fallback (always present), then the vendor
- * step's output when it has run, then the period layer generated for the
- * project. A higher layer's asset replaces the lower asset of the same id,
- * and every id the fallback covers stays resolvable.
+ * Loads a set's layers in order: the fallback (always present), then the
+ * vendor step's output when it has run, then the period layers generated for
+ * the project. A higher layer's asset replaces the lower asset of the same
+ * id, and every id the fallback covers stays resolvable.
  */
 export const loadStageManifest = async (
-  fetcher: typeof fetch = fetch,
+  options: { set?: StageSetId | StageSet; fetcher?: typeof fetch } = {},
 ): Promise<StageManifest> => {
+  const set =
+    typeof options.set === "object"
+      ? options.set
+      : stageSet(options.set ?? DEFAULT_STAGE_SET);
+  const fetcher = options.fetcher ?? fetch;
   const assets: Record<string, StageAsset> = {};
   const sources: StageSource[] = [];
-  for (const source of STAGE_SOURCES) {
+  for (const source of set.sources) {
     const file = await fetchManifest(source, fetcher);
     if (!file) {
       if (source === "fallback") {
@@ -58,7 +76,13 @@ export const loadStageManifest = async (
     sources.push(source);
     Object.assign(assets, resolveFile(file, source));
   }
-  return { assets, sources, vendor: sources.includes("vendor") };
+  return {
+    assets,
+    sources,
+    vendor: sources.includes("vendor"),
+    set: set.id,
+    tile: set.tile,
+  };
 };
 
 /**

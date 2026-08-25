@@ -14,13 +14,14 @@ import {
   terrainId,
   waterId,
 } from "./catalog";
-import type { StageAsset, StageManifest } from "./manifest";
+import type { StageAsset, StageManifest, StageSource } from "./manifest";
+import { stageSet, type StageSet } from "./sets";
 
 /**
- * What `/craft/tiles` shows: the art this project generated for itself, in
- * catalog order, with what the map still borrows from a lower layer named
- * rather than rendered. The purchased packs are deliberately absent — their
- * licence keeps them out of anything that travels.
+ * What `/craft/tiles` shows for one art set: the art that set generated for
+ * itself, in catalog order, with what it still borrows from a lower layer
+ * named rather than rendered. The purchased packs are deliberately absent —
+ * their licence keeps them out of anything that travels.
  */
 
 export type ShowcaseGroup = "ground" | "place" | "decor" | "figure";
@@ -59,15 +60,30 @@ export interface ShowcaseSection {
   assets: StageAsset[];
 }
 
+/** A catalog id this set does not draw itself, and the layer that answers it. */
+export interface BorrowedId {
+  id: string;
+  /** the layer standing in, or null when nothing does */
+  from: StageSource | null;
+}
+
 export interface Showcase {
+  /** the set the showcase was built for */
+  set: StageSet;
+  /** the layer this set draws itself */
+  own: StageSource;
   sections: ShowcaseSection[];
   /** how many ids the layer supplies */
   count: number;
   /** every generation they cost, failed attempts included */
   generations: number;
-  /** catalog ids the map asks for that this layer does not supply */
-  borrowed: string[];
+  /** catalog ids the map asks for that this set does not draw itself */
+  borrowed: BorrowedId[];
 }
+
+/** The layer a set draws itself: the highest it stacks. */
+export const ownSourceOf = (set: StageSet): StageSource =>
+  set.sources[set.sources.length - 1];
 
 const SECTIONS: { group: ShowcaseGroup; title: string; blurb: string }[] = [
   {
@@ -92,14 +108,16 @@ const SECTIONS: { group: ShowcaseGroup; title: string; blurb: string }[] = [
     group: "figure",
     title: "Figures",
     blurb:
-      "One walk cycle per archetype, four frames a facing, generated at 24 px and animated as the stage walks a move from one place to another.",
+      "One walk cycle per archetype, four frames a facing, animated as the stage walks a move from one place to another. Each card names the frame it was generated at.",
   },
 ];
 
-/** The project's own art, grouped and ordered, with what it does not cover. */
+/** One set's own art, grouped and ordered, with what it does not cover. */
 export const showcaseOf = (manifest: StageManifest): Showcase => {
+  const set = stageSet(manifest.set);
+  const source = ownSourceOf(set);
   const own = Object.values(manifest.assets).filter(
-    (asset) => asset.source === "period",
+    (asset) => asset.source === source,
   );
   const ids = new Set(own.map((asset) => asset.id));
   const sections = SECTIONS.map(({ group, title, blurb }) => {
@@ -118,13 +136,18 @@ export const showcaseOf = (manifest: StageManifest): Showcase => {
     return { group, title, blurb, assets };
   }).filter((section) => section.assets.length > 0);
   return {
+    set,
+    own: source,
     sections,
     count: own.length,
     generations: own.reduce(
       (sum, asset) => sum + (asset.record?.generations ?? 0),
       0,
     ),
-    borrowed: WANTED_IDS.filter((id) => !ids.has(id)),
+    borrowed: WANTED_IDS.filter((id) => !ids.has(id)).map((id) => ({
+      id,
+      from: manifest.assets[id]?.source ?? null,
+    })),
   };
 };
 

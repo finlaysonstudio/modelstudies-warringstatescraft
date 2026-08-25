@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { BadRequestError } from "@jaypie/errors";
 
+import type { StageSource } from "../../src/stage/manifest";
 import type {
   AssetEntry,
   AssetRecord,
@@ -108,9 +109,22 @@ export interface PeriodTilesetItem extends PeriodRecord {
 
 export type PeriodItem = PeriodImageItem | PeriodSpriteItem | PeriodTilesetItem;
 
+/**
+ * One art set's spec: the layer it writes, the tile its ground sheets are
+ * drawn at, where the raw downloads sit, and where the built layer lands. The
+ * period step builds whichever spec it is given, so a second set at a second
+ * resolution is a second file rather than a second script.
+ */
 export interface PeriodSpec {
   version: 1;
+  /** the layer this spec writes (`period`, `period32`) */
+  source: StageSource;
+  /** the tile its ground sheets are drawn at */
+  tile: number;
+  /** the raw PixelLab downloads, relative to the repository */
   root: string;
+  /** the built layer, relative to the repository */
+  out: string;
   items: PeriodItem[];
 }
 
@@ -215,6 +229,7 @@ export const buildPeriod = async ({
   for (const item of spec.items) {
     const file = `${item.id}.png`;
     if (item.kind === "tileset") {
+      const tile = spec.tile;
       let sheet = await readPng(path.join(root, item.file));
       if (item.desaturate) sheet = greyBlue(sheet, item.desaturate);
       if (item.adjust) sheet = adjustColour(sheet, item.adjust);
@@ -222,30 +237,34 @@ export const buildPeriod = async ({
         await readFile(path.join(root, item.metadata), "utf8"),
       ) as WangMetadata;
       let image = item.fill
-        ? wangFillSheet({ sheet, meta, fill: item.fill })
-        : wangBlobSheet({ sheet, meta });
+        ? wangFillSheet({ sheet, meta, tile, fill: item.fill })
+        : wangBlobSheet({ sheet, meta, tile });
       if (item.key === "lower") {
         image = keyPalette(
           image,
-          lowerPalette(sheet, meta),
+          lowerPalette(sheet, meta, tile),
           item.keyTolerance ?? 0,
         );
       }
       if (item.key === "upper") {
         image = keepPalette(
           image,
-          cornerPalette(sheet, meta, "upper"),
+          cornerPalette(sheet, meta, "upper", tile),
           item.keyTolerance ?? 0,
         );
       }
       if (item.frames) {
         image = waterFrames(image, {
           frames: item.frames,
-          palette: cornerPalette(sheet, meta, "upper"),
+          palette: cornerPalette(sheet, meta, "upper", tile),
         });
       }
-      if (item.variants)
-        image = variantSheet(image, item.variants, { tone: item.variantTone });
+      if (item.variants) {
+        image = variantSheet(image, item.variants, {
+          tone: item.variantTone,
+          tile,
+        });
+      }
       await writePng(path.join(outDir, file), image);
       assets[item.id] = {
         file,
@@ -301,9 +320,14 @@ export const buildPeriod = async ({
       `${item.id}  ${image.width}x${image.height}  ${item.frames} frames  ← ${item.dir}`,
     );
   }
-  const manifest: VendorManifest = { version: 1, source: "period", assets };
+  const manifest: VendorManifest = {
+    version: 1,
+    source: spec.source,
+    tile: spec.tile,
+    assets,
+  };
   await writeFile(
-    path.join(outDir, "period.json"),
+    path.join(outDir, `${spec.source}.json`),
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
   return manifest;
@@ -316,11 +340,12 @@ const isMain =
 if (isMain) {
   const here = path.dirname(fileURLToPath(import.meta.url));
   const repo = path.resolve(here, "../../../..");
+  const file = process.argv[2] ?? "items.json";
   const spec = JSON.parse(
-    await readFile(path.join(here, "items.json"), "utf8"),
+    await readFile(path.resolve(here, file), "utf8"),
   ) as PeriodSpec;
   const root = process.env.STAGE_PIXELLAB_DIR ?? path.join(repo, spec.root);
-  const outDir = path.join(repo, "packages/app/public/stage/period");
+  const outDir = path.join(repo, spec.out);
   const manifest = await buildPeriod({
     spec,
     root,
@@ -328,6 +353,6 @@ if (isMain) {
     log: (line) => console.log(line),
   });
   console.log(
-    `${Object.keys(manifest.assets).length} period assets → ${path.relative(repo, outDir)}/period.json`,
+    `${Object.keys(manifest.assets).length} ${spec.source} assets at ${spec.tile} px → ${path.relative(repo, outDir)}/${spec.source}.json`,
   );
 }

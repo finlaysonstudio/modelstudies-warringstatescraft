@@ -61,10 +61,13 @@ export const planAction = ({
   direction,
   places,
   home,
+  unit = 1,
 }: {
   direction: StageDirection;
   places: StagePlaces;
   home?: string;
+  /** the set's tile over the base tile; a walk covers the same country either way */
+  unit?: number;
 }): StageAction | null => {
   const landing = landingOf(direction, home);
   const to = landing ? places[landing] : undefined;
@@ -75,7 +78,7 @@ export const planAction = ({
   const distance = travels ? Math.hypot(to.x - from.x, to.y - from.y) : 0;
   const walkMs = travels
     ? clamp(
-        Math.round((distance / WALK_SPEED_PX_PER_S) * 1000),
+        Math.round((distance / (WALK_SPEED_PX_PER_S * unit)) * 1000),
         WALK_MIN_MS,
         WALK_MAX_MS,
       )
@@ -102,15 +105,23 @@ export const planBeat = ({
   beat,
   places,
   homes,
+  unit = 1,
 }: {
   beat: StageBeat;
   places: StagePlaces;
   /** seat → home place key */
   homes: Record<string, string>;
+  /** the set's tile over the base tile */
+  unit?: number;
 }): StagePlan => {
   const actions = beat.directions
     .map((direction) =>
-      planAction({ direction, places, home: homes[direction.actor.seat] }),
+      planAction({
+        direction,
+        places,
+        home: homes[direction.actor.seat],
+        unit,
+      }),
     )
     .filter((action): action is StageAction => action !== null);
   const points: StagePoint[] = actions.flatMap((action) => [

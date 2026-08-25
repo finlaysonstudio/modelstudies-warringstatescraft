@@ -60,9 +60,10 @@ const fetcher = (present: string[]): typeof fetch =>
 
 describe("loadStageManifest", () => {
   it("merges the layers in order and records which are present", async () => {
-    const manifest = await loadStageManifest(
-      fetcher(["fallback", "vendor", "period"]),
-    );
+    const manifest = await loadStageManifest({
+      set: "period-16",
+      fetcher: fetcher(["fallback", "vendor", "period"]),
+    });
     expect(manifest.sources).toEqual(["fallback", "vendor", "period"]);
     expect(manifest.vendor).toBe(true);
     expect(manifest.assets["sprite.official"]).toMatchObject({
@@ -74,29 +75,36 @@ describe("loadStageManifest", () => {
   });
 
   it("runs on the fallback alone", async () => {
-    const manifest = await loadStageManifest(fetcher(["fallback"]));
+    const manifest = await loadStageManifest({
+      set: "period-16",
+      fetcher: fetcher(["fallback"]),
+    });
     expect(manifest.sources).toEqual(["fallback"]);
     expect(manifest.vendor).toBe(false);
   });
 
   it("refuses a missing fallback", async () => {
-    await expect(loadStageManifest(fetcher(["vendor"]))).rejects.toThrow(
-      /fallback manifest is missing/,
-    );
+    await expect(
+      loadStageManifest({ set: "period-16", fetcher: fetcher(["vendor"]) }),
+    ).rejects.toThrow(/fallback manifest is missing/);
   });
 });
 
 describe("spriteFor", () => {
   it("prefers the archetype's own sprite over a stand-in", async () => {
-    const manifest = await loadStageManifest(
-      fetcher(["fallback", "vendor", "period"]),
-    );
+    const manifest = await loadStageManifest({
+      set: "period-16",
+      fetcher: fetcher(["fallback", "vendor", "period"]),
+    });
     expect(spriteFor(manifest, "envoy")?.id).toBe("sprite.envoy");
     expect(spriteFor(manifest, "general")?.id).toBe("sprite.knight");
   });
 
   it("falls back to the stand-in when the period sprite is absent", async () => {
-    const manifest = await loadStageManifest(fetcher(["fallback", "vendor"]));
+    const manifest = await loadStageManifest({
+      set: "period-16",
+      fetcher: fetcher(["fallback", "vendor"]),
+    });
     expect(spriteFor(manifest, "envoy")?.id).toBe("sprite.official");
     expect(spriteFor(manifest, "boat")).toBeUndefined();
   });

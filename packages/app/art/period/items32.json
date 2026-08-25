@@ -1,0 +1,1219 @@
+{
+  "version": 1,
+  "source": "period32",
+  "tile": 32,
+  "root": "var/assets/pixellab",
+  "out": "packages/app/public/stage/period32",
+  "items": [
+    {
+      "id": "terrain.forest",
+      "kind": "tileset",
+      "file": "tilesets32/forest.png",
+      "metadata": "tilesets32/forest.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns; transition: scattered saplings and low bushes thinning out at the forest edge",
+      "jobId": "cd62aa26-4e90-492e-a31a-67f0979f6c9b",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": -10,
+        "saturation": 0.7,
+        "value": 1.25
+      }
+    },
+    {
+      "id": "terrain.loess",
+      "kind": "tileset",
+      "file": "tilesets32/loess.png",
+      "metadata": "tilesets32/loess.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.5
+      },
+      "prompt": "a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth; transition: a crumbling dusty terrace edge with sparse dry grass tufts hanging over it",
+      "jobId": "aa9a4829-fb57-465f-a312-81bf41ae3577",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "lower",
+      "keyTolerance": 16,
+      "adjust": {
+        "hue": -5,
+        "saturation": 1.2,
+        "value": 0.85
+      }
+    },
+    {
+      "id": "terrain.steppe",
+      "kind": "tileset",
+      "file": "tilesets32/steppe.png",
+      "metadata": "tilesets32/steppe.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "dry steppe grassland seen from above, pale straw and gold wild grass bent by the wind in long streaks, thin tufts of tawny bunchgrass, no bare earth, no brown soil, no sand; transition: green grass fading into pale windblown gold grass",
+      "jobId": "18ac0b5d-1317-4255-9037-f3d581fb8e2c",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "lower",
+      "keyTolerance": 16,
+      "adjust": {
+        "hue": 14,
+        "saturation": 1.1,
+        "value": 1.1
+      }
+    },
+    {
+      "id": "terrain.marsh",
+      "kind": "tileset",
+      "file": "tilesets32/marsh.png",
+      "metadata": "tilesets32/marsh.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.5
+      },
+      "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds; transition: boggy mud and scattered reeds where the grass gives out",
+      "jobId": "dae8bac6-8946-4d15-b73b-26a495241891",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": 38,
+        "saturation": 0.75,
+        "value": 1.45
+      }
+    },
+    {
+      "id": "terrain.field",
+      "kind": "tileset",
+      "file": "tilesets32/field.png",
+      "metadata": "tilesets32/field.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ploughed field",
+      "jobId": "5a31a0bc-d5dd-4296-9b94-0cb274950392",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": 8,
+        "saturation": 0.62,
+        "value": 0.9
+      }
+    },
+    {
+      "id": "terrain.bamboo",
+      "kind": "tileset",
+      "file": "tilesets32/bamboo.png",
+      "metadata": "tilesets32/bamboo.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "a dense bamboo grove seen from above, tight clumps of slender bamboo canes with narrow leaves, deep green with cool shadow between the clumps, strictly green, no yellow, no gold, no cream; transition: young bamboo shoots standing in the grass",
+      "jobId": "353dd665-3a70-4140-9a5a-75545df2c233",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 10,
+      "adjust": {
+        "hue": 12,
+        "saturation": 0.45,
+        "value": 1.05
+      }
+    },
+    {
+      "id": "terrain.grass",
+      "kind": "tileset",
+      "file": "tilesets32/grass.png",
+      "metadata": "tilesets32/grass.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "green meadow grass seen from directly above, thick with individual blades and tufts, scattered darker green clumps and paler sun-caught patches, a few tiny pale specks, clearly textured and uneven all over, not a flat colour (over bare brown earth; the ground layer takes the upper fill)",
+      "jobId": "789efaa0-6ef3-464a-a674-c4aeb9e0d540",
+      "date": "2026-08-25",
+      "generations": 1,
+      "fill": "upper",
+      "variants": 4,
+      "variantTone": 0.02,
+      "adjust": {
+        "hue": -14,
+        "saturation": 0.64,
+        "value": 1.05
+      }
+    },
+    {
+      "id": "terrain.tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/tallgrass.png",
+      "metadata": "tilesets32/tallgrass.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above; transition: short grass thickening into tall grass",
+      "jobId": "869a1023-9539-44b8-ae2b-05b2f6b737a7",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "lower",
+      "keyTolerance": 16,
+      "adjust": {
+        "hue": 10,
+        "saturation": 0.7,
+        "value": 0.92
+      }
+    },
+    {
+      "id": "terrain.scrub",
+      "kind": "tileset",
+      "file": "tilesets32/scrub.png",
+      "metadata": "tilesets32/scrub.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow; transition: green grass giving way to drab olive tufts and small shrubs",
+      "jobId": "69556012-db4a-45f6-b811-34ae47e2509e",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "lower",
+      "keyTolerance": 16,
+      "adjust": {
+        "hue": 4,
+        "saturation": 0.5,
+        "value": 1.08
+      }
+    },
+    {
+      "id": "terrain.hills",
+      "kind": "tileset",
+      "file": "tilesets32/hills.png",
+      "metadata": "tilesets32/hills.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.25,
+        "slope_size": 0.85,
+        "spread_x": 0.8
+      },
+      "prompt": "low rolling hills seen from above, gentle rounded green shoulders with soft shadow in the hollows between them, thin dry grass on the crowns and a little bare brown earth showing through, no rock, no cliffs, strictly green and warm brown; transition: grass rising gently onto the hill shoulder",
+      "jobId": "8fc0a979-2023-44cb-b467-8a914f99c118",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 24,
+      "adjust": {
+        "hue": -8,
+        "saturation": 0.6,
+        "value": 0.9
+      }
+    },
+    {
+      "id": "terrain.mountain",
+      "kind": "tileset",
+      "file": "tilesets32/mountain.png",
+      "metadata": "tilesets32/mountain.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.5,
+        "slope_size": 0.4,
+        "spread_x": 0.5
+      },
+      "prompt": "a modest stony mountain range seen from above, rounded grey rock ridges with shallow clefts, worn and weathered, patches of dry grass on the shoulders, strictly grey stone and dull green, no purple, no blue; transition: grey stones scattered in the grass at the foot of the ridge",
+      "jobId": "cbeb2b1f-17c6-4938-a4d4-51d54706ee6b",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 20
+    },
+    {
+      "id": "terrain.qinling",
+      "kind": "tileset",
+      "file": "tilesets32/qinling.png",
+      "metadata": "tilesets32/qinling.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.5,
+        "slope_size": 0.4,
+        "spread_x": 0.5
+      },
+      "prompt": "a pine-covered mountain range seen from above, rounded rock ridges with shallow clefts like worn grey stone shoulders, dark pine forest lying in the clefts and thinning on the crests so the grey rock shows through, weathered and irregular, strictly grey stone and dark pine green; transition: grey stones and dark pines scattered in the grass at the foot of the ridge",
+      "jobId": "38ebbbd8-1f57-4726-a82e-978823133b09",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": 30,
+        "saturation": 1.3,
+        "value": 0.78
+      }
+    },
+    {
+      "id": "terrain.taihang",
+      "kind": "tileset",
+      "file": "tilesets32/taihang.png",
+      "metadata": "tilesets32/taihang.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.4,
+        "slope_size": 0.8,
+        "spread_x": 0.2
+      },
+      "prompt": "a steep dark mountain scarp seen from above, one long unbroken wall of rock with a sheer cliff face, narrow flat crest, deep shadow along its foot, dark slate and charcoal stone, strictly grey, no purple, no blue; transition: dark grey rubble and fallen slabs at the cliff foot",
+      "jobId": "9c373526-159f-4968-ae38-069c979e7e57",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 10,
+      "adjust": {
+        "hue": -6,
+        "saturation": 1.35,
+        "value": 1.55
+      }
+    },
+    {
+      "id": "terrain.shu",
+      "kind": "tileset",
+      "file": "tilesets32/shu.png",
+      "metadata": "tilesets32/shu.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.85,
+        "slope_size": 0.5,
+        "spread_x": 0.4
+      },
+      "prompt": "jagged pale limestone karst peaks seen from above, a crowd of narrow steep-sided towers of pale grey stone with dark green vegetation in the clefts between them, chaotic and broken, strictly pale grey and dark green, no purple, no blue; transition: pale grey broken stone and dense dark green scrub at the foot of the crags",
+      "jobId": "73d1d26e-5a3e-415b-957a-d4ca154ef668",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": -24,
+        "saturation": 0.9,
+        "value": 0.78
+      }
+    },
+    {
+      "id": "water.river",
+      "kind": "tileset",
+      "file": "tilesets32/river.png",
+      "metadata": "tilesets32/river.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle; transition: a narrow strip of wet pebbles and pale sand at the water's edge",
+      "jobId": "f88a1f2d-a8a0-454c-9458-02a4eff03cc5",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 44,
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "water.sea",
+      "kind": "tileset",
+      "file": "tilesets32/sea.png",
+      "metadata": "tilesets32/sea.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey; transition: pale wet sand with a thin line of white surf",
+      "jobId": "72bc3b3b-be25-43ed-8ff4-7bcd0072f695",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 44,
+      "frames": 3,
+      "adjust": {
+        "hue": -5,
+        "saturation": 0.6,
+        "value": 0.8
+      }
+    },
+    {
+      "id": "terrain.road",
+      "kind": "tileset",
+      "file": "tilesets32/road.png",
+      "metadata": "tilesets32/road.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "a rammed earth cart road seen from above, pale packed tan earth worn smooth, two darker wheel ruts running along it, loose dust and small stones scattered at the verges, no paving, no cobbles, no bricks; transition: packed earth breaking up into tufts of trodden grass at the road's edge",
+      "jobId": "52539534-ed29-44f9-94ff-5ec425627beb",
+      "date": "2026-08-25",
+      "generations": 2,
+      "key": "upper",
+      "keyTolerance": 18,
+      "note": "The first generation came back as brick paving despite the prompt refusing it; the second names bare soil and ruts and refuses masonry five ways.",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "id": "terrain.cobble",
+      "kind": "tileset",
+      "file": "tilesets32/cobble.png",
+      "metadata": "tilesets32/cobble.json",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "a stone pavement seen from above, irregular grey flagstones of varied size laid tight together with dark joints between them, worn smooth in the middle and chipped at the corners, strictly grey stone, no moss, no green; transition: the last flagstones giving way to packed earth and grass at the paving's edge",
+      "jobId": "01a6c8ce-b543-475e-96fc-76e87bbf9342",
+      "date": "2026-08-25",
+      "generations": 1,
+      "key": "upper",
+      "keyTolerance": 18,
+      "note": "the paved ground inside a court, borrowed from the fallback in the sixteen-pixel set",
+      "adjust": {
+        "saturation": 0.35,
+        "value": 1.15
+      },
+      "desaturate": 0.8
+    },
+    {
+      "id": "image.court",
+      "kind": "image",
+      "file": "objects32/court.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 96,
+        "height": 96,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Chinese royal audience hall of the Warring States period standing on a tan earthen platform with horizontal layer lines and no bricks, dark timber pillars along the open front, a wide low grey tiled hip roof with slightly upturned ends, a short stone stair at the front, no people",
+      "jobId": "b69d01eb-aea9-4dc5-a4b3-0b0c0421b532",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.hall",
+      "kind": "image",
+      "file": "objects32/hall.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 96,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a long single-storey Chinese lecture hall with a grey tiled roof, an open front with dark wooden pillars, a low tan earthen platform, a plain wooden fence along one side, no people",
+      "jobId": "0047b608-3796-4e37-bd11-fa46735c8562",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.pass",
+      "kind": "image",
+      "file": "objects32/pass.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 96,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a gate through a smooth tan packed-earth wall with thin horizontal lines and no bricks and no stones, a wooden watchtower with a small grey tiled roof standing on top of the wall, a dark arched gate opening below, a wooden railing, one small red banner on a pole, no people",
+      "jobId": "774c2cb5-29a2-43be-9f4f-d51c47c06ca9",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.town",
+      "kind": "image",
+      "file": "objects32/town.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small walled Chinese town, a square tan earthen wall with layer lines and one dark gate opening, grey tiled rooftops of a few houses inside the wall, no people",
+      "jobId": "730b1884-e288-4406-b4bf-e44410e58c70",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.camp",
+      "kind": "image",
+      "file": "objects32/camp.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a military field camp, three tan cloth tents behind a low wooden palisade of sharpened stakes, one tall red banner on a pole, no people",
+      "jobId": "94901c57-3585-455b-b3c2-0294af8cc442",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.harbour",
+      "kind": "image",
+      "file": "objects32/harbour.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a wooden pier of planks on posts with a moored flat wooden river boat with a furled square sail, a coil of rope on the pier, no people",
+      "jobId": "ede772ab-b8a7-4ab8-933d-3874030b2b91",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.ford",
+      "kind": "image",
+      "file": "objects32/ford.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "high top-down"
+      },
+      "prompt": "five round flat grey stones lying in a straight horizontal row on a patch of pale sand, seen from above, a short wooden post at the right end, nothing else",
+      "jobId": "2471f5e2-636d-4b03-b1c2-ab5f9cdd4459",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.works",
+      "kind": "image",
+      "file": "objects32/works.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 96,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a long low bank of tan packed earth running left to right with a flat top and thin horizontal lines, a small square wooden gate of vertical planks set into the middle of its front face, a wooden wheelbarrow beside it, no fence, no water, no people",
+      "jobId": "2d450a54-423f-4fc1-b0c9-6e90a2d34888",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.field",
+      "kind": "image",
+      "file": "objects32/field.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small square plot of green millet in straight rows on brown soil, a low earthen ridge around the edge, no people",
+      "jobId": "090456c0-69a9-4fca-b61e-ff92a51a43ce",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.market",
+      "kind": "image",
+      "file": "objects32/market.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small Chinese market, two wooden stalls with flat tan cloth awnings on poles, a large wooden balance scale with two hanging pans standing between them, a small heap of round bronze coins on a low table, no people",
+      "jobId": "0257bee2-0402-4fd0-949d-02635cffebad",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.academy",
+      "kind": "image",
+      "file": "objects32/academy.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 96,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a long single-storey Chinese lecture hall with a grey tiled roof on dark wooden pillars, an open front showing low writing desks inside, a tall grey stone tablet standing upright before it, a low tan earthen platform, no people",
+      "jobId": "4cbe90d4-f0fb-4de4-a3aa-f1e1db2ad7bb",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.saltern",
+      "kind": "image",
+      "file": "objects32/saltern.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "three shallow square wooden brine pans filled with white salt standing in a row on pale sand, a small white mound of salt beside them, a small hut with a tan thatched roof behind them, no water, no people",
+      "jobId": "cbd0d45d-94fe-4bfb-ae08-7410accd4a27",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.altar",
+      "kind": "image",
+      "file": "objects32/altar.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a wide flat square mound of smooth tan packed earth rising in three flat steps like a low staircase pyramid, plain smooth surfaces with faint thin horizontal lines, a row of three round dark bronze pots each standing on three short legs on the flat top, no bricks, no people",
+      "jobId": "dda0cfc8-6090-45f3-89b7-24f60a9529b5",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.weir",
+      "kind": "image",
+      "file": "objects32/weir.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "high top-down"
+      },
+      "prompt": "seen from directly above, a pale blue stream flowing from the top edge to the bottom edge of the image, flat tan earthen ground on the left side and on the right side, a low straight dam of brown wooden planks crossing the stream from left bank to right bank at the middle, white foam below the dam, no people",
+      "jobId": "4c113aae-b26b-40b8-89a3-1ecacc354aa6",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.town-b",
+      "kind": "image",
+      "file": "objects32/town-b.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small walled Chinese town beside a river, a square tan earthen wall with layer lines and one dark gate opening, grey tiled rooftops of a few houses inside the wall, a short wooden jetty with a moored flat wooden boat at the front, no people",
+      "jobId": "d020313a-dab8-4e0c-a8cf-eae1f9e5fb41",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.town-c",
+      "kind": "image",
+      "file": "objects32/town-c.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small Chinese hill town on a terraced tan earthen slope, grey tiled rooftops on two terrace levels, a short stone stair climbing to a dark gate in a low earthen wall, no people",
+      "jobId": "6cf5e1ec-f73b-4d1f-85a7-dda65d5af311",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.pine",
+      "kind": "image",
+      "file": "objects32/pine.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "two Chinese pine trees filling the frame, wide flat layered canopies of dark green needles, short reddish-brown trunks, strictly green foliage, no people",
+      "jobId": "442c0874-d644-4cfa-91b5-b63b418bf824",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.bamboo",
+      "kind": "image",
+      "file": "objects32/bamboo.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small clump of tall thin green bamboo stalks leaning slightly with sparse narrow leaves, no people",
+      "jobId": "a6d0fc45-07ec-40fb-9d98-3e84fb30caba",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.beacon",
+      "kind": "image",
+      "file": "objects32/beacon.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 96,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a square tan rammed-earth beacon tower with thin horizontal layer lines, a small wooden shelter with a grey tiled roof on top, an unlit iron brazier beside the shelter, no people",
+      "jobId": "c55f5462-cc3d-433f-87ca-fc06ac493ff8",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.tumulus",
+      "kind": "image",
+      "file": "objects32/tumulus.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a large rounded burial mound of packed tan earth thinly covered in dry grass, a single small grey stone marker at its foot, no people",
+      "jobId": "2378eb99-7ef6-4ec7-9ee2-5f4ae7a9f703",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.stele",
+      "kind": "image",
+      "file": "objects32/stele.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a single tall narrow grey standing stone with faint carved vertical marks, leaning very slightly, on a small round earthen base, no people",
+      "jobId": "298e1af8-bb87-489c-aa4f-bcf444d6d726",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.boat",
+      "kind": "image",
+      "file": "objects32/boat.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small flat wooden fishing boat with a single short mast and a furled net, floating, no people",
+      "jobId": "4ac62e73-ebe4-45e4-9d06-7eaa42590c94",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.horses",
+      "kind": "image",
+      "file": "objects32/horses.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "three small brown steppe horses grazing close together on dry grass, heads down, no riders, no people",
+      "jobId": "6d7314e0-628f-472f-8339-cd64655ef123",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.grove",
+      "kind": "image",
+      "file": "objects32/grove.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 80,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a mulberry orchard filling the frame, six low round-crowned leafy green trees planted in two straight rows on bare brown soil, no people",
+      "jobId": "59602e94-129a-482d-95ca-9ca839846a34",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "decor.rocks",
+      "kind": "image",
+      "file": "objects32/rocks.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small outcrop of three weathered grey rocks of different sizes on bare ground with a few tufts of grass, no people",
+      "jobId": "763016b0-bab9-4d03-9a86-c0cb3aa1ce7c",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "sprite.envoy",
+      "kind": "sprite",
+      "dir": "envoy48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese court envoy, a long plain flat dark-blue robe with wide sleeves reaching the ankles, a narrow red sash at the waist, a small black cloth cap, holding a flat narrow wooden tablet upright in both hands before the chest, low top-down view",
+      "characterId": "58d0a2bc-08b0-4351-9126-bc4c31f8a1d4",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's envoy at twice the canvas and a grade more detail; walk group 4b2fa846-843e-4200-926d-b3da7c87aa31, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.general",
+      "kind": "sprite",
+      "dir": "general48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese army commander, brown leather armour of small overlapping rectangular plates laced with red cord over a dark red robe, a plain rounded leather helmet with a short red plume, a long straight bronze sword in a scabbard at the left hip, one hand raised, low top-down view",
+      "characterId": "14e44b8a-cc5f-4324-894d-bd56935a678f",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's general at twice the canvas and a grade more detail; walk group 8ad2ed6e-9f77-4b6f-9df7-ef986f0ee286, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.infantry",
+      "kind": "sprite",
+      "dir": "infantry48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese foot soldier, dark brown hair pulled up into a small round bun on top of the head with the hairline showing above the forehead, a thin red cloth band tied around the head over the hair, no hat, no helmet, no cap, brown leather lamellar cuirass laced with red cord over a plain flat olive tunic, small round wooden shield strapped to the left forearm, the right hand holding upright a tall plain wooden staff with a blunt top and no spearhead, a short flat dull gold-green bronze blade fixed crosswise near the top of the staff sticking out to one side like the head of a pickaxe, low top-down view",
+      "characterId": "666abb3b-8262-4a25-97f1-60118f692c53",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's infantry at twice the canvas and a grade more detail; walk group 4eca5b12-3b1d-44c6-a164-1e982a07b979, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.merchant",
+      "kind": "sprite",
+      "dir": "merchant48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese travelling merchant, a plain brown hemp robe to the knees over grey trousers, a wide flat round straw hat, a wooden carrying pole across the shoulders with a cloth bundle hanging at each end, low top-down view",
+      "characterId": "23b993fa-8b64-44db-a759-4beda8b8531c",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's merchant at twice the canvas and a grade more detail; walk group f60ab2d3-773d-48f8-b641-a8f658dddb67, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.court",
+      "kind": "sprite",
+      "dir": "court48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese king, a long black robe with wide sleeves and red hems reaching the ground, a flat black rectangular board crown with short strings of beads hanging at the front, hands folded inside the sleeves, low top-down view",
+      "characterId": "75ad84b4-9d9a-4e09-acd3-32dfd1cc8755",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's court at twice the canvas and a grade more detail; walk group 8a8aa42d-bb1d-4c66-9b82-5ef562c0ee71, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.scholar",
+      "kind": "sprite",
+      "dir": "scholar48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese scholar, a long plain white robe with wide sleeves, a simple black cloth band tied around the hair with no cap, holding a bundle of thin bamboo strips bound with cord in both hands, low top-down view",
+      "characterId": "bf021fd2-36a4-4598-82ec-19180fef371e",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's scholar at twice the canvas and a grade more detail; walk group e6be8f52-1234-4071-8db8-246234e8ad12, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.clerk",
+      "kind": "sprite",
+      "dir": "clerk48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese registry clerk, a plain grey knee-length robe with narrow sleeves over dark trousers, a small black cloth cap, holding a bundle of bamboo strips under one arm and a thin writing brush in the other hand, low top-down view",
+      "characterId": "dc29d86f-fb9d-4284-8c99-ae0e0e0d7a47",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's clerk at twice the canvas and a grade more detail; walk group a079e0eb-380f-436f-93cf-4a00c2d9e07c, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.labourer",
+      "kind": "sprite",
+      "dir": "labourer48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese labourer, bare chested with a short brown cloth wrapped at the waist, a grey cloth band around the head, carrying a large wicker basket of earth on the back with a strap across the chest, low top-down view",
+      "characterId": "4d8fae53-8904-426d-9cce-fdfd5b683972",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's labourer at twice the canvas and a grade more detail; walk group f2d2eb9a-30fd-49e1-a913-a285bbcf5d4b, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.peasant",
+      "kind": "sprite",
+      "dir": "peasant48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese farmer, a short undyed pale hemp tunic with a rope belt, bare lower legs, a wide conical straw hat, carrying a wooden hoe over one shoulder, low top-down view",
+      "characterId": "df689e31-f6fd-4a2b-84d2-2c6811668198",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's peasant at twice the canvas and a grade more detail; walk group 166e86e4-2e5a-4412-8584-d5b34dc65438, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.mohist",
+      "kind": "sprite",
+      "dir": "mohist48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese Mohist craftsman, a short coarse black tunic with a rope belt over plain trousers, bare forearms, hair tied back with no cap, holding a wooden mallet in one hand, low top-down view",
+      "characterId": "8e24a35c-afa0-4358-9d18-60a4e3ba9c63",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's mohist at twice the canvas and a grade more detail; walk group 4e7a053b-5f6e-426e-ba31-00c59964d1ac, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.assassin",
+      "kind": "sprite",
+      "dir": "assassin48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese swordsman, a dark grey hooded cloak over a black tunic, the hood up hiding the upper face, a short bronze dagger held low in one hand, low top-down view",
+      "characterId": "f0b117f5-c153-4159-94d5-752d591e858c",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's assassin at twice the canvas and a grade more detail; walk group 4b04fb00-3d1d-46e6-9319-d38fda296eae, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.hostage",
+      "kind": "sprite",
+      "dir": "hostage48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese young prince, a fine light-blue silk robe with wide sleeves and a red sash reaching the ground, a small black cap, hands folded in front, low top-down view",
+      "characterId": "6ba4fceb-9510-4023-b244-60a1e19881ac",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's hostage at twice the canvas and a grade more detail; walk group 8b092264-154e-4983-b3d2-696af4e1445c, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.crossbowman",
+      "kind": "sprite",
+      "dir": "crossbowman48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese crossbowman, brown leather armour of small overlapping rectangular plates laced with red cord over a dark green tunic, a grey cloth band around the head with no helmet, holding a wooden crossbow with a short bronze trigger horizontally across the chest, low top-down view",
+      "characterId": "10e61312-d193-47ba-8369-fd5b87a80134",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the 16 px set's crossbowman at twice the canvas and a grade more detail; walk group 36802b20-933a-4183-a390-d1f1e6b78d50, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.boat",
+      "kind": "sprite",
+      "dir": "barge48",
+      "frame": 48,
+      "frames": 1,
+      "tool": "create_8_direction_object",
+      "settings": {
+        "size": 48,
+        "view": "low top-down"
+      },
+      "prompt": "a flat wooden river barge with a raised square prow, a short mast with a furled tan cloth sail, three round grain sacks of pale cloth on the deck, low top-down view",
+      "jobId": "52d058b5-9ead-4439-a628-7f3eec4d89f2",
+      "date": "2026-08-25",
+      "generations": 20,
+      "note": "one still rotation per cardinal facing, laid out as a one-frame walk so the fleet sprite reads like any other"
+    }
+  ]
+}

@@ -105,11 +105,13 @@ export interface AssetEntry {
   record?: AssetRecord;
 }
 
-export type ManifestSource = "fallback" | "vendor" | "period";
+export type ManifestSource = "fallback" | "vendor" | "period" | "period32";
 
 export interface VendorManifest {
   version: 1;
   source: ManifestSource;
+  /** the tile this layer's ground sheets are drawn at (16 when absent) */
+  tile?: number;
   assets: Record<string, AssetEntry>;
 }
 

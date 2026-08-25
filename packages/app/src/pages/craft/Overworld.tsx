@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { labelOf } from "../../lib/gazetteer";
 import type {
@@ -20,7 +20,7 @@ import {
   EFFECTS,
   seatColor,
 } from "../../stage/catalog";
-import { MAP_URL } from "../../stage/OverworldScene";
+import { STAGE_SETS, stageSetOf } from "../../stage/sets";
 import { Stage } from "../../stage/Stage";
 
 // The whole overworld on one pannable, zoomable stage, with a control panel
@@ -59,6 +59,8 @@ type LoadState =
 type EffectChoice = "default" | "none" | StageEffect;
 
 export function Overworld() {
+  const [params, setParams] = useSearchParams();
+  const set = stageSetOf(params.get("set"));
   const [state, setState] = useState<LoadState>({ phase: "loading" });
   const [naming, setNaming] = useState<Naming>("chronicle");
   const [language, setLanguage] = useState<Language>("en");
@@ -76,10 +78,11 @@ export function Overworld() {
 
   useEffect(() => {
     let cancelled = false;
+    setState({ phase: "loading" });
     void (async () => {
       try {
         const [mapRes, gazetteerRes] = await Promise.all([
-          fetch(MAP_URL),
+          fetch(set.map),
           fetch("/data/world/gazetteer.json"),
         ]);
         if (!mapRes.ok) throw new Error(`map responded ${mapRes.status}`);
@@ -114,7 +117,7 @@ export function Overworld() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [set.map]);
 
   const places = state.phase === "ready" ? state.places : [];
   const gazetteer = state.phase === "ready" ? state.gazetteer : null;
@@ -364,6 +367,22 @@ export function Overworld() {
             value={language}
             onPick={(value) => rerender(naming, value as Language)}
           />
+          <ToggleGroup
+            options={STAGE_SETS.map((option) => ({
+              value: option.id,
+              label: `${option.tile} px`,
+            }))}
+            value={set.id}
+            onPick={(value) =>
+              setParams(
+                (next) => {
+                  next.set("set", value);
+                  return next;
+                },
+                { replace: true },
+              )
+            }
+          />
         </div>
       </header>
 
@@ -378,6 +397,7 @@ export function Overworld() {
           view={VIEW}
           interactive
           follow={follow}
+          set={set.id}
           eyebrow="Overworld · drag pans · scroll zooms"
         />
       </section>

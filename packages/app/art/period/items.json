@@ -1,6 +1,9 @@
 {
   "version": 1,
+  "source": "period",
+  "tile": 16,
   "root": "var/assets/pixellab",
+  "out": "packages/app/public/stage/period",
   "items": [
     {
       "id": "image.court",
@@ -186,7 +189,7 @@
       "characterId": "978eac79-517a-41fb-baa0-d99d2f25df33",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "figure 16x22 on the 24 px canvas (plan \u00a79.6 target 20 to 23); walk group c3597cb8-7238-4ce8-9e7b-7354e7860cdc, four frames per cardinal facing"
+      "note": "figure 16x22 on the 24 px canvas (plan §9.6 target 20 to 23); walk group c3597cb8-7238-4ce8-9e7b-7354e7860cdc, four frames per cardinal facing"
     },
     {
       "id": "sprite.general",
@@ -228,7 +231,7 @@
       "characterId": "f1fa0816-73ca-4fdc-992e-bcb5a8f1d20e",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "the trial's third prompt (plan \u00a75.2 table) regenerated at size 24; figure 21x22; walk group 302f6273-80da-4861-9788-dd3d9860bd37"
+      "note": "the trial's third prompt (plan §5.2 table) regenerated at size 24; figure 21x22; walk group 302f6273-80da-4861-9788-dd3d9860bd37"
     },
     {
       "id": "sprite.merchant",
@@ -671,7 +674,7 @@
       "keyTolerance": 20,
       "adjust": {
         "saturation": 0.9,
-        "value": 1.0
+        "value": 1
       },
       "note": "four prompts: flat at low detail, then mauve, then ochre with violet furrow shadows. Barring the violet family by name four ways finally held the shadow lines brown."
     },
@@ -1036,7 +1039,7 @@
       "generations": 1,
       "note": "the generic style every lesser range wears",
       "adjust": {
-        "saturation": 2.0,
+        "saturation": 2,
         "value": 1.5
       }
     },
