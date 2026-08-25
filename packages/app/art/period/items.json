@@ -186,7 +186,7 @@
       "characterId": "978eac79-517a-41fb-baa0-d99d2f25df33",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "figure 16x22 on the 24 px canvas (plan \u00a79.6 target 20 to 23); walk group c3597cb8-7238-4ce8-9e7b-7354e7860cdc, four frames per cardinal facing"
+      "note": "figure 16x22 on the 24 px canvas (plan §9.6 target 20 to 23); walk group c3597cb8-7238-4ce8-9e7b-7354e7860cdc, four frames per cardinal facing"
     },
     {
       "id": "sprite.general",
@@ -228,7 +228,7 @@
       "characterId": "f1fa0816-73ca-4fdc-992e-bcb5a8f1d20e",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "the trial's third prompt (plan \u00a75.2 table) regenerated at size 24; figure 21x22; walk group 302f6273-80da-4861-9788-dd3d9860bd37"
+      "note": "the trial's third prompt (plan §5.2 table) regenerated at size 24; figure 21x22; walk group 302f6273-80da-4861-9788-dd3d9860bd37"
     },
     {
       "id": "sprite.merchant",
@@ -439,6 +439,115 @@
       "date": "2026-08-25",
       "generations": 6,
       "note": "figure 12x22; walk group cef7388b-7a06-4dda-bc9c-0b38f7429a45"
+    },
+    {
+      "id": "image.saltern",
+      "kind": "image",
+      "file": "objects/saltern.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "three shallow square wooden brine pans filled with white salt standing in a row on pale sand, a small white mound of salt beside them, a small hut with a tan thatched roof behind them, no water, no people",
+      "jobId": "edfcc59f-4643-4c09-8cd8-2dabf334c20a",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.market",
+      "kind": "image",
+      "file": "objects/market.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small Chinese market, two wooden stalls with flat tan cloth awnings on poles, a large wooden balance scale with two hanging pans standing between them, a small heap of round bronze coins on a low table, no people",
+      "jobId": "b034655f-2eb8-4f01-9f63-b39014d8b9b2",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.academy",
+      "kind": "image",
+      "file": "objects/academy.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 40,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a long single-storey Chinese lecture hall with a grey tiled roof on dark wooden pillars, an open front showing low writing desks inside, a tall grey stone tablet standing upright before it, a low tan earthen platform, no people",
+      "jobId": "3f60a643-291f-4d0e-af0c-34d100b64331",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.altar",
+      "kind": "image",
+      "file": "objects/altar2.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 40,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a wide flat square mound of smooth tan packed earth rising in three flat steps like a low staircase pyramid, plain smooth surfaces with faint thin horizontal lines, a row of three round dark bronze pots each standing on three short legs on the flat top, no bricks, no people",
+      "jobId": "fab04d67-4746-4b89-8040-2904e85d4298",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "second prompt: the first (9b9e304c-a8b4-4a66-ada4-72261cf8b193) read the tiers as stacked brick; the mound described as a shape with no bricks named"
+    },
+    {
+      "id": "sprite.boat",
+      "kind": "sprite",
+      "dir": "barge24",
+      "frame": 24,
+      "frames": 1,
+      "tool": "create_8_direction_object",
+      "settings": {
+        "size": 24,
+        "view": "low top-down"
+      },
+      "prompt": "a flat wooden river barge with a raised square prow, a short mast with a furled tan cloth sail, three round grain sacks of pale cloth on the deck, low top-down view",
+      "jobId": "791ae6ca-d291-452a-8ff0-72b57d0d749d",
+      "date": "2026-08-25",
+      "generations": 20,
+      "note": "a rigid object, not a walk: the four cardinal rotations stand as single static frames per facing"
+    },
+    {
+      "id": "image.weir",
+      "kind": "image",
+      "file": "objects/weir3.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 40,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "high top-down"
+      },
+      "prompt": "seen from directly above, a pale blue stream flowing from the top edge to the bottom edge of the image, flat tan earthen ground on the left side and on the right side, a low straight dam of brown wooden planks crossing the stream from left bank to right bank at the middle, white foam below the dam, no people",
+      "jobId": "cbbb419c-fefb-4ba4-82e9-f386c37a3766",
+      "date": "2026-08-25",
+      "generations": 3,
+      "note": "third prompt: the first (f953c07a-8305-4871-b107-21c42230fe17) lost the water, the second (907f40f6-201f-4ce8-8942-40a18b605934) read the band of water as a hanging curtain; the dam and its foam carry the water reading"
     }
   ]
 }

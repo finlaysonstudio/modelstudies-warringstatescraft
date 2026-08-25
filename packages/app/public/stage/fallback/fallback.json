@@ -834,6 +834,41 @@
       "height": 16,
       "pack": "fallback",
       "kind": "image"
+    },
+    "image.saltern": {
+      "file": "image.saltern.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.market": {
+      "file": "image.market.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.academy": {
+      "file": "image.academy.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.altar": {
+      "file": "image.altar.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.weir": {
+      "file": "image.weir.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
     }
   }
 }

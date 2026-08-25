@@ -549,6 +549,54 @@ const marker = (kind: Marker): Image => {
       );
       return out;
     }
+    case "saltern": {
+      const out = blankImage(16, 16);
+      rect(out, 1, 8, 6, 5, wood);
+      rect(out, 2, 9, 4, 3, rgba("#f2f0e8"));
+      rect(out, 9, 8, 6, 5, wood);
+      rect(out, 10, 9, 4, 3, rgba("#f2f0e8"));
+      disc(out, 8, 5, 2.5, rgba("#f2f0e8"));
+      return out;
+    }
+    case "market": {
+      const out = blankImage(16, 16);
+      rect(out, 1, 6, 6, 3, rgba("#d9c39a"));
+      rect(out, 1, 9, 1, 5, wood);
+      rect(out, 6, 9, 1, 5, wood);
+      line(out, 8, 4, 14, 4, wood);
+      line(out, 11, 4, 11, 9, wood);
+      rect(out, 8, 5, 2, 2, rgba("#e8c547"));
+      rect(out, 13, 5, 2, 2, rgba("#e8c547"));
+      return out;
+    }
+    case "academy": {
+      const out = blankImage(16, 16);
+      rect(out, 2, 7, 12, 8, rgba("#f3e7c9"));
+      rect(out, 1, 5, 14, 3, wall);
+      rect(out, 4, 9, 2, 3, wall);
+      rect(out, 10, 9, 2, 3, wall);
+      rect(out, 7, 1, 2, 5, stone);
+      return out;
+    }
+    case "altar": {
+      const out = blankImage(16, 16);
+      rect(out, 1, 12, 14, 3, rgba("#d9c39a"));
+      rect(out, 3, 9, 10, 3, shade(rgba("#d9c39a"), 0.9));
+      rect(out, 5, 6, 6, 3, shade(rgba("#d9c39a"), 0.8));
+      rect(out, 6, 3, 4, 3, rgba("#6b5a35"));
+      rect(out, 6, 6, 1, 2, rgba("#6b5a35"));
+      rect(out, 9, 6, 1, 2, rgba("#6b5a35"));
+      return out;
+    }
+    case "weir": {
+      const out = blankImage(16, 16);
+      rect(out, 0, 6, 16, 5, rgba("#3d7bc4"));
+      rect(out, 0, 4, 16, 2, rgba("#d9c39a"));
+      rect(out, 0, 11, 16, 2, rgba("#d9c39a"));
+      for (let x = 2; x < 16; x += 3) rect(out, x, 5, 1, 7, wood);
+      rect(out, 7, 4, 2, 9, shade(wood, 1.2));
+      return out;
+    }
     default:
       return blankImage(16, 16);
   }

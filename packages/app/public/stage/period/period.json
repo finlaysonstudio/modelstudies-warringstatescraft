@@ -558,6 +558,67 @@
         }
       },
       "pack": "pixellab"
+    },
+    "image.saltern": {
+      "file": "image.saltern.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "image.market": {
+      "file": "image.market.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "image.academy": {
+      "file": "image.academy.png",
+      "kind": "image",
+      "width": 48,
+      "height": 40,
+      "pack": "pixellab"
+    },
+    "image.altar": {
+      "file": "image.altar.png",
+      "kind": "image",
+      "width": 40,
+      "height": 40,
+      "pack": "pixellab"
+    },
+    "sprite.boat": {
+      "file": "sprite.boat.png",
+      "kind": "sprite",
+      "width": 24,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 1,
+        "walk": {
+          "down": [
+            0
+          ],
+          "left": [
+            1
+          ],
+          "right": [
+            2
+          ],
+          "up": [
+            3
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "image.weir": {
+      "file": "image.weir.png",
+      "kind": "image",
+      "width": 40,
+      "height": 40,
+      "pack": "pixellab"
     }
   }
 }

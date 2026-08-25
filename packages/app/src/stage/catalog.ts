@@ -25,7 +25,12 @@ export type Terrain = (typeof TERRAINS)[number];
 export const WATERS = ["river", "sea"] as const;
 export type Water = (typeof WATERS)[number];
 
-/** Place markers, `image.<marker>`. */
+/**
+ * Place markers, `image.<marker>`. The last five are chapter props (plan
+ * §5.3): the salt works at the Brine Flats, the merchant house's market,
+ * the Jixia academy, the altar and tripods of the royal domain, and the
+ * weir on the Great Ditch.
+ */
 export const MARKERS = [
   "court",
   "town",
@@ -36,6 +41,11 @@ export const MARKERS = [
   "harbour",
   "camp",
   "hall",
+  "saltern",
+  "market",
+  "academy",
+  "altar",
+  "weir",
 ] as const;
 export type Marker = (typeof MARKERS)[number];
 

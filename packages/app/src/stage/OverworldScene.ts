@@ -66,6 +66,10 @@ const propertiesOf = (object: TiledPoint): Record<string, unknown> =>
     ? Object.fromEntries(object.properties.map((p) => [p.name, p.value]))
     : (object.properties ?? {});
 
+/** the frame a figure rests on (a static sprite has one frame per facing) */
+const restFrame = (sprite: NonNullable<StageAsset["sprite"]>): number =>
+  sprite.walk.down[1] ?? sprite.walk.down[0] ?? 0;
+
 /**
  * The overworld: the Tiled map, its places and their labels, the seats'
  * homes, and a queue of beats played one after another. Every direction is
@@ -299,7 +303,10 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   private clearLive(): void {
-    for (const object of this.live) object.destroy();
+    for (const object of this.live) {
+      this.tweens.killTweensOf(object);
+      object.destroy();
+    }
     this.live = [];
   }
 
@@ -329,15 +336,16 @@ export class OverworldScene extends Phaser.Scene {
             ease: "Linear",
             onUpdate: () => sprite.setDepth(1000 + sprite.y),
             onComplete: () => {
+              if (!sprite.active) return;
               sprite.anims.stop();
-              sprite.setFrame(asset.sprite!.walk.down[1]);
+              sprite.setFrame(restFrame(asset.sprite!));
             },
           });
         } else {
           this.time.delayedCall(700 + i * 90, () => {
             if (!sprite.active) return;
             sprite.anims.stop();
-            sprite.setFrame(asset.sprite!.walk.down[1]);
+            sprite.setFrame(restFrame(asset.sprite!));
           });
         }
       });
