@@ -75,8 +75,18 @@ describe("validatePacks", () => {
       { id: "terrain.grass", kind: "a2", file: "x.png" },
       { id: "water.x", kind: "characters", file: "y.png" },
       { id: "terrain.oops", kind: "a1", file: "z.png", block: { x: 0, y: 0 } },
+      {
+        id: "terrain.rows",
+        kind: "a2",
+        file: "z.png",
+        block: { x: 0, y: 0 },
+        layout: "stacked" as never,
+      },
     );
+    manifest.packs[0].layout = "rpgmaker" as never;
     const problems = validatePacks(manifest);
+    expect(problems).toContain('test: unknown layout "rpgmaker"');
+    expect(problems).toContain('test/terrain.rows: unknown layout "stacked"');
     expect(problems).toContain("test/terrain.grass: duplicate id");
     expect(problems).toContain("test/terrain.grass: a2 needs a block");
     expect(problems).toContain("test/water.x: characters need a cell");

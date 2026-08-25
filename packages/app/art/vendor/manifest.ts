@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 
 import { BadRequestError } from "@jaypie/errors";
 
+import { A2_LAYOUTS, type A2Layout } from "./autotile";
 import type { SpriteMeta } from "./slice";
 
 export type SheetKind = "a2" | "a1" | "characters" | "image";
@@ -29,6 +30,8 @@ export interface SheetSpec {
   sha1?: string;
   /** a2 / a1: the block to expand. */
   block?: BlockRef;
+  /** a2 / a1: the block's top-row layout (default: the pack's, then `corners-fill`). */
+  layout?: A2Layout;
   /** a2 / a1: key the surrounding base out of the expanded tiles. */
   keyOut?: KeyOutRef;
   /** a1: frames side by side (default 3). */
@@ -49,6 +52,8 @@ export interface PackSpec {
   vendor: string;
   url?: string;
   license: string;
+  /** The top-row layout of every a2 / a1 sheet in the pack unless the sheet says otherwise. */
+  layout?: A2Layout;
   sheets: SheetSpec[];
 }
 
@@ -103,9 +108,15 @@ export const validatePacks = (manifest: PacksManifest): string[] => {
   const problems: string[] = [];
   const ids = new Set<string>();
   for (const pack of manifest.packs) {
+    if (pack.layout && !A2_LAYOUTS.includes(pack.layout)) {
+      problems.push(`${pack.id}: unknown layout "${pack.layout}"`);
+    }
     for (const sheet of pack.sheets) {
       const label = `${pack.id}/${sheet.id}`;
       if (ids.has(sheet.id)) problems.push(`${label}: duplicate id`);
+      if (sheet.layout && !A2_LAYOUTS.includes(sheet.layout)) {
+        problems.push(`${label}: unknown layout "${sheet.layout}"`);
+      }
       ids.add(sheet.id);
       if (!KINDS.includes(sheet.kind)) {
         problems.push(`${label}: unknown kind "${sheet.kind}"`);

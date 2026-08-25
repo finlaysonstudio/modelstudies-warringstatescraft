@@ -8,6 +8,7 @@
       "vendor": "VectoRaith",
       "url": "https://vectoraith.itch.io/",
       "license": "VectoRaith commercial license: purchased assets, no redistribution, no AI use",
+      "layout": "single-corners",
       "sheets": [
         {
           "id": "terrain.grass",
@@ -150,6 +151,7 @@
       "vendor": "VectoRaith",
       "url": "https://vectoraith.itch.io/",
       "license": "VectoRaith commercial license: purchased assets, no redistribution, no AI use",
+      "layout": "single-corners",
       "sheets": [
         {
           "id": "terrain.forest",

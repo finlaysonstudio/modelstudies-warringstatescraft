@@ -1,10 +1,17 @@
 import { BadRequestError } from "@jaypie/errors";
 
-import { expandA1Block, expandA2Block, fillTileOf } from "./autotile";
+import {
+  DEFAULT_A2_LAYOUT,
+  expandA1Block,
+  expandA2Block,
+  fillTileOf,
+  type A2Layout,
+} from "./autotile";
 import {
   assertPacks,
   sha1Of,
   type AssetEntry,
+  type PackSpec,
   type PacksManifest,
   type SheetSpec,
   type VendorManifest,
@@ -65,13 +72,15 @@ export const buildVendor = ({
     imageCache.set(file, image);
     return image;
   };
-  const keyOutOf = (sheet: SheetSpec): Image | undefined =>
+  const layoutOf = (pack: PackSpec, sheet: SheetSpec): A2Layout =>
+    sheet.layout ?? pack.layout ?? DEFAULT_A2_LAYOUT;
+  const keyOutOf = (pack: PackSpec, sheet: SheetSpec): Image | undefined =>
     sheet.keyOut
-      ? fillTileOf(
-          imageOf(sheet.keyOut.file ?? sheet.file),
-          sheet.keyOut.block,
+      ? fillTileOf(imageOf(sheet.keyOut.file ?? sheet.file), {
+          block: sheet.keyOut.block,
           tile,
-        )
+          layout: layoutOf(pack, sheet),
+        })
       : undefined;
 
   const assets: Record<string, AssetEntry> = {};
@@ -84,7 +93,8 @@ export const buildVendor = ({
             sheet.block!,
             {
               tile,
-              keyOut: keyOutOf(sheet),
+              layout: layoutOf(pack, sheet),
+              keyOut: keyOutOf(pack, sheet),
               keyOutMode: sheet.keyOut?.mode,
             },
           );
@@ -117,7 +127,8 @@ export const buildVendor = ({
             {
               tile,
               frames,
-              keyOut: keyOutOf(sheet),
+              layout: layoutOf(pack, sheet),
+              keyOut: keyOutOf(pack, sheet),
               keyOutMode: sheet.keyOut?.mode,
             },
           );

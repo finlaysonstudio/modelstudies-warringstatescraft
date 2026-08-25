@@ -29,9 +29,28 @@ export interface Block {
 
 export type KeyOutMode = "phase" | "palette";
 
+/**
+ * How a sheet lays out the top row of a 2×3 block. `corners-fill` (the
+ * RPG Maker VX/MV convention) holds the four inner-corner minis at tile (0,0)
+ * and the plain fill at tile (1,0). `single-corners` (VectoRaith's "RPG Maker
+ * ready" sheets) holds the isolated single tile at (0,0) and the inner-corner
+ * minis at (1,0), with no plain fill tile: the fill is the interior of the
+ * box. Rows 1 to 2 are the 2×2 box of outer edges under both.
+ */
+export type A2Layout = "corners-fill" | "single-corners";
+
+export const A2_LAYOUTS: readonly A2Layout[] = [
+  "corners-fill",
+  "single-corners",
+];
+
+export const DEFAULT_A2_LAYOUT: A2Layout = "corners-fill";
+
 export interface ExpandOptions {
   /** Tile edge in pixels (default 16). */
   tile?: number;
+  /** The block's top-row layout (default `corners-fill`). */
+  layout?: A2Layout;
   /**
    * The sheet's plain fill tile of the terrain the block sits on. Pixels of
    * the expanded tiles that match it are keyed transparent so the blob can
@@ -53,65 +72,20 @@ interface Quadrant {
   xInt: number;
   yEdge: number;
   yInt: number;
-  inner: [number, number];
 }
 
 /**
- * An RPG Maker A2 block is 2 tiles wide and 3 tall: tile (0,0) holds the four
- * inner-corner minis, tile (1,0) the plain fill, and rows 1 to 2 a 2×2 box of
- * the outer edges. Every output tile is composed from four minis, one per
- * quadrant, chosen by that quadrant's vertical (v), horizontal (h), and
- * diagonal (d) neighbours.
+ * Every output tile is composed from four minis, one per quadrant, chosen by
+ * that quadrant's vertical (v), horizontal (h), and diagonal (d) neighbours:
+ * an open side takes the box's edge mini, a closed one its interior mini, and
+ * two closed sides without the diagonal take the inner-corner tile's mini at
+ * the quadrant's own position (the tile draws each notch in its own corner).
  */
 const QUADRANTS: Quadrant[] = [
-  {
-    ox: 0,
-    oy: 0,
-    v: N,
-    h: W,
-    d: NW,
-    xEdge: 0,
-    xInt: 2,
-    yEdge: 0,
-    yInt: 2,
-    inner: [1, 1],
-  },
-  {
-    ox: 1,
-    oy: 0,
-    v: N,
-    h: E,
-    d: NE,
-    xEdge: 3,
-    xInt: 1,
-    yEdge: 0,
-    yInt: 2,
-    inner: [0, 1],
-  },
-  {
-    ox: 0,
-    oy: 1,
-    v: S,
-    h: W,
-    d: SW,
-    xEdge: 0,
-    xInt: 2,
-    yEdge: 3,
-    yInt: 1,
-    inner: [1, 0],
-  },
-  {
-    ox: 1,
-    oy: 1,
-    v: S,
-    h: E,
-    d: SE,
-    xEdge: 3,
-    xInt: 1,
-    yEdge: 3,
-    yInt: 1,
-    inner: [0, 0],
-  },
+  { ox: 0, oy: 0, v: N, h: W, d: NW, xEdge: 0, xInt: 2, yEdge: 0, yInt: 2 },
+  { ox: 1, oy: 0, v: N, h: E, d: NE, xEdge: 3, xInt: 1, yEdge: 0, yInt: 2 },
+  { ox: 0, oy: 1, v: S, h: W, d: SW, xEdge: 0, xInt: 2, yEdge: 3, yInt: 1 },
+  { ox: 1, oy: 1, v: S, h: E, d: SE, xEdge: 3, xInt: 1, yEdge: 3, yInt: 1 },
 ];
 
 const paletteOf = (image: Image): Set<number> => {
@@ -151,6 +125,17 @@ const keyOut = (
   return keyed;
 };
 
+/**
+ * The top-row tile a mask copies whole rather than composes: the plain fill
+ * for a fully surrounded tile under `corners-fill`, the drawn single for an
+ * isolated tile under `single-corners`.
+ */
+const wholeTileOf = (layout: A2Layout, mask: number): number | undefined => {
+  if (layout === "corners-fill" && mask === 255) return 1;
+  if (layout === "single-corners" && mask === 0) return 0;
+  return undefined;
+};
+
 /** Expands one A2 block into the 47-tile blob sheet. */
 export const expandA2Block = (
   sheet: Image,
@@ -158,9 +143,11 @@ export const expandA2Block = (
   options: ExpandOptions = {},
 ): Image => {
   const tile = options.tile ?? 16;
+  const layout = options.layout ?? DEFAULT_A2_LAYOUT;
   const mini = tile / 2;
   const originX = block.x * 2 * tile;
   const originY = block.y * 3 * tile;
+  const cornersX = originX + (layout === "corners-fill" ? 0 : tile);
   if (originX + 2 * tile > sheet.width || originY + 3 * tile > sheet.height) {
     throw new BadRequestError(
       `block (${block.x}, ${block.y}) lies outside a ${sheet.width}×${sheet.height} sheet`,
@@ -170,10 +157,11 @@ export const expandA2Block = (
   BLOB_MASKS.forEach((mask, index) => {
     const tx = (index % BLOB_COLUMNS) * tile;
     const ty = Math.floor(index / BLOB_COLUMNS) * tile;
-    if (mask === 255) {
+    const whole = wholeTileOf(layout, mask);
+    if (whole !== undefined) {
       copyRect({
         source: sheet,
-        sx: originX + tile,
+        sx: originX + whole * tile,
         sy: originY,
         width: tile,
         height: tile,
@@ -190,8 +178,8 @@ export const expandA2Block = (
       let sx: number;
       let sy: number;
       if (v && h && !d) {
-        sx = originX + q.inner[0] * mini;
-        sy = originY + q.inner[1] * mini;
+        sx = cornersX + q.ox * mini;
+        sy = originY + q.oy * mini;
       } else {
         const bx = h ? q.xInt : q.xEdge;
         const by = v ? q.yInt : q.yEdge;
@@ -249,13 +237,34 @@ export const expandA1Block = (
   return out;
 };
 
-/** The plain fill tile of a block: tile (1,0). */
-export const fillTileOf = (sheet: Image, block: Block, tile = 16): Image => {
+export interface FillTileOptions {
+  block: Block;
+  /** Tile edge in pixels (default 16). */
+  tile?: number;
+  /** The block's top-row layout (default `corners-fill`). */
+  layout?: A2Layout;
+}
+
+/**
+ * The plain fill tile of a block: tile (1,0) under `corners-fill`, the centre
+ * of the box under `single-corners`.
+ */
+export const fillTileOf = (
+  sheet: Image,
+  { block, tile = 16, layout = DEFAULT_A2_LAYOUT }: FillTileOptions,
+): Image => {
+  const mini = tile / 2;
+  const originX = block.x * 2 * tile;
+  const originY = block.y * 3 * tile;
+  const [sx, sy] =
+    layout === "corners-fill"
+      ? [originX + tile, originY]
+      : [originX + mini, originY + tile + mini];
   const out = blankImage(tile, tile);
   copyRect({
     source: sheet,
-    sx: block.x * 2 * tile + tile,
-    sy: block.y * 3 * tile,
+    sx,
+    sy,
     width: tile,
     height: tile,
     target: out,
