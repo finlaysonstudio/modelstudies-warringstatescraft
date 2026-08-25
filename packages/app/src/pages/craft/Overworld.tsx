@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { labelOf } from "../../lib/gazetteer";
@@ -552,13 +552,7 @@ export function Overworld() {
 const SELECT =
   "w-full cursor-pointer rounded-sm border border-white/10 bg-black/40 px-2 py-1.5 text-sm text-zinc-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal";
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="block">
       <span className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">

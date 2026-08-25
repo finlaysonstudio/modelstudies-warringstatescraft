@@ -4,7 +4,11 @@ import { fileURLToPath } from "node:url";
 
 import { BadRequestError } from "@jaypie/errors";
 
-import type { AssetEntry, VendorManifest } from "../vendor/manifest";
+import type {
+  AssetEntry,
+  AssetRecord,
+  VendorManifest,
+} from "../vendor/manifest";
 import {
   blankImage,
   copyRect,
@@ -156,6 +160,43 @@ export const assembleSprite = (
   };
 };
 
+/**
+ * What the build did to the download. `items.json` carries these beside the
+ * prompt, and they are as much of the art as the generation is: the same
+ * sheet keyed two ways is two different biomes on the map.
+ */
+const finishOf = (item: PeriodItem): Record<string, unknown> | undefined => {
+  if (item.kind !== "tileset") return undefined;
+  const finish: Record<string, unknown> = {};
+  if (item.fill) finish.fill = item.fill;
+  if (item.desaturate) finish.desaturate = item.desaturate;
+  if (item.key) finish.key = item.key;
+  if (item.keyTolerance) finish.keyTolerance = item.keyTolerance;
+  if (item.frames) finish.frames = item.frames;
+  if (item.variants) finish.variants = item.variants;
+  if (item.variantTone) finish.variantTone = item.variantTone;
+  if (item.adjust) finish.adjust = item.adjust;
+  return Object.keys(finish).length ? finish : undefined;
+};
+
+/** The making of one id, carried into the manifest for the showcase page. */
+export const recordOf = (item: PeriodItem): AssetRecord => {
+  const finish = finishOf(item);
+  return {
+    tool: item.tool,
+    prompt: item.prompt,
+    ...(item.settings ? { settings: item.settings } : {}),
+    ...(item.jobId ? { jobId: item.jobId } : {}),
+    ...(item.characterId ? { characterId: item.characterId } : {}),
+    ...(item.date ? { date: item.date } : {}),
+    ...(item.generations === undefined
+      ? {}
+      : { generations: item.generations }),
+    ...(item.note ? { note: item.note } : {}),
+    ...(finish ? { finish } : {}),
+  };
+};
+
 export interface BuildPeriodOptions {
   spec: PeriodSpec;
   root: string;
@@ -212,6 +253,7 @@ export const buildPeriod = async ({
         width: image.width,
         height: image.height,
         pack: "pixellab",
+        record: recordOf(item),
       };
       log(`${item.id}  ${image.width}x${image.height}  ← ${item.file}`);
       continue;
@@ -225,6 +267,7 @@ export const buildPeriod = async ({
         width: image.width,
         height: image.height,
         pack: "pixellab",
+        record: recordOf(item),
       };
       log(`${item.id}  ${image.width}x${image.height}  ← ${item.file}`);
       continue;
@@ -252,6 +295,7 @@ export const buildPeriod = async ({
       height: image.height,
       sprite: meta,
       pack: "pixellab",
+      record: recordOf(item),
     };
     log(
       `${item.id}  ${image.width}x${image.height}  ${item.frames} frames  ← ${item.dir}`,

@@ -351,6 +351,29 @@ export function CraftHome() {
             open the map →
           </Link>
         </section>
+
+        <section
+          id="tiles"
+          className="scroll-mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
+          aria-label="Tiles"
+        >
+          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+            Tiles
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            The art the overworld is drawn from, generated for this project one
+            prompt at a time: every biome autotiled on the patch that shows its
+            transitions, every marker and figure on the ground it stands on, and
+            beside each one the prompt it came from and what the build did to
+            the reply.
+          </p>
+          <Link
+            to="/craft/tiles"
+            className="mt-4 inline-block cursor-pointer rounded-sm border border-white/10 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-zinc-300 uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+          >
+            see the tiles →
+          </Link>
+        </section>
       </div>
     </div>
   );

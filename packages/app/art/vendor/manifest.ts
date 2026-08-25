@@ -66,6 +66,27 @@ export interface PacksManifest {
 
 export type AssetKind = "blob" | "water" | "sprite" | "image" | "effect";
 
+/**
+ * How one asset was made. The period layer writes it from `items.json` (the
+ * build spec is also the prompt record), so the showcase page can say what
+ * was asked for and what was done to the reply without reading the spec.
+ * The vendor step never writes one: a purchased sheet has no prompt, and
+ * nothing from those packs travels with the app.
+ */
+export interface AssetRecord {
+  tool: string;
+  prompt: string;
+  settings?: Record<string, unknown>;
+  jobId?: string;
+  characterId?: string;
+  date?: string;
+  /** how many generations the id cost, failed attempts included */
+  generations?: number;
+  note?: string;
+  /** what the build did to the download (keying, colour, stacking) */
+  finish?: Record<string, unknown>;
+}
+
 export interface AssetEntry {
   file: string;
   kind: AssetKind;
@@ -80,6 +101,8 @@ export interface AssetEntry {
   /** blob / water: the Tiled tileset written beside the sheet. */
   tileset?: string;
   pack: string;
+  /** period only: the prompt and the finishing the id was made with. */
+  record?: AssetRecord;
 }
 
 export type ManifestSource = "fallback" | "vendor" | "period";

@@ -14,6 +14,23 @@ export interface StageSpriteMeta {
   walk: Record<StageFacing, number[]>;
 }
 
+/**
+ * How one asset was made: the prompt, the generator's settings, and what the
+ * build did to the reply. Only the period layer carries it (a purchased sheet
+ * has no prompt), and `/craft/tiles` is what reads it.
+ */
+export interface StageAssetRecord {
+  tool: string;
+  prompt: string;
+  settings?: Record<string, unknown>;
+  jobId?: string;
+  characterId?: string;
+  date?: string;
+  generations?: number;
+  note?: string;
+  finish?: Record<string, unknown>;
+}
+
 export interface StageAssetEntry {
   file: string;
   kind: StageAssetKind;
@@ -24,6 +41,7 @@ export interface StageAssetEntry {
   sprite?: StageSpriteMeta;
   tileset?: string;
   pack: string;
+  record?: StageAssetRecord;
 }
 
 export interface StageManifestFile {
