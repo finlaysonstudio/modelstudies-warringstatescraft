@@ -167,7 +167,6 @@ export function CraftHome() {
   const chapters = state.scenarios
     .filter((entry) => entry.chapter)
     .sort((a, b) => (a.chapter?.order ?? 0) - (b.chapter?.order ?? 0));
-  const twins = state.scenarios.filter((entry) => !entry.chapter);
   const headlines = chronicleHeadlines(state.studies, state.reports);
 
   return (
@@ -205,15 +204,6 @@ export function CraftHome() {
               entry={entry}
               library={state.library}
               headline={headlines.get(entry.id)}
-            />
-          ))}
-          {twins.map((entry) => (
-            <ChronicleRow
-              key={entry.id}
-              entry={entry}
-              library={state.library}
-              headline={headlines.get(entry.id)}
-              twin
             />
           ))}
         </ul>
@@ -371,12 +361,10 @@ function ChronicleRow({
   entry,
   library,
   headline,
-  twin = false,
 }: {
   entry: ScenarioIndexEntry;
   library: LibraryGame[];
   headline?: { model: string; peak: number }[];
-  twin?: boolean;
 }) {
   const games = library.filter((game) => game.scenario === entry.id);
   const fork = entry.decisionPoints?.[0];
@@ -390,18 +378,16 @@ function ChronicleRow({
         className="flex cursor-pointer flex-wrap items-baseline gap-x-4 gap-y-1 py-3.5 hover:bg-white/[0.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
       >
         <span className="w-16 shrink-0 font-plex-mono text-xs text-zinc-500">
-          {twin
-            ? "twin"
-            : entry.chapter?.order === 0
-              ? "prologue"
-              : `ch. ${entry.chapter?.order}`}
+          {entry.chapter?.order === 0
+            ? "prologue"
+            : `ch. ${entry.chapter?.order}`}
         </span>
         <span className="min-w-0 sm:w-56">
           <span className="block truncate text-sm font-medium text-white">
             {entry.title}
           </span>
           <span className="block font-plex-mono text-[10px] text-zinc-600">
-            {twin ? "the prologue in modern nouns" : entry.chapter?.date}
+            {entry.chapter?.date}
             {forkSeat ? ` · forks at turn ${fork!.turn} (${forkSeat})` : ""}
           </span>
         </span>
