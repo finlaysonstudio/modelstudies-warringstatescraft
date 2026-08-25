@@ -556,6 +556,27 @@ describe("weaveTurn", () => {
     expect(meet(3).map((direction) => direction.kind)).toEqual([
       "granary-close",
     ]);
+  });
+
+  it("steps a route consequence down a band when the escalator is already at the focus", () => {
+    // zhao alone escalates at its own court: a raid needs a road from
+    // elsewhere, so the band-4 garrison stands in, placed at the focus
+    const derived = weaveTurn({
+      directions: [
+        {
+          kind: "wall-build",
+          actor: { seat: "zhao", archetype: "labourer" },
+          at: "handan",
+          count: 6,
+        },
+      ],
+      band: 5,
+      focus: "handan",
+      seats,
+    });
+    expect(derived).toHaveLength(1);
+    expect(derived[0]).toMatchObject({ kind: "garrison", at: "handan" });
+    expect(derived[0]).not.toHaveProperty("from");
     // two columns on a court: the holder defends
     expect(
       weaveTurn({

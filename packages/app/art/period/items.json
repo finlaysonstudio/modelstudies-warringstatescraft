@@ -1,0 +1,444 @@
+{
+  "version": 1,
+  "root": "var/assets/pixellab",
+  "items": [
+    {
+      "id": "image.court",
+      "kind": "image",
+      "file": "objects/court.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 48,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Chinese royal audience hall of the Warring States period standing on a tan earthen platform with horizontal layer lines and no bricks, dark timber pillars along the open front, a wide low grey tiled hip roof with slightly upturned ends, a short stone stair at the front, no people",
+      "jobId": "470f9cce-816d-4116-aa86-e5ebebd00e91",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.hall",
+      "kind": "image",
+      "file": "objects/hall.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 40,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a long single-storey Chinese lecture hall with a grey tiled roof, an open front with dark wooden pillars, a low tan earthen platform, a plain wooden fence along one side, no people",
+      "jobId": "174e26b3-65d9-40c7-979b-ff4aef035ecf",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.pass",
+      "kind": "image",
+      "file": "objects/pass2.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 48,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a gate through a smooth tan packed-earth wall with thin horizontal lines and no bricks and no stones, a wooden watchtower with a small grey tiled roof standing on top of the wall, a dark arched gate opening below, a wooden railing, one small red banner on a pole, no people",
+      "jobId": "43c53f6d-6dda-4bee-aca1-df20351d8a60",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "second prompt: the first (87fd4936-7400-429a-b43f-8a2e134cf60e) read the wall as dressed stone blocks; rammed earth named in plainer words and moved to the front"
+    },
+    {
+      "id": "image.town",
+      "kind": "image",
+      "file": "objects/town.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 40,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small walled Chinese town, a square tan earthen wall with layer lines and one dark gate opening, grey tiled rooftops of a few houses inside the wall, no people",
+      "jobId": "f92cea63-21f1-491d-a69f-7c4db34e9af0",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.camp",
+      "kind": "image",
+      "file": "objects/camp.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a military field camp, three tan cloth tents behind a low wooden palisade of sharpened stakes, one tall red banner on a pole, no people",
+      "jobId": "05e6ea44-45d1-4d75-b7f4-e252b4444ca8",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.harbour",
+      "kind": "image",
+      "file": "objects/harbour.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a wooden pier of planks on posts with a moored flat wooden river boat with a furled square sail, a coil of rope on the pier, no people",
+      "jobId": "ac5aa829-eaa2-4880-affb-a1be74109a40",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "image.ford",
+      "kind": "image",
+      "file": "objects/ford2.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "high top-down"
+      },
+      "prompt": "five round flat grey stones lying in a straight horizontal row on a patch of pale sand, seen from above, a short wooden post at the right end, nothing else",
+      "jobId": "8eb5ff49-1892-4756-bef2-6d67ff0e3605",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "second prompt: the first (23b0aca0-dfb4-4fba-b219-40ec26ee3501) drew a diagonal ramp with water ends; the stones counted and laid flat, high top-down"
+    },
+    {
+      "id": "image.works",
+      "kind": "image",
+      "file": "objects/works2.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a long low bank of tan packed earth running left to right with a flat top and thin horizontal lines, a small square wooden gate of vertical planks set into the middle of its front face, a wooden wheelbarrow beside it, no fence, no water, no people",
+      "jobId": "c45e90bb-8f7e-4f8b-ac47-2dec504878eb",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "second prompt: the first (fdbbdf7e-60aa-4f68-aac5-4e560f3bfecc) read as a log palisade; the bank described as a shape before the gate"
+    },
+    {
+      "id": "image.field",
+      "kind": "image",
+      "file": "objects/field.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small square plot of green millet in straight rows on brown soil, a low earthen ridge around the edge, no people",
+      "jobId": "44ba529f-c9f4-4b3f-8791-86ccbbf9eaf7",
+      "date": "2026-08-25",
+      "generations": 1
+    },
+    {
+      "id": "sprite.envoy",
+      "kind": "sprite",
+      "dir": "envoy24",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese court envoy, a long plain flat dark-blue robe with wide sleeves reaching the ankles, a narrow red sash at the waist, a small black cloth cap, holding a flat narrow wooden tablet upright in both hands before the chest, low top-down view",
+      "characterId": "978eac79-517a-41fb-baa0-d99d2f25df33",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 16x22 on the 24 px canvas (plan \u00a79.6 target 20 to 23); walk group c3597cb8-7238-4ce8-9e7b-7354e7860cdc, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.general",
+      "kind": "sprite",
+      "dir": "general",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese army commander, brown leather armour of small overlapping rectangular plates laced with red cord over a dark red robe, a plain rounded leather helmet with a short red plume, a long straight bronze sword in a scabbard at the left hip, one hand raised, low top-down view",
+      "characterId": "ba19d4bf-a087-43f8-a0ef-e56d04360e19",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 19x22; walk group 34354153-e30a-4fda-a2d4-e4a12a590920"
+    },
+    {
+      "id": "sprite.infantry",
+      "kind": "sprite",
+      "dir": "infantry",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese foot soldier, dark brown hair pulled up into a small round bun on top of the head with the hairline showing above the forehead, a thin red cloth band tied around the head over the hair, no hat, no helmet, no cap, brown leather lamellar cuirass laced with red cord over a plain flat olive tunic, small round wooden shield strapped to the left forearm, the right hand holding upright a tall plain wooden staff with a blunt top and no spearhead, a short flat dull gold-green bronze blade fixed crosswise near the top of the staff sticking out to one side like the head of a pickaxe, low top-down view",
+      "characterId": "f1fa0816-73ca-4fdc-992e-bcb5a8f1d20e",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the trial's third prompt (plan \u00a75.2 table) regenerated at size 24; figure 21x22; walk group 302f6273-80da-4861-9788-dd3d9860bd37"
+    },
+    {
+      "id": "sprite.merchant",
+      "kind": "sprite",
+      "dir": "merchant",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese travelling merchant, a plain brown hemp robe to the knees over grey trousers, a wide flat round straw hat, a wooden carrying pole across the shoulders with a cloth bundle hanging at each end, low top-down view",
+      "characterId": "5c6b48d5-8e56-417c-a482-39adfe05bc1b",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 11x22 (the pole widens the east and west frames); walk group ed1ba0c7-5bc0-4f4a-b410-9acfdcda0126"
+    },
+    {
+      "id": "sprite.court",
+      "kind": "sprite",
+      "dir": "court",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese king, a long black robe with wide sleeves and red hems reaching the ground, a flat black rectangular board crown with short strings of beads hanging at the front, hands folded inside the sleeves, low top-down view",
+      "characterId": "6bbaf806-b343-4fe4-9f88-6b6b42bd8719",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "the court archetype (a ruler in audience); figure 10x21; walk group da8f6403-0b71-4a8f-a511-474ae439771b"
+    },
+    {
+      "id": "sprite.scholar",
+      "kind": "sprite",
+      "dir": "scholar",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese scholar, a long plain white robe with wide sleeves, a simple black cloth band tied around the hair with no cap, holding a bundle of thin bamboo strips bound with cord in both hands, low top-down view",
+      "characterId": "830204e3-f37d-4141-b800-b06f90f6968d",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 13x21; walk group 0398056e-e7ec-4b53-81f2-7689478ba789"
+    },
+    {
+      "id": "sprite.clerk",
+      "kind": "sprite",
+      "dir": "clerk",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese registry clerk, a plain grey knee-length robe with narrow sleeves over dark trousers, a small black cloth cap, holding a bundle of bamboo strips under one arm and a thin writing brush in the other hand, low top-down view",
+      "characterId": "870d7b41-1533-409d-a177-9590739a5380",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 12x21; walk group 68ad722a-b1c1-4cbc-85a7-6f11a06e2918"
+    },
+    {
+      "id": "sprite.labourer",
+      "kind": "sprite",
+      "dir": "labourer",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese labourer, bare chested with a short brown cloth wrapped at the waist, a grey cloth band around the head, carrying a large wicker basket of earth on the back with a strap across the chest, low top-down view",
+      "characterId": "efdedccd-ff06-432a-a7a2-680ca54fd7bd",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 13x22; walk group f882ce3c-57ce-43df-b004-36503f1121c9"
+    },
+    {
+      "id": "sprite.peasant",
+      "kind": "sprite",
+      "dir": "peasant",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese farmer, a short undyed pale hemp tunic with a rope belt, bare lower legs, a wide conical straw hat, carrying a wooden hoe over one shoulder, low top-down view",
+      "characterId": "7003fba8-e5bf-45ac-adf9-3310b245b8a8",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 12x21; walk group 6ae8ee20-099c-43ed-bfab-270053dd08aa"
+    },
+    {
+      "id": "sprite.mohist",
+      "kind": "sprite",
+      "dir": "mohist",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese Mohist craftsman, a short coarse black tunic with a rope belt over plain trousers, bare forearms, hair tied back with no cap, holding a wooden mallet in one hand, low top-down view",
+      "characterId": "422f3c2c-20cb-4c19-82a5-0ba00be82bf5",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 8x20; walk group 149be10d-4f0d-4549-9ed0-d41407277673"
+    },
+    {
+      "id": "sprite.assassin",
+      "kind": "sprite",
+      "dir": "assassin",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese swordsman, a dark grey hooded cloak over a black tunic, the hood up hiding the upper face, a short bronze dagger held low in one hand, low top-down view",
+      "characterId": "8cf3e953-14e4-4862-a6a9-974f8217cce4",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 11x21; walk group 953f7ce5-e68c-4ec2-87b7-b75ea3bf61a7"
+    },
+    {
+      "id": "sprite.hostage",
+      "kind": "sprite",
+      "dir": "hostage",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese young prince, a fine light-blue silk robe with wide sleeves and a red sash reaching the ground, a small black cap, hands folded in front, low top-down view",
+      "characterId": "5798654e-d7d2-407f-b8db-e4aa96b6c413",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 11x21; walk group 0b4538d9-d914-49cb-a2a5-cb409f460991"
+    },
+    {
+      "id": "sprite.crossbowman",
+      "kind": "sprite",
+      "dir": "crossbowman",
+      "frame": 24,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 24,
+        "detail": "low detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese crossbowman, brown leather armour of small overlapping rectangular plates laced with red cord over a dark green tunic, a grey cloth band around the head with no helmet, holding a wooden crossbow with a short bronze trigger horizontally across the chest, low top-down view",
+      "characterId": "fa96303b-9989-46dd-aff6-d2fcb9fbb42a",
+      "date": "2026-08-25",
+      "generations": 6,
+      "note": "figure 12x22; walk group cef7388b-7a06-4dda-bc9c-0b38f7429a45"
+    }
+  ]
+}

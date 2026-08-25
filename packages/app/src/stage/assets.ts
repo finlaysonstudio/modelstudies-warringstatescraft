@@ -1,12 +1,20 @@
+import { NotFoundError } from "@jaypie/errors";
+
 import type { StageArchetype } from "../lib/types";
 import { ARCHETYPE_SPRITES } from "./catalog";
-import type { StageAsset, StageManifest, StageManifestFile } from "./manifest";
+import {
+  STAGE_SOURCES,
+  type StageAsset,
+  type StageManifest,
+  type StageManifestFile,
+  type StageSource,
+} from "./manifest";
 
 export const STAGE_BASE = "/stage";
 
 const resolveFile = (
   file: StageManifestFile,
-  source: "vendor" | "fallback",
+  source: StageSource,
 ): Record<string, StageAsset> =>
   Object.fromEntries(
     Object.entries(file.assets).map(([id, entry]) => [
@@ -16,7 +24,7 @@ const resolveFile = (
   );
 
 const fetchManifest = async (
-  source: "vendor" | "fallback",
+  source: StageSource,
   fetcher: typeof fetch,
 ): Promise<StageManifestFile | null> => {
   const response = await fetcher(`${STAGE_BASE}/${source}/${source}.json`);
@@ -27,37 +35,51 @@ const fetchManifest = async (
 };
 
 /**
- * Loads the fallback manifest (always present) and, when the vendor step has
- * run, the vendor manifest over it: a vendor asset replaces the fallback
- * asset of the same id, and every id the fallback covers stays resolvable.
+ * Loads the layers in order: the fallback (always present), then the vendor
+ * step's output when it has run, then the period layer generated for the
+ * project. A higher layer's asset replaces the lower asset of the same id,
+ * and every id the fallback covers stays resolvable.
  */
 export const loadStageManifest = async (
   fetcher: typeof fetch = fetch,
 ): Promise<StageManifest> => {
-  const fallback = await fetchManifest("fallback", fetcher);
-  if (!fallback) {
-    throw new Error(
-      "stage: the fallback manifest is missing (run `npm run stage:fallback`)",
-    );
+  const assets: Record<string, StageAsset> = {};
+  const sources: StageSource[] = [];
+  for (const source of STAGE_SOURCES) {
+    const file = await fetchManifest(source, fetcher);
+    if (!file) {
+      if (source === "fallback") {
+        throw new NotFoundError(
+          "stage: the fallback manifest is missing (run `npm run stage:fallback`)",
+        );
+      }
+      continue;
+    }
+    sources.push(source);
+    Object.assign(assets, resolveFile(file, source));
   }
-  const vendor = await fetchManifest("vendor", fetcher);
-  return {
-    assets: {
-      ...resolveFile(fallback, "fallback"),
-      ...(vendor ? resolveFile(vendor, "vendor") : {}),
-    },
-    vendor: vendor !== null,
-  };
+  return { assets, sources, vendor: sources.includes("vendor") };
 };
 
-/** The first sprite asset on record for an archetype, in catalog preference order. */
+/**
+ * The sprite for an archetype: of the candidates the catalog lists, the one
+ * from the highest art layer (a period sprite over a vendor stand-in over the
+ * fallback), and among equals the first listed (the archetype's own id).
+ */
 export const spriteFor = (
   manifest: StageManifest,
   archetype: StageArchetype,
 ): StageAsset | undefined => {
+  let best: StageAsset | undefined;
+  let bestRank = -1;
   for (const id of ARCHETYPE_SPRITES[archetype]) {
     const asset = manifest.assets[id];
-    if (asset?.kind === "sprite") return asset;
+    if (asset?.kind !== "sprite") continue;
+    const rank = STAGE_SOURCES.indexOf(asset.source);
+    if (rank > bestRank) {
+      best = asset;
+      bestRank = rank;
+    }
   }
-  return undefined;
+  return best;
 };

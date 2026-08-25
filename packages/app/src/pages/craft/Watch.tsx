@@ -1,10 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import {
-  AdjudicationBlock,
-  compactVerdict,
-} from "../../components/replay/AdjudicationBlock";
+import { compactVerdict } from "../../components/replay/AdjudicationBlock";
 import { BriefCard } from "../../components/replay/BriefCard";
 import { DebriefBlock } from "../../components/replay/DebriefBlock";
 import { EscalationOverview } from "../../components/replay/EscalationOverview";

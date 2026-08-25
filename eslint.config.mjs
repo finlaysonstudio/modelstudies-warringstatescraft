@@ -23,11 +23,23 @@ export default [
     },
   },
   {
+    // the art build scripts report to the terminal like the CLI does
+    files: ["packages/app/art/**/*.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
+  {
     // vitest accepts a message as expect's second argument; the specs use it
     // to name the rendering or chapter under test.
     files: ["packages/*/src/**/__tests__/**/*.ts"],
     rules: {
       "vitest/valid-expect": ["error", { maxArgs: 2 }],
+      // expectChapter asserts a chapter's shape; a chapter spec may be that call alone
+      "vitest/expect-expect": [
+        "warn",
+        { assertFunctionNames: ["expect", "expectChapter"] },
+      ],
     },
   },
 ];

@@ -142,13 +142,23 @@ export const weaveTurn = ({
     invested.add(place);
   }
   if (derived.length === 0) {
-    const kind = CONSEQUENCES[level];
     const escalator = escalatorOf(directions) ?? Object.keys(seats)[0];
+    const home = escalator ? seats[escalator]?.home : undefined;
+    const routable = home !== undefined && home !== focus;
+    // a route consequence (a raid) needs a road from the escalator's home
+    // to the focus; at the escalator's own court the band below stands in
+    let kind = CONSEQUENCES[level];
+    for (
+      let band = level;
+      kind && DIRECTIONS[kind].places === "route" && !routable && band > 0;
+      band -= 1
+    ) {
+      kind = CONSEQUENCES[band - 1];
+    }
     if (kind && escalator) {
       const rule = DIRECTIONS[kind];
       const holder = homeSeat(focus, seats);
-      const home = seats[escalator]?.home;
-      const route = rule.places === "route" && home && home !== focus;
+      const route = rule.places === "route";
       derived.push({
         kind,
         actor: { seat: escalator, archetype: rule.actor },

@@ -77,9 +77,11 @@ export interface AssetEntry {
   pack: string;
 }
 
+export type ManifestSource = "fallback" | "vendor" | "period";
+
 export interface VendorManifest {
   version: 1;
-  source: "vendor" | "fallback";
+  source: ManifestSource;
   assets: Record<string, AssetEntry>;
 }
 

@@ -58,6 +58,12 @@ npm run cli -- study-run --resume <studyId> --replicates 10        # grow a pilo
 npm run cli -- study-list
 npm run cli -- study-report <studyId>                              # the study's report → var/reports/<studyId>.json
 npm run materials                                                  # export scenario cards + prompts to var/scenarios/ and instrument descriptions to var/instruments/ (npm run app does this first)
+npm run cli -- game-stage <runId>                                  # code a stage script for a run with Sonnet (--model <id>); --fallback codes it from the escalation record, --random --seed <n> stores a seeded alternate beside it
+npm run cli -- study-stage <studyId> --fallback                    # a stage script for every complete arm of a study
+npm run cli -- stage-map --check                                   # every gazetteer key and seat home has a place on the overworld map
+npm run stage:fallback && npm run stage:map                        # draw the procedural art layer and render the Tiled map (both committed)
+npm run stage:vendor                                               # the purchased packs from var/assets/vendor/ (output git-ignored, never committed)
+npm run stage:period                                               # assemble the PixelLab layer from var/assets/pixellab/ (committed)
 npm run cli -- interview-run --plan crisis --panel dev --explain     # a fielding: one sitting per model, every call journaled; Ctrl-C stops between calls
 npm run cli -- interview-run --resume <fieldingId>                  # pick every sitting of a fielding back up (or --resume <interviewId>)
 npm run cli -- interview-verify <interviewId>                       # check a sitting against its journal; --rebuild rewrites it from the journal
@@ -114,6 +120,10 @@ Retrieval practice is documented as a skill in `.claude/skills/lake/`: which `us
 ### The site
 
 `npm run app` serves the campaign site. `/` introduces the two campaigns. **Warring States Craft** (`/craft`) presents the chronicle (each chapter at `/craft/chapters/:id`, results above the chapter's cards and prompts in every rendering), the saga studies (`/craft/studies/:id`), the Model Values Survey (`/craft/survey`: values scorecards, ladder scorecards, the fieldings on record, and the instrument description, with one sitting's full record — per-repetition codes and probed explanations — at `/craft/survey/:interviewId`), replays (`/craft/replays/:id`, matrix roots at `/craft/replays/:id/matrix`), and Play (`/craft/play`): choose a chapter, a seat to follow, and the models on the other seats, or take a game at random, then watch the recording reveal itself turn by turn from that seat's vantage at `/craft/play/:id`. **AI Gone Awry 2026** (`/awry`) opens on the replication's summary, every number read from the study report, then its studies (`/awry/studies/:id`) and replays. A run opened under the wrong campaign redirects to its own. Nothing in the UI constructs a game: games are played by the CLI (`game-run`, `study-run`), and the site shows what was played. The interactive play console and the play server stay on disk, unrouted, for a later registration-gated live-play deliverable.
+
+### The stage
+
+Every replay at `/craft/play/:id` plays on an animated overworld above the turn cards: a pixel map of the Warring States world (every gazetteer place, rivers and passes, a court for each seat under its own flag) that pans and zooms to each beat as the game reveals itself. What moves is a stage script (`var/stagings/<runId>.json`), a list of beats keyed to the run's injects, briefs, verdicts, narratives, and debrief, each beat a few directions from a closed vocabulary (an envoy sent, a column marched, a granary closed, a pass garrisoned, a market opened, a city sacked). The script is written by a coder: the default reads each turn's brief and codes it with a model (`game-stage <runId>`, about $0.17 for a six-turn game); `--fallback` derives it from the escalation record alone, with no model call; `--random --seed <n>` has every seat pick a strategy at random and stores the result as a second sequence beside the first, so a replay can carry more than one staging and the page's sequence switcher (`?staging=<id>`) plays either. The art comes in three layers, each replacing the last by asset id: a procedural fallback drawn by the repo, the purchased packs run through a git-ignored vendor step (the packs are never committed and never uploaded to a generator), and a period layer generated on PixelLab for this project and committed with its prompt record (`packages/app/art/period/items.json`). Captions follow the run's language and naming; a `zh` run reads its stage in Chinese.
 
 ### Read the matrix
 

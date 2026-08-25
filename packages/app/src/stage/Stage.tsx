@@ -24,7 +24,7 @@ export interface StageProps {
 
 type Status =
   | { phase: "loading" }
-  | { phase: "ready"; source: "vendor" | "fallback" }
+  | { phase: "ready"; sources: string }
   | { phase: "error"; message: string };
 
 const captionOf = (
@@ -92,7 +92,7 @@ export function Stage({
             sceneRef.current = scene;
             setStatus({
               phase: "ready",
-              source: manifest.vendor ? "vendor" : "fallback",
+              sources: manifest.sources.join(" + "),
             });
           },
           onBeatStart: (beat, plan) => {
@@ -166,7 +166,7 @@ export function Stage({
         <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
           Stage · {script.source}
           {script.seed !== undefined ? ` · seed ${script.seed}` : ""}
-          {status.phase === "ready" ? ` · ${status.source} art` : ""}
+          {status.phase === "ready" ? ` · ${status.sources} art` : ""}
         </p>
         {status.phase === "loading" && (
           <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] text-zinc-500">

@@ -57,6 +57,75 @@ export interface CreateLlmClientOptions {
   retry?: RetryOptions | false;
 }
 
+interface ToolUseBlock {
+  type?: string;
+  name?: string;
+  input?: unknown;
+  arguments?: unknown;
+  function?: { name?: string; arguments?: unknown };
+}
+
+const STRUCTURED_OUTPUT_TOOL = "structured_output";
+
+const parseArguments = (value: unknown): unknown => {
+  if (typeof value !== "string") return value;
+  try {
+    return JSON.parse(value) as unknown;
+  } catch {
+    return undefined;
+  }
+};
+
+const structuredCallOf = (block: ToolUseBlock): unknown => {
+  if (block.name === STRUCTURED_OUTPUT_TOOL) {
+    return parseArguments(block.input ?? block.arguments);
+  }
+  if (block.function?.name === STRUCTURED_OUTPUT_TOOL) {
+    return parseArguments(block.function.arguments);
+  }
+  return undefined;
+};
+
+/**
+ * Jaypie's legacy `structured_output` tool emulation can return a reply whose
+ * only block is that tool call while `content` stays undefined (seen on
+ * claude-sonnet-5 once the runtime has cached the native output_config
+ * rejection: the response is read on the native path, which expects a text
+ * block). The call's input is the structured reply, so a format request
+ * recovers it from the raw provider responses rather than reporting an empty
+ * reply. Anthropic blocks (`content[].type === "tool_use"`), OpenAI
+ * Responses items (`output[].type === "function_call"`), and Chat
+ * Completions tool calls (`choices[].message.tool_calls[]`) are read; the
+ * last structured call wins.
+ */
+export const recoverStructuredOutput = (response: unknown): unknown => {
+  const raw = (response as { responses?: unknown[] } | null)?.responses;
+  if (!Array.isArray(raw)) return undefined;
+  let found: unknown;
+  for (const entry of raw) {
+    const item = entry as {
+      content?: ToolUseBlock[];
+      output?: ToolUseBlock[];
+      choices?: { message?: { tool_calls?: ToolUseBlock[] } }[];
+    } | null;
+    const blocks: ToolUseBlock[] = [
+      ...(Array.isArray(item?.content) ? item.content : []),
+      ...(Array.isArray(item?.output) ? item.output : []),
+      ...(Array.isArray(item?.choices)
+        ? item.choices.flatMap((choice) => choice?.message?.tool_calls ?? [])
+        : []),
+    ];
+    for (const block of blocks) {
+      if (!block || typeof block !== "object") continue;
+      const value = structuredCallOf(block);
+      if (value !== undefined && value !== null && typeof value === "object") {
+        found = value;
+      }
+    }
+  }
+  return found;
+};
+
 export function createLlmClient(
   defaults: CreateLlmClientOptions = {},
 ): LlmClient {
@@ -86,8 +155,12 @@ export function createLlmClient(
         }),
       };
       const response = await Llm.operate(prompt, operateOptions);
+      const content =
+        response.content === undefined && options.format
+          ? recoverStructuredOutput(response)
+          : response.content;
       return {
-        content: response.content,
+        content,
         history: response.history,
         ...(response.usage?.length
           ? { usage: priceUsage(response.usage) }

@@ -1,0 +1,193 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import { BadRequestError } from "@jaypie/errors";
+
+import type { AssetEntry, VendorManifest } from "../vendor/manifest";
+import {
+  blankImage,
+  copyRect,
+  readPng,
+  writePng,
+  type Image,
+} from "../vendor/png";
+import { FACINGS, type SpriteMeta } from "../vendor/slice";
+
+/**
+ * The period layer: art generated on PixelLab for this project (the terms
+ * grant ownership and distribution, so the output is committed), assembled
+ * from the raw downloads under `var/assets/pixellab/` into
+ * `public/stage/period/` with a manifest the stage loads over the vendor
+ * layer. `items.json` is both the build spec and the record of every prompt.
+ */
+
+export interface PeriodRecord {
+  tool: string;
+  prompt: string;
+  settings?: Record<string, unknown>;
+  jobId?: string;
+  characterId?: string;
+  date?: string;
+  generations?: number;
+  note?: string;
+}
+
+export interface PeriodImageItem extends PeriodRecord {
+  id: string;
+  kind: "image";
+  /** the raw download, relative to the source root */
+  file: string;
+}
+
+export interface PeriodSpriteItem extends PeriodRecord {
+  id: string;
+  kind: "sprite";
+  /** directory holding `walk/<facing>-<n>.png` frames (south, west, east, north) */
+  dir: string;
+  frame: number;
+  frames: number;
+}
+
+export type PeriodItem = PeriodImageItem | PeriodSpriteItem;
+
+export interface PeriodSpec {
+  version: 1;
+  root: string;
+  items: PeriodItem[];
+}
+
+/** PixelLab facings → the stage's facings (rows down, left, right, up) */
+const FACING_SOURCE: Record<(typeof FACINGS)[number], string> = {
+  down: "south",
+  left: "west",
+  right: "east",
+  up: "north",
+};
+
+export const assembleSprite = (
+  frames: Record<string, Image[]>,
+  { frame, count }: { frame: number; count: number },
+): { image: Image; meta: SpriteMeta } => {
+  const image = blankImage(frame * count, frame * FACINGS.length);
+  const walk = {} as SpriteMeta["walk"];
+  FACINGS.forEach((facing, row) => {
+    const list = frames[FACING_SOURCE[facing]];
+    if (!list || list.length < count) {
+      throw new BadRequestError(
+        `sprite is missing ${FACING_SOURCE[facing]} frames (${list?.length ?? 0} of ${count})`,
+      );
+    }
+    list.slice(0, count).forEach((source, column) => {
+      if (source.width !== frame || source.height !== frame) {
+        throw new BadRequestError(
+          `frame ${FACING_SOURCE[facing]}-${column} is ${source.width}x${source.height}, not ${frame}x${frame}`,
+        );
+      }
+      copyRect({
+        source,
+        sx: 0,
+        sy: 0,
+        width: frame,
+        height: frame,
+        target: image,
+        tx: column * frame,
+        ty: row * frame,
+      });
+    });
+    walk[facing] = Array.from({ length: count }, (_, i) => row * count + i);
+  });
+  return {
+    image,
+    meta: { frameWidth: frame, frameHeight: frame, columns: count, walk },
+  };
+};
+
+export interface BuildPeriodOptions {
+  spec: PeriodSpec;
+  root: string;
+  outDir: string;
+  log?: (line: string) => void;
+}
+
+export const buildPeriod = async ({
+  spec,
+  root,
+  outDir,
+  log = () => {},
+}: BuildPeriodOptions): Promise<VendorManifest> => {
+  await mkdir(outDir, { recursive: true });
+  const assets: Record<string, AssetEntry> = {};
+  for (const item of spec.items) {
+    const file = `${item.id}.png`;
+    if (item.kind === "image") {
+      const image = await readPng(path.join(root, item.file));
+      await writePng(path.join(outDir, file), image);
+      assets[item.id] = {
+        file,
+        kind: "image",
+        width: image.width,
+        height: image.height,
+        pack: "pixellab",
+      };
+      log(`${item.id}  ${image.width}x${image.height}  ← ${item.file}`);
+      continue;
+    }
+    const frames: Record<string, Image[]> = {};
+    for (const source of Object.values(FACING_SOURCE)) {
+      frames[source] = [];
+      for (let i = 0; i < item.frames; i += 1) {
+        frames[source].push(
+          await readPng(
+            path.join(root, item.dir, "walk", `${source}-${i}.png`),
+          ),
+        );
+      }
+    }
+    const { image, meta } = assembleSprite(frames, {
+      frame: item.frame,
+      count: item.frames,
+    });
+    await writePng(path.join(outDir, file), image);
+    assets[item.id] = {
+      file,
+      kind: "sprite",
+      width: image.width,
+      height: image.height,
+      sprite: meta,
+      pack: "pixellab",
+    };
+    log(
+      `${item.id}  ${image.width}x${image.height}  ${item.frames} frames  ← ${item.dir}`,
+    );
+  }
+  const manifest: VendorManifest = { version: 1, source: "period", assets };
+  await writeFile(
+    path.join(outDir, "period.json"),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+  );
+  return manifest;
+};
+
+const isMain =
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isMain) {
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  const repo = path.resolve(here, "../../../..");
+  const spec = JSON.parse(
+    await readFile(path.join(here, "items.json"), "utf8"),
+  ) as PeriodSpec;
+  const root = process.env.STAGE_PIXELLAB_DIR ?? path.join(repo, spec.root);
+  const outDir = path.join(repo, "packages/app/public/stage/period");
+  const manifest = await buildPeriod({
+    spec,
+    root,
+    outDir,
+    log: (line) => console.log(line),
+  });
+  console.log(
+    `${Object.keys(manifest.assets).length} period assets → ${path.relative(repo, outDir)}/period.json`,
+  );
+}

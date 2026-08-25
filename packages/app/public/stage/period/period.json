@@ -1,0 +1,563 @@
+{
+  "version": 1,
+  "source": "period",
+  "assets": {
+    "image.court": {
+      "file": "image.court.png",
+      "kind": "image",
+      "width": 48,
+      "height": 48,
+      "pack": "pixellab"
+    },
+    "image.hall": {
+      "file": "image.hall.png",
+      "kind": "image",
+      "width": 48,
+      "height": 40,
+      "pack": "pixellab"
+    },
+    "image.pass": {
+      "file": "image.pass.png",
+      "kind": "image",
+      "width": 32,
+      "height": 48,
+      "pack": "pixellab"
+    },
+    "image.town": {
+      "file": "image.town.png",
+      "kind": "image",
+      "width": 40,
+      "height": 40,
+      "pack": "pixellab"
+    },
+    "image.camp": {
+      "file": "image.camp.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "image.harbour": {
+      "file": "image.harbour.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "image.ford": {
+      "file": "image.ford.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "image.works": {
+      "file": "image.works.png",
+      "kind": "image",
+      "width": 48,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "image.field": {
+      "file": "image.field.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab"
+    },
+    "sprite.envoy": {
+      "file": "sprite.envoy.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.general": {
+      "file": "sprite.general.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.infantry": {
+      "file": "sprite.infantry.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.merchant": {
+      "file": "sprite.merchant.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.court": {
+      "file": "sprite.court.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.scholar": {
+      "file": "sprite.scholar.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.clerk": {
+      "file": "sprite.clerk.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.labourer": {
+      "file": "sprite.labourer.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.peasant": {
+      "file": "sprite.peasant.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.mohist": {
+      "file": "sprite.mohist.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.assassin": {
+      "file": "sprite.assassin.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.hostage": {
+      "file": "sprite.hostage.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    },
+    "sprite.crossbowman": {
+      "file": "sprite.crossbowman.png",
+      "kind": "sprite",
+      "width": 96,
+      "height": 96,
+      "sprite": {
+        "frameWidth": 24,
+        "frameHeight": 24,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab"
+    }
+  }
+}
