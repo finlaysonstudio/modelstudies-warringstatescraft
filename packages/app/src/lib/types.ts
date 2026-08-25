@@ -73,6 +73,11 @@ export interface TurnAdjudication {
   mode: PanelMode;
   /** 0..ladder.length-1 consensus escalation for the turn */
   escalation: number;
+  /**
+   * no judge returned a finite escalation: the turn has no score and
+   * `escalation` is a placeholder, not a rung the panel gave
+   */
+  unscored?: true;
   narrative: string;
   narratorUsage?: Usage;
 }
@@ -143,6 +148,8 @@ export interface Run {
   dialogWords?: number;
   /** false when the scenario's priorities block was withheld */
   priorities?: boolean;
+  /** the seats were asked in plain text rather than a schema */
+  elicit?: "text";
   /** the chapter's rendering, when not the default (en, chronicle, no pivot) */
   language?: Language;
   naming?: Naming;
@@ -362,6 +369,8 @@ export interface LamparthGroup {
   n: number;
   /** complete games dropped for a missing or unusable selection */
   excluded: number;
+  /** study groups elicited as plain text rather than a schema */
+  elicit?: "text";
   cells: { scenario: string; n: number }[];
   /** study groups: mean words of simulated dialog per move */
   dialogWords?: { turn: number; mean: number }[];

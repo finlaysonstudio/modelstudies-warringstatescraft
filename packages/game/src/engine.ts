@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
 
-import { BadRequestError } from "@jaypie/errors";
-import type { LlmClient, Store } from "@modelstudies/workflows";
+import { BadRequestError, ConfigurationError } from "@jaypie/errors";
+import type {
+  ElicitationMode,
+  LlmClient,
+  Store,
+} from "@modelstudies/workflows";
+import { elicitationFor } from "@modelstudies/workflows";
 
 import { adjudicateTurn } from "./adjudicate";
 import {
@@ -18,6 +23,7 @@ import type {
   DecisionBrief,
   DecisionMemo,
   DecisionPoint,
+  ElicitOption,
   HumanPlayer,
   HumanPrompt,
   Language,
@@ -59,6 +65,13 @@ export interface GameOptions {
    * chunks were about 350 words); unset leaves the length to the model
    */
   dialogWords?: number;
+  /**
+   * how decisions are asked of the seats: `auto` (default) follows the
+   * capability table (`elicitationFor`), `schema` and `text` force one path
+   * for every seat. The text path is forced-choice only; a `text` model on a
+   * memo scenario is refused.
+   */
+  elicit?: ElicitOption;
   /**
    * a human player; plays any seat assigned `HUMAN_MODEL` (and, at the
    * decision point, adds a blind and an informed focal memo beside the
@@ -211,6 +224,7 @@ export class GameEngine {
   private readonly branchConcurrency: number;
   private readonly dialog: number;
   private readonly dialogWords?: number;
+  private readonly elicit: ElicitOption;
   private readonly human?: HumanPlayer;
   private readonly panel: Partial<PanelConfig>;
   private readonly llm: LlmClient;
@@ -246,6 +260,7 @@ export class GameEngine {
       options.dialogWords && options.dialogWords > 0
         ? Math.floor(options.dialogWords)
         : undefined;
+    this.elicit = options.elicit ?? "auto";
     this.human = options.human;
     this.panel = options.panel ?? {};
     this.llm = options.llm;
@@ -275,6 +290,23 @@ export class GameEngine {
     const seated = this.matrix
       ? combinations.flatMap((combination) => Object.values(combination))
       : Object.values(this.seats);
+    // the text path reads a selection off a menu; a memo turn carries two
+    // unvalidated arrays with the same merge exposure, so a text model on a
+    // memo scenario would fail silently rather than loudly
+    if (this.scenario.elicitation !== "choice") {
+      const text = [...new Set([...seated, ...this.roster])].filter(
+        (model) =>
+          model !== HUMAN_MODEL &&
+          model !== SCRIPTED_MODEL &&
+          this.elicitationFor(model) === "text",
+      );
+      if (text.length) {
+        throw new ConfigurationError(
+          `Text elicitation needs a forced-choice scenario; ${this.scenario.id} is ` +
+            `${this.scenario.elicitation ?? "memo"} (${text.join(", ")})`,
+        );
+      }
+    }
     if (seated.includes(HUMAN_MODEL) && !this.human) {
       throw new BadRequestError(
         `A seat is assigned to ${HUMAN_MODEL} but no human player was provided`,
@@ -290,6 +322,11 @@ export class GameEngine {
         `${HUMAN_MODEL} is the narrator but no human narrator was provided`,
       );
     }
+  }
+
+  /** how this run asks `model`: the forced mode, or the capability table */
+  private elicitationFor(model: string): ElicitationMode {
+    return this.elicit === "auto" ? elicitationFor(model) : this.elicit;
   }
 
   private turns(): ScenarioTurn[] {
@@ -311,7 +348,15 @@ export class GameEngine {
     );
   }
 
-  private newRun(): Run {
+  private newRun(roster: Record<string, string> = this.seats): Run {
+    // recorded per run, not per engine: a matrix child and a branch child
+    // each carry their own roster
+    const text = Object.values(roster).some(
+      (model) =>
+        model !== HUMAN_MODEL &&
+        model !== SCRIPTED_MODEL &&
+        this.elicitationFor(model) === "text",
+    );
     return {
       id: runId(),
       model: "runs",
@@ -320,7 +365,7 @@ export class GameEngine {
       createdAt: new Date().toISOString(),
       escalationLadder: [...this.scenario.escalationLadder],
       status: "active",
-      roster: { ...this.seats },
+      roster: { ...roster },
       panel: this.panelConfig(),
       narrator: this.narrator ?? this.roster[0],
       ...(this.dialog ? { dialog: this.dialog } : {}),
@@ -328,6 +373,7 @@ export class GameEngine {
         ? { dialogWords: this.dialogWords }
         : {}),
       ...(this.priorities ? {} : { priorities: false }),
+      ...(text ? { elicit: "text" as const } : {}),
       ...(this.scenario.language ? { language: this.scenario.language } : {}),
       ...(this.scenario.naming ? { naming: this.scenario.naming } : {}),
       ...(this.scenario.pivot ? { pivot: this.scenario.pivot } : {}),
@@ -379,7 +425,7 @@ export class GameEngine {
       ).filter((child): child is Run => child !== undefined);
     } else {
       children = combinations.map((roster) => ({
-        ...this.newRun(),
+        ...this.newRun(roster),
         roster,
         branch: {
           parent: run.id,
@@ -518,6 +564,7 @@ export class GameEngine {
         : elicitBrief({
             dialog: this.dialog,
             dialogWords: this.dialogWords,
+            elicit: this.elicitationFor(model),
             llm: this.llm,
             model,
             run,
@@ -617,6 +664,7 @@ export class GameEngine {
         elicitBrief({
           dialog: this.dialog,
           dialogWords: this.dialogWords,
+          elicit: this.elicitationFor(model),
           llm: this.llm,
           model,
           run,
@@ -685,7 +733,7 @@ export class GameEngine {
       ].filter((seed) => !seed.brief.error);
 
     const children: Run[] = seeds.map((seed) => ({
-      ...this.newRun(),
+      ...this.newRun({ ...run.roster, [point.seat]: seed.brief.model }),
       roster: { ...run.roster, [point.seat]: seed.brief.model },
       branch: {
         parent: run.id,

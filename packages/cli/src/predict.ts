@@ -192,8 +192,12 @@ export const buildPredictionReport = async ({
         selected,
       );
     }
+    // an unscored turn gave no level; counting its placeholder 0 would put a
+    // rung the panel never returned beside the declared force ceiling
     const escalations = run.turns.flatMap((turn) =>
-      typeof turn.adjudication?.escalation === "number"
+      turn.adjudication &&
+      !turn.adjudication.unscored &&
+      typeof turn.adjudication.escalation === "number"
         ? [turn.adjudication.escalation]
         : [],
     );

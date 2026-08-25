@@ -39,10 +39,12 @@ export interface BasicReport extends ReportBase {
   byModel: EscalationGroup[];
 }
 
+/** an unscored turn is omitted, not counted as a 0 (see `TurnAdjudication.unscored`) */
+const isScored = (turn: Run["turns"][number]): boolean =>
+  Boolean(turn.adjudication) && !turn.adjudication!.unscored;
+
 const series = (run: Run): number[] =>
-  run.turns
-    .filter((turn) => turn.adjudication)
-    .map((turn) => turn.adjudication!.escalation);
+  run.turns.filter(isScored).map((turn) => turn.adjudication!.escalation);
 
 export { armOfRuns } from "./types";
 
@@ -67,7 +69,7 @@ const group = (
   const indexes = [
     ...new Set(
       timelines.flatMap((run) =>
-        run.turns.filter((turn) => turn.adjudication).map((t) => t.index),
+        run.turns.filter(isScored).map((t) => t.index),
       ),
     ),
   ].sort((a, b) => a - b);

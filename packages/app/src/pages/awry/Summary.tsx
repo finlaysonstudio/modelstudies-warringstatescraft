@@ -96,6 +96,14 @@ export function Summary({ report }: { report: LamparthReport | null }) {
                       human
                     </span>
                   )}
+                  {group.elicit === "text" && (
+                    <span
+                      className="ml-2 font-plex-mono text-[10px] text-zinc-600 uppercase"
+                      title="asked in plain text: this subject cannot hold the choice schema"
+                    >
+                      text
+                    </span>
+                  )}
                 </td>
                 <td className="py-2 pr-4 font-plex-mono text-zinc-400">
                   {group.n}

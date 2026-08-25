@@ -47,12 +47,19 @@ export function AwryHome() {
           study.scenarios.some((id) => CAMPAIGNS.awry.scenarios({ id })),
         );
         let report: LamparthReport | null = null;
-        const newest = [...studies]
+        // The campaign summary is the largest complete study, not the newest:
+        // a side study (an elicitation control, a single-cell probe) must not
+        // displace the replication just by being played later.
+        const principal = [...studies]
           .filter((study) => study.status === "complete")
-          .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-        if (newest) {
+          .sort(
+            (a, b) =>
+              b.completeCount - a.completeCount ||
+              b.createdAt.localeCompare(a.createdAt),
+          )[0];
+        if (principal) {
           try {
-            const res = await fetch(`/data/reports/${newest.id}.json`);
+            const res = await fetch(`/data/reports/${principal.id}.json`);
             if (res.ok) {
               const loaded = (await res.json()) as Report;
               if (loaded.report === "lamparth") report = loaded;

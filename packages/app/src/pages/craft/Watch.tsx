@@ -359,14 +359,22 @@ function StepBlock({
     return (
       <section className={frame} aria-label="Verdict">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          The panel's verdict · escalation {adjudication.escalation}
-          {ladder?.[adjudication.escalation]
-            ? ` — ${ladder[adjudication.escalation]}`
-            : ""}
+          {adjudication.unscored ? (
+            <>The panel returned no verdict · unscored</>
+          ) : (
+            <>
+              The panel&apos;s verdict · escalation {adjudication.escalation}
+              {ladder?.[adjudication.escalation]
+                ? ` — ${ladder[adjudication.escalation]}`
+                : ""}
+            </>
+          )}
         </p>
-        <div className="mt-3 max-w-md">
-          <LadderStrip escalation={adjudication.escalation} ladder={ladder} />
-        </div>
+        {!adjudication.unscored && (
+          <div className="mt-3 max-w-md">
+            <LadderStrip escalation={adjudication.escalation} ladder={ladder} />
+          </div>
+        )}
         {(adjudication.panel ?? []).length > 0 && (
           <ul className="mt-3 space-y-1">
             {adjudication.panel.map((verdict) => (

@@ -1,4 +1,8 @@
-import type { LlmClient, LlmTurn } from "@modelstudies/workflows";
+import type {
+  ElicitationMode,
+  LlmClient,
+  LlmTurn,
+} from "@modelstudies/workflows";
 
 import type {
   DecisionBrief,
@@ -174,6 +178,14 @@ export const publicRecord = (run: Run, scenario: Scenario): string => {
   return settled
     .map((turn) => {
       const adjudication = turn.adjudication!;
+      // an unscored turn prints no rung: rung 0 is "routine posture", not
+      // "unknown", and a fabricated 0 would enter every later seat prompt
+      if (adjudication.unscored) {
+        return (
+          `${t.turnHeaderUnscored(turn.index, turn.title)}\n` +
+          `${adjudication.narrative}`
+        );
+      }
       const label =
         scenario.escalationLadder[adjudication.escalation] ??
         t.level(adjudication.escalation);
@@ -212,14 +224,19 @@ export const privateRecord = (
   return own || t.noPriorDecisions;
 };
 
-/** The questions and choices a forced-choice turn puts to the seat. */
+/**
+ * The questions and choices a forced-choice turn puts to the seat.
+ * `choices: false` withholds the menu, which is what the text path's
+ * answers call asks (the menu arrives on its own call).
+ */
 export const choiceBlock = (
   turn: ScenarioTurn,
   scenario: Pick<Scenario, "language"> = {},
+  options: { choices?: boolean } = {},
 ): string => {
   const t = stringsFor(scenario);
   const questions = turn.questions ?? [];
-  const choices = turn.choices ?? [];
+  const choices = options.choices === false ? [] : (turn.choices ?? []);
   const lines = questions.map(
     (question, index) => `(${index + 1}) ${question}`,
   );
@@ -236,18 +253,25 @@ export const turnPrompt = (
   scenario: Scenario,
   seat: ScenarioSeat,
   turn: ScenarioTurn,
+  options: { choices?: boolean } = {},
 ): string => {
   const t = stringsFor(scenario);
   const script = scriptBlock(scenario, turn);
+  const withChoices = options.choices !== false;
   const menu =
     scenario.elicitation === "choice"
-      ? `\n\n${t.questions}\n${choiceBlock(turn, scenario)}`
+      ? `\n\n${t.questions}\n${choiceBlock(turn, scenario, options)}`
       : turn.moveMenu?.length
         ? `\n\n${t.illustrativeOptions}\n${turn.moveMenu
             .map((move) => `- ${move}`)
             .join("\n")}`
         : "";
-  const ask = scenario.elicitation === "choice" ? t.askChoice : t.askMemo;
+  const ask =
+    scenario.elicitation === "choice"
+      ? withChoices
+        ? t.askChoice
+        : t.askAnswers
+      : t.askMemo;
   return (
     `${t.publicRecord}\n${publicRecord(run, scenario)}\n\n` +
     `${t.ownDecisions}\n${privateRecord(run, seat.id, scenario)}\n\n` +
@@ -387,6 +411,199 @@ export const choiceRetryPrompt = (
   return `${t.choiceRetry(reason)}\n\n${t.questions}\n${choiceBlock(turn, scenario)}`;
 };
 
+/**
+ * TEXT ELICITATION (see `elicitationFor` in @modelstudies/workflows)
+ *
+ * A model that cannot hold the choice schema is asked twice in plain text:
+ * once for the turn's questions with the menu withheld, once for the menu
+ * with the answers on the history. The engine matches the selection reply
+ * against the menu itself. This is a return toward the original protocol
+ * (the MIT repo asked each question in sequence and parsed letters out of
+ * free text), not a departure from it.
+ */
+
+/** the turn prompt with the menu withheld: the questions only */
+export const answersPrompt = (
+  run: Run,
+  scenario: Scenario,
+  seat: ScenarioSeat,
+  turn: ScenarioTurn,
+): string => turnPrompt(run, scenario, seat, turn, { choices: false });
+
+/** the menu and one instruction: reply with the ids that apply */
+export const selectionPrompt = (
+  turn: ScenarioTurn,
+  scenario: Pick<Scenario, "language"> = {},
+): string => {
+  const t = stringsFor(scenario);
+  const choices = turn.choices ?? [];
+  return (
+    `${t.selectionHeader}\n` +
+    choices.map((choice) => `    [${choice.id}] ${choice.label}`).join("\n") +
+    `\n\n${t.selectionAsk}`
+  );
+};
+
+/** the corrective prompt after an invalid text selection */
+export const textRetryPrompt = (
+  reason: string,
+  turn: ScenarioTurn,
+  scenario: Pick<Scenario, "language"> = {},
+): string =>
+  `${stringsFor(scenario).choiceRetry(reason)}\n\n${selectionPrompt(turn, scenario)}`;
+
+/** a selection token's surrounding brackets, quotes, and trailing stops */
+const stripToken = (token: string): string =>
+  token
+    .replace(/^[[({<"'`*]+/, "")
+    .replace(/[\])}>"'`*.,;:!?]+$/, "")
+    .toLowerCase();
+
+/** normalized label text: case, punctuation, and spacing folded */
+const normalizeLabel = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+
+/** a bare word that could be an id: letters, digits, or a hyphen */
+const TOKENISH = /^[\p{L}\p{N}-]+$/u;
+
+const SEPARATORS = /[\s,;\u3001\uff0c\uff1b]+/;
+
+/**
+ * The choice ids a plain-text selection reply names, in the order it names
+ * them, first occurrence only. Deliberately narrow, because a menu whose
+ * ids are single letters shares them with English articles: `a` is both
+ * "Military Action" and the indefinite article, and reading one as the
+ * other would silently code a de-escalatory reply as aggressive.
+ *
+ * 1. The selection is the last non-empty line, which is what the prompt
+ *    asks for; a reply whose every line opens with a bracketed id is read
+ *    as a list and every line contributes.
+ * 2. A line every one of whose tokens is short enough to be an id (and at
+ *    least one of which is one) is an id list: its known ids are taken and
+ *    its unknown tokens dropped, as `toDecisionBrief` drops unknown ids.
+ * 3. Otherwise only bracketed ids (`[a1]`, `(d)`) count, because the menu
+ *    prints them that way and prose does not.
+ * 4. With no id at all, the phrases (commas and semicolons only) are
+ *    matched against the labels: normalized equality first, then a unique
+ *    prefix. A phrase matching more than one label is dropped as ambiguous
+ *    rather than guessed ("Military Action" prefixes three move-two
+ *    labels).
+ *
+ * What survives is `validateChoices`'s business: an empty, duplicated, or
+ * whole-menu result is retried and then recorded `unusable`, the same
+ * vocabulary the schema path and the Lamparth report already understand.
+ */
+export const parseSelection = (
+  reply: unknown,
+  turn: ScenarioTurn,
+): string[] => {
+  const menu = turn.choices ?? [];
+  if (!menu.length) return [];
+  const byId = new Map(menu.map((choice) => [choice.id.toLowerCase(), choice]));
+  const width = Math.max(4, ...menu.map((choice) => choice.id.length));
+  const bracketed = new RegExp(
+    `[[(]\\s*([^\\])\\s]{1,${width}})\\s*[\\])]`,
+    "gu",
+  );
+  const text = typeof reply === "string" ? reply : JSON.stringify(reply);
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (!lines.length) return [];
+  const opensWithId = (line: string): boolean => {
+    const first = new RegExp(bracketed.source, "u").exec(line);
+    return Boolean(
+      first && first.index === 0 && byId.has(first[1].toLowerCase()),
+    );
+  };
+  const selection =
+    lines.length > 1 && lines.every(opensWithId)
+      ? lines
+      : [lines[lines.length - 1]];
+
+  const picked: string[] = [];
+  const take = (id: string) => {
+    if (!picked.includes(id)) picked.push(id);
+  };
+  for (const line of selection) {
+    const tokens = line.split(SEPARATORS).map(stripToken).filter(Boolean);
+    const isList =
+      tokens.length > 0 &&
+      tokens.every((token) => token.length <= width && TOKENISH.test(token)) &&
+      tokens.some((token) => byId.has(token));
+    if (isList) {
+      for (const token of tokens) {
+        const choice = byId.get(token);
+        if (choice) take(choice.id);
+      }
+      continue;
+    }
+    for (const match of line.matchAll(bracketed)) {
+      const choice = byId.get(match[1].toLowerCase());
+      if (choice) take(choice.id);
+    }
+  }
+  if (picked.length) return picked;
+
+  // no ids anywhere: read the reply as labels
+  const labels = menu.map((choice) => ({
+    id: choice.id,
+    label: normalizeLabel(choice.label),
+  }));
+  for (const phrase of selection
+    .join(", ")
+    .split(/[,;\u3001\uff0c\uff1b]+/)
+    .map(normalizeLabel)
+    .filter(Boolean)) {
+    const exact = labels.filter((entry) => entry.label === phrase);
+    if (exact.length === 1) {
+      take(exact[0].id);
+      continue;
+    }
+    if (exact.length > 1) continue;
+    const prefixed = labels.filter((entry) => entry.label.startsWith(phrase));
+    if (prefixed.length === 1) take(prefixed[0].id);
+  }
+  return picked;
+};
+
+/** the answers reply split on its `(n)` markers; one entry when it has none */
+export const splitAnswers = (text: string): string[] => {
+  const markers = [...text.matchAll(/\(\s*\d+\s*\)/g)];
+  const numbered =
+    markers.length > 1 ||
+    (markers.length === 1 &&
+      markers[0].index === text.length - text.trimStart().length);
+  if (!numbered) {
+    const trimmed = text.trim();
+    return trimmed ? [trimmed] : [];
+  }
+  return markers
+    .map((marker, index) =>
+      text
+        .slice(
+          marker.index! + marker[0].length,
+          index + 1 < markers.length ? markers[index + 1].index! : text.length,
+        )
+        .replace(/^[\s.:\u3002\uff1a]+/, "")
+        .trim(),
+    )
+    .filter(Boolean);
+};
+
+/** whatever the selection reply said above its selection line */
+export const selectionProse = (reply: string): string => {
+  const lines = reply
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return lines.length > 1 ? lines.slice(0, -1).join("\n") : "";
+};
+
 export const toDecisionBrief = (
   seatId: string,
   model: string,
@@ -437,6 +654,13 @@ export const toDecisionBrief = (
 export interface ElicitBriefOptions {
   /** rounds of simulated team dialog before the decision (0 = direct) */
   dialog?: number;
+  /**
+   * how the decision is asked of this model: `schema` (default) is one
+   * structured call; `text` asks the questions and the selection as two
+   * plain calls and matches the reply against the menu (forced-choice
+   * turns only). The engine resolves it from `elicitationFor`.
+   */
+  elicit?: ElicitationMode;
   /** target words per dialog round, stated in the dialog prompts */
   dialogWords?: number;
   llm: LlmClient;
@@ -503,45 +727,132 @@ const decisionFormat = (scenario: Scenario, turn: ScenarioTurn) =>
     unknown
   >;
 
+/** one path's outcome: the brief, the retries it cost, and why it still failed */
+interface Elicited {
+  brief: DecisionBrief;
+  retries: number;
+  reason?: string;
+}
+
+/** what both paths carry out of the dialog rounds */
+interface ElicitContext {
+  dialog: string[];
+  history: LlmTurn[];
+  usage: Usage;
+}
+
+/** the schema path: one decision call, answers and selection together */
+const elicitBySchema = async (
+  options: ElicitBriefOptions,
+  { dialog, history, usage }: ElicitContext,
+): Promise<Elicited> => {
+  const { llm, model, run, scenario, seat, turn } = options;
+  const base = turnPrompt(run, scenario, seat, turn);
+  const system = seatSystem(scenario, seat);
+  const format = decisionFormat(scenario, turn);
+  let prompt = dialog.length ? `${dialogClose(scenario)}\n\n${base}` : base;
+  let brief: DecisionBrief;
+  let reason: string | undefined;
+  let retries = 0;
+  for (;;) {
+    const result = await llm.operate(prompt, {
+      format,
+      ...(history.length ? { history: [...history] } : {}),
+      model,
+      system,
+    });
+    usage.push(...(result.usage ?? []));
+    brief = toDecisionBrief(seat.id, model, result.content, turn);
+    reason =
+      scenario.elicitation === "choice"
+        ? validateChoices(turn, brief.memo.choices ?? [], scenario)
+        : undefined;
+    if (!reason || retries >= CHOICE_RETRIES) break;
+    // retry with the invalid reply on the record and a corrective ask
+    history.push({ role: "user", content: prompt });
+    history.push({ role: "assistant", content: asText(result.content) });
+    prompt = choiceRetryPrompt(reason, turn, scenario);
+    retries++;
+  }
+  return { brief, retries, reason };
+};
+
+/**
+ * The text path: the questions and the selection as two plain calls. Only
+ * the selection call repeats on an invalid selection, so a retry never
+ * re-pays for the prose answers, and the model is never asked to hold two
+ * outputs apart inside one object (which is the defect this path exists
+ * for). `retries` counts selection calls repeated.
+ */
+const elicitByText = async (
+  options: ElicitBriefOptions,
+  { dialog, history, usage }: ElicitContext,
+): Promise<Elicited> => {
+  const { llm, model, run, scenario, seat, turn } = options;
+  const system = seatSystem(scenario, seat);
+  const base = answersPrompt(run, scenario, seat, turn);
+  const ask = dialog.length ? `${dialogClose(scenario)}\n\n${base}` : base;
+  const answered = await llm.operate(ask, {
+    ...(history.length ? { history: [...history] } : {}),
+    model,
+    system,
+  });
+  usage.push(...(answered.usage ?? []));
+  const answers = asText(answered.content);
+  history.push({ role: "user", content: ask });
+  history.push({ role: "assistant", content: answers });
+
+  let prompt = selectionPrompt(turn, scenario);
+  let choices: string[];
+  let rationale: string;
+  let reason: string | undefined;
+  let retries = 0;
+  for (;;) {
+    const result = await llm.operate(prompt, {
+      history: [...history],
+      model,
+      system,
+    });
+    usage.push(...(result.usage ?? []));
+    const reply = asText(result.content);
+    choices = parseSelection(reply, turn);
+    rationale = selectionProse(reply);
+    reason = validateChoices(turn, choices, scenario);
+    if (!reason || retries >= CHOICE_RETRIES) break;
+    history.push({ role: "user", content: prompt });
+    history.push({ role: "assistant", content: reply });
+    prompt = textRetryPrompt(reason, turn, scenario);
+    retries++;
+  }
+  // the same object the schema path returns, so one mapping serves both
+  return {
+    brief: toDecisionBrief(
+      seat.id,
+      model,
+      { answers: splitAnswers(answers), choices, rationale },
+      turn,
+    ),
+    retries,
+    reason,
+  };
+};
+
 export const elicitBrief = async (
   options: ElicitBriefOptions,
 ): Promise<DecisionBrief> => {
-  const { llm, model, run, scenario, seat, turn } = options;
+  const { model, scenario, seat } = options;
   try {
-    const { dialog, history, usage } = await simulateDialog(options);
-    const base = turnPrompt(run, scenario, seat, turn);
-    const system = seatSystem(scenario, seat);
-    const format = decisionFormat(scenario, turn);
-    let prompt = dialog.length ? `${dialogClose(scenario)}\n\n${base}` : base;
-    let brief: DecisionBrief;
-    let reason: string | undefined;
-    let retries = 0;
-    for (;;) {
-      const result = await llm.operate(prompt, {
-        format,
-        ...(history.length ? { history: [...history] } : {}),
-        model,
-        system,
-      });
-      usage.push(...(result.usage ?? []));
-      brief = toDecisionBrief(seat.id, model, result.content, turn);
-      reason =
-        scenario.elicitation === "choice"
-          ? validateChoices(turn, brief.memo.choices ?? [], scenario)
-          : undefined;
-      if (!reason || retries >= CHOICE_RETRIES) break;
-      // retry with the invalid reply on the record and a corrective ask
-      history.push({ role: "user", content: prompt });
-      history.push({ role: "assistant", content: asText(result.content) });
-      prompt = choiceRetryPrompt(reason, turn, scenario);
-      retries++;
-    }
+    const context = await simulateDialog(options);
+    const text = options.elicit === "text" && scenario.elicitation === "choice";
+    const { brief, retries, reason } = text
+      ? await elicitByText(options, context)
+      : await elicitBySchema(options, context);
     return {
       ...brief,
-      ...(dialog.length ? { dialog } : {}),
+      ...(context.dialog.length ? { dialog: context.dialog } : {}),
       ...(retries ? { retries } : {}),
       ...(reason ? { unusable: reason } : {}),
-      ...withUsage(usage),
+      ...withUsage(context.usage),
     };
   } catch (error) {
     return {

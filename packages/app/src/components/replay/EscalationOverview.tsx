@@ -8,7 +8,14 @@ export function EscalationOverview({
   turns: TurnRecord[];
   ladder?: string[];
 }) {
-  const levels = turns.map((turn) => turn.adjudication?.escalation ?? 0);
+  // an unscored turn has no level: it is drawn hollow and left out of the scale
+  const scored = (turn: TurnRecord): number | null =>
+    turn.adjudication && !turn.adjudication.unscored
+      ? turn.adjudication.escalation
+      : null;
+  const levels = turns
+    .map(scored)
+    .filter((level): level is number => level !== null);
   const maxLevel = Math.max(ladder ? ladder.length - 1 : 0, ...levels, 1);
   return (
     <section
@@ -21,21 +28,28 @@ export function EscalationOverview({
       </p>
       <div className="mt-3 flex items-end gap-x-3">
         {turns.map((turn) => {
-          const level = turn.adjudication?.escalation ?? 0;
+          const level = scored(turn);
           return (
             <div
               key={turn.index}
               className="flex flex-col items-center gap-y-1"
             >
-              <span
-                className="size-4 rounded-[2px] bg-brand-terminal"
-                style={{ opacity: Math.max(level / maxLevel, 0.12) }}
-                title={
-                  ladder?.[level]
-                    ? `T${turn.index} · ${ladder[level]}`
-                    : `T${turn.index} · escalation ${level}`
-                }
-              />
+              {level === null ? (
+                <span
+                  className="size-4 rounded-[2px] border border-dashed border-white/25"
+                  title={`T${turn.index} · unscored`}
+                />
+              ) : (
+                <span
+                  className="size-4 rounded-[2px] bg-brand-terminal"
+                  style={{ opacity: Math.max(level / maxLevel, 0.12) }}
+                  title={
+                    ladder?.[level]
+                      ? `T${turn.index} · ${ladder[level]}`
+                      : `T${turn.index} · escalation ${level}`
+                  }
+                />
+              )}
               <span className="font-plex-mono text-[10px] text-zinc-600">
                 T{turn.index}
               </span>

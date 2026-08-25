@@ -42,9 +42,10 @@ export interface Scorecard {
   scenarioTitle: string;
 }
 
+/** an unscored turn contributes nothing: the panel gave no level (see `unscored`) */
 const escalationSeries = (run: Run): number[] =>
   run.turns
-    .filter((turn) => turn.adjudication)
+    .filter((turn) => turn.adjudication && !turn.adjudication.unscored)
     .map((turn) => turn.adjudication!.escalation);
 
 const normalize = (text: string): string =>
@@ -146,7 +147,10 @@ export const buildScorecard = async ({
     ] as const) {
       const values = children
         .filter((run) => run.branch.lane === lane)
-        .map((run) => run.turns[index]?.adjudication?.escalation)
+        .map((run) => {
+          const adjudication = run.turns[index]?.adjudication;
+          return adjudication?.unscored ? undefined : adjudication?.escalation;
+        })
         .filter((value): value is number => Number.isFinite(value));
       sink.push(spread(values));
     }

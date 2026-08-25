@@ -73,10 +73,12 @@ export interface LamparthGame {
   dialogWords?: Record<string, number>;
 }
 
-/** what `gamesOfRuns` read: the usable games and how many it dropped */
+/** what `gamesOfRuns` read: the usable games, how many it dropped, and how they were asked */
 export interface LamparthGames {
   games: LamparthGame[];
   excluded: number;
+  /** the games were elicited as plain text rather than a schema */
+  elicit?: "text";
 }
 
 const wordCount = (text: string): number =>
@@ -112,6 +114,12 @@ export interface LamparthGroup {
    * (`DecisionBrief.unusable` or a failed brief); reference groups have none
    */
   excluded: number;
+  /**
+   * study groups: the games were elicited as plain text rather than a
+   * schema (see `elicitationFor`), so a comparison across subjects can
+   * state the protocol instead of inferring it from the model id
+   */
+  elicit?: "text";
   /** games per cell */
   cells: { scenario: string; n: number }[];
   /**
@@ -217,12 +225,14 @@ export const gamesOfRuns = (
   const arms = armOfRuns(study, runs);
   const games: LamparthGame[] = [];
   let excluded = 0;
+  let text = false;
   for (const run of runs) {
     const arm = arms.get(run.id);
     if (!arm || arm.model !== model || run.status !== "complete") continue;
     const scenario = scenarios.get(run.scenario);
     const treatment = lamparthTreatmentOf(run.scenario);
     if (!scenario || !treatment) continue;
+    if (run.elicit === "text") text = true;
     const seat = subjectSeat(scenario);
     const choices: Record<string, string[] | null> = {};
     const dialogWords: Record<string, number> = {};
@@ -250,7 +260,7 @@ export const gamesOfRuns = (
       ...(Object.keys(dialogWords).length ? { dialogWords } : {}),
     });
   }
-  return { games, excluded };
+  return { games, excluded, ...(text ? { elicit: "text" as const } : {}) };
 };
 
 /** mean words of dialog per move across the games that carry any */
@@ -426,7 +436,7 @@ export const effectsOf = (
   });
 
 export const groupOf = (
-  base: Pick<LamparthGroup, "id" | "label" | "kind" | "model"> & {
+  base: Pick<LamparthGroup, "id" | "label" | "kind" | "model" | "elicit"> & {
     excluded?: number;
   },
   games: LamparthGame[],

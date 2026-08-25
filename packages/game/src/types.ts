@@ -88,6 +88,15 @@ export interface ScenarioChapter {
 
 export type Elicitation = "memo" | "choice";
 
+/**
+ * how a run asks its models for a decision: `auto` follows the capability
+ * table (`elicitationFor` in @modelstudies/workflows), the others force one
+ * path for every seat. See `ElicitationMode`.
+ */
+export type ElicitOption = "auto" | "schema" | "text";
+
+export const ELICIT_OPTIONS: ElicitOption[] = ["auto", "schema", "text"];
+
 export type SeatPrompt = "framed" | "bare";
 
 export const SEAT_PROMPTS: SeatPrompt[] = ["framed", "bare"];
@@ -320,6 +329,14 @@ export interface TurnAdjudication {
   mode: PanelMode;
   /** 0..ladder.length-1 consensus escalation for the turn */
   escalation: number;
+  /**
+   * no judge returned a finite escalation, so the turn has no score.
+   * `escalation` stays 0 for type stability and this is what readers and
+   * folds test: rung 0 is "routine posture", not "unknown", and counting it
+   * would put a level the panel never gave into the record, the prompts,
+   * and the reports
+   */
+  unscored?: true;
   narrative: string;
   /** the narrator's call; absent for a human narrator */
   narratorUsage?: Usage;
@@ -381,6 +398,13 @@ export interface Run {
   dialogWords?: number;
   /** false when the scenario's priorities block was withheld (instruction ablation) */
   priorities?: boolean;
+  /**
+   * recorded when any seat's decisions were elicited as plain text rather
+   * than a schema (see `elicitationFor`); absent when every seat held the
+   * schema, so a run says how it was elicited without recomputing a table
+   * that may move
+   */
+  elicit?: "text";
   /** language the played text was rendered in, when not `en` */
   language?: Language;
   /** naming the played text was rendered with, when not `chronicle` */
@@ -429,6 +453,8 @@ export interface Study {
   /** target words per dialog round */
   dialogWords?: number;
   priorities?: boolean;
+  /** elicitation every arm plays under; absent is `auto` */
+  elicit?: ElicitOption;
   language?: Language;
   naming?: Naming;
   pivot?: string;

@@ -192,12 +192,18 @@ export const adjudicateTurn = async ({
     .map((entry) => Number(entry.verdict.escalation))
     .filter((score) => Number.isFinite(score))
     .map((score) => clampLevel(scenario, score));
-  const escalation = scores.length ? COMBINE[config.mode](scores) : 0;
+  // a panel that returned nothing usable has no score. Rung 0 is "routine
+  // posture" on every ladder, so recording it would put a level no judge
+  // gave into the public record, the later prompts, and the reports;
+  // `unscored` records the absence instead.
+  const unscored = scores.length === 0;
+  const escalation = unscored ? 0 : COMBINE[config.mode](scores);
 
-  const narratePrompt = `${context}\n\n${t.narrateAsk(
-    escalation,
-    scenario.escalationLadder[escalation],
-  )}`;
+  const narratePrompt = `${context}\n\n${
+    unscored
+      ? t.narrateAskUnscored
+      : t.narrateAsk(escalation, scenario.escalationLadder[escalation])
+  }`;
   let narrative: string;
   let narratorUsage: Usage | undefined;
   try {
@@ -237,6 +243,7 @@ export const adjudicateTurn = async ({
     panel,
     mode: config.mode,
     escalation,
+    ...(unscored ? { unscored: true as const } : {}),
     narrative,
     ...(narratorUsage?.length ? { narratorUsage } : {}),
   };

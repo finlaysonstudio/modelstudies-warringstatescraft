@@ -45,6 +45,14 @@ export {
   LEGACY_OPENAI_MODELS,
 } from "./llm/legacyOpenAiClient";
 
+// Model capabilities: which models cannot hold a structured schema
+export {
+  ELICITATION_MODES,
+  elicitationFor,
+  TEXT_ELICITATION_MODELS,
+  type ElicitationMode,
+} from "./llm/capabilities";
+
 // Pricing: list price per model and the per-call dollar stamp
 export {
   billableTokens,

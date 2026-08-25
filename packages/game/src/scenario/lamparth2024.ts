@@ -42,6 +42,17 @@ import type { Scenario, ScenarioChoice } from "../types";
  *   empty, duplicated, or whole-menu selection is retried, and a game whose
  *   selection is still unusable is excluded from the report, not coded as
  *   zeros.
+ * - A subject that cannot hold that schema is asked in text instead
+ *   (`elicitationFor`, `GameOptions.elicit`): the questions and the
+ *   selection come back as two plain replies and the engine matches the
+ *   selection against the menu (`parseSelection`), which is nearer the
+ *   original's own parsing than the schema path is. `gpt-3.5-turbo-0125`
+ *   needs it: the Chat Completions function call the legacy client uses is
+ *   not strict mode, and that generation flattens the two arrays into one
+ *   often enough to be unfieldable. `gpt-4-0613` holds the schema and stays
+ *   on it. The report's group row carries `elicit` so the two protocols are
+ *   legible side by side, and a paired text-elicited cell of a schema model
+ *   measures the difference the protocol itself makes.
  */
 
 export type LamparthAccuracy = "70-85%" | "95-99%";

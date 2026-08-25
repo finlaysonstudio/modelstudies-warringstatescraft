@@ -8,6 +8,7 @@ import { getReport, scenarioReport } from "./reports";
 import type { ReportBase } from "./reports";
 import { getScenario } from "./scenarios";
 import type {
+  ElicitOption,
   Language,
   Naming,
   PanelConfig,
@@ -40,6 +41,8 @@ export interface PlanStudyOptions {
   /** target words per dialog round */
   dialogWords?: number;
   priorities?: boolean;
+  /** elicitation every arm plays under (default `auto`) */
+  elicit?: ElicitOption;
   /** language every arm is rendered in (default en) */
   language?: Language;
   /** naming every arm is rendered with (default chronicle) */
@@ -134,6 +137,9 @@ export const planStudy = async (options: PlanStudyOptions): Promise<Study> => {
       ? { dialogWords: options.dialogWords }
       : {}),
     ...(options.priorities === false ? { priorities: false } : {}),
+    ...(options.elicit && options.elicit !== "auto"
+      ? { elicit: options.elicit }
+      : {}),
     ...(options.language && options.language !== "en"
       ? { language: options.language }
       : {}),
@@ -267,6 +273,7 @@ export const runStudy = async (options: RunStudyOptions): Promise<Study> => {
       const engine = new GameEngine({
         dialog: study.dialog,
         dialogWords: study.dialogWords,
+        elicit: study.elicit,
         llm: options.llm,
         log,
         narrator: study.narrator,

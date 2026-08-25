@@ -212,7 +212,12 @@ function MatrixBody({
       roots.flatMap(({ children }) =>
         children.map((run) => ({
           run,
-          path: (run.turns ?? []).map((turn) => turn.adjudication?.escalation),
+          // an unscored turn is a gap in the path, not a level 0
+          path: (run.turns ?? []).map((turn) =>
+            turn.adjudication?.unscored
+              ? undefined
+              : turn.adjudication?.escalation,
+          ),
         })),
       ),
     [roots],

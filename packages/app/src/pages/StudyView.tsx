@@ -463,12 +463,26 @@ const FACTOR_LABEL: Record<LamparthEffect["factor"], string> = {
   posture: "PRC posture",
 };
 
+/** how the group was asked, when it was not the schema */
+function ElicitMark({ group }: { group: LamparthGroup }) {
+  if (group.elicit !== "text") return null;
+  return (
+    <span
+      className="ml-2 font-plex-mono text-[10px] text-zinc-600 uppercase"
+      title="asked in plain text: this subject cannot hold the choice schema"
+    >
+      text
+    </span>
+  );
+}
+
 function GroupHead({ group }: { group: LamparthGroup }) {
   return (
     <th className={th}>
       <span className={group.kind === "reference" ? "text-zinc-500" : ""}>
         {group.label}
       </span>
+      <ElicitMark group={group} />
       <span className="ml-1 text-zinc-600">n={group.n}</span>
     </th>
   );
@@ -631,6 +645,7 @@ function LamparthReportView({ report }: { report: LamparthReport }) {
                 )}
               >
                 {group.label}
+                <ElicitMark group={group} />
               </td>
               <td className={clsx(td, "font-plex-mono text-zinc-400")}>
                 {group.n}

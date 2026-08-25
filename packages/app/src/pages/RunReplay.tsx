@@ -365,7 +365,11 @@ function TurnBlock({
         onToggle={() => setOpen((value) => !value)}
         label={`Turn ${turn.index} — ${turn.title}`}
         detail={
-          turn.adjudication ? `esc ${turn.adjudication.escalation}` : undefined
+          turn.adjudication
+            ? turn.adjudication.unscored
+              ? "unscored"
+              : `esc ${turn.adjudication.escalation}`
+            : undefined
         }
       />
       {open && (

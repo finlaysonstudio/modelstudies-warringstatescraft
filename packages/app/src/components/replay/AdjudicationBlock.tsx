@@ -32,7 +32,13 @@ export function AdjudicationBlock({
     <div className="border-t border-white/5">
       <Section label="Adjudication" />
       <div className="space-y-4 px-4 py-4">
-        <LadderStrip escalation={adjudication.escalation} ladder={ladder} />
+        {adjudication.unscored ? (
+          <span className="font-plex-mono text-[10px] tracking-wide text-amber-400 uppercase">
+            unscored — no judge returned a level
+          </span>
+        ) : (
+          <LadderStrip escalation={adjudication.escalation} ladder={ladder} />
+        )}
         {adjudication.narrative && (
           <p className="max-w-3xl text-sm leading-relaxed text-zinc-300">
             {adjudication.narrative}

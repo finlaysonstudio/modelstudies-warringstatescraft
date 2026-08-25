@@ -202,6 +202,17 @@ const parseNaming = async (naming: string) => {
   return naming as (typeof NAMINGS)[number];
 };
 
+const parseElicit = async (elicit: string) => {
+  const { ELICIT_OPTIONS } = await import("@modelstudies/game");
+  const { BadRequestError } = await import("@jaypie/errors");
+  if (!(ELICIT_OPTIONS as string[]).includes(elicit)) {
+    throw new BadRequestError(
+      `Unknown elicitation "${elicit}"; expected one of ${ELICIT_OPTIONS.join(", ")}`,
+    );
+  }
+  return elicit as (typeof ELICIT_OPTIONS)[number];
+};
+
 const resolveRoster = async (panelOrModels: string): Promise<string[]> => {
   if (!(await isPanel(panelOrModels))) return resolveModels(panelOrModels);
   const survey = await import("@modelstudies/survey");
@@ -238,6 +249,11 @@ program
     "--no-priorities",
     "withhold the scenario's priorities block (instruction ablation)",
   )
+  .option(
+    "--elicit <mode>",
+    "how decisions are asked: auto (the model capability table), schema, or text",
+    "auto",
+  )
   .option("--language <lang>", "render the chapter in en or zh", "en")
   .option(
     "--naming <naming>",
@@ -259,6 +275,7 @@ program
       dialogWords: options.dialogWords
         ? Number(options.dialogWords)
         : undefined,
+      elicit: await parseElicit(options.elicit),
       llm: await llmFor(log),
       log,
       maxTurns: options.turns ? Number(options.turns) : undefined,
@@ -330,6 +347,11 @@ program
   )
   .option("--dialog-words <n>", "target words per dialog round")
   .option("--no-priorities", "withhold the scenario's priorities block")
+  .option(
+    "--elicit <mode>",
+    "how decisions are asked: auto (the model capability table), schema, or text",
+    "auto",
+  )
   .option("--language <lang>", "render every arm in en or zh", "en")
   .option(
     "--naming <naming>",
@@ -378,6 +400,7 @@ program
         dialogWords: options.dialogWords
           ? Number(options.dialogWords)
           : undefined,
+        elicit: await parseElicit(options.elicit),
         models: await resolveModels(options.models),
         narrator: options.narrator,
         panel: {

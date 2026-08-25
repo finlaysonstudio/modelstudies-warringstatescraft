@@ -566,7 +566,9 @@ function History({
                     {turn.title}
                     {turn.adjudication && (
                       <span className="ml-2 font-plex-mono text-[10px] text-zinc-500">
-                        escalation {turn.adjudication.escalation}
+                        {turn.adjudication.unscored
+                          ? "unscored"
+                          : `escalation ${turn.adjudication.escalation}`}
                       </span>
                     )}
                   </span>
