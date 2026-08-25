@@ -12,6 +12,6 @@
   "dependencies": {
     "@jaypie/errors": "^1.2.6",
     "@jaypie/fabric": "^0.3.11",
-    "@jaypie/llm": "^1.3.31"
+    "@jaypie/llm": "^1.3.33"
   }
 }
