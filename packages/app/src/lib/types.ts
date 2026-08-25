@@ -901,3 +901,162 @@ export interface LadderScorecardDoc {
   crux: string[];
   models: LadderModelRow[];
 }
+
+// ---------------------------------------------------------------------------
+// Stage scripts (mirror of packages/game/src/stage/types.ts)
+// ---------------------------------------------------------------------------
+
+/** the closed vocabulary of stage directions, grouped by ladder band */
+export type StageDirectionKind =
+  | "idle"
+  | "market-open"
+  | "envoy"
+  | "hostage"
+  | "petition"
+  | "gold"
+  | "toll"
+  | "refuse"
+  | "seize-books"
+  | "granary-close"
+  | "carts-back"
+  | "price"
+  | "column"
+  | "garrison"
+  | "wall-build"
+  | "fleet"
+  | "raid"
+  | "gates-taken"
+  | "enforce"
+  | "expel"
+  | "battle"
+  | "siege"
+  | "execute"
+  | "works-cut"
+  | "sack"
+  | "flood"
+  | "extinguish"
+  | "tripods";
+
+export type StageArchetype =
+  | "envoy"
+  | "general"
+  | "infantry"
+  | "crossbowman"
+  | "cavalry"
+  | "chariot"
+  | "merchant"
+  | "peasant"
+  | "clerk"
+  | "scholar"
+  | "mohist"
+  | "assassin"
+  | "hostage"
+  | "labourer"
+  | "court"
+  | "boat";
+
+export type StageEffect =
+  | "scroll"
+  | "coin"
+  | "bar"
+  | "plate"
+  | "dust"
+  | "banner"
+  | "fire"
+  | "smoke"
+  | "arrows"
+  | "splash"
+  | "flood"
+  | "grey";
+
+export interface StageActor {
+  seat: string;
+  archetype: StageArchetype;
+}
+
+export interface StageDirection {
+  kind: StageDirectionKind;
+  actor: StageActor;
+  from?: string;
+  to?: string;
+  at?: string;
+  against?: string;
+  count?: number;
+  effect?: StageEffect;
+}
+
+export type StageBeatKind =
+  "inject" | "brief" | "verdict" | "narrative" | "debrief";
+
+export interface StageBeat {
+  /** `t1.inject`, `t1.brief.qin`, `t1.verdict`, `t1.narrative`, `debrief` */
+  id: string;
+  kind: StageBeatKind;
+  /** 1-based turn; 0 for the debrief */
+  turn: number;
+  seat?: string;
+  title?: string;
+  /** the place the camera moves to before the directions play */
+  focus?: string;
+  rung?: number;
+  unscored?: true;
+  directions: StageDirection[];
+  /** the coder fell back for this turn */
+  fallback?: true;
+  cues?: string[];
+}
+
+export type StageSource = "fallback" | "coder" | "random";
+
+export interface StageSeat {
+  state?: string;
+  /** the place the seat's figures start from and return to */
+  home: string;
+  model: string;
+}
+
+export interface StageScript {
+  id: string;
+  model: "stagings";
+  run: string;
+  scenario: string;
+  language: Language;
+  naming: Naming;
+  createdAt: string;
+  source: StageSource;
+  seed?: number;
+  coder?: string;
+  seats: Record<string, StageSeat>;
+  places: string[];
+  beats: StageBeat[];
+  fallbackTurns?: number[];
+  usage?: UsageItem[];
+}
+
+/** one entry of the generated /data/stagings.json index */
+export interface StagingIndexEntry {
+  id: string;
+  run: string;
+  scenario: string;
+  source: StageSource;
+  seed?: number;
+  coder?: string;
+  createdAt: string;
+  beatCount: number;
+  fallbackTurns?: number[];
+}
+
+/** one gazetteer entry (mirror of `GazetteerEntry` in `@modelstudies/game`) */
+export interface GazetteerEntry {
+  chronicle: Record<Language, string>;
+  masked: Record<Language, string>;
+  modern?: Record<Language, string>;
+}
+
+/** var/world/gazetteer.json, written by `cli materials` */
+export interface GazetteerFile {
+  id: "gazetteer";
+  model: "world";
+  createdAt: string;
+  entries: Record<string, GazetteerEntry>;
+}

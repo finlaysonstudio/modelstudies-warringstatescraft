@@ -11,6 +11,7 @@
     "packages/game/src",
     "packages/cli/src",
     "packages/app/server",
+    "packages/app/art",
     "packages/*/src/**/__tests__"
   ],
   "exclude": ["packages/app/src", "packages/app/vite.config.ts"]

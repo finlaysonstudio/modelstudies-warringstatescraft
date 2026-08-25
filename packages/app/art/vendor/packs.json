@@ -1,0 +1,325 @@
+{
+  "version": 1,
+  "root": "var/assets/vendor",
+  "packs": [
+    {
+      "id": "vectoraith-chinese",
+      "title": "VectoRaith Chinese Medieval Buildings",
+      "vendor": "VectoRaith",
+      "url": "https://vectoraith.itch.io/",
+      "license": "VectoRaith commercial license: purchased assets, no redistribution, no AI use",
+      "sheets": [
+        {
+          "id": "terrain.grass",
+          "kind": "a2",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+          "block": {
+            "x": 0,
+            "y": 0
+          },
+          "sha1": "1859d8e9f3656567b5f2b4e8d0894a9c2569a7cc"
+        },
+        {
+          "id": "terrain.loess",
+          "kind": "a2",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+          "block": {
+            "x": 1,
+            "y": 0
+          },
+          "keyOut": {
+            "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+            "block": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "sha1": "1859d8e9f3656567b5f2b4e8d0894a9c2569a7cc"
+        },
+        {
+          "id": "terrain.cobble",
+          "kind": "a2",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+          "block": {
+            "x": 2,
+            "y": 0
+          },
+          "keyOut": {
+            "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+            "block": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "sha1": "1859d8e9f3656567b5f2b4e8d0894a9c2569a7cc"
+        },
+        {
+          "id": "terrain.road",
+          "kind": "a2",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+          "block": {
+            "x": 1,
+            "y": 1
+          },
+          "keyOut": {
+            "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+            "block": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          "sha1": "1859d8e9f3656567b5f2b4e8d0894a9c2569a7cc"
+        },
+        {
+          "id": "terrain.field",
+          "kind": "a2",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+          "block": {
+            "x": 4,
+            "y": 2
+          },
+          "sha1": "1859d8e9f3656567b5f2b4e8d0894a9c2569a7cc"
+        },
+        {
+          "id": "water.river",
+          "kind": "a1",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_water_temperate_autotile_rpgmaker.png",
+          "block": {
+            "x": 0,
+            "y": 0
+          },
+          "frames": 3,
+          "keyOut": {
+            "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+            "block": {
+              "x": 0,
+              "y": 0
+            },
+            "mode": "palette"
+          },
+          "sha1": "b0fe2ef177078693fbc4400b2bcaa1e117f637b0"
+        },
+        {
+          "id": "water.sea",
+          "kind": "a1",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_water_temperate_autotile_rpgmaker.png",
+          "block": {
+            "x": 0,
+            "y": 3
+          },
+          "frames": 3,
+          "keyOut": {
+            "file": "buildings-chinese/Original/16x16/vectoraith_tileset_terrains_temperate_autotile_rpgmaker.png",
+            "block": {
+              "x": 0,
+              "y": 0
+            },
+            "mode": "palette"
+          },
+          "sha1": "b0fe2ef177078693fbc4400b2bcaa1e117f637b0"
+        },
+        {
+          "id": "image.court",
+          "kind": "image",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_buildings_chinese_medieval_0.png",
+          "crop": {
+            "x": 128,
+            "y": 0,
+            "width": 64,
+            "height": 48
+          },
+          "sha1": "bfaf31681bd8d7808378c915ff8906568ffbc27d"
+        },
+        {
+          "id": "image.hall",
+          "kind": "image",
+          "file": "buildings-chinese/Original/16x16/vectoraith_tileset_buildings_chinese_medieval_0.png",
+          "crop": {
+            "x": 192,
+            "y": 0,
+            "width": 64,
+            "height": 48
+          },
+          "sha1": "bfaf31681bd8d7808378c915ff8906568ffbc27d"
+        }
+      ]
+    },
+    {
+      "id": "vectoraith-biomes",
+      "title": "VectoRaith Biome Packs A, C, D",
+      "vendor": "VectoRaith",
+      "url": "https://vectoraith.itch.io/",
+      "license": "VectoRaith commercial license: purchased assets, no redistribution, no AI use",
+      "sheets": [
+        {
+          "id": "terrain.forest",
+          "kind": "a2",
+          "file": "biome-a/Original/16x16/temperate_forest/tilesets - RPG Maker ready/vectoraith_tileset_terrain_A2_temperate_forest.png",
+          "block": {
+            "x": 4,
+            "y": 0
+          },
+          "sha1": "369c193450f5fbc91c24fb840191c7093d0ebd35"
+        },
+        {
+          "id": "terrain.mountain",
+          "kind": "a2",
+          "file": "biome-d/Original/16x16/alpine/tilesets - RPG Maker ready/vectoraith_tileset_terrain_A2_alpine_B.png",
+          "block": {
+            "x": 1,
+            "y": 0
+          },
+          "keyOut": {
+            "block": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "sha1": "fa98e9ec17986cad4bce5e1e3279c8bd60f8445d"
+        },
+        {
+          "id": "terrain.marsh",
+          "kind": "a2",
+          "file": "biome-c/Original/16x16/wetland/tilesets - RPG Maker ready/vectoraith_tileset_terrain_A2_wetland.png",
+          "block": {
+            "x": 1,
+            "y": 0
+          },
+          "keyOut": {
+            "block": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "sha1": "2aa2e97bc9620145d41fb4b9d10fa262733347e5"
+        }
+      ]
+    },
+    {
+      "id": "vectoraith-sprites",
+      "title": "VectoRaith NPC Sprites and Farm Animals",
+      "vendor": "VectoRaith",
+      "url": "https://vectoraith.itch.io/",
+      "license": "VectoRaith commercial license: purchased assets, no redistribution, no AI use",
+      "sheets": [
+        {
+          "id": "sprite.chinese-jobs",
+          "kind": "characters",
+          "file": "sprites-npc/Original/16x16/_default_tint/chinese_jobs.png",
+          "cell": {
+            "width": 48,
+            "height": 128
+          },
+          "names": [
+            "peasant-red",
+            "labourer",
+            "fisher",
+            "official",
+            "clerk",
+            "monk",
+            "sage",
+            "soldier"
+          ],
+          "sha1": "5d1ff9ac7f0afb2c9150f3cabb5f772c66eeb98f"
+        },
+        {
+          "id": "sprite.chinese-people",
+          "kind": "characters",
+          "file": "sprites-npc/Original/16x16/_default_tint/chinese_people.png",
+          "cell": {
+            "width": 48,
+            "height": 128
+          },
+          "names": [
+            "commoner",
+            "worker",
+            "bravo",
+            "porter",
+            "woman-white",
+            "woman-dark",
+            "woman-red",
+            "elder"
+          ],
+          "sha1": "f6f829e7beff8ae45952b3e57454bcd072d159d1"
+        },
+        {
+          "id": "sprite.chinese-royals",
+          "kind": "characters",
+          "file": "sprites-npc/Original/16x16/_default_tint/chinese_royals.png",
+          "cell": {
+            "width": 48,
+            "height": 128
+          },
+          "names": [
+            "attendant",
+            "prince-white",
+            "king-gold",
+            "king-old",
+            "queen-white",
+            "princess-gold",
+            "lady-gold",
+            "empress-gold"
+          ],
+          "sha1": "6da1a423999ae174b15717ec320ebb3a3706959a"
+        },
+        {
+          "id": "sprite.chinese-royals-02",
+          "kind": "characters",
+          "file": "sprites-npc/Original/16x16/_default_tint/chinese_royals_02.png",
+          "cell": {
+            "width": 48,
+            "height": 128
+          },
+          "names": [
+            "attendant-blue",
+            "prince-blue",
+            "king-red",
+            "king-old-red",
+            "queen-purple",
+            "princess-purple",
+            "lady-red",
+            "empress-red"
+          ],
+          "sha1": "6909c66cf99cf34a01e8e79e7298b3781ff91417"
+        },
+        {
+          "id": "sprite.generic-jobs",
+          "kind": "characters",
+          "file": "sprites-npc/Original/16x16/_default_tint/generic_jobs.png",
+          "cell": {
+            "width": 48,
+            "height": 128
+          },
+          "names": [
+            "generic-red",
+            "merchant",
+            "generic-white",
+            "generic-grey",
+            "generic-shirt",
+            "smith",
+            "generic-blue",
+            "knight"
+          ],
+          "sha1": "5cc3e127e3a45ba045277a68d049be8ce2613210"
+        },
+        {
+          "id": "sprite.horses",
+          "kind": "characters",
+          "file": "sprites-farm-animals/16x16/Default Format/$horse_friesian.png",
+          "cell": {
+            "width": 96,
+            "height": 128
+          },
+          "frame": {
+            "width": 32,
+            "height": 32
+          },
+          "names": [
+            "horse"
+          ],
+          "sha1": "9dad9ba814f7df63a40e70cbe61fb4f1e5e87f4f"
+        }
+      ]
+    }
+  ]
+}

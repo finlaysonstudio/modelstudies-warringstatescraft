@@ -1,0 +1,839 @@
+{
+  "version": 1,
+  "source": "fallback",
+  "assets": {
+    "terrain.grass": {
+      "file": "terrain.grass.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.grass.tsj"
+    },
+    "terrain.loess": {
+      "file": "terrain.loess.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.loess.tsj"
+    },
+    "terrain.road": {
+      "file": "terrain.road.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.road.tsj"
+    },
+    "terrain.cobble": {
+      "file": "terrain.cobble.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.cobble.tsj"
+    },
+    "terrain.forest": {
+      "file": "terrain.forest.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.forest.tsj"
+    },
+    "terrain.mountain": {
+      "file": "terrain.mountain.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.mountain.tsj"
+    },
+    "terrain.marsh": {
+      "file": "terrain.marsh.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.marsh.tsj"
+    },
+    "terrain.field": {
+      "file": "terrain.field.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.field.tsj"
+    },
+    "water.river": {
+      "file": "water.river.png",
+      "width": 128,
+      "height": 288,
+      "pack": "fallback",
+      "kind": "water",
+      "frames": 3,
+      "tileset": "water.river.tsj"
+    },
+    "water.sea": {
+      "file": "water.sea.png",
+      "width": 128,
+      "height": 288,
+      "pack": "fallback",
+      "kind": "water",
+      "frames": 3,
+      "tileset": "water.sea.tsj"
+    },
+    "sprite.envoy": {
+      "file": "sprite.envoy.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.general": {
+      "file": "sprite.general.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.infantry": {
+      "file": "sprite.infantry.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.crossbowman": {
+      "file": "sprite.crossbowman.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.cavalry": {
+      "file": "sprite.cavalry.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.chariot": {
+      "file": "sprite.chariot.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.merchant": {
+      "file": "sprite.merchant.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.peasant": {
+      "file": "sprite.peasant.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.clerk": {
+      "file": "sprite.clerk.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.scholar": {
+      "file": "sprite.scholar.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.mohist": {
+      "file": "sprite.mohist.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.assassin": {
+      "file": "sprite.assassin.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.hostage": {
+      "file": "sprite.hostage.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.labourer": {
+      "file": "sprite.labourer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.court": {
+      "file": "sprite.court.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.boat": {
+      "file": "sprite.boat.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "effect.scroll": {
+      "file": "effect.scroll.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.coin": {
+      "file": "effect.coin.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.bar": {
+      "file": "effect.bar.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.plate": {
+      "file": "effect.plate.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.dust": {
+      "file": "effect.dust.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.banner": {
+      "file": "effect.banner.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.fire": {
+      "file": "effect.fire.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.smoke": {
+      "file": "effect.smoke.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.arrows": {
+      "file": "effect.arrows.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.splash": {
+      "file": "effect.splash.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.flood": {
+      "file": "effect.flood.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.grey": {
+      "file": "effect.grey.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "image.court": {
+      "file": "image.court.png",
+      "width": 32,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.town": {
+      "file": "image.town.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.pass": {
+      "file": "image.pass.png",
+      "width": 32,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.ford": {
+      "file": "image.ford.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.field": {
+      "file": "image.field.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.works": {
+      "file": "image.works.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.harbour": {
+      "file": "image.harbour.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.camp": {
+      "file": "image.camp.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.hall": {
+      "file": "image.hall.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    }
+  }
+}

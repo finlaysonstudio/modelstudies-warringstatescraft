@@ -169,3 +169,4 @@ export type {
   PlanStudyOptions,
   RunStudyOptions,
 } from "./study";
+export * from "./stage";

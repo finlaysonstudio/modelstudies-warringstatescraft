@@ -12,7 +12,10 @@ import {
 
 // Resolved relative to this package: every stored model lives at
 // <repo>/var/<model>/*.json (git-ignored), served here under /data/<model>/.
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../..",
+);
 const varDir = path.join(repoRoot, "var");
 const modelDir = (model: string) => path.join(varDir, model);
 const runsDir = modelDir("runs");
@@ -54,7 +57,9 @@ interface StudyFile {
 async function buildStudyIndex(): Promise<object[]> {
   let files: string[] = [];
   try {
-    files = (await readdir(studiesDir)).filter((file) => file.endsWith(".json"));
+    files = (await readdir(studiesDir)).filter((file) =>
+      file.endsWith(".json"),
+    );
   } catch {
     return [];
   }
@@ -115,11 +120,14 @@ async function buildScorecardIndex(): Promise<object[]> {
       const id = scorecard.id ?? file.replace(/\.json$/, "");
       index.push({
         id,
-        kind: scorecard.kind ?? (id.startsWith("ladder-") ? "ladder" : "values"),
+        kind:
+          scorecard.kind ?? (id.startsWith("ladder-") ? "ladder" : "values"),
         plan: scorecard.plan ?? "",
         title: scorecard.title ?? "",
         createdAt: scorecard.createdAt ?? "",
-        modelCount: Array.isArray(scorecard.models) ? scorecard.models.length : 0,
+        modelCount: Array.isArray(scorecard.models)
+          ? scorecard.models.length
+          : 0,
       });
     } catch {
       // unreadable file: skip it
@@ -170,8 +178,12 @@ async function buildScenarioIndex(): Promise<object[]> {
         simulates: materials.scenario?.simulates ?? "",
         seatCount: Array.isArray(materials.seats) ? materials.seats.length : 0,
         turnCount: Array.isArray(materials.turns) ? materials.turns.length : 0,
-        renderings: materials.renderings ?? [{ id, naming: "chronicle", language: "en" }],
-        ...(materials.scenario?.chapter ? { chapter: materials.scenario.chapter } : {}),
+        renderings: materials.renderings ?? [
+          { id, naming: "chronicle", language: "en" },
+        ],
+        ...(materials.scenario?.chapter
+          ? { chapter: materials.scenario.chapter }
+          : {}),
         report: materials.scenario?.report ?? "basic",
         seats: (materials.seats ?? []).map((seat) => ({
           id: seat.id ?? "",
@@ -234,7 +246,9 @@ async function buildFieldingIndex(): Promise<object[]> {
           : {}),
         interviews: fielding.interviews ?? {},
         status: fielding.status ?? "active",
-        ...(fielding.statusDetail ? { statusDetail: fielding.statusDetail } : {}),
+        ...(fielding.statusDetail
+          ? { statusDetail: fielding.statusDetail }
+          : {}),
         startedAt: fielding.startedAt ?? "",
         ...(fielding.completedAt ? { completedAt: fielding.completedAt } : {}),
       });
@@ -245,6 +259,53 @@ async function buildFieldingIndex(): Promise<object[]> {
   return (index as { startedAt: string }[]).sort((a, b) =>
     b.startedAt.localeCompare(a.startedAt),
   );
+}
+
+interface StagingFile {
+  id?: string;
+  run?: string;
+  scenario?: string;
+  source?: string;
+  seed?: number;
+  coder?: string;
+  createdAt?: string;
+  beats?: unknown[];
+  fallbackTurns?: number[];
+}
+
+// one entry per staging on record; the watch page offers a run's stagings
+async function buildStagingIndex(): Promise<object[]> {
+  const dir = modelDir("stagings");
+  let files: string[] = [];
+  try {
+    files = (await readdir(dir)).filter((file) => file.endsWith(".json"));
+  } catch {
+    return [];
+  }
+  const index: object[] = [];
+  for (const file of files) {
+    try {
+      const staging = JSON.parse(
+        await readFile(path.join(dir, file), "utf8"),
+      ) as StagingFile;
+      index.push({
+        id: staging.id ?? file.replace(/\.json$/, ""),
+        run: staging.run ?? "",
+        scenario: staging.scenario ?? "",
+        source: staging.source ?? "fallback",
+        ...(staging.seed !== undefined ? { seed: staging.seed } : {}),
+        ...(staging.coder ? { coder: staging.coder } : {}),
+        createdAt: staging.createdAt ?? "",
+        beatCount: Array.isArray(staging.beats) ? staging.beats.length : 0,
+        ...(staging.fallbackTurns?.length
+          ? { fallbackTurns: staging.fallbackTurns }
+          : {}),
+      });
+    } catch {
+      // unreadable file: skip it
+    }
+  }
+  return (index as { id: string }[]).sort((a, b) => a.id.localeCompare(b.id));
 }
 
 async function buildIndex(): Promise<object[]> {
@@ -323,6 +384,11 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       res.end(JSON.stringify(await buildFieldingIndex()));
       return;
     }
+    if (url === "/data/stagings.json") {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(await buildStagingIndex()));
+      return;
+    }
     // every probe of one sitting: var/probe/<interviewId>#<item>.json
     const probes = /^\/data\/probes\/([A-Za-z0-9._-]+)\.json$/.exec(url);
     if (probes) {
@@ -330,8 +396,7 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       let files: string[] = [];
       try {
         files = (await readdir(dir)).filter(
-          (file) =>
-            file.startsWith(`${probes[1]}#`) && file.endsWith(".json"),
+          (file) => file.startsWith(`${probes[1]}#`) && file.endsWith(".json"),
         );
       } catch {
         // missing dir → empty list
@@ -349,7 +414,7 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       return;
     }
     const match =
-      /^\/data\/(runs|studies|scorecards|scenarios|reports|fielding|interview|instruments)\/([A-Za-z0-9._-]+)\.json$/.exec(
+      /^\/data\/(runs|studies|scorecards|scenarios|reports|fielding|interview|instruments|stagings|world)\/([A-Za-z0-9._-]+)\.json$/.exec(
         url,
       );
     if (match) {

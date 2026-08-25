@@ -594,6 +594,279 @@ program
     }
   });
 
+/** the overworld map the stage plays on; its `places` layer is the place list */
+const stageMapPath = () =>
+  resolve(process.cwd(), "packages/app/public/stage/overworld.tmj");
+
+/**
+ * The place list a staging is validated against: the map's `places` layer
+ * when the map exists, else the whole gazetteer (the map is meant to carry
+ * every key; `stage-map --check` says what it still lacks).
+ */
+const stagePlaces = async (
+  log: { warn: (...args: unknown[]) => void },
+  mapPath?: string,
+) => {
+  const { placesOfTiledMap, worldPlaces } = await import("@modelstudies/game");
+  const { readFile } = await import("node:fs/promises");
+  const file = mapPath ?? stageMapPath();
+  try {
+    const map = JSON.parse(await readFile(file, "utf8"));
+    return { places: placesOfTiledMap(map), file };
+  } catch (error) {
+    if (mapPath) throw error;
+    log.warn(`no map at ${file}; validating places against the gazetteer`);
+    return { places: worldPlaces(), file: null };
+  }
+};
+
+/** build one staging for a run by the chosen route and store it */
+const stageRun = async ({
+  run,
+  source,
+  seed,
+  model,
+  force,
+  places,
+  store,
+  llm,
+  log,
+}: {
+  run: import("@modelstudies/game").Run;
+  source: "fallback" | "random" | "coder";
+  seed: number;
+  model: string;
+  force: boolean;
+  places: import("@modelstudies/game").Places;
+  store: import("@modelstudies/workflows").Store;
+  llm?: import("@modelstudies/workflows").LlmClient;
+  log: CliLogger;
+}) => {
+  const game = await import("@modelstudies/game");
+  const { BadRequestError } = await import("@jaypie/errors");
+  const scenario = game.getScenario(run.scenario, {
+    ...(run.naming ? { naming: run.naming } : {}),
+    ...(run.language ? { language: run.language } : {}),
+    ...(run.pivot ? { pivot: run.pivot } : {}),
+  });
+  const id =
+    source === "random"
+      ? game.stagingId(run.id, game.randomVariant(seed))
+      : game.stagingId(run.id);
+  const existing = await store.get<import("@modelstudies/game").StageScript>(
+    "stagings",
+    id,
+  );
+  if (existing && !force) {
+    log.trace(`${id}: exists (${existing.source}); --force rebuilds`);
+    return { script: existing, built: false };
+  }
+  let script: import("@modelstudies/game").StageScript;
+  if (source === "fallback") {
+    script = await game.fallbackStage({ run, scenario, places });
+  } else if (source === "random") {
+    script = await game.randomStage({ run, scenario, places, seed });
+  } else {
+    if (!llm) throw new BadRequestError("the coder needs a client");
+    script = await game.buildStageScript({
+      run,
+      scenario,
+      llm,
+      model,
+      places,
+      onInvalid: ({ turn, attempt, errors }) =>
+        log.warn(
+          `${run.id} turn ${turn}: reply ${attempt} invalid (${errors.length} error${errors.length === 1 ? "" : "s"})${attempt === 2 ? "; the fallback stands in" : ""}`,
+          { errors },
+        ),
+    });
+  }
+  if (existing) await store.update(script);
+  else await store.create(script);
+  return { script, built: true };
+};
+
+const stagingLine = (script: import("@modelstudies/game").StageScript) => {
+  const usage = (script.usage ?? []).reduce(
+    (sum, item) => sum + (item.usd ?? 0),
+    0,
+  );
+  return (
+    `${script.id.padEnd(24)} ${script.source.padEnd(8)} beats:${String(script.beats.length).padStart(3)}` +
+    `  places:${String(script.places.length).padStart(3)}` +
+    (script.fallbackTurns?.length
+      ? `  fallback turns: ${script.fallbackTurns.join(",")}`
+      : "") +
+    (script.usage?.length ? `  ${usd(usage)}` : "")
+  );
+};
+
+program
+  .command("game-stage")
+  .description(
+    "Code a run's record into a stage script (var/stagings/<runId>.json): the coder by default, --fallback for no model call, --random for a seeded random sequence stored beside it",
+  )
+  .argument("<runId>", "run id (one run, not its tree)")
+  .option("--fallback", "the deterministic fallback, no model call")
+  .option("--random", "a seeded random staging, stored as <runId>.random<seed>")
+  .option("--seed <n>", "seed for --random", "1")
+  .option("--model <id>", "the coder model (a MODELS name or an id)")
+  .option("--force", "rebuild an existing staging")
+  .option(
+    "--map <path>",
+    "the Tiled map whose places layer validates the script",
+  )
+  .action(async (runId: string, options) => {
+    const log = createCliLog("game-stage");
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { NotFoundError } = await import("@jaypie/errors");
+    const { MODELS } = await import("@modelstudies/survey");
+    const store = new FileStore(varRoot());
+    const run = await store.get<import("@modelstudies/game").Run>(
+      "runs",
+      runId,
+    );
+    if (!run) throw new NotFoundError(`Unknown run: ${runId}`);
+    const source = options.random
+      ? "random"
+      : options.fallback
+        ? "fallback"
+        : "coder";
+    const [model] = await resolveModels(options.model ?? MODELS.SONNET);
+    const { places, file } = await stagePlaces(log, options.map);
+    if (file) log.trace(`places from ${file}`);
+    const { script, built } = await stageRun({
+      run,
+      source,
+      seed: Number(options.seed),
+      model,
+      force: Boolean(options.force),
+      places,
+      store,
+      ...(source === "coder" ? { llm: await llmFor(log) } : {}),
+      log,
+    });
+    console.log(stagingLine(script));
+    console.error(`${built ? "→" : "="} var/stagings/${script.id}.json`);
+  });
+
+program
+  .command("study-stage")
+  .description(
+    "Stage every complete run of a study (roots and branches), skipping stagings already on record",
+  )
+  .argument("<studyId>", "study id")
+  .option("--fallback", "the deterministic fallback, no model call")
+  .option("--model <id>", "the coder model (a MODELS name or an id)")
+  .option("--force", "rebuild existing stagings")
+  .option("--concurrency <n>", "runs staged at once", "4")
+  .option(
+    "--map <path>",
+    "the Tiled map whose places layer validates the scripts",
+  )
+  .action(async (studyId: string, options) => {
+    const log = createCliLog("study-stage");
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { loadStudy, studyRuns } = await import("@modelstudies/game");
+    const { MODELS } = await import("@modelstudies/survey");
+    const store = new FileStore(varRoot());
+    const study = await loadStudy(store, studyId);
+    const runs = (await studyRuns(store, study)).filter(
+      (run) => run.status === "complete" && run.turns.length > 0,
+    );
+    const source = options.fallback ? "fallback" : "coder";
+    const [model] = await resolveModels(options.model ?? MODELS.SONNET);
+    const { places, file } = await stagePlaces(log, options.map);
+    if (file) log.trace(`places from ${file}`);
+    const llm = source === "coder" ? await llmFor(log) : undefined;
+    const concurrency = Math.max(1, Number(options.concurrency) || 1);
+    let built = 0;
+    let kept = 0;
+    let failed = 0;
+    const queue = [...runs];
+    const worker = async () => {
+      for (;;) {
+        const run = queue.shift();
+        if (!run) return;
+        try {
+          const result = await stageRun({
+            run,
+            source,
+            seed: 1,
+            model,
+            force: Boolean(options.force),
+            places,
+            store,
+            ...(llm ? { llm } : {}),
+            log,
+          });
+          if (result.built) built += 1;
+          else kept += 1;
+          console.log(stagingLine(result.script));
+        } catch (error) {
+          failed += 1;
+          log.error(
+            `${run.id}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      }
+    };
+    await Promise.all(Array.from({ length: concurrency }, worker));
+    console.error(
+      `${study.id}: ${runs.length} complete run(s); built ${built}, kept ${kept}, failed ${failed}`,
+    );
+    if (failed) process.exitCode = 1;
+  });
+
+program
+  .command("stage-map")
+  .description(
+    "List the places on the overworld map; --check reports every gazetteer key a chapter uses that the map lacks",
+  )
+  .option("--check", "report missing keys and exit 1 when any are missing")
+  .option(
+    "--map <path>",
+    "the Tiled map (default packages/app/public/stage/overworld.tmj)",
+  )
+  .option("--json", "print the check as JSON")
+  .action(async (options) => {
+    const { checkPlaces, placeObjectsOf } = await import("@modelstudies/game");
+    const { NotFoundError } = await import("@jaypie/errors");
+    const { readFile } = await import("node:fs/promises");
+    const { MemoryPlaces } = await import("@modelstudies/game");
+    const file = options.map ?? stageMapPath();
+    let map: import("@modelstudies/game").TiledMap;
+    try {
+      map = JSON.parse(await readFile(file, "utf8"));
+    } catch {
+      throw new NotFoundError(`No map at ${file}`);
+    }
+    const objects = placeObjectsOf(map);
+    if (!options.check) {
+      for (const object of objects) {
+        console.log(
+          `${(object.name ?? "").padEnd(12)} ${String(object.x ?? "").padStart(6)},${String(object.y ?? "").padEnd(6)}${object.type ? `  ${object.type}` : ""}`,
+        );
+      }
+      console.error(`${objects.length} place(s) on ${file}`);
+      return;
+    }
+    const check = checkPlaces(
+      new MemoryPlaces(objects.map((object) => object.name!)),
+    );
+    if (options.json) {
+      console.log(JSON.stringify({ file, ...check }, null, 2));
+    } else {
+      console.log(
+        `${file}: ${check.present.length}/${check.required.length} required places present`,
+      );
+      if (check.missing.length)
+        console.log(`missing: ${check.missing.join(" ")}`);
+      if (check.extra.length) console.log(`extra: ${check.extra.join(" ")}`);
+    }
+    if (check.missing.length) process.exitCode = 1;
+  });
+
 program
   .command("materials")
   .description(
@@ -601,7 +874,7 @@ program
   )
   .action(async () => {
     const { FileStore } = await import("@modelstudies/workflows");
-    const { buildAllMaterials } = await import("@modelstudies/game");
+    const { buildAllMaterials, GAZETTEER } = await import("@modelstudies/game");
     const { buildInstrument, listPlans } = await import("@modelstudies/survey");
     const store = new FileStore(varRoot());
     for (const materials of buildAllMaterials()) {
@@ -610,6 +883,16 @@ program
         `${materials.id}  seats:${materials.seats.length}  turns:${materials.turns.length}  → var/scenarios/${materials.id}.json`,
       );
     }
+    // the gazetteer, so the app labels the stage's places in any rendering
+    await store.create({
+      id: "gazetteer",
+      model: "world",
+      createdAt: new Date().toISOString(),
+      entries: GAZETTEER,
+    });
+    console.log(
+      `gazetteer  keys:${Object.keys(GAZETTEER).length}  → var/world/gazetteer.json`,
+    );
     for (const plan of listPlans()) {
       const instrument = buildInstrument({ plan });
       const topics = new Map<string, number>();

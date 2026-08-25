@@ -14,8 +14,11 @@
     "materials": "npm run cli -- materials",
     "preapp": "npm run materials",
     "predev": "npm run materials",
-    "format": "prettier --write \"packages/*/src/**/*.{ts,tsx,css}\"",
-    "lint": "eslint packages/*/src",
+    "format": "prettier --write \"packages/*/src/**/*.{ts,tsx,css}\" \"packages/app/art/**/*.ts\"",
+    "lint": "eslint packages/*/src packages/app/art",
+    "stage:fallback": "tsx packages/app/art/fallback/generate.ts",
+    "stage:map": "tsx packages/app/art/map/build.ts",
+    "stage:vendor": "tsx packages/app/art/vendor/run.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit && npm run typecheck --workspace @modelstudies/app"
   },

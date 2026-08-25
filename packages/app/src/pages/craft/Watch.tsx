@@ -11,10 +11,16 @@ import { EscalationOverview } from "../../components/replay/EscalationOverview";
 import { LadderStrip } from "../../components/replay/LadderStrip";
 import type {
   DecisionBrief,
+  GazetteerFile,
   Run,
   ScenarioMaterials,
+  StageScript,
+  StagingIndexEntry,
   TurnRecord,
 } from "../../lib/types";
+import { seatColor } from "../../stage/catalog";
+import { beatsRevealed } from "../../stage/cursor";
+import { Stage } from "../../stage/Stage";
 
 // Watching one recorded game from a chosen seat's vantage, paced turn by
 // turn: the inject, then the followed seat's brief, then the rest of the
@@ -41,13 +47,42 @@ const materialsIdOf = (run: Run) =>
 type LoadState =
   | { phase: "loading" }
   | { phase: "error"; message: string }
-  | { phase: "ready"; run: Run; materials: ScenarioMaterials | null };
+  | {
+      phase: "ready";
+      run: Run;
+      materials: ScenarioMaterials | null;
+      gazetteer: GazetteerFile | null;
+      stagings: StagingIndexEntry[];
+    };
+
+type StagingState =
+  | { phase: "loading" }
+  | { phase: "missing"; id: string }
+  | { phase: "ready"; script: StageScript };
+
+/** a place label in the run's rendering, without a leading English article */
+const labelOf = (
+  gazetteer: GazetteerFile | null,
+  key: string,
+  naming: Run["naming"],
+  language: "en" | "zh",
+): string => {
+  const entry = gazetteer?.entries[key];
+  if (!entry) return key;
+  const localized =
+    (naming === "modern" && entry.modern) ||
+    (naming === "masked" ? entry.masked : entry.chronicle);
+  const text = localized[language] ?? entry.chronicle[language] ?? key;
+  return language === "en" ? text.replace(/^the /, "") : text;
+};
 
 export function Watch() {
   const { id = "" } = useParams();
   const [params] = useSearchParams();
   const [state, setState] = useState<LoadState>({ phase: "loading" });
   const [revealed, setRevealed] = useState(1);
+  const [staging, setStaging] = useState<StagingState>({ phase: "loading" });
+  const stagingId = params.get("staging") ?? id;
 
   useEffect(() => {
     let cancelled = false;
@@ -69,7 +104,27 @@ export function Watch() {
         } catch {
           // seat names fall back to seat ids
         }
-        if (!cancelled) setState({ phase: "ready", run, materials });
+        let gazetteer: GazetteerFile | null = null;
+        let stagings: StagingIndexEntry[] = [];
+        try {
+          const [gazetteerRes, stagingsRes] = await Promise.all([
+            fetch("/data/world/gazetteer.json"),
+            fetch("/data/stagings.json"),
+          ]);
+          if (gazetteerRes.ok) {
+            gazetteer = (await gazetteerRes.json()) as GazetteerFile;
+          }
+          if (stagingsRes.ok) {
+            stagings = (
+              (await stagingsRes.json()) as StagingIndexEntry[]
+            ).filter((entry) => entry.run === run.id);
+          }
+        } catch {
+          // place labels fall back to keys; no switcher
+        }
+        if (!cancelled) {
+          setState({ phase: "ready", run, materials, gazetteer, stagings });
+        }
       } catch (error) {
         if (!cancelled) {
           setState({
@@ -84,8 +139,30 @@ export function Watch() {
     };
   }, [id]);
 
+  useEffect(() => {
+    let cancelled = false;
+    setStaging({ phase: "loading" });
+    void (async () => {
+      try {
+        const res = await fetch(
+          `/data/stagings/${encodeURIComponent(stagingId)}.json`,
+        );
+        if (!res.ok) throw new Error(`staging responded ${res.status}`);
+        const script = (await res.json()) as StageScript;
+        if (!cancelled) setStaging({ phase: "ready", script });
+      } catch {
+        if (!cancelled) setStaging({ phase: "missing", id: stagingId });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [stagingId]);
+
   const run = state.phase === "ready" ? state.run : null;
   const materials = state.phase === "ready" ? state.materials : null;
+  const gazetteer = state.phase === "ready" ? state.gazetteer : null;
+  const stagings = state.phase === "ready" ? state.stagings : [];
   const roster = run?.roster ?? {};
   const seat = params.get("seat") ?? Object.keys(roster)[0] ?? "";
 
@@ -109,6 +186,49 @@ export function Watch() {
   }, [run, seat]);
 
   const done = revealed >= steps.length;
+  const script = staging.phase === "ready" ? staging.script : null;
+  const language = run?.language === "zh" ? "zh" : "en";
+  const naming = run?.naming ?? "chronicle";
+
+  const beats = useMemo(() => {
+    if (!script) return [];
+    return beatsRevealed({
+      script,
+      steps: steps.map((step) => ({ turn: step.turn.index, kind: step.kind })),
+      revealed,
+      done,
+      context: { seat, seats: Object.keys(roster) },
+    });
+  }, [script, steps, revealed, done, seat, roster]);
+
+  const stageNames = useMemo(() => {
+    const names: Record<string, string> = {};
+    for (const key of Object.keys(gazetteer?.entries ?? {})) {
+      names[key] = labelOf(gazetteer, key, naming, language);
+    }
+    return names;
+  }, [gazetteer, naming, language]);
+
+  const stageSeatNames = useMemo(() => {
+    const names: Record<string, string> = {};
+    for (const candidate of Object.keys(roster)) {
+      names[candidate] =
+        materials?.seats.find((entry) => entry.id === candidate)?.name ??
+        labelOf(gazetteer, candidate, naming, language);
+    }
+    return names;
+  }, [roster, materials, gazetteer, naming, language]);
+
+  const stageColors = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.keys(roster).map((candidate, index) => [
+          candidate,
+          seatColor(index),
+        ]),
+      ),
+    [roster],
+  );
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -204,6 +324,55 @@ export function Watch() {
           </p>
         )}
       </header>
+
+      <section aria-label="Stage" className="mt-8">
+        {script ? (
+          <Stage
+            script={script}
+            beats={beats}
+            names={stageNames}
+            seatNames={stageSeatNames}
+            colors={stageColors}
+            language={language}
+          />
+        ) : staging.phase === "missing" ? (
+          <p className="rounded-sm border border-white/10 px-4 py-3 font-plex-mono text-[10px] text-zinc-500">
+            no staging on record for {staging.id}; run{" "}
+            <span className="text-zinc-300">cli game-stage {run.id}</span> (or{" "}
+            <span className="text-zinc-300">--random</span> for a seeded
+            alternate)
+          </p>
+        ) : (
+          <p className="font-plex-mono text-[10px] text-zinc-600">
+            loading stage…
+          </p>
+        )}
+        {stagings.length > 1 && (
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="font-plex-mono text-[10px] tracking-wide text-zinc-600 uppercase">
+              sequences
+            </span>
+            {stagings.map((entry) => (
+              <Link
+                key={entry.id}
+                to={`/craft/play/${run.id}?seat=${seat}&staging=${entry.id}`}
+                className={clsx(
+                  "font-plex-mono text-[10px] hover:text-white",
+                  entry.id === stagingId
+                    ? "text-brand-terminal"
+                    : "text-zinc-500",
+                )}
+              >
+                {entry.source}
+                {entry.seed !== undefined ? ` #${entry.seed}` : ""}
+                {entry.coder ? ` · ${shortModel(entry.coder)}` : ""}
+                {" · "}
+                {entry.beatCount} beats
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
 
       <div className="mt-10 space-y-6">
         {steps.slice(0, revealed).map((step, index) => (
