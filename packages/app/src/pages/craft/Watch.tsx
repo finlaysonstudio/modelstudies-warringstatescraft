@@ -15,6 +15,7 @@ import type {
   StagingIndexEntry,
   TurnRecord,
 } from "../../lib/types";
+import { labelOf } from "../../lib/gazetteer";
 import { seatColor } from "../../stage/catalog";
 import { beatsRevealed } from "../../stage/cursor";
 import { Stage } from "../../stage/Stage";
@@ -56,22 +57,6 @@ type StagingState =
   | { phase: "loading" }
   | { phase: "missing"; id: string }
   | { phase: "ready"; script: StageScript };
-
-/** a place label in the run's rendering, without a leading English article */
-const labelOf = (
-  gazetteer: GazetteerFile | null,
-  key: string,
-  naming: Run["naming"],
-  language: "en" | "zh",
-): string => {
-  const entry = gazetteer?.entries[key];
-  if (!entry) return key;
-  const localized =
-    (naming === "modern" && entry.modern) ||
-    (naming === "masked" ? entry.masked : entry.chronicle);
-  const text = localized[language] ?? entry.chronicle[language] ?? key;
-  return language === "en" ? text.replace(/^the /, "") : text;
-};
 
 export function Watch() {
   const { id = "" } = useParams();

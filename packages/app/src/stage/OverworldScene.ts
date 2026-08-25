@@ -33,6 +33,12 @@ export const VIEW_HEIGHT = 400;
 const FONT =
   '"IBM Plex Mono", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace';
 const ZOOMS = [3, 2.5, 2, 1.5, 1.25, 1];
+export const MAX_ZOOM = 4;
+/** wheel delta → zoom factor; exponential so trackpads glide and wheels step */
+const WHEEL_ZOOM_RATE = 0.0015;
+
+const clamp = (value: number, low: number, high: number): number =>
+  Math.max(low, Math.min(high, value));
 
 export interface OverworldCallbacks {
   onReady?: () => void;
@@ -50,6 +56,12 @@ export interface OverworldConfig extends OverworldCallbacks {
   /** seat → colour */
   colors: Record<string, number>;
   mapUrl?: string;
+  /** the game canvas in logical pixels (defaults to the watch page's view) */
+  view?: { width: number; height: number };
+  /** drag pans and the wheel zooms; the camera opens on the whole map */
+  interactive?: boolean;
+  /** whether the camera flies to each beat (the explorer can switch it off) */
+  follow?: boolean;
 }
 
 interface TiledPoint {
@@ -78,6 +90,7 @@ const restFrame = (sprite: NonNullable<StageAsset["sprite"]>): number =>
  */
 export class OverworldScene extends Phaser.Scene {
   private readonly config: OverworldConfig;
+  private readonly view: { width: number; height: number };
   private places: StagePlaces = {};
   private homes: Record<string, string> = {};
   private queue: StageBeat[] = [];
@@ -86,10 +99,15 @@ export class OverworldScene extends Phaser.Scene {
   private waterFrame = 0;
   private live: Phaser.GameObjects.GameObject[] = [];
   private loadedSprites = new Map<string, StageAsset>();
+  private minZoom = ZOOMS[ZOOMS.length - 1];
+  /** whether the camera flies to each beat; the explorer toggles it live */
+  follow: boolean;
 
   constructor(config: OverworldConfig) {
     super("overworld");
     this.config = config;
+    this.view = config.view ?? { width: VIEW_WIDTH, height: VIEW_HEIGHT };
+    this.follow = config.follow ?? true;
   }
 
   preload(): void {
@@ -245,16 +263,73 @@ export class OverworldScene extends Phaser.Scene {
 
     const camera = this.cameras.main;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    camera.setZoom(1.5);
-    const firstHome = Object.values(this.homes)
-      .map((key) => this.places[key])
-      .find((point) => point !== undefined);
-    camera.centerOn(
-      firstHome?.x ?? map.widthInPixels / 2,
-      firstHome?.y ?? map.heightInPixels / 2,
-    );
+    if (this.config.interactive) {
+      this.minZoom = Math.max(
+        this.view.width / map.widthInPixels,
+        this.view.height / map.heightInPixels,
+      );
+      camera.setZoom(this.minZoom);
+      camera.centerOn(map.widthInPixels / 2, map.heightInPixels / 2);
+      this.enableCameraControls();
+    } else {
+      camera.setZoom(1.5);
+      const firstHome = Object.values(this.homes)
+        .map((key) => this.places[key])
+        .find((point) => point !== undefined);
+      camera.centerOn(
+        firstHome?.x ?? map.widthInPixels / 2,
+        firstHome?.y ?? map.heightInPixels / 2,
+      );
+    }
     this.config.onReady?.();
     this.pump();
+  }
+
+  /** Drag pans, the wheel zooms at the cursor, and a beat's pan is cancelled
+   * by taking hold of the map. */
+  private enableCameraControls(): void {
+    const camera = this.cameras.main;
+    this.input.setDefaultCursor("grab");
+    this.input.on("pointerdown", () => {
+      camera.panEffect.reset();
+      camera.zoomEffect.reset();
+      this.input.setDefaultCursor("grabbing");
+    });
+    this.input.on("pointerup", () => this.input.setDefaultCursor("grab"));
+    this.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
+      if (!pointer.isDown) return;
+      camera.scrollX -= (pointer.x - pointer.prevPosition.x) / camera.zoom;
+      camera.scrollY -= (pointer.y - pointer.prevPosition.y) / camera.zoom;
+    });
+    this.input.on(
+      "wheel",
+      (
+        pointer: Phaser.Input.Pointer,
+        _over: unknown,
+        _dx: number,
+        dy: number,
+      ) => {
+        const prev = camera.zoom;
+        const next = clamp(
+          prev * Math.exp(-dy * WHEEL_ZOOM_RATE),
+          this.minZoom,
+          MAX_ZOOM,
+        );
+        if (next === prev) return;
+        camera.panEffect.reset();
+        camera.zoomEffect.reset();
+        // hold the world point under the cursor fixed through the zoom
+        const halfW = camera.width / 2;
+        const halfH = camera.height / 2;
+        const worldX = camera.scrollX + halfW + (pointer.x - halfW) / prev;
+        const worldY = camera.scrollY + halfH + (pointer.y - halfH) / prev;
+        camera.setZoom(next);
+        camera.centerOn(
+          worldX - (pointer.x - halfW) / next,
+          worldY - (pointer.y - halfH) / next,
+        );
+      },
+    );
   }
 
   /** Queues a beat; beats play in arrival order, one at a time. */
@@ -285,7 +360,7 @@ export class OverworldScene extends Phaser.Scene {
   private zoomFor(plan: StagePlan): number {
     const width = plan.bounds.width + 200;
     const height = plan.bounds.height + 140;
-    const fit = Math.min(VIEW_WIDTH / width, VIEW_HEIGHT / height);
+    const fit = Math.min(this.view.width / width, this.view.height / height);
     return ZOOMS.find((zoom) => zoom <= fit) ?? ZOOMS[ZOOMS.length - 1];
   }
 
@@ -293,9 +368,11 @@ export class OverworldScene extends Phaser.Scene {
     const plan = planBeat({ beat, places: this.places, homes: this.homes });
     this.clearLive();
     this.config.onBeatStart?.(beat, plan);
-    const camera = this.cameras.main;
-    camera.pan(plan.focus.x, plan.focus.y, PAN_MS, "Sine.easeInOut");
-    camera.zoomTo(this.zoomFor(plan), PAN_MS, "Sine.easeInOut");
+    if (this.follow) {
+      const camera = this.cameras.main;
+      camera.pan(plan.focus.x, plan.focus.y, PAN_MS, "Sine.easeInOut");
+      camera.zoomTo(this.zoomFor(plan), PAN_MS, "Sine.easeInOut");
+    }
     this.time.delayedCall(PAN_MS, () => {
       plan.actions.forEach((action) => this.runAction(action));
     });

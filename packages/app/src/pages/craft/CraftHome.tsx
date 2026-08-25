@@ -328,6 +328,29 @@ export function CraftHome() {
             choose a game →
           </Link>
         </section>
+
+        <section
+          id="map"
+          className="scroll-mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
+          aria-label="Map"
+        >
+          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+            Map
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            The whole overworld of the chronicle on one pannable, zoomable
+            stage: every court, pass, ford, and work a chapter names, with a
+            control panel that choreographs any move from the stage's closed
+            vocabulary — an envoy court to court, a column to the pass, a fleet
+            along the coast.
+          </p>
+          <Link
+            to="/craft/map"
+            className="mt-4 inline-block cursor-pointer rounded-sm border border-white/10 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-zinc-300 uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+          >
+            open the map →
+          </Link>
+        </section>
       </div>
     </div>
   );

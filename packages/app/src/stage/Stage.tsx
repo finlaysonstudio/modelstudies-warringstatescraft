@@ -20,6 +20,14 @@ export interface StageProps {
   colors: Record<string, number>;
   language: "en" | "zh";
   className?: string;
+  /** the game canvas in logical pixels (defaults to the watch page's 960 × 400) */
+  view?: { width: number; height: number };
+  /** drag pans and the wheel zooms; the camera opens on the whole map */
+  interactive?: boolean;
+  /** whether the camera flies to each beat (default true) */
+  follow?: boolean;
+  /** replaces the "Stage · source" part of the eyebrow */
+  eyebrow?: string;
 }
 
 type Status =
@@ -62,6 +70,10 @@ export function Stage({
   colors,
   language,
   className,
+  view = { width: VIEW_WIDTH, height: VIEW_HEIGHT },
+  interactive = false,
+  follow = true,
+  eyebrow,
 }: StageProps) {
   const host = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<OverworldScene | null>(null);
@@ -87,6 +99,9 @@ export function Stage({
           script,
           names,
           colors,
+          view,
+          interactive,
+          follow,
           onReady: () => {
             if (cancelled) return;
             sceneRef.current = scene;
@@ -110,12 +125,13 @@ export function Stage({
         game = new Phaser.Game({
           type: Phaser.AUTO,
           parent: host.current,
-          width: VIEW_WIDTH,
-          height: VIEW_HEIGHT,
+          width: view.width,
+          height: view.height,
           pixelArt: true,
           backgroundColor: "#0b0d10",
           banner: false,
           audio: { noAudio: true },
+          input: { mouse: { preventDefaultWheel: interactive } },
           scale: {
             mode: Phaser.Scale.FIT,
             autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -149,6 +165,10 @@ export function Stage({
     }
   }, [beats, status]);
 
+  useEffect(() => {
+    if (sceneRef.current) sceneRef.current.follow = follow;
+  }, [follow, status]);
+
   const captions = current
     ? captionOf(current.beat, names, seatNames, language)
     : [];
@@ -161,11 +181,17 @@ export function Stage({
         className,
       )}
     >
-      <div ref={host} className="aspect-[12/5] w-full" />
+      <div
+        ref={host}
+        className="w-full"
+        style={{ aspectRatio: `${view.width} / ${view.height}` }}
+      />
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between px-3 py-2">
         <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
-          Stage · {script.source}
-          {script.seed !== undefined ? ` · seed ${script.seed}` : ""}
+          {eyebrow ??
+            `Stage · ${script.source}${
+              script.seed !== undefined ? ` · seed ${script.seed}` : ""
+            }`}
           {status.phase === "ready" ? ` · ${status.sources} art` : ""}
         </p>
         {status.phase === "loading" && (

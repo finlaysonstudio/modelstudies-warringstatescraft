@@ -49,6 +49,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                 label="Play"
                 active={pathname.startsWith("/craft/play")}
               />
+              <Dot />
+              <SectionLink
+                to="/craft/map"
+                label="Map"
+                active={pathname.startsWith("/craft/map")}
+              />
             </div>
           </div>
         )}

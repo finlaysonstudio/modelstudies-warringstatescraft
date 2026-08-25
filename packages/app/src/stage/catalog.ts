@@ -123,6 +123,90 @@ export const seatColor = (index: number): number =>
     ((index % SEAT_COLORS.length) + SEAT_COLORS.length) % SEAT_COLORS.length
   ];
 
+/** which place keys a direction takes (mirror of `PlaceRule` in the vocabulary) */
+export type PlaceRule = "route" | "at" | "home";
+
+export interface DirectionRule {
+  /** 0..7, the ladder band the kind belongs to */
+  band: number;
+  places: PlaceRule;
+  actor: StageArchetype;
+  effect?: StageEffect;
+  /** default group size */
+  count?: number;
+}
+
+/** the eight band labels by index (a browser mirror of the vocabulary's `BANDS`) */
+export const BAND_LABELS: string[] = [
+  "Ordinary",
+  "Envoys and petitions",
+  "Subversion and coin",
+  "Grain and roads",
+  "Levies and posture",
+  "Seizure and raids",
+  "War",
+  "Annihilation",
+];
+
+/**
+ * Arity and defaults per direction (a browser mirror of the vocabulary's
+ * rules; `catalog.spec.ts` holds it to `DIRECTIONS` in the game package).
+ */
+export const DIRECTION_RULES: Record<StageDirectionKind, DirectionRule> = {
+  idle: { band: 0, places: "home", actor: "court" },
+  "market-open": { band: 0, places: "home", actor: "merchant" },
+  envoy: { band: 1, places: "route", actor: "envoy", effect: "scroll" },
+  hostage: { band: 1, places: "route", actor: "hostage" },
+  petition: { band: 1, places: "home", actor: "peasant", count: 4 },
+  gold: { band: 2, places: "route", actor: "merchant", effect: "coin" },
+  toll: { band: 2, places: "at", actor: "clerk", effect: "bar" },
+  refuse: { band: 2, places: "home", actor: "court" },
+  "seize-books": { band: 2, places: "at", actor: "clerk", count: 3 },
+  "granary-close": { band: 3, places: "home", actor: "peasant", effect: "bar" },
+  "carts-back": { band: 3, places: "at", actor: "merchant", count: 2 },
+  price: { band: 3, places: "home", actor: "merchant", effect: "plate" },
+  column: {
+    band: 4,
+    places: "route",
+    actor: "infantry",
+    count: 6,
+    effect: "dust",
+  },
+  garrison: {
+    band: 4,
+    places: "at",
+    actor: "infantry",
+    count: 4,
+    effect: "banner",
+  },
+  "wall-build": { band: 4, places: "at", actor: "mohist", count: 3 },
+  fleet: { band: 4, places: "route", actor: "boat", count: 3 },
+  raid: {
+    band: 5,
+    places: "route",
+    actor: "cavalry",
+    count: 4,
+    effect: "fire",
+  },
+  "gates-taken": { band: 5, places: "at", actor: "infantry", effect: "banner" },
+  enforce: { band: 5, places: "at", actor: "clerk", count: 3 },
+  expel: { band: 5, places: "route", actor: "scholar", count: 3 },
+  battle: {
+    band: 6,
+    places: "at",
+    actor: "infantry",
+    count: 8,
+    effect: "arrows",
+  },
+  siege: { band: 6, places: "at", actor: "infantry", count: 8 },
+  execute: { band: 6, places: "home", actor: "court" },
+  "works-cut": { band: 6, places: "at", actor: "mohist", effect: "splash" },
+  sack: { band: 7, places: "at", actor: "infantry", effect: "fire" },
+  flood: { band: 7, places: "at", actor: "mohist", effect: "flood" },
+  extinguish: { band: 7, places: "home", actor: "court", effect: "grey" },
+  tripods: { band: 7, places: "route", actor: "labourer", count: 3 },
+};
+
 /** One-line captions per direction (a browser mirror of the vocabulary's glosses). */
 export const DIRECTION_CAPTIONS: Record<
   StageDirectionKind,
