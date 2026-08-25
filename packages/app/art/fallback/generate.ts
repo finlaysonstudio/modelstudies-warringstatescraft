@@ -46,6 +46,8 @@ import {
 } from "../vendor/png";
 import { FACINGS, spriteMeta, type Facing } from "../vendor/slice";
 import { blobTileset } from "../vendor/tileset";
+import { blocksOf } from "../map/map";
+import { variantSheet } from "../period/tileset";
 import { disc, line, rect, rgba, ring, shade, triangle } from "./draw";
 
 const TILE = 16;
@@ -56,13 +58,19 @@ const TERRAIN_COLORS: Record<
   { fill: string; rim: string; dots?: string }
 > = {
   grass: { fill: "#5f8f3f", rim: "#5f8f3f", dots: "#578538" },
+  tallgrass: { fill: "#4a7f37", rim: "#3a662b", dots: "#437431" },
+  scrub: { fill: "#8a9b55", rim: "#6f7f42", dots: "#7d8d4c" },
   loess: { fill: "#c9a86a", rim: "#a3844c" },
   steppe: { fill: "#b3ab66", rim: "#8f884e", dots: "#a49d5c" },
   road: { fill: "#8a6a45", rim: "#6b4f31" },
   cobble: { fill: "#8c8c88", rim: "#63635f", dots: "#7a7a76" },
   forest: { fill: "#2f6b2f", rim: "#1f4a1f", dots: "#255a25" },
   bamboo: { fill: "#7fae3c", rim: "#5e872b", dots: "#71a034" },
+  hills: { fill: "#6f8f52", rim: "#55703c", dots: "#638047" },
   mountain: { fill: "#7d7468", rim: "#4e463d", dots: "#6a6257" },
+  qinling: { fill: "#5e5f63", rim: "#3a3b3f", dots: "#4e4f53" },
+  taihang: { fill: "#4c5057", rim: "#2f3238", dots: "#3f434a" },
+  shu: { fill: "#a29a86", rim: "#726b5c", dots: "#8e8674" },
   marsh: { fill: "#4f7a5a", rim: "#3a5c44", dots: "#436a4e" },
   field: { fill: "#9bb04a", rim: "#7a8c34", dots: "#889a3e" },
 };
@@ -738,17 +746,24 @@ const emitImage = (
 for (const terrain of TERRAINS) {
   const colors = TERRAIN_COLORS[terrain];
   const id = `terrain.${terrain}`;
-  const image = blobSheet([
+  const sheet = blobSheet([
     {
       fill: rgba(colors.fill),
       rim: rgba(colors.rim),
       dots: colors.dots ? rgba(colors.dots) : undefined,
     },
   ]);
+  // the ground layer picks a variant per cell, so grass carries the stack
+  const frames = blocksOf(terrain);
+  const image = frames > 1 ? variantSheet(sheet, frames) : sheet;
   const tileset = `${id}.tsj`;
   writeFileSync(
     join(out, tileset),
-    JSON.stringify(blobTileset({ name: id, image: `${id}.png` }), null, 2),
+    JSON.stringify(
+      blobTileset({ name: id, image: `${id}.png`, frames }),
+      null,
+      2,
+    ),
   );
   emitImage(id, image, { kind: "blob", tileset });
 }

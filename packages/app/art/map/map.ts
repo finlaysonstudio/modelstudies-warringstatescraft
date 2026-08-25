@@ -54,15 +54,34 @@ export interface Geography {
 
 export const GROUNDS: readonly Ground[] = [...TERRAINS, ...WATERS];
 
-/** Blob layers above the grass ground, bottom to top. */
+/**
+ * Rearrangements of the grass fill stacked in `terrain.grass`. The ground
+ * layer picks one per cell, so the field the whole map is laid on stops
+ * reading as one tile repeated 13,824 times. Every art layer's grass sheet
+ * has to carry this many blocks (`variants` in the period spec, the same
+ * count in the fallback generator).
+ */
+export const GROUND_VARIANTS = 4;
+
+/**
+ * Blob layers above the grass ground, bottom to top: the other grasses, then
+ * the flat country, then the raised ground (hills below the ranges, so a
+ * range that meets a hill stands on it), then the works and the water.
+ */
 export const DRAW_ORDER: readonly Ground[] = [
+  "tallgrass",
+  "scrub",
   "loess",
   "steppe",
   "field",
   "forest",
   "bamboo",
   "marsh",
+  "hills",
   "mountain",
+  "qinling",
+  "taihang",
+  "shu",
   "cobble",
   "road",
   "river",
@@ -71,13 +90,19 @@ export const DRAW_ORDER: readonly Ground[] = [
 
 export const LETTERS: Record<Ground, string> = {
   grass: ".",
+  tallgrass: "w",
+  scrub: "s",
   loess: ":",
   steppe: ",",
   road: "-",
   cobble: "#",
   forest: "T",
   bamboo: "y",
+  hills: "n",
   mountain: "^",
+  qinling: "Q",
+  taihang: "H",
+  shu: "K",
   marsh: "%",
   field: '"',
   river: "~",
@@ -216,6 +241,47 @@ export interface BuildTiledMapOptions {
 export const tilesetIdOf = (ground: Ground): string =>
   isWater(ground) ? `water.${ground}` : `terrain.${ground}`;
 
+const hashAt = (x: number, y: number): number =>
+  Math.imul((x * 73856093) ^ (y * 19349663), 0x85ebca6b);
+
+/**
+ * One of four orientations for the tile at (x, y): bit 1 mirrors across the
+ * vertical axis, bit 2 across the horizontal. Only a fully surrounded tile
+ * may take one — an edge tile's art has to face its boundary — but an
+ * interior tile is isotropic, and turning it breaks up the grid the eye
+ * otherwise reads across a wide field of one terrain. Free variety: no extra
+ * art, and it holds for whichever layer supplies the asset.
+ */
+export const orientationOf = (x: number, y: number): number =>
+  (hashAt(x, y) >>> 29) % 4;
+
+/** Which stacked rearrangement of the grass fill the cell at (x, y) takes. */
+export const variantOf = (x: number, y: number): number =>
+  (hashAt(y, x) >>> 17) % GROUND_VARIANTS;
+
+/**
+ * How many stacked blob blocks a ground's sheet carries: a frame apiece for
+ * water, a rearrangement apiece for the ground the whole map is laid on, one
+ * for everything else. Every art layer builds to this, because a layer that
+ * supplies fewer blocks than the map addresses renders blank where a later
+ * block is asked for, and the layers shadow one another by id.
+ */
+export const blocksOf = (ground: Ground, frames = 3): number =>
+  isWater(ground) ? frames : ground === "grass" ? GROUND_VARIANTS : 1;
+
+/** Tiled's gid flip flags. They are added, never OR-ed: `|` is int32 in JS. */
+const FLIPPED_HORIZONTALLY = 0x80000000;
+const FLIPPED_VERTICALLY = 0x40000000;
+
+/** The flip flags a fully surrounded tile at (x, y) carries in its gid. */
+export const flipAt = (x: number, y: number): number => {
+  const orientation = orientationOf(x, y);
+  return (
+    (orientation & 1 ? FLIPPED_HORIZONTALLY : 0) +
+    (orientation & 2 ? FLIPPED_VERTICALLY : 0)
+  );
+};
+
 /** The Tiled map: a grass ground layer, one blob layer per ground in draw order, and the places. */
 export const buildTiledMap = ({
   geo,
@@ -229,11 +295,12 @@ export const buildTiledMap = ({
   let next = 1;
   for (const ground of GROUNDS) {
     const id = tilesetIdOf(ground);
+    const blocks = blocksOf(ground, frames);
     const set = blobTileset({
       name: id,
       image: `${imageDir}/${id}.png`,
       tile,
-      frames: isWater(ground) ? frames : 1,
+      frames: blocks,
     });
     tilesets.push({ firstgid: next, ...set });
     firstgid[ground] = next;
@@ -266,7 +333,17 @@ export const buildTiledMap = ({
   const cells = geo.width * geo.height;
   tileLayer(
     "ground",
-    Array.from({ length: cells }, () => (firstgid.grass ?? 1) + BLOB_FULL),
+    Array.from({ length: cells }, (_, cell) => {
+      const x = cell % geo.width;
+      const y = Math.floor(cell / geo.width);
+      const variant = variantOf(x, y);
+      return (
+        (firstgid.grass ?? 1) +
+        variant * BLOB_TILE_COUNT +
+        BLOB_FULL +
+        flipAt(x, y)
+      );
+    }),
   );
   for (const ground of DRAW_ORDER) {
     const present = grid.some((row) => row.includes(ground));
@@ -275,8 +352,10 @@ export const buildTiledMap = ({
     for (let y = 0; y < geo.height; y += 1) {
       for (let x = 0; x < geo.width; x += 1) {
         if (grid[y][x] !== ground) continue;
-        data[y * geo.width + x] =
-          (firstgid[ground] ?? 0) + blobIndexOf(maskOf(same(ground)(x, y)));
+        const index = blobIndexOf(maskOf(same(ground)(x, y)));
+        // water animates by advancing the tile index, so leave its gids plain
+        const flip = index === BLOB_FULL && !isWater(ground) ? flipAt(x, y) : 0;
+        data[y * geo.width + x] = (firstgid[ground] ?? 0) + index + flip;
       }
     }
     tileLayer(ground, data);

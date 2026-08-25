@@ -620,13 +620,6 @@
       "height": 40,
       "pack": "pixellab"
     },
-    "terrain.grass": {
-      "file": "terrain.grass.png",
-      "kind": "blob",
-      "width": 128,
-      "height": 96,
-      "pack": "pixellab"
-    },
     "terrain.forest": {
       "file": "terrain.forest.png",
       "kind": "blob",
@@ -650,13 +643,6 @@
     },
     "terrain.marsh": {
       "file": "terrain.marsh.png",
-      "kind": "blob",
-      "width": 128,
-      "height": 96,
-      "pack": "pixellab"
-    },
-    "terrain.mountain": {
-      "file": "terrain.mountain.png",
       "kind": "blob",
       "width": 128,
       "height": 96,
@@ -751,6 +737,76 @@
       "kind": "image",
       "width": 32,
       "height": 32,
+      "pack": "pixellab"
+    },
+    "terrain.grass": {
+      "file": "terrain.grass.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab"
+    },
+    "terrain.tallgrass": {
+      "file": "terrain.tallgrass.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.scrub": {
+      "file": "terrain.scrub.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.hills": {
+      "file": "terrain.hills.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.mountain": {
+      "file": "terrain.mountain.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.qinling": {
+      "file": "terrain.qinling.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.taihang": {
+      "file": "terrain.taihang.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "terrain.shu": {
+      "file": "terrain.shu.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab"
+    },
+    "water.river": {
+      "file": "water.river.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab"
+    },
+    "water.sea": {
+      "file": "water.sea.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
       "pack": "pixellab"
     }
   }

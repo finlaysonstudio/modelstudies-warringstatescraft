@@ -21,7 +21,9 @@
     "stage:vendor": "tsx packages/app/art/vendor/run.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit && npm run typecheck --workspace @modelstudies/app",
-    "stage:period": "tsx packages/app/art/period/build.ts"
+    "stage:period": "tsx packages/app/art/period/build.ts",
+    "stage:preview": "tsx packages/app/art/map/preview.ts",
+    "stage:fetch": "tsx packages/app/art/period/fetch.ts"
   },
   "devDependencies": {
     "@jaypie/eslint": "^1.2.6",

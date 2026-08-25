@@ -10,19 +10,37 @@ import type {
  * generator (`art/fallback/`) supplies every id in flat colour, so the scene
  * always finds something under each id.
  */
+/**
+ * The terrain vocabulary. Four of these are the mountain family: `mountain`
+ * is the generic lesser range every unnamed chain wears, and `qinling`,
+ * `taihang`, and `shu` are the three ranges the chronicle's geography gives a
+ * character of their own (the folded southern wall, the eastern scarp, the
+ * western crags). `hills` is the low rolling swell. The grasses are `grass`
+ * (the ground every other terrain is laid over), `tallgrass` on the wet river
+ * plains, `scrub` on the dry margins, and `steppe` in the north.
+ */
 export const TERRAINS = [
   "grass",
+  "tallgrass",
+  "scrub",
   "loess",
   "steppe",
   "road",
   "cobble",
   "forest",
   "bamboo",
+  "hills",
   "mountain",
+  "qinling",
+  "taihang",
+  "shu",
   "marsh",
   "field",
 ] as const;
 export type Terrain = (typeof TERRAINS)[number];
+
+/** The mountain family: `mountain` is the generic style for lesser ranges. */
+export const RANGES = ["mountain", "qinling", "taihang", "shu"] as const;
 
 export const WATERS = ["river", "sea"] as const;
 export type Water = (typeof WATERS)[number];

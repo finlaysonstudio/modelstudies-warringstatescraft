@@ -14,9 +14,17 @@ import {
 } from "../vendor/png";
 import { FACINGS, type SpriteMeta } from "../vendor/slice";
 import {
+  adjustColour,
+  cornerPalette,
   greyBlue,
+  keepPalette,
+  keyPalette,
+  lowerPalette,
   wangBlobSheet,
+  variantSheet,
   wangFillSheet,
+  waterFrames,
+  type ColourAdjustment,
   type WangMetadata,
 } from "./tileset";
 
@@ -66,6 +74,32 @@ export interface PeriodTilesetItem extends PeriodRecord {
   fill?: "lower" | "upper";
   /** grey blue-dominant pixels toward luminance by this amount (0..1) */
   desaturate?: number;
+  /**
+   * Key the lower terrain out to transparency so the map's layer beneath
+   * shows through the surround instead of a collar of this tileset's own
+   * lower rendering. Off for a `fill` sheet (it is the lower terrain) and
+   * for a biome whose interior shares the lower palette. `upper` keeps only
+   * the upper terrain's own colours, which also drops the collar the
+   * generator paints across the transition.
+   */
+  key?: "lower" | "upper";
+  /** per-channel distance from the lower palette that still keys (default 0) */
+  keyTolerance?: number;
+  /**
+   * Stack this many animation frames, cycling the upper terrain's brightest
+   * tones between them. Water only: the scene advances a water tile by a
+   * whole blob block per frame.
+   */
+  frames?: number;
+  /**
+   * Stack this many rearrangements of a `fill` sheet, so the ground layer can
+   * pick one per cell. Must match `GROUND_VARIANTS` in the map builder.
+   */
+  variants?: number;
+  /** value swing between variant blocks (0 leaves every block the same tone) */
+  variantTone?: number;
+  /** turn the hue and scale saturation and value (the defaults leave them) */
+  adjust?: ColourAdjustment;
 }
 
 export type PeriodItem = PeriodImageItem | PeriodSpriteItem | PeriodTilesetItem;
@@ -142,12 +176,35 @@ export const buildPeriod = async ({
     if (item.kind === "tileset") {
       let sheet = await readPng(path.join(root, item.file));
       if (item.desaturate) sheet = greyBlue(sheet, item.desaturate);
+      if (item.adjust) sheet = adjustColour(sheet, item.adjust);
       const meta = JSON.parse(
         await readFile(path.join(root, item.metadata), "utf8"),
       ) as WangMetadata;
-      const image = item.fill
+      let image = item.fill
         ? wangFillSheet({ sheet, meta, fill: item.fill })
         : wangBlobSheet({ sheet, meta });
+      if (item.key === "lower") {
+        image = keyPalette(
+          image,
+          lowerPalette(sheet, meta),
+          item.keyTolerance ?? 0,
+        );
+      }
+      if (item.key === "upper") {
+        image = keepPalette(
+          image,
+          cornerPalette(sheet, meta, "upper"),
+          item.keyTolerance ?? 0,
+        );
+      }
+      if (item.frames) {
+        image = waterFrames(image, {
+          frames: item.frames,
+          palette: cornerPalette(sheet, meta, "upper"),
+        });
+      }
+      if (item.variants)
+        image = variantSheet(image, item.variants, { tone: item.variantTone });
       await writePng(path.join(outDir, file), image);
       assets[item.id] = {
         file,

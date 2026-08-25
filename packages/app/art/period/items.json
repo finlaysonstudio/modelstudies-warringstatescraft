@@ -186,7 +186,7 @@
       "characterId": "978eac79-517a-41fb-baa0-d99d2f25df33",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "figure 16x22 on the 24 px canvas (plan §9.6 target 20 to 23); walk group c3597cb8-7238-4ce8-9e7b-7354e7860cdc, four frames per cardinal facing"
+      "note": "figure 16x22 on the 24 px canvas (plan \u00a79.6 target 20 to 23); walk group c3597cb8-7238-4ce8-9e7b-7354e7860cdc, four frames per cardinal facing"
     },
     {
       "id": "sprite.general",
@@ -228,7 +228,7 @@
       "characterId": "f1fa0816-73ca-4fdc-992e-bcb5a8f1d20e",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "the trial's third prompt (plan §5.2 table) regenerated at size 24; figure 21x22; walk group 302f6273-80da-4861-9788-dd3d9860bd37"
+      "note": "the trial's third prompt (plan \u00a75.2 table) regenerated at size 24; figure 21x22; walk group 302f6273-80da-4861-9788-dd3d9860bd37"
     },
     {
       "id": "sprite.merchant",
@@ -550,112 +550,170 @@
       "note": "third prompt: the first (f953c07a-8305-4871-b107-21c42230fe17) lost the water, the second (907f40f6-201f-4ce8-8942-40a18b605934) read the band of water as a hanging curtain; the dam and its foam carry the water reading"
     },
     {
-      "id": "terrain.grass",
-      "kind": "tileset",
-      "file": "tilesets/forest.png",
-      "metadata": "tilesets/forest.json",
-      "fill": "lower",
-      "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading" },
-      "prompt": "short green meadow grass, plain flat pasture (the shared lower base every biome tileset chains to, tile db10aae9-a0f1-4075-b305-daf5cf8e6cd9)",
-      "jobId": "45f16227-6064-4fba-bb0b-535a0f95c4d6",
-      "date": "2026-08-25",
-      "generations": 1,
-      "note": "the ground layer: the pure-lower Wang tile of the forest tileset repeated over the blob sheet, so biome surrounds meet the ground in the same rendering"
-    },
-    {
       "id": "terrain.forest",
       "kind": "tileset",
-      "file": "tilesets/forest.png",
-      "metadata": "tilesets/forest.json",
+      "file": "tilesets/forest2.png",
+      "metadata": "tilesets/forest2.json",
       "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading", "transition": 0.25 },
-      "prompt": "dense dark green broadleaf forest canopy of many small rounded treetops seen from above; transition: scattered small bushes and undergrowth at the forest edge",
-      "jobId": "45f16227-6064-4fba-bb0b-535a0f95c4d6",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns; transition: scattered saplings and low bushes thinning out at the forest edge",
+      "jobId": "56b4a2ef-3669-461c-9832-c872f7bcc122",
       "date": "2026-08-25",
-      "generations": 1
+      "generations": 2,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": -15,
+        "saturation": 0.72,
+        "value": 1.05
+      }
     },
     {
       "id": "terrain.loess",
       "kind": "tileset",
-      "file": "tilesets/loess.png",
-      "metadata": "tilesets/loess.json",
+      "file": "tilesets/loess2.png",
+      "metadata": "tilesets/loess2.json",
       "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading", "transition": 0.25 },
-      "prompt": "bare pale tan loess earth, dry dusty yellow-brown silt plateau with faint horizontal terrace lines; transition: a crumbling dusty edge with sparse dry grass tufts",
-      "jobId": "5c88f286-6f36-467f-bf02-12b51b0b76c2",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.5
+      },
+      "prompt": "a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth; transition: a crumbling dusty terrace edge with sparse dry grass tufts hanging over it",
+      "jobId": "350bb5cd-2cfc-456f-8707-b499ecef8d23",
       "date": "2026-08-25",
-      "generations": 1
+      "generations": 2,
+      "key": "lower",
+      "keyTolerance": 16,
+      "adjust": {
+        "saturation": 2.5,
+        "value": 0.82
+      }
     },
     {
       "id": "terrain.steppe",
       "kind": "tileset",
-      "file": "tilesets/steppe.png",
-      "metadata": "tilesets/steppe.json",
+      "file": "tilesets/steppe2.png",
+      "metadata": "tilesets/steppe2.json",
       "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading", "transition": 0.25 },
-      "prompt": "pale straw-yellow dry steppe grassland, faded gold wild grass with thin windswept tufts, no bare earth, no brown soil; transition: green grass fading into dry pale gold grass",
-      "jobId": "9ea35f99-e4c2-4366-b78c-2231b495fa4a",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "dry steppe grassland seen from above, pale straw and gold wild grass bent by the wind in long streaks, thin tufts of tawny bunchgrass, no bare earth, no brown soil, no sand; transition: green grass fading into pale windblown gold grass",
+      "jobId": "d670df9e-cb93-4f79-ac48-153052bcbe42",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "second prompt: the first (dc415f64-e2d9-4162-a415-5294509f9d47) named bare dusty earth and rendered a tan twin of the loess; the gold grass carries the difference"
+      "generations": 3,
+      "note": "second prompt: the first (dc415f64-e2d9-4162-a415-5294509f9d47) named bare dusty earth and rendered a tan twin of the loess; the gold grass carries the difference",
+      "key": "lower",
+      "keyTolerance": 16,
+      "adjust": {
+        "hue": 5,
+        "saturation": 1.15,
+        "value": 0.9
+      }
     },
     {
       "id": "terrain.marsh",
       "kind": "tileset",
-      "file": "tilesets/marsh.png",
-      "metadata": "tilesets/marsh.json",
+      "file": "tilesets/marsh4.png",
+      "metadata": "tilesets/marsh4.json",
       "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading", "transition": 0.25 },
-      "prompt": "green reed marsh, dense reeds with winding patches of dark still water seen from above; transition: wet muddy ground with scattered reeds",
-      "jobId": "b2f6eb66-f509-4444-8331-6cb8bd2391f2",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.5
+      },
+      "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, water covering most of the ground; transition: boggy mud and scattered reeds where the grass gives out",
+      "jobId": "4c939fa3-205f-4db7-be17-86492afe319a",
       "date": "2026-08-25",
-      "generations": 1
-    },
-    {
-      "id": "terrain.mountain",
-      "kind": "tileset",
-      "file": "tilesets/mountain.png",
-      "metadata": "tilesets/mountain.json",
-      "desaturate": 0.85,
-      "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading", "transition": 0.5 },
-      "prompt": "desaturated grey slate rock mountains, plain grey stone ridges with darker grey shadowed clefts, strictly grey and charcoal colors only, no purple, no blue; transition: grey scree and scattered grey boulders at the mountain foot",
-      "jobId": "d0478270-cdf7-4cf7-a645-b78a89034ee0",
-      "date": "2026-08-25",
-      "generations": 2,
-      "note": "second prompt: the first (aff7a1ce-0dce-422d-ac80-de998025b8c7) rendered the rock purple; grey named three ways"
+      "generations": 3,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": 40,
+        "saturation": 1.3,
+        "value": 0.95
+      },
+      "note": "three prompts, and the generator never drew standing water at 16px: the reeds it does draw fill the tile. What came back is a wet mudflat, which is what the marsh reads as on the map, turned olive here rather than spending a fourth generation on water that does not survive the tile."
     },
     {
       "id": "terrain.field",
       "kind": "tileset",
-      "file": "tilesets/field.png",
-      "metadata": "tilesets/field.json",
+      "file": "tilesets/field4.png",
+      "metadata": "tilesets/field4.json",
       "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading", "transition": 0.25 },
-      "prompt": "tilled farmland, straight parallel rows of young green millet on brown ploughed soil seen from above; transition: a low tan earthen ridge around the field edge",
-      "jobId": "94f5d7cc-2c55-459d-88a8-0043611853cf",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ploughed field",
+      "jobId": "f1272803-01d8-412e-a500-b07ee475cf99",
       "date": "2026-08-25",
-      "generations": 1
+      "generations": 4,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "saturation": 0.9,
+        "value": 1.0
+      },
+      "note": "four prompts: flat at low detail, then mauve, then ochre with violet furrow shadows. Barring the violet family by name four ways finally held the shadow lines brown."
     },
     {
       "id": "terrain.bamboo",
       "kind": "tileset",
-      "file": "tilesets/bamboo.png",
-      "metadata": "tilesets/bamboo.json",
+      "file": "tilesets/bamboo2.png",
+      "metadata": "tilesets/bamboo2.json",
       "tool": "create_topdown_tileset",
-      "settings": { "tile": 16, "view": "high top-down", "detail": "low detail", "shading": "basic shading", "transition": 0.25 },
-      "prompt": "bright yellow-green bamboo grove canopy, dense thin leafy stalks seen from above; transition: scattered young bamboo shoots in the grass",
-      "jobId": "c3429abf-348a-4211-aeea-8c3d3695e3e3",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "a dense bamboo grove seen from above, tight clumps of slender bamboo canes with narrow leaves, deep green with cool shadow between the clumps, strictly green, no yellow, no gold, no cream; transition: young bamboo shoots standing in the grass",
+      "jobId": "b0d3900e-85d6-4ee2-a2b6-45d43e020944",
       "date": "2026-08-25",
-      "generations": 1
+      "generations": 2,
+      "key": "upper",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": -6,
+        "saturation": 0.75,
+        "value": 1.15
+      },
+      "note": "the first (low detail, basic shading) painted a gold collar around every grove; barring yellow and raising the detail dropped it"
     },
     {
       "id": "image.town-b",
       "kind": "image",
       "file": "objects/town-b.png",
       "tool": "create_map_object",
-      "settings": { "width": 40, "height": 40, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 40,
+        "height": 40,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a small walled Chinese town beside a river, a square tan earthen wall with layer lines and one dark gate opening, grey tiled rooftops of a few houses inside the wall, a short wooden jetty with a moored flat wooden boat at the front, no people",
       "jobId": "517ce822-158b-4ed0-8044-70db33ff2a70",
       "date": "2026-08-25",
@@ -667,7 +725,14 @@
       "kind": "image",
       "file": "objects/town-c.png",
       "tool": "create_map_object",
-      "settings": { "width": 40, "height": 40, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 40,
+        "height": 40,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a small Chinese hill town on a terraced tan earthen slope, grey tiled rooftops on two terrace levels, a short stone stair climbing to a dark gate in a low earthen wall, no people",
       "jobId": "5deade5c-7fc2-49c4-b1b5-c1f1f55f1edf",
       "date": "2026-08-25",
@@ -679,7 +744,14 @@
       "kind": "image",
       "file": "objects/decor-pine.png",
       "tool": "create_map_object",
-      "settings": { "width": 32, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "two Chinese pine trees filling the frame, wide flat layered canopies of dark green needles, short reddish-brown trunks, strictly green foliage, no people",
       "jobId": "50d1575d-cbfb-40ca-8e01-30ebed9bc6f9",
       "date": "2026-08-25",
@@ -691,7 +763,14 @@
       "kind": "image",
       "file": "objects/decor-bamboo.png",
       "tool": "create_map_object",
-      "settings": { "width": 32, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a small clump of tall thin green bamboo stalks leaning slightly with sparse narrow leaves, no people",
       "jobId": "7531ce49-f733-4366-b78b-f6d9ddc8694a",
       "date": "2026-08-25",
@@ -702,7 +781,14 @@
       "kind": "image",
       "file": "objects/decor-beacon.png",
       "tool": "create_map_object",
-      "settings": { "width": 32, "height": 48, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 32,
+        "height": 48,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a square tan rammed-earth beacon tower with thin horizontal layer lines, a small wooden shelter with a grey tiled roof on top, an unlit iron brazier beside the shelter, no people",
       "jobId": "6d30bade-1529-4423-9ca4-cbc26c1a4760",
       "date": "2026-08-25",
@@ -713,7 +799,14 @@
       "kind": "image",
       "file": "objects/decor-tumulus.png",
       "tool": "create_map_object",
-      "settings": { "width": 40, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a large rounded burial mound of packed tan earth thinly covered in dry grass, a single small grey stone marker at its foot, no people",
       "jobId": "a00a7385-80af-4592-956e-f5eee38b80c2",
       "date": "2026-08-25",
@@ -724,7 +817,14 @@
       "kind": "image",
       "file": "objects/decor-stele.png",
       "tool": "create_map_object",
-      "settings": { "width": 32, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a single tall narrow grey standing stone with faint carved vertical marks, leaning very slightly, on a small round earthen base, no people",
       "jobId": "cca09ab2-7ec2-4159-b353-640868d1f959",
       "date": "2026-08-25",
@@ -735,7 +835,14 @@
       "kind": "image",
       "file": "objects/decor-boat.png",
       "tool": "create_map_object",
-      "settings": { "width": 32, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a small flat wooden fishing boat with a single short mast and a furled net, floating, no people",
       "jobId": "4db08e7a-6111-4262-b876-dc96810ccd9f",
       "date": "2026-08-25",
@@ -746,7 +853,14 @@
       "kind": "image",
       "file": "objects/decor-horses.png",
       "tool": "create_map_object",
-      "settings": { "width": 40, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "three small brown steppe horses grazing close together on dry grass, heads down, no riders, no people",
       "jobId": "427a6cbb-06b9-4a95-a55f-992cada7cf91",
       "date": "2026-08-25",
@@ -757,7 +871,14 @@
       "kind": "image",
       "file": "objects/decor-grove.png",
       "tool": "create_map_object",
-      "settings": { "width": 40, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a mulberry orchard filling the frame, six low round-crowned leafy green trees planted in two straight rows on bare brown soil, no people",
       "jobId": "8c29d9a6-e34f-4d3b-b306-bf479cab606d",
       "date": "2026-08-25",
@@ -769,11 +890,299 @@
       "kind": "image",
       "file": "objects/decor-rocks.png",
       "tool": "create_map_object",
-      "settings": { "width": 32, "height": 32, "detail": "low detail", "shading": "basic shading", "outline": "single color outline", "view": "low top-down" },
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "low detail",
+        "shading": "basic shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
       "prompt": "a small outcrop of three weathered grey rocks of different sizes on bare ground with a few tufts of grass, no people",
       "jobId": "ca405ce1-fc5b-408d-89fc-811ed5a3ed6c",
       "date": "2026-08-25",
       "generations": 1
+    },
+    {
+      "id": "terrain.grass",
+      "kind": "tileset",
+      "file": "tilesets/meadow2.png",
+      "metadata": "tilesets/meadow2.json",
+      "fill": "upper",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "green meadow grass seen from directly above, thick with individual blades and tufts, scattered darker green clumps and paler sun-caught patches, a few tiny pale specks, clearly textured and uneven all over, not a flat colour (over bare brown earth; the ground layer takes the upper fill)",
+      "jobId": "83964e02-9a43-45b2-89ff-cb6e1eebcf1f",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "the ground layer is this tile over all 13,824 cells, so its texture carries most of the map; taken as the upper because the generator renders a lower description flat (the first base, 20e5a230, was three near-identical limes over 73% of the tile)",
+      "variants": 4,
+      "adjust": {
+        "hue": -14,
+        "saturation": 0.52,
+        "value": 0.7
+      },
+      "variantTone": 0.02
+    },
+    {
+      "id": "terrain.tallgrass",
+      "kind": "tileset",
+      "file": "tilesets/meadow.png",
+      "metadata": "tilesets/meadow.json",
+      "key": "lower",
+      "keyTolerance": 16,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above; transition: short grass thickening into tall grass",
+      "jobId": "20e5a230-afc8-4c1c-8183-eaacd9b830ad",
+      "date": "2026-08-25",
+      "generations": 0,
+      "note": "the upper of the base tileset: one generation gives both the ground and the wet-plain grass",
+      "adjust": {
+        "hue": -28,
+        "saturation": 0.7,
+        "value": 1.1
+      }
+    },
+    {
+      "id": "terrain.scrub",
+      "kind": "tileset",
+      "file": "tilesets/scrub.png",
+      "metadata": "tilesets/scrub.json",
+      "key": "lower",
+      "keyTolerance": 16,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow; transition: green grass giving way to drab olive tufts and small shrubs",
+      "jobId": "e714201a-d091-4416-b4be-9f06a33e299c",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "second prompt: the first (b9caa696-1c42-46de-b989-9c0303e93a7c) read 'pale stony ground' as sand and rendered a twin of the loess",
+      "adjust": {
+        "saturation": 0.9,
+        "value": 0.95
+      }
+    },
+    {
+      "id": "terrain.hills",
+      "kind": "tileset",
+      "file": "tilesets/hills3.png",
+      "metadata": "tilesets/hills3.json",
+      "key": "lower",
+      "keyTolerance": 16,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.25,
+        "slope_size": 0.85,
+        "spread_x": 0.8
+      },
+      "prompt": "low rolling hills seen from above, gentle rounded green shoulders with soft shadow in the hollows between them, thin dry grass on the crowns and a little bare brown earth showing through, no rock, no cliffs, strictly green and warm brown; transition: grass rising gently onto the hill shoulder",
+      "jobId": "512aff07-8cde-46f5-802c-b9441f45231f",
+      "date": "2026-08-25",
+      "generations": 3,
+      "note": "the lesser relief between the plain and the ranges: three prompts. The first two (pro, then standard) read as a wooded valley with streams; barring rock and cliffs and running the slope high gave shoulders instead of walls.",
+      "adjust": {
+        "hue": -10,
+        "saturation": 0.55,
+        "value": 0.95
+      }
+    },
+    {
+      "id": "terrain.mountain",
+      "kind": "tileset",
+      "file": "tilesets/ridge.png",
+      "metadata": "tilesets/ridge.json",
+      "key": "upper",
+      "keyTolerance": 20,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.5,
+        "slope_size": 0.4,
+        "spread_x": 0.5
+      },
+      "prompt": "a modest stony mountain range seen from above, rounded grey rock ridges with shallow clefts, worn and weathered, patches of dry grass on the shoulders, strictly grey stone and dull green, no purple, no blue; transition: grey stones scattered in the grass at the foot of the ridge",
+      "jobId": "3289a9b9-25a2-4805-80a7-d3598aa2416d",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "the generic style every lesser range wears",
+      "adjust": {
+        "saturation": 2.0,
+        "value": 1.5
+      }
+    },
+    {
+      "id": "terrain.qinling",
+      "kind": "tileset",
+      "file": "tilesets/qinling4.png",
+      "metadata": "tilesets/qinling4.json",
+      "key": "upper",
+      "keyTolerance": 20,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.5,
+        "slope_size": 0.4,
+        "spread_x": 0.5
+      },
+      "prompt": "a pine-covered mountain range seen from above, rounded rock ridges with shallow clefts like worn grey stone shoulders, dark pine forest lying in the clefts and thinning on the crests so the grey rock shows through, weathered and irregular, strictly grey stone and dark pine green; transition: grey stones and dark pines scattered in the grass at the foot of the ridge",
+      "jobId": "6274d716-597e-489d-9130-5c94f1dbac5d",
+      "date": "2026-08-25",
+      "generations": 4,
+      "note": "the southern wall: four prompts. Pale cream (a twin of the Shu karst), then near black, then a chevron weave that read as a cornfield; the shape settings that made the generic range work (raggedness 0.5, slope 0.4, spread 0.5) with pine wording finally gave ridges. The pine came back as rock, so the green cast is an adjust.",
+      "adjust": {
+        "hue": -134,
+        "saturation": 6,
+        "value": 1.15
+      },
+      "desaturate": 0.7
+    },
+    {
+      "id": "terrain.taihang",
+      "kind": "tileset",
+      "file": "tilesets/taihang.png",
+      "metadata": "tilesets/taihang.json",
+      "key": "upper",
+      "keyTolerance": 20,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.4,
+        "slope_size": 0.8,
+        "spread_x": 0.2
+      },
+      "prompt": "a steep dark mountain scarp seen from above, one long unbroken wall of rock with a sheer cliff face, narrow flat crest, deep shadow along its foot, dark slate and charcoal stone, strictly grey, no purple, no blue; transition: dark grey rubble and fallen slabs at the cliff foot",
+      "jobId": "b2a24795-41a4-425e-b9e0-f6f3bf6460e1",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "the eastern scarp: a wall rather than a range, so the slope runs high and the boundary stays straight",
+      "adjust": {
+        "hue": -16,
+        "saturation": 1.1,
+        "value": 1.9
+      }
+    },
+    {
+      "id": "terrain.shu",
+      "kind": "tileset",
+      "file": "tilesets/shu.png",
+      "metadata": "tilesets/shu.json",
+      "key": "upper",
+      "keyTolerance": 20,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.5,
+        "mode": "pro",
+        "raggedness": 0.85,
+        "slope_size": 0.5,
+        "spread_x": 0.4
+      },
+      "prompt": "jagged pale limestone karst peaks seen from above, a crowd of narrow steep-sided towers of pale grey stone with dark green vegetation in the clefts between them, chaotic and broken, strictly pale grey and dark green, no purple, no blue; transition: pale grey broken stone and dense dark green scrub at the foot of the crags",
+      "jobId": "6c3e1bb2-7535-41a6-9d99-2ec1a4c6db39",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "the western crags: the highest raggedness on the map, pale against the grey of the others",
+      "adjust": {
+        "hue": -25,
+        "saturation": 0.6,
+        "value": 1.15
+      }
+    },
+    {
+      "id": "water.river",
+      "kind": "tileset",
+      "file": "tilesets/river.png",
+      "metadata": "tilesets/river.json",
+      "key": "lower",
+      "keyTolerance": 16,
+      "frames": 3,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle; transition: a narrow strip of wet pebbles and pale sand at the water's edge",
+      "jobId": "9f34a053-7a74-4054-9b08-fa00ed0d0586",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "second prompt: the first (f78c1fcf-da2d-44df-940b-abf11eecbc3b) asked for silt-laden yellow-brown water and rendered sand",
+      "adjust": {
+        "hue": 12,
+        "saturation": 0.58,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "water.sea",
+      "kind": "tileset",
+      "file": "tilesets/sea.png",
+      "metadata": "tilesets/sea.json",
+      "key": "lower",
+      "keyTolerance": 16,
+      "frames": 3,
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 16,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "transition": 0.25
+      },
+      "prompt": "deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey; transition: pale wet sand with a thin line of white surf",
+      "jobId": "9bd79c98-41cd-481a-950e-a3f5f913a172",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "second prompt: the first (3656084b-eac8-4113-8d99-3bf6697f9a42) came back a dull grey-teal",
+      "adjust": {
+        "saturation": 0.8,
+        "value": 1.12
+      }
     }
   ]
 }

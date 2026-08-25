@@ -5,10 +5,26 @@
     "terrain.grass": {
       "file": "terrain.grass.png",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "fallback",
       "kind": "blob",
       "tileset": "terrain.grass.tsj"
+    },
+    "terrain.tallgrass": {
+      "file": "terrain.tallgrass.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.tallgrass.tsj"
+    },
+    "terrain.scrub": {
+      "file": "terrain.scrub.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.scrub.tsj"
     },
     "terrain.loess": {
       "file": "terrain.loess.png",
@@ -58,6 +74,14 @@
       "kind": "blob",
       "tileset": "terrain.bamboo.tsj"
     },
+    "terrain.hills": {
+      "file": "terrain.hills.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.hills.tsj"
+    },
     "terrain.mountain": {
       "file": "terrain.mountain.png",
       "width": 128,
@@ -65,6 +89,30 @@
       "pack": "fallback",
       "kind": "blob",
       "tileset": "terrain.mountain.tsj"
+    },
+    "terrain.qinling": {
+      "file": "terrain.qinling.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.qinling.tsj"
+    },
+    "terrain.taihang": {
+      "file": "terrain.taihang.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.taihang.tsj"
+    },
+    "terrain.shu": {
+      "file": "terrain.shu.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.shu.tsj"
     },
     "terrain.marsh": {
       "file": "terrain.marsh.png",

@@ -5,8 +5,23 @@ import { fileURLToPath } from "node:url";
 import { checkPlaces, placesOfTiledMap } from "@modelstudies/game";
 import { describe, expect, it } from "vitest";
 
-import { BLOB_FULL, blobIndexOf, E, N, S, W } from "../../vendor/blob";
-import { asciiOf, buildTiledMap, rasterize, type Geography } from "../map";
+import {
+  BLOB_FULL,
+  BLOB_TILE_COUNT,
+  blobIndexOf,
+  E,
+  N,
+  S,
+  W,
+} from "../../vendor/blob";
+import {
+  asciiOf,
+  buildTiledMap,
+  flipAt,
+  rasterize,
+  variantOf,
+  type Geography,
+} from "../map";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -57,8 +72,17 @@ describe("buildTiledMap", () => {
     ]);
     expect(map.tilesets.map((set) => set.name)).toContain("water.river");
     const grass = map.tilesets.find((set) => set.name === "terrain.grass")!;
+    // every cell is the fill, in one of the stacked variants and one of the
+    // four orientations the cell's own hash picks
     expect(
-      map.layers[0].data!.every((gid) => gid === grass.firstgid + BLOB_FULL),
+      map.layers[0].data!.every(
+        (gid, at) =>
+          gid ===
+          grass.firstgid +
+            variantOf(at % 6, Math.floor(at / 6)) * BLOB_TILE_COUNT +
+            BLOB_FULL +
+            flipAt(at % 6, Math.floor(at / 6)),
+      ),
     ).toBe(true);
   });
 
@@ -78,9 +102,12 @@ describe("buildTiledMap", () => {
     expect(forestLayer.data![2 * 6 + 4]).toBe(
       forest.firstgid + blobIndexOf(E | S | 8),
     );
-    // the block's bottom-right corner touches the map edge on two sides
+    // the block's bottom-right corner touches the map edge on two sides, so
+    // it reads as fully surrounded and takes the cell's orientation
     expect(forestLayer.data![3 * 6 + 5]).toBe(
-      forest.firstgid + blobIndexOf(N | W | 128 | E | S | 8 | 32 | 2),
+      forest.firstgid +
+        blobIndexOf(N | W | 128 | E | S | 8 | 32 | 2) +
+        flipAt(5, 3),
     );
     expect(riverLayer.data![0]).toBe(0);
   });

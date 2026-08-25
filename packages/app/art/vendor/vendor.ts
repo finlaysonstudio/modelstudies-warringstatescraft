@@ -1,5 +1,7 @@
 import { BadRequestError } from "@jaypie/errors";
 
+import { blocksOf, tilesetIdOf, GROUNDS, type Ground } from "../map/map";
+import { variantSheet } from "../period/tileset";
 import {
   DEFAULT_A2_LAYOUT,
   expandA1Block,
@@ -19,6 +21,15 @@ import {
 import { cropImage, decodePng, encodePng, isBlank, type Image } from "./png";
 import { sliceGrid, spriteMeta } from "./slice";
 import { blobTileset } from "./tileset";
+
+const groundOf = (id: string): Ground | undefined =>
+  GROUNDS.find((ground) => tilesetIdOf(ground) === id);
+
+/** How many blob blocks the sheet with this id has to carry (1 if it is not a ground). */
+const blocksOfSheet = (id: string): number => {
+  const ground = groundOf(id);
+  return ground ? blocksOf(ground) : 1;
+};
 
 export interface BuildVendorOptions {
   packs: PacksManifest;
@@ -88,7 +99,7 @@ export const buildVendor = ({
     for (const sheet of pack.sheets) {
       switch (sheet.kind) {
         case "a2": {
-          const out = expandA2Block(
+          const block = expandA2Block(
             imageOf(sheet.file, sheet.sha1),
             sheet.block!,
             {
@@ -98,13 +109,22 @@ export const buildVendor = ({
               keyOutMode: sheet.keyOut?.mode,
             },
           );
+          // the ground the map is laid on is addressed by stacked variant, so
+          // this layer has to carry as many blocks as the map builder counts
+          const blocks = blocksOfSheet(sheet.id);
+          const out = blocks > 1 ? variantSheet(block, blocks) : block;
           const file = `${sheet.id}.png`;
           const tileset = `${sheet.id}.tsj`;
           emit(file, encodePng(out));
           emit(
             tileset,
             JSON.stringify(
-              blobTileset({ name: sheet.id, image: file, tile }),
+              blobTileset({
+                name: sheet.id,
+                image: file,
+                tile,
+                frames: blocks,
+              }),
               null,
               2,
             ),

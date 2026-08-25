@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { GROUND_VARIANTS } from "../../map/map";
 import { sha1Of, validatePacks, type PacksManifest } from "../manifest";
 import { blankImage, decodePng, encodePng, fillRect } from "../png";
 import { buildVendor } from "../vendor";
@@ -115,10 +116,11 @@ describe("buildVendor", () => {
       "terrain.grass",
       "water.river",
     ]);
+    // the ground carries one block per variant the map builder addresses
     expect(manifest.assets["terrain.grass"]).toMatchObject({
       kind: "blob",
       width: 128,
-      height: 96,
+      height: 96 * GROUND_VARIANTS,
       tileset: "terrain.grass.tsj",
     });
     expect(manifest.assets["water.river"]).toMatchObject({

@@ -96,6 +96,10 @@ export interface CopyRect {
   target: Image;
   tx: number;
   ty: number;
+  /** mirror the source rectangle across its vertical axis */
+  flipX?: boolean;
+  /** mirror the source rectangle across its horizontal axis */
+  flipY?: boolean;
 }
 
 /** Copies a rectangle byte for byte (no blending). */
@@ -126,10 +130,16 @@ export const blit = ({
   target,
   tx,
   ty,
+  flipX = false,
+  flipY = false,
 }: CopyRect): void => {
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
-      const [r, g, b, a] = pixelAt(source, sx + x, sy + y);
+      const [r, g, b, a] = pixelAt(
+        source,
+        sx + (flipX ? width - 1 - x : x),
+        sy + (flipY ? height - 1 - y : y),
+      );
       if (a === 0) continue;
       if (a === 255) {
         setPixel(target, tx + x, ty + y, [r, g, b, a]);

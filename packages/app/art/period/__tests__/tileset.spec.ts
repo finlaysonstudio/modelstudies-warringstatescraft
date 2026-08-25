@@ -10,7 +10,10 @@ import {
 } from "../../vendor/blob";
 import { blankImage, pixelAt } from "../../vendor/png";
 import {
+  adjustColour,
   greyBlue,
+  keepPalette,
+  variantSheet,
   wangBlobSheet,
   wangFillSheet,
   type WangMetadata,
@@ -133,5 +136,68 @@ describe("greyBlue", () => {
     const out = greyBlue(image, 0.5);
     expect(pixelAt(out, 0, 0)).toEqual([25, 30, 65, 255]);
     expect(pixelAt(out, 1, 0)).toEqual([10, 90, 20, 255]);
+  });
+});
+
+describe("keepPalette", () => {
+  it("keeps what the palette names and drops the rest", () => {
+    const image = blankImage(3, 1);
+    image.data.set([10, 20, 30, 255, 14, 24, 34, 255, 200, 40, 40, 255]);
+    const out = keepPalette(image, [[10, 20, 30, 255]], 4);
+    expect(pixelAt(out, 0, 0)).toEqual([10, 20, 30, 255]);
+    // within tolerance: the collar's anti-aliased blends stay with their terrain
+    expect(pixelAt(out, 1, 0)).toEqual([14, 24, 34, 255]);
+    expect(pixelAt(out, 2, 0)).toEqual([0, 0, 0, 0]);
+  });
+});
+
+describe("adjustColour", () => {
+  it("turns the hue without touching a grey", () => {
+    const image = blankImage(2, 1);
+    image.data.set([255, 0, 0, 255, 100, 100, 100, 255]);
+    const out = adjustColour(image, { hue: 120 });
+    expect(pixelAt(out, 0, 0)).toEqual([0, 255, 0, 255]);
+    expect(pixelAt(out, 1, 0)).toEqual([100, 100, 100, 255]);
+  });
+
+  it("scales saturation and value", () => {
+    const image = blankImage(1, 1);
+    image.data.set([200, 100, 100, 255]);
+    const out = adjustColour(image, { saturation: 0, value: 0.5 });
+    expect(pixelAt(out, 0, 0)).toEqual([100, 100, 100, 255]);
+  });
+
+  it("leaves a transparent pixel alone", () => {
+    const image = blankImage(1, 1);
+    const out = adjustColour(image, { hue: 90, saturation: 2, value: 2 });
+    expect(pixelAt(out, 0, 0)).toEqual([0, 0, 0, 0]);
+  });
+});
+
+describe("variantSheet", () => {
+  const source = (): ReturnType<typeof blankImage> => {
+    const image = blankImage(TILE, TILE);
+    image.data.set([80, 80, 80, 255], 0);
+    return image;
+  };
+
+  it("stacks a block per variant, the first one untouched", () => {
+    const out = variantSheet(source(), 3, { tile: TILE });
+    expect(out.height).toBe(TILE * 3);
+    expect(pixelAt(out, 0, 0)).toEqual([80, 80, 80, 255]);
+  });
+
+  it("shifts each later block within the tile, wrapping at its edge", () => {
+    const out = variantSheet(source(), 2, { tile: TILE });
+    // block 1 samples (x + 5, y + 7), so the corner pixel lands where the
+    // shift wraps it back to
+    const dx = (TILE - (5 % TILE)) % TILE;
+    const dy = (TILE - (7 % TILE)) % TILE;
+    expect(pixelAt(out, dx, TILE + dy)).toEqual([80, 80, 80, 255]);
+  });
+
+  it("gives each block its own tone when asked", () => {
+    const out = variantSheet(source(), 2, { tone: 0.5, tile: TILE });
+    expect(pixelAt(out, 0, 0)[0]).toBe(40);
   });
 });
