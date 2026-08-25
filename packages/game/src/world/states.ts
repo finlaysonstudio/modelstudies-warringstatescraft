@@ -133,7 +133,7 @@ export const CAST: CastMember[] = [
         "fear the cost of war; your generals fear the cost of waiting. You " +
         "have long believed that you will be conquered last, if at all.",
       zh:
-        "你们是{qi}国的内廷议事之臣，当世最富之国，都于东海之滨的{linzi}，远离" +
+        "你们是{qi}国的内廷议事之臣，当世最富之国，都于{sea}之滨的{linzi}，远离" +
         "{qin}的边境。你们的财富是海滨煮出的盐、铁、山东诸市通行的刀币，以及历代" +
         "君王出公帑养在门下议论的学者。你们的车徒精良而极少出动，舟师扼守{gulf}。商贾" +
         "惧怕战争的代价，将军惧怕观望的代价。你们一向相信，即使终被征服，也是最后" +

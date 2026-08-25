@@ -514,3 +514,204 @@ export const legendFor = (kind: LegendKind, id: string): LegendNote | null => {
   if (kind === "decor") return DECOR_NOTES[id as Decor] ?? null;
   return MARKER_NOTES[id as Marker | "region"] ?? null;
 };
+
+/**
+ * A note about one named thing rather than one kind of thing. The title is a
+ * fallback: the explorer prefers the gazetteer's own rendering, so the name a
+ * reader sees follows the naming and language they set, and a masked run
+ * keeps its mask. `modern` is the name the feature goes by now, shown only
+ * under the chronicle naming, where the real names are on the map already.
+ */
+export interface FeatureNote extends LegendNote {
+  modern?: Localized;
+}
+
+/**
+ * The named country: what the map draws that history itself named. Keys are
+ * gazetteer keys (`FEATURE_NAMES` and `PLACE_NAMES` in the world module), and
+ * `geography.json` binds them to the fills that draw them.
+ */
+export const FEATURE_NOTES: Record<string, FeatureNote> = {
+  river: {
+    title: { en: "The River", zh: "大河" },
+    modern: { en: "the Yellow River", zh: "黄河" },
+    what: {
+      en: "The great northern river: west out of the highlands, north around the Ordos loop, south along the border of Qin and the Jin lands, then east across the plain to the Gulf.",
+      zh: "北方大川。出陇上，绕河套而北，南下秦晋之界，复东注渤海。",
+    },
+    history: {
+      en: "It is simply the River in this period; the name that calls it yellow comes later, from the silt it carries. That silt raises its own bed above the plain, so the plain lives behind dykes and a cut dyke is a weapon: states on it flooded each other on purpose, and the crossings and the bend below the Fen decided campaigns.",
+      zh: "时人但称河，黄河之名后起，以其挟沙也。沙高其床，故平原恃堤而居；决堤即兵器，列国以水相攻，见于史。汾口之曲与诸津渡，常决战守之势。",
+    },
+  },
+  weishui: {
+    title: { en: "The Wei", zh: "渭水" },
+    what: {
+      en: "The river of Guanzhong, running east down the valley past Xianyang to meet the River at the bend.",
+      zh: "关中之水，东流经咸阳，会河于曲。",
+    },
+    history: {
+      en: "The valley it waters is the whole basis of Qin: loess soil, a canal system drawing off the Jing, and one road out to the east through a pass that can be shut. A state that can feed an army in the Wei valley and close the gate behind it can lose a campaign without losing the war.",
+      zh: "渭川沃野，秦之本也。黄壤宜稼，引泾以溉，东出唯一函谷之道，可闭而守。故秦能养兵于内，败于外而国不摇。",
+    },
+  },
+  jing: {
+    title: { en: "The Jing", zh: "泾水" },
+    what: {
+      en: "The northern tributary that comes down out of the loess country into the Wei.",
+      zh: "自黄土高原南下，注于渭。",
+    },
+    history: {
+      en: "Its water was taken into a canal across the dry terrace above the Wei, and the silt it carried turned alkali ground into grain land. The canal was begun as an engineering project meant to exhaust Qin and ended as the thing that fed its armies.",
+      zh: "引泾为渠，溉渭北舄卤之地，淤而成田。渠本敌国疲秦之计，终为秦之仓廪。",
+    },
+  },
+  fen: {
+    title: { en: "The Fen", zh: "汾水" },
+    what: {
+      en: "The valley river of the old Jin country, running south between the ranges to the River.",
+      zh: "晋地之川，南流两山之间而入河。",
+    },
+    history: {
+      en: "The corridor down the middle of the Jin lands, and after their partition the road between the three states that came out of it. Jinyang stands on it; salt from the lake at its lower end was one of the oldest sources of state revenue in the north.",
+      zh: "晋国之脊，三家分晋后，为三国往来之道。晋阳临之。汾下盐池之利，北方最古之国赋也。",
+    },
+  },
+  luo: {
+    title: { en: "The Luo", zh: "洛水" },
+    what: {
+      en: "The short river of the royal domain, joining the River below the Zhou altars.",
+      zh: "王畿之水，东注于河，在周室之下。",
+    },
+    history: {
+      en: "The Zhou kings were left with the land along it and little else: the altars, the bronzes, the calendar, and no army worth the name. Every state that wanted the form of legitimacy came here for it, and none of them defended the place.",
+      zh: "周室所余，唯此水之地：宗庙、彝器、正朔而已，无兵可恃。诸侯欲假天子之名者皆至，而莫肯为之守。",
+    },
+  },
+  ditch: {
+    title: { en: "The Great Ditch", zh: "鸿沟" },
+    what: {
+      en: "The cut canal between the River and the Huai, carrying boats across the plain.",
+      zh: "凿渠通河淮，舟行平原。",
+    },
+    history: {
+      en: "A canal is a grain road: it moves the tax of one province to the army of another at a fraction of what carts cost. This one tied the middle plain together and, being a straight line drawn across open country, later served as the obvious thing to make a border out of.",
+      zh: "渠者，漕道也，转一方之粟以给他方之军，费省于车运数倍。此渠联中原为一，其为平地直线，后遂用以划疆。",
+    },
+  },
+  yi: {
+    title: { en: "The Yi", zh: "易水" },
+    what: {
+      en: "Yan's southern water, the line between its own country and the states below it.",
+      zh: "燕之南水，燕与南国之界。",
+    },
+    history: {
+      en: "A frontier river far enough from anywhere to feel like an edge: walls and beacon lines run near it, and the crossing of it southward is the setting of the period's most quoted farewell.",
+      zh: "边水也，去中原既远，长城烽燧多循其地。南渡易水之别，为一代传诵之辞。",
+    },
+  },
+  jiang: {
+    title: { en: "The Jiang", zh: "大江" },
+    modern: { en: "the Yangtze", zh: "长江" },
+    what: {
+      en: "The great southern river, running east through the Chu country to the sea.",
+      zh: "南方大川，东贯楚地入海。",
+    },
+    history: {
+      en: "No one bridges it. It is a road rather than a barrier for whoever has the boats, which for most of this period is Chu, and it is why a southern state can move grain and men at a speed the northern plains manage only on canals.",
+      zh: "无桥可渡。有舟者以为道，无舟者以为险；楚擅舟楫，故转粟运兵之速，北国非渠不能及。",
+    },
+  },
+  hanshui: {
+    title: { en: "The Han", zh: "汉水" },
+    what: {
+      en: "The river of the middle vale, running southeast out of Hanzhong to the Jiang country.",
+      zh: "汉中之水，东南流入江域。",
+    },
+    history: {
+      en: "The seam between the Wei valley, the Sichuan basin, and Chu. Whoever holds its upper vale holds the door to two of the three, which is why a stretch of mountain road above it was worth more to Qin than the province it crossed.",
+      zh: "关中、巴蜀、荆楚三地之交。得其上游，即握两地之门；故其上栈道一线，于秦重于所过之郡。",
+    },
+  },
+  huai: {
+    title: { en: "The Huai", zh: "淮水" },
+    what: {
+      en: "The river between the northern plain and the southern country, running east to the sea.",
+      zh: "南北之间，东流入海。",
+    },
+    history: {
+      en: "The old dividing line: wheat and millet above it, rice and boats below. Armies from the north lose their advantage crossing it, and the states along it changed hands often enough that its towns learned to keep two sets of loyalties.",
+      zh: "南北之分：其北黍麦，其南稻舟。北军渡之则失其长。淮上诸邑数易其主，遂习于两属。",
+    },
+  },
+  min: {
+    title: { en: "The Min", zh: "岷江" },
+    what: {
+      en: "The river coming down out of the western mountains onto the Chengdu plain.",
+      zh: "自西山下成都之原。",
+    },
+    history: {
+      en: "It was split at the head of the plain by a weir that sends part of the flow into an irrigation net and lets the flood take the rest. The work has no gates and needs no wall, and it turned Shu into the granary that made Qin's later campaigns affordable.",
+      zh: "于原首分其流，堰以入渠，余水泄洪。工无闸而不恃墙，遂使蜀为天府，秦之军资出焉。",
+    },
+  },
+  sea: {
+    title: { en: "The Eastern Sea", zh: "东海" },
+    what: {
+      en: "The open water off the eastern shore, with its bays and the salt flats along them.",
+      zh: "东境外海，多湾泽，沿海皆盐场。",
+    },
+    history: {
+      en: "Salt and fish, which is to say revenue. Boiling seawater made the eastern states rich before anyone taxed iron, and the argument over whether salt should be a state monopoly or left to merchants starts here and never quite ends.",
+      zh: "鱼盐之利，即国赋也。煮海而富，先于铁官；盐当官营抑或听民，其议肇于此而未尝止。",
+    },
+  },
+  gulf: {
+    title: { en: "The Gulf", zh: "渤海" },
+    what: {
+      en: "The shallow northern sea, closed on three sides by the coast.",
+      zh: "北方浅海，三面环陆。",
+    },
+    history: {
+      en: "Shallow, cold, and easy to work: salterns line it, and coastal shipping runs from the Qi shore up toward the Yan country. It is also where the search for the isles of the immortals was fitted out, which was a court expense before it was a story.",
+      zh: "水浅而寒，宜煮盐，沿岸盐灶相望；齐燕之间，舟运相通。求仙山之舶亦出于此：先为国费，后成传说。",
+    },
+  },
+  yunmeng: {
+    title: { en: "The Yunmeng marshes", zh: "云梦泽" },
+    what: {
+      en: "The great wetland behind the Chu court: lakes, reed, and channels rather than solid ground.",
+      zh: "楚都之后，湖泽苇渚，非坚地也。",
+    },
+    history: {
+      en: "A hunting preserve, a fishery, and a defence that costs nothing to garrison. An army that walks into it disappears into water it cannot see the far side of, and the boats belong to the people who live there.",
+      zh: "田猎之囿，鱼稻之乡，不戍而险自守。军入其中，四顾皆水，舟楫又非其所有。",
+    },
+  },
+  passroad: {
+    title: { en: "The road through the passes", zh: "关道" },
+    what: {
+      en: "The trunk road east out of Guanzhong, through the pass and on across the plain to the eastern courts.",
+      zh: "自关中东出，过关而临中原诸都。",
+    },
+    history: {
+      en: "One road, and a gate on it. An army from the west has to come this way, and a coalition that wants to march on Qin has to force the same gate. Both facts shaped a century of leagues: the states east of it kept swearing to attack together, because none of them could do it alone.",
+      zh: "东西一道，扼以一关。秦兵东出必由此，合从伐秦亦必攻此。百年纵横之局，端在于是：关东诸侯屡盟而共图之，以其独力不能也。",
+    },
+  },
+  plankroad: {
+    title: { en: "The plank roads", zh: "栈道" },
+    what: {
+      en: "Galleries pinned to the cliff faces on the way south from the Wei valley into Hanzhong and Shu.",
+      zh: "自渭南入汉中、巴蜀，凿崖架木为道。",
+    },
+    history: {
+      en: "Beams set into holes cut in the rock, with planks laid over them, hung above gorges that have no floor to build on. They are how a grain convoy reaches Shu at all, they can be burned behind an army to show it is not coming back, and the state that built them turned a mountain province into a supply base.",
+      zh: "凿石置梁，铺木其上，悬于绝谷之侧。粟运入蜀，唯此可通；亦可焚之以示不返。筑之者遂化山郡为军储之地。",
+    },
+  },
+};
+
+/** The note for a named feature, or null when the map draws it anonymously. */
+export const featureFor = (id: string | undefined): FeatureNote | null =>
+  id ? (FEATURE_NOTES[id] ?? null) : null;

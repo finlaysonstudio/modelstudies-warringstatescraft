@@ -18,6 +18,7 @@ import {
   GROUND_VARIANTS,
   asciiOf,
   buildTiledMap,
+  featureFileOf,
   flipAt,
   rasterize,
   variantOf,
@@ -57,6 +58,34 @@ describe("rasterize", () => {
     const geo = tiny();
     geo.fills.push({ terrain: "lava" as never, rect: [0, 0, 1, 1] });
     expect(() => rasterize(geo)).toThrow(/unknown terrain/);
+  });
+});
+
+describe("featureFileOf", () => {
+  it("keeps the cells each named fill still paints", () => {
+    const geo = tiny();
+    geo.fills[0].feature = "river";
+    const file = featureFileOf(geo);
+    expect(file).toMatchObject({ width: 6, height: 4 });
+    expect(file.features.river).toEqual([6, 7, 8, 9, 10, 11]);
+  });
+
+  it("hands a cell to whatever was painted over it", () => {
+    const geo = tiny();
+    geo.fills[0].feature = "river";
+    // a marsh drawn across the river's last two tiles takes them with it
+    geo.fills.push({
+      terrain: "marsh",
+      rect: [4, 1, 2, 1],
+      feature: "yunmeng",
+    });
+    const file = featureFileOf(geo);
+    expect(file.features.river).toEqual([6, 7, 8, 9]);
+    expect(file.features.yunmeng).toEqual([10, 11]);
+  });
+
+  it("says nothing about ground no fill names", () => {
+    expect(featureFileOf(tiny()).features).toEqual({});
   });
 });
 

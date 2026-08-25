@@ -18,6 +18,13 @@ export type Ground = Terrain | Water;
 
 export interface Fill {
   terrain: Ground;
+  /**
+   * The named thing this fill draws (`river` for the He, `plankroad` for the
+   * roads into Shu): a gazetteer key, so the explorer can name it under the
+   * reader's naming and language. A later fill takes the tiles it overpaints,
+   * feature and all, which is what keeps a feature's cells honest.
+   */
+  feature?: string;
   /** [x, y, width, height] in tiles. */
   rect?: [number, number, number, number];
   /** [cx, cy, rx, ry] in tiles. */
@@ -119,17 +126,38 @@ const assertGround = (terrain: string): Ground => {
   return terrain as Ground;
 };
 
+/** The painted map: the ground at every cell, and the feature that drew it. */
+export interface RasterMap {
+  grid: Ground[][];
+  /** the feature each cell belongs to, or null where the ground is anonymous */
+  features: (string | null)[][];
+}
+
 /** Paints the geography onto a grid of ground names (grass by default). */
-export const rasterize = (geo: Geography): Ground[][] => {
+export const rasterize = (geo: Geography): Ground[][] => rasterMapOf(geo).grid;
+
+/**
+ * Paints the geography, keeping what each cell belongs to beside what it is.
+ * The two are painted by one pass on purpose: a fill laid over another takes
+ * its cells' feature with its ground, so a river a marsh was later drawn over
+ * does not go on claiming the tiles it no longer paints.
+ */
+export const rasterMapOf = (geo: Geography): RasterMap => {
   const grid: Ground[][] = Array.from({ length: geo.height }, () =>
     Array.from({ length: geo.width }, () => "grass" as Ground),
   );
+  const features: (string | null)[][] = Array.from({ length: geo.height }, () =>
+    Array.from({ length: geo.width }, () => null as string | null),
+  );
+  let feature: string | null = null;
   const paint = (x: number, y: number, ground: Ground): void => {
     if (x < 0 || y < 0 || x >= geo.width || y >= geo.height) return;
     grid[y][x] = ground;
+    features[y][x] = feature;
   };
   for (const fill of geo.fills) {
     const ground = assertGround(fill.terrain);
+    feature = fill.feature ?? null;
     if (fill.rect) {
       const [x, y, w, h] = fill.rect;
       for (let j = y; j < y + h; j += 1) {
@@ -177,7 +205,30 @@ export const rasterize = (geo: Geography): Ground[][] => {
       );
     }
   }
-  return grid;
+  return { grid, features };
+};
+
+/** What the explorer reads: feature id → the cells it holds, row by row. */
+export interface FeatureFile {
+  width: number;
+  height: number;
+  /** feature id → cell indexes (`y * width + x`), ascending */
+  features: Record<string, number[]>;
+}
+
+export const featureFileOf = (
+  geo: Geography,
+  raster = rasterMapOf(geo),
+): FeatureFile => {
+  const features: Record<string, number[]> = {};
+  for (let y = 0; y < geo.height; y += 1) {
+    for (let x = 0; x < geo.width; x += 1) {
+      const id = raster.features[y][x];
+      if (!id) continue;
+      (features[id] ??= []).push(y * geo.width + x);
+    }
+  }
+  return { width: geo.width, height: geo.height, features };
 };
 
 export const asciiOf = (grid: Ground[][]): string =>

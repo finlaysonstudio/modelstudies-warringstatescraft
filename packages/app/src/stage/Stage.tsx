@@ -6,7 +6,7 @@ import type { StageBeat, StageScript } from "../lib/types";
 import { loadStageManifest } from "./assets";
 import type { StagePlan } from "./beats";
 import { DIRECTION_CAPTIONS } from "./catalog";
-import { KIND_LABELS, legendFor } from "./legend";
+import { featureFor, KIND_LABELS, legendFor } from "./legend";
 import {
   OverworldScene,
   VIEW_HEIGHT,
@@ -225,12 +225,35 @@ export function Stage({
   const captions = current
     ? captionOf(current.beat, names, seatNames, language)
     : [];
-  const note = pick
+  // what the map draws generally, and what this particular stretch of it is:
+  // the note about rivers, and then the note about the Wei
+  const kindNote = pick
     ? legendFor(
         pick.kind,
         pick.kind === "place" ? (pick.marker ?? "region") : pick.id,
       )
     : null;
+  // a place standing on a named feature is read as both: the marker says what
+  // a ford is, and the feature says what this river is (the Jing's crossing
+  // carries the Jing's history)
+  const feature = featureFor(
+    pick?.feature ?? (pick?.kind === "place" ? pick.id : undefined),
+  );
+  const note = kindNote ?? feature;
+  const what = (pick?.feature ? feature?.what : kindNote?.what) ?? note?.what;
+  const history = feature?.history ?? note?.history;
+  // the name follows the reader's naming and language, so a masked map stays
+  // masked; the modern name is shown only where the real ones already are
+  const title = headingOf(
+    pick?.feature
+      ? (names[pick.feature] ?? feature?.title[language] ?? pick.feature)
+      : pick?.kind === "place"
+        ? (names[pick.id] ?? pick.id)
+        : (note?.title[language] ?? ""),
+    language,
+  );
+  const modern =
+    script.naming === "chronicle" ? feature?.modern?.[language] : undefined;
 
   return (
     <section
@@ -328,7 +351,10 @@ export function Stage({
           <div className="flex items-start justify-between gap-x-3">
             <p className="font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
               {KIND_LABELS[pick.kind][language]}
-              {pick.kind === "place" ? ` · ${note.title[language]}` : ""}
+              {pick.kind === "place" && kindNote
+                ? ` · ${kindNote.title[language]}`
+                : ""}
+              {pick.feature && kindNote ? ` · ${kindNote.title[language]}` : ""}
             </p>
             <button
               type="button"
@@ -339,22 +365,34 @@ export function Stage({
               ×
             </button>
           </div>
-          <h3 className="mt-1 text-sm font-medium text-white">
-            {pick.kind === "place"
-              ? (names[pick.id] ?? pick.id)
-              : note.title[language]}
-          </h3>
-          <p className="mt-2 text-xs text-pretty text-zinc-300">
-            {note.what[language]}
-          </p>
-          <p className="mt-2 text-xs text-pretty text-zinc-500">
-            {note.history[language]}
-          </p>
+          <h3 className="mt-1 text-sm font-medium text-white">{title}</h3>
+          {modern && (
+            <p className="font-plex-mono text-[10px] text-zinc-500">
+              {language === "zh" ? `今称${modern}` : `today ${modern}`}
+            </p>
+          )}
+          {what && (
+            <p className="mt-2 text-xs text-pretty text-zinc-300">
+              {what[language]}
+            </p>
+          )}
+          {history && (
+            <p className="mt-2 text-xs text-pretty text-zinc-500">
+              {history[language]}
+            </p>
+          )}
         </div>
       )}
     </section>
   );
 }
+
+/**
+ * A name as a heading. The gazetteer drops the English article, which leaves
+ * "plank roads" where a heading wants "Plank roads"; zh is left alone.
+ */
+const headingOf = (name: string, language: "en" | "zh"): string =>
+  language === "en" ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 
 /** floating-point slack, so a button at the stop reads as at the stop */
 const EPSILON = 1e-6;

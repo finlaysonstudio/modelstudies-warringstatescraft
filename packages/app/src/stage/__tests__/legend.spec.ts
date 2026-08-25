@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest";
 
+// the world's own table, imported directly: the package index pulls the node
+// graph the app's DOM-lib typecheck refuses (as `catalog.spec` does)
+import { GAZETTEER } from "../../../../game/src/world/gazetteer";
 import geography from "../../../art/map/geography.json";
 import { DECOR, MARKERS, TERRAINS, WATERS } from "../catalog";
 import {
   BARE_GROUND,
   DECOR_NOTES,
+  FEATURE_NOTES,
+  featureFor,
   KIND_LABELS,
   legendFor,
   MARKER_NOTES,
@@ -74,6 +79,44 @@ describe("legend", () => {
     for (const [key, place] of Object.entries(places)) {
       expect(legendFor("place", place.marker ?? "region"), key).not.toBeNull();
     }
+  });
+
+  it("names every feature the geography draws, in both languages", () => {
+    const fills: { terrain: string; feature?: string }[] = geography.fills;
+    const drawn = new Set(
+      fills.map((fill) => fill.feature).filter((id): id is string => !!id),
+    );
+    expect(drawn.size).toBeGreaterThan(0);
+    for (const id of drawn) {
+      const note = featureFor(id);
+      expect(note, id).not.toBeNull();
+      for (const language of LANGUAGES) {
+        expect(note?.title[language], `${id} title`).toBeTruthy();
+        expect(note?.what[language], `${id} what`).toBeTruthy();
+        expect(note?.history[language], `${id} history`).toBeTruthy();
+        // the gazetteer is what the explorer actually shows, so every feature
+        // has to be a key it can render under either naming
+        expect(
+          GAZETTEER[id]?.chronicle[language],
+          `${id} chronicle`,
+        ).toBeTruthy();
+        expect(GAZETTEER[id]?.masked[language], `${id} masked`).toBeTruthy();
+      }
+      if (note?.modern) {
+        for (const language of LANGUAGES) {
+          expect(note.modern[language], `${id} modern`).toBeTruthy();
+        }
+      }
+    }
+    // and nothing is written about a feature the map never draws
+    for (const id of Object.keys(FEATURE_NOTES)) {
+      expect(drawn.has(id), `${id} is written but not drawn`).toBe(true);
+    }
+  });
+
+  it("has nothing to say about an unnamed stretch of ground", () => {
+    expect(featureFor(undefined)).toBeNull();
+    expect(featureFor("atlantis")).toBeNull();
   });
 
   it("names each kind in both languages", () => {

@@ -32,6 +32,12 @@ import { BASE_TILE, DEFAULT_STAGE_SET, stageSet } from "./sets";
 
 /** the map of the set the stage plays on unless a caller names another */
 export const MAP_URL = stageSet(DEFAULT_STAGE_SET).map;
+/**
+ * What each cell of the map belongs to: the He, the Jiang, the plank roads.
+ * Written once by `npm run stage:map`, because the grid is the same at every
+ * tile size and only the art it is drawn with differs.
+ */
+export const FEATURES_URL = "/stage/features.json";
 export const VIEW_WIDTH = 960;
 export const VIEW_HEIGHT = 400;
 
@@ -63,6 +69,12 @@ export interface StagePick {
   id: string;
   /** for a place, the marker the map drew (`region` when it has none) */
   marker?: string;
+  /**
+   * For a ground the map names, the gazetteer key of what it is: a click on
+   * the water below Xianyang is `water` / `river` / `weishui`, and reads as
+   * the Wei rather than as one more river.
+   */
+  feature?: string;
 }
 
 /** Where the camera stands, for the zoom control to render itself against. */
@@ -189,6 +201,9 @@ export class OverworldScene extends Phaser.Scene {
   private current: StagePick | null = null;
   /** the tiles the ground highlight covers, so the run closes as one thing */
   private currentRun?: { layer: string; inside: Uint8Array };
+  /** cell → the feature that holds it, and each feature's own cells */
+  private featureAt = new Map<number, string>();
+  private featureCells = new Map<string, number[]>();
   private reportedZoom = 0;
   /**
    * The map's tile over the base tile. Every constant below is written for a
@@ -216,6 +231,8 @@ export class OverworldScene extends Phaser.Scene {
       },
     );
     this.load.tilemapTiledJSON("overworld", this.config.mapUrl ?? MAP_URL);
+    // the named country, only where a reader can click it
+    if (this.config.interactive) this.load.json("features", FEATURES_URL);
     const image = (id: string): void => {
       const asset = manifest.assets[id];
       if (asset) this.load.image(id, asset.url);
@@ -279,6 +296,8 @@ export class OverworldScene extends Phaser.Scene {
         layer: layerData.name,
       });
     });
+
+    this.readFeatures(map);
 
     for (const object of (map.getObjectLayer("decor")?.objects ??
       []) as TiledPoint[]) {
@@ -623,6 +642,26 @@ export class OverworldScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * Reads the named country beside the map. The file is written against the
+   * same grid at every tile size, so a set drawn larger needs no second copy;
+   * a grid of another shape is refused rather than read at an offset.
+   */
+  private readFeatures(map: Phaser.Tilemaps.Tilemap): void {
+    const file = this.cache.json.get("features") as
+      | { width?: number; height?: number; features?: Record<string, number[]> }
+      | undefined;
+    if (!file?.features) return;
+    if (file.width !== map.width || file.height !== map.height) {
+      this.config.onError?.("stage: the feature file is drawn to another grid");
+      return;
+    }
+    for (const [id, cells] of Object.entries(file.features)) {
+      this.featureCells.set(id, cells);
+      for (const cell of cells) this.featureAt.set(cell, id);
+    }
+  }
+
   private pickableAt(worldX: number, worldY: number): StagePick | null {
     if (!this.config.interactive) return null;
     for (const candidate of this.pickables) {
@@ -671,8 +710,13 @@ export class OverworldScene extends Phaser.Scene {
           this.clearPick();
           return;
         }
+        const feature = this.featureAt.get(tileY * map.width + tileX);
         this.showPick(
-          { kind: WATER_GROUNDS.has(ground) ? "water" : "terrain", id: ground },
+          {
+            kind: WATER_GROUNDS.has(ground) ? "water" : "terrain",
+            id: ground,
+            ...(feature ? { feature } : {}),
+          },
           worldX,
           worldY,
           { layer, tileX, tileY },
@@ -730,6 +774,7 @@ export class OverworldScene extends Phaser.Scene {
         ground.layer,
         ground.tileX,
         ground.tileY,
+        pick.feature ? this.featureCells.get(pick.feature) : undefined,
       );
       if (inside) this.currentRun = { layer: ground.layer, inside };
     } else {
@@ -757,16 +802,18 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   /**
-   * Lights up the whole run of one ground the click landed in: the connected
-   * tiles of that layer, filled faintly and outlined where they end. Clicking
-   * a range shows the range rather than one tile of it. Returns the run it
-   * lit, which is what a later click is tested against.
+   * Lights up what the click landed in: the cells of the named feature when
+   * the map knows one, so the He lights as the He and not as every water it
+   * runs into, and otherwise the connected run of that ground, so clicking a
+   * range shows the range rather than one tile of it. Returns what it lit,
+   * which is what a later click is tested against.
    */
   private outlineGround(
     graphics: Phaser.GameObjects.Graphics,
     layer: string,
     tileX: number,
     tileY: number,
+    named?: number[],
   ): Uint8Array | undefined {
     const map = this.map;
     if (!map) return undefined;
@@ -774,25 +821,32 @@ export class OverworldScene extends Phaser.Scene {
     const height = map.height;
     const tile = map.tileWidth;
     const inside = new Uint8Array(width * height);
-    const stack = [tileY * width + tileX];
-    inside[stack[0]] = 1;
     const cells: number[] = [];
-    while (stack.length) {
-      const cell = stack.pop()!;
-      cells.push(cell);
-      const x = cell % width;
-      const y = (cell - x) / width;
-      const step = (nx: number, ny: number): void => {
-        if (nx < 0 || ny < 0 || nx >= width || ny >= height) return;
-        const next = ny * width + nx;
-        if (inside[next] || !map.getTileAt(nx, ny, false, layer)) return;
-        inside[next] = 1;
-        stack.push(next);
-      };
-      step(x - 1, y);
-      step(x + 1, y);
-      step(x, y - 1);
-      step(x, y + 1);
+    if (named) {
+      for (const cell of named) {
+        inside[cell] = 1;
+        cells.push(cell);
+      }
+    } else {
+      const stack = [tileY * width + tileX];
+      inside[stack[0]] = 1;
+      while (stack.length) {
+        const cell = stack.pop()!;
+        cells.push(cell);
+        const x = cell % width;
+        const y = (cell - x) / width;
+        const step = (nx: number, ny: number): void => {
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) return;
+          const next = ny * width + nx;
+          if (inside[next] || !map.getTileAt(nx, ny, false, layer)) return;
+          inside[next] = 1;
+          stack.push(next);
+        };
+        step(x - 1, y);
+        step(x + 1, y);
+        step(x, y - 1);
+        step(x, y + 1);
+      }
     }
     graphics.fillStyle(PICK_COLOR, 0.14);
     for (const cell of cells) {

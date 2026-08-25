@@ -9,7 +9,8 @@
         0,
         18,
         96
-      ]
+      ],
+      "feature": "sea"
     },
     {
       "terrain": "grass",
@@ -36,7 +37,8 @@
         15,
         11,
         8
-      ]
+      ],
+      "feature": "gulf"
     },
     {
       "terrain": "sea",
@@ -45,7 +47,8 @@
         47,
         7,
         5
-      ]
+      ],
+      "feature": "sea"
     },
     {
       "terrain": "sea",
@@ -54,7 +57,8 @@
         62,
         6,
         4
-      ]
+      ],
+      "feature": "sea"
     },
     {
       "terrain": "sea",
@@ -63,7 +67,8 @@
         72,
         6,
         3
-      ]
+      ],
+      "feature": "sea"
     },
     {
       "terrain": "tallgrass",
@@ -387,7 +392,8 @@
         77,
         8,
         3
-      ]
+      ],
+      "feature": "yunmeng"
     },
     {
       "terrain": "marsh",
@@ -651,7 +657,8 @@
           46
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "passroad"
     },
     {
       "terrain": "road",
@@ -673,7 +680,8 @@
           47
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "passroad"
     },
     {
       "terrain": "road",
@@ -791,7 +799,8 @@
           66
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "plankroad"
     },
     {
       "terrain": "road",
@@ -913,7 +922,8 @@
           17
         ]
       ],
-      "width": 2
+      "width": 2,
+      "feature": "river"
     },
     {
       "terrain": "river",
@@ -943,7 +953,8 @@
           42
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "weishui"
     },
     {
       "terrain": "river",
@@ -961,7 +972,8 @@
           43
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "jing"
     },
     {
       "terrain": "river",
@@ -979,7 +991,8 @@
           33
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "fen"
     },
     {
       "terrain": "river",
@@ -997,7 +1010,8 @@
           45
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "luo"
     },
     {
       "terrain": "river",
@@ -1059,7 +1073,8 @@
           60
         ]
       ],
-      "width": 2
+      "width": 2,
+      "feature": "jiang"
     },
     {
       "terrain": "river",
@@ -1081,7 +1096,8 @@
           71
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "hanshui"
     },
     {
       "terrain": "river",
@@ -1111,7 +1127,8 @@
           55
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "huai"
     },
     {
       "terrain": "river",
@@ -1133,7 +1150,8 @@
           16
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "yi"
     },
     {
       "terrain": "river",
@@ -1151,7 +1169,26 @@
           74
         ]
       ],
-      "width": 1
+      "width": 1,
+      "feature": "min"
+    },
+    {
+      "terrain": "river",
+      "feature": "ditch",
+      "path": [
+        [
+          76,
+          43
+        ],
+        [
+          76,
+          50
+        ],
+        [
+          80,
+          56
+        ]
+      ]
     }
   ],
   "places": {

@@ -126,7 +126,37 @@ export const PLACE_NAMES: Gazetteer = {
   huai: entry(["the Huai", "淮水"], ["the Southwater", "南水"]),
 };
 
-export const GAZETTEER: Gazetteer = { ...CAST_NAMES, ...PLACE_NAMES };
+/**
+ * Features the map draws that no chapter names: the lesser rivers, the sea,
+ * the marshes, and the trunk roads. They are deliberately outside
+ * `PLACE_NAMES`, because `mentionsOf` sweeps that table to aim a stage
+ * direction and every key it may return has to be a place the map carries.
+ * These are stretches of country, not points, and the explorer names them
+ * when a reader clicks the ground itself (`FEATURE_NOTES` in the app).
+ */
+export const FEATURE_NAMES: Gazetteer = {
+  weishui: entry(["the Wei river", "渭水"], ["the Millwater", "碾水"]),
+  fen: entry(["the Fen river", "汾水"], ["the Ashwater", "烬水"]),
+  hanshui: entry(["the Han river", "汉水"], ["the Southbend", "南曲"]),
+  min: entry(["the Min river", "岷江"], ["the Fallwater", "急水"]),
+  sea: entry(
+    ["the Eastern Sea", "东海"],
+    ["the Outer Sea", "外海"],
+    ["the Western Pacific", "西太平洋"],
+  ),
+  yunmeng: entry(["the Yunmeng marshes", "云梦泽"], ["the Reedmere", "苇泽"]),
+  passroad: entry(
+    ["the road through the passes", "关道"],
+    ["the Boxgate road", "匣谷道"],
+  ),
+  plankroad: entry(["the plank roads", "栈道"], ["the trestle roads", "架道"]),
+};
+
+export const GAZETTEER: Gazetteer = {
+  ...CAST_NAMES,
+  ...PLACE_NAMES,
+  ...FEATURE_NAMES,
+};
 
 /** the rendering of one key, or undefined when the naming has none */
 export const renderName = (

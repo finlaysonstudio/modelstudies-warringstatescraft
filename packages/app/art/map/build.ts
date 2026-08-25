@@ -23,8 +23,9 @@ import {
   asciiOf,
   blocksOf,
   buildTiledMap,
+  featureFileOf,
   GROUNDS,
-  rasterize,
+  rasterMapOf,
   tilesetIdOf,
   type Geography,
 } from "./map";
@@ -76,8 +77,21 @@ export const coverageOf = (
 const geo = JSON.parse(
   readFileSync(join(here, "geography.json"), "utf8"),
 ) as Geography;
-const grid = rasterize(geo);
+const raster = rasterMapOf(geo);
+const grid = raster.grid;
 writeFileSync(join(here, "overworld.txt"), `${asciiOf(grid)}\n`);
+
+// the named country, written once: the grid is the same for every set, and
+// the explorer reads it to say which river a click landed in
+const featureFile = featureFileOf(geo, raster);
+writeFileSync(join(publicStage, "features.json"), JSON.stringify(featureFile));
+console.log(
+  `features: ${Object.keys(featureFile.features).length} named (${Object.entries(
+    featureFile.features,
+  )
+    .map(([id, cells]) => `${id} ${cells.length}`)
+    .join(", ")}) → features.json`,
+);
 
 const layers = new Map<string, VendorManifest>();
 for (const source of new Set(STAGE_SETS.flatMap((set) => set.sources))) {
