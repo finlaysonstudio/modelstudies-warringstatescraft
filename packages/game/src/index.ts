@@ -39,10 +39,37 @@ export {
   adjudicateTurn,
   JUDGE_SYSTEM,
   NARRATOR_SYSTEM,
+  scoreTurn,
   VERDICT_FORMAT,
   verdictFormat,
 } from "./adjudicate";
-export type { AdjudicateOptions } from "./adjudicate";
+export type {
+  AdjudicateOptions,
+  ScoreTurnOptions,
+  TurnPanel,
+} from "./adjudicate";
+export {
+  adjudicateRun,
+  adjudicationCoverage,
+  adjudicationId,
+  applyAdjudications,
+  callsOf,
+  createGate,
+  loadAdjudications,
+  panelIdOf,
+  parentOfAdjudication,
+  parentOfRun,
+  planAdjudication,
+  scenarioOfRun,
+  usageOfAdjudication,
+} from "./adjudicateRun";
+export type {
+  AdjudicateRunOptions,
+  AdjudicateRunResult,
+  AdjudicationParent,
+  Gate,
+  TurnPlan,
+} from "./adjudicateRun";
 export { GameEngine, matrixCombinations, runGame } from "./engine";
 export type { GameLog, GameOptions } from "./engine";
 export { maskBrief, maskTurn, maskVerdict } from "./mask";
@@ -129,6 +156,7 @@ export {
   loadTree,
   USAGE_ROLES,
   usageOf,
+  usageOfAdjudications,
   usageOfRuns,
   usageOfTree,
 } from "./cost";
@@ -156,14 +184,19 @@ export type {
 } from "./materials";
 export * from "./reports";
 export {
+  adjudicableRuns,
+  adjudicateStudy,
   buildStudyReport,
   extendStudy,
   loadStudy,
   planStudy,
+  planStudyAdjudication,
   runStudy,
   studyRuns,
 } from "./study";
 export type {
+  AdjudicateStudyOptions,
+  AdjudicateStudyResult,
   BuildStudyReportOptions,
   ExtendStudyOptions,
   PlanStudyOptions,

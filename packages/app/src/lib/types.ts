@@ -320,6 +320,14 @@ export interface ReportBase {
   replicates: number;
   coverage: CellCoverage[];
   bootstrap: number;
+  /**
+   * panel id when this report was built over a re-adjudication rather than
+   * the panels that played the runs (`study-report --adjudication`); the
+   * report's own id then carries it as `<studyId>.<panelId>`
+   */
+  adjudication?: string;
+  /** the re-adjudication's reach and spend; `usage` stays the play cost */
+  adjudicated?: { runs: number; of: number; usage: UsageTotals };
   /** absent on reports built before usage capture */
   usage?: StudyUsage;
 }

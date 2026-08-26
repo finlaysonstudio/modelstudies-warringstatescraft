@@ -18,7 +18,7 @@ import {
   type UsageTotals,
 } from "@modelstudies/workflows";
 
-import type { Run, Usage } from "./types";
+import type { Adjudication, Run, Usage } from "./types";
 import { HUMAN_MODEL, SCRIPTED_MODEL } from "./types";
 
 export type UsageRole = "seat" | "judge" | "narrator" | "debrief";
@@ -126,6 +126,25 @@ export const usageOfRuns = (runs: Run[]): RunUsage => {
   const fold = new RowFold();
   for (const run of runs) {
     for (const row of usageOf(run).rows) fold.addRow(row);
+  }
+  return fold.result();
+};
+
+/**
+ * What a re-scoring cost. Its judges' calls belong to the `Adjudication`,
+ * never to the run: the run's own fold keeps reporting what the game cost,
+ * and this is the separate line beside it. An inherited turn's verdicts are
+ * the parent scoring's calls and are counted there.
+ */
+export const usageOfAdjudications = (sets: Adjudication[]): RunUsage => {
+  const fold = new RowFold();
+  for (const set of sets) {
+    for (const score of set.turns) {
+      if (score.inherited) continue;
+      for (const verdict of score.panel) {
+        fold.add("judge", null, verdict.model, verdict.usage);
+      }
+    }
   }
   return fold.result();
 };

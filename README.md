@@ -57,6 +57,10 @@ npm run cli -- study-run --resume <studyId>                        # play the ar
 npm run cli -- study-run --resume <studyId> --replicates 10        # grow a pilot: add replicates (or --models) and play the additions
 npm run cli -- study-list
 npm run cli -- study-report <studyId>                              # the study's report → var/reports/<studyId>.json
+npm run cli -- study-adjudicate <studyId> --judges LUNA,FIREWORKS_QWEN,FIREWORKS_DEEPSEEK --dry-run   # what re-scoring every game with one fixed panel would call for, and cost
+npm run cli -- study-adjudicate <studyId> --judges LUNA,FIREWORKS_QWEN,FIREWORKS_DEEPSEEK            # re-score them → var/adjudications/<runId>.<panelId>.json
+npm run cli -- game-adjudicate <runId> --judges LUNA               # re-score one stored run (--as <name>, --force, --concurrency <n>, --dry-run)
+npm run cli -- study-report <studyId> --adjudication <panelId>     # the report over the re-scoring → var/reports/<studyId>.<panelId>.json
 npm run materials                                                  # export scenario cards + prompts to var/scenarios/ and instrument descriptions to var/instruments/ (npm run app does this first)
 npm run cli -- game-stage <runId>                                  # code a stage script for a run with Sonnet (--model <id>); --fallback codes it from the escalation record, --random --seed <n> stores a seeded alternate beside it
 npm run cli -- study-stage <studyId> --fallback                    # a stage script for every complete arm of a study
@@ -111,6 +115,16 @@ The `crisis-situated` plan (88 situated forced-choice items in 16 ladders anchor
 ### Studies and reports
 
 A study is scenarios × models × replicates, each arm its own game. `study-run` plans and plays it (a second call with `--resume` plays whatever did not finish; `--resume` with `--replicates` or `--models` grows the study first, keeping every played game), and `study-report` builds the report the study's scenarios define: `basic` (escalation per turn, peak, and final across replicates) for the Warring States scenarios, `lamparth` for the eight Lamparth cells. The Lamparth report computes the paper's statistics for every subject model and for its reference groups (`packages/game/src/reference/lamparth-2024.json`: the MIT repository's human teams and its GPT-4 and GPT-3.5 games): action frequency per move, the total causal effect of each treatment factor, aggressiveness, actions selected, the Table 2 consistency statistic, and subject-minus-reference differences per action, every interval a seeded 95% bootstrap. `/craft/studies/:id` and `/awry/studies/:id` show the report, then the arm grid (each chip a replay link).
+
+### Re-scoring a study with a fixed panel
+
+A study whose seats, judge, and narrator are all the same model cannot say whether a difference between models is a difference in play or a difference in scoring. Two judges reading the same last turn can both be right and disagree by four rungs: one carries a standing occupation forward as an armed show of force, the other resets to baseline because no new force was used. The instrument does not choose between them, and in a self-played study the model that plays is the model that chooses.
+
+`study-adjudicate` separates the two without playing anything again. It re-reads every complete run of a study with one fixed panel and writes the scores beside each run (`var/adjudications/<runId>.<panelId>.json`), leaving the run itself untouched: the games on disk are the evidence, and only the scoring is in question. `study-report --adjudication <panelId>` then builds the report over those scores, as its own artifact, so the study's original report is never overwritten and a reader is never looking at re-scored numbers without knowing it.
+
+Three things keep the exercise honest. The judge reads the record **as it was played**, truncated to the turn it is scoring: the prior-turn headers carry the original rungs and the original narratives, because those are what the seats answered, and rewriting them would score a game no seat ever saw. A branch copies its parent's scores for every turn before the fork rather than paying for them twice, which on a study with decision points is close to half the bill. And the re-scoring's own spend stays on its own artifact, so what the games cost stays what the games cost.
+
+`--dry-run` prints the call count and prices it from the judge calls already on record, per judge, with each figure naming its source. Run it first.
 
 ### The document lake
 

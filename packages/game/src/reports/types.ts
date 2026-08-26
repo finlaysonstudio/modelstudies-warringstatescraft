@@ -2,11 +2,12 @@ import type { Store } from "@modelstudies/workflows";
 
 import {
   groupUsage,
+  usageOfAdjudications,
   usageOfRuns,
   type UsageRow,
   type UsageTotals,
 } from "../cost";
-import type { ReportId, Run, Scenario, Study } from "../types";
+import type { Adjudication, ReportId, Run, Scenario, Study } from "../types";
 
 /** a point estimate with its bootstrap 95% interval */
 export interface Estimate {
@@ -45,6 +46,22 @@ export interface StudyUsage {
   cells: CellUsage[];
 }
 
+/**
+ * A re-scoring the report was built over: the runs in `ReportInput`
+ * already carry it (see `applyAdjudications`), so a definition never
+ * applies it a second time.
+ */
+export interface ReportAdjudication {
+  /** the panel id the scores are stored under */
+  id: string;
+  /** the scorings applied */
+  sets: Adjudication[];
+  /** runs covered */
+  runs: number;
+  /** runs the study produced */
+  of: number;
+}
+
 /** fields every report carries, whichever definition built it */
 export interface ReportBase {
   id: string;
@@ -59,14 +76,36 @@ export interface ReportBase {
   coverage: CellCoverage[];
   /** bootstrap resamples behind every interval */
   bootstrap: number;
+  /**
+   * panel id when this report was built over a re-adjudication rather than
+   * the panels that played the runs
+   */
+  adjudication?: string;
+  /**
+   * the re-adjudication's own reach and spend: runs covered, of the runs
+   * the study produced, and what its judges cost. `usage` below stays the
+   * study's play cost, which a re-scoring never changes
+   */
+  adjudicated?: { runs: number; of: number; usage: UsageTotals };
   usage: StudyUsage;
 }
 
 export interface ReportInput {
   study: Study;
   scenarios: Scenario[];
-  /** every run recorded against the study (roots and branches) */
+  /**
+   * every run recorded against the study (roots and branches), already
+   * carrying `adjudication`'s scores when one was given
+   */
   runs: Run[];
+  /**
+   * the runs as played, before the overlay. The cost fold reads these, so a
+   * re-scoring never re-rates what the games cost; absent means `runs` are
+   * the runs as played
+   */
+  played?: Run[];
+  /** the re-scoring the runs were read through, when they were */
+  adjudication?: ReportAdjudication;
   store: Store;
   bootstrap?: number;
   seed?: number;
@@ -162,7 +201,11 @@ export const reportBase = (
   report: ReportId,
   bootstrap: number,
 ): ReportBase => ({
-  id: input.study.id,
+  // a re-scored report is its own artifact: the study id alone would
+  // overwrite var/reports/<studyId>.json with numbers a different panel gave
+  id: input.adjudication
+    ? `${input.study.id}.${input.adjudication.id}`
+    : input.study.id,
   model: "reports",
   report,
   study: input.study.id,
@@ -173,5 +216,15 @@ export const reportBase = (
   replicates: input.study.replicates,
   coverage: coverageOf(input.study),
   bootstrap,
-  usage: studyUsage(input.study, input.runs),
+  ...(input.adjudication
+    ? {
+        adjudication: input.adjudication.id,
+        adjudicated: {
+          runs: input.adjudication.runs,
+          of: input.adjudication.of,
+          usage: usageOfAdjudications(input.adjudication.sets).total,
+        },
+      }
+    : {}),
+  usage: studyUsage(input.study, input.played ?? input.runs),
 });

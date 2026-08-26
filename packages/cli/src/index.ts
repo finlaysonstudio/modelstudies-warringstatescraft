@@ -480,6 +480,14 @@ program
   )
   .argument("<studyId>", "study id")
   .option("--bootstrap <n>", "bootstrap resamples", "10000")
+  .option(
+    "--adjudication <name>",
+    "build over a re-scoring on record (see study-adjudicate); writes var/reports/<studyId>.<name>.json",
+  )
+  .option(
+    "--partial",
+    "build even when the re-scoring covers only some of the study's runs",
+  )
   .option("--no-save", "print only")
   .action(async (studyId: string, options) => {
     const { FileStore } = await import("@modelstudies/workflows");
@@ -488,12 +496,276 @@ program
       bootstrap: Number(options.bootstrap),
       id: studyId,
       save: options.save,
+      ...(options.adjudication ? { adjudication: options.adjudication } : {}),
+      partial: Boolean(options.partial),
       store: new FileStore(varRoot()),
     });
     console.log(JSON.stringify(report, null, 2));
     if (options.save) {
       console.error(`→ var/reports/${report.id}.json`);
     }
+  });
+
+/**
+ * Mean dollars per judge call, per judge model, from the calls already on
+ * record. The estimate an operator needs before re-scoring is what these
+ * judges actually charged on this evidence, not a token guess; a judge with
+ * no calls on record is priced at the mean of those that have some, and the
+ * line says so.
+ */
+const judgePrices = (
+  runs: import("@modelstudies/game").Run[],
+): Map<string, { calls: number; usd: number }> => {
+  const prices = new Map<string, { calls: number; usd: number }>();
+  for (const run of runs) {
+    for (const turn of run.turns) {
+      for (const verdict of turn.adjudication?.panel ?? []) {
+        for (const item of verdict.usage ?? []) {
+          if (item.usd === undefined) continue;
+          const row = prices.get(verdict.model) ?? { calls: 0, usd: 0 };
+          row.calls += 1;
+          row.usd += item.usd;
+          prices.set(verdict.model, row);
+        }
+      }
+    }
+  }
+  return prices;
+};
+
+/** the projected bill for a plan, judge by judge, each figure naming its source */
+const estimateLines = (
+  turns: number,
+  inherited: number,
+  judges: string[],
+  prices: Map<string, { calls: number; usd: number }>,
+): string[] => {
+  const scored = turns - inherited;
+  const observed = [...prices.values()];
+  const fallback = observed.length
+    ? observed.reduce((sum, row) => sum + row.usd, 0) /
+      observed.reduce((sum, row) => sum + row.calls, 0)
+    : 0;
+  const lines: string[] = [];
+  let total = 0;
+  for (const judge of judges) {
+    const row = prices.get(judge);
+    const perCall = row ? row.usd / row.calls : fallback;
+    total += perCall * scored;
+    lines.push(
+      `  ${judge.padEnd(46)} ${scored.toString().padStart(6)} call(s)` +
+        `  $${perCall.toFixed(5)}/call  ${usd(perCall * scored).padStart(10)}` +
+        (row
+          ? `  (measured, ${row.calls} call(s))`
+          : observed.length
+            ? "  (no calls on record; priced at the panel mean)"
+            : "  (nothing priced on record)"),
+    );
+  }
+  lines.push(
+    `  ${"total".padEnd(46)} ${(scored * judges.length).toString().padStart(6)} call(s)` +
+      `${" ".repeat(19)}${usd(total).padStart(10)}`,
+  );
+  lines.push(
+    `  ${turns} scored turn(s); ${inherited} inherited from a parent and copied, not called`,
+  );
+  return lines;
+};
+
+/** the panel a re-scoring runs, and the name its files land under */
+const adjudicationPanel = async (options: {
+  judges?: string;
+  judgeMode: string;
+  as?: string;
+}) => {
+  const { BadRequestError } = await import("@jaypie/errors");
+  const { panelIdOf } = await import("@modelstudies/game");
+  if (!options.judges) {
+    throw new BadRequestError("--judges is required: the panel that re-scores");
+  }
+  const judges = await resolveModels(options.judges);
+  if (!judges.length) throw new BadRequestError("--judges named no models");
+  const panel = { judges, mode: await parsePanelMode(options.judgeMode) };
+  if (options.as && !/^[A-Za-z0-9._-]+$/.test(options.as)) {
+    throw new BadRequestError(
+      `--as "${options.as}" is not a file name; use letters, digits, dot, dash, underscore`,
+    );
+  }
+  return { panel, panelId: options.as ?? panelIdOf(panel) };
+};
+
+const adjudicationLine = (
+  set: import("@modelstudies/game").Adjudication,
+  built?: boolean,
+) => {
+  const spend = (set.usage ?? []).reduce(
+    (sum, item) => sum + (item.usd ?? 0),
+    0,
+  );
+  const inherited = set.turns.filter((turn) => turn.inherited).length;
+  const unscored = set.turns.filter((turn) => turn.unscored).length;
+  return (
+    `${built === undefined ? "" : built ? "→ " : "= "}${set.id.padEnd(34)}` +
+    ` turns:${String(set.turns.length).padStart(2)}` +
+    `  scored:${set.turns
+      .filter((turn) => !turn.unscored)
+      .map((turn) => turn.escalation)
+      .join(",")}` +
+    (inherited ? `  inherited:${inherited}` : "") +
+    (unscored ? `  unscored:${unscored}` : "") +
+    (spend ? `  ${usd(spend)}` : "")
+  );
+};
+
+program
+  .command("game-adjudicate")
+  .description(
+    "Re-score a stored run's turns with a new judge panel, beside the run (var/adjudications/<runId>.<panelId>.json). The run is never touched: only the scoring is in question",
+  )
+  .argument("<runId>", "run id (one run, not its tree)")
+  .option("--judges <models>", "comma-separated judge ids or MODELS names")
+  .option("--judge-mode <mode>", "how the verdicts combine", "median")
+  .option(
+    "--as <name>",
+    "store the scoring under this name instead of the panel hash",
+  )
+  .option("--force", "rebuild a scoring already on record")
+  .option("--concurrency <n>", "judge calls in flight", "4")
+  .option("--dry-run", "print the calls and the estimate; call nothing")
+  .action(async (runId: string, options) => {
+    const log = createCliLog("game-adjudicate");
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { NotFoundError } = await import("@jaypie/errors");
+    const game = await import("@modelstudies/game");
+    const store = new FileStore(varRoot());
+    const run = await store.get<import("@modelstudies/game").Run>(
+      "runs",
+      runId,
+    );
+    if (!run) throw new NotFoundError(`Unknown run: ${runId}`);
+    const { panel, panelId } = await adjudicationPanel(options);
+    // a branch copies its pre-fork turns from the parent's scoring by this
+    // same panel, when one is already on record
+    const parent = run.branch.parent
+      ? await store.get<import("@modelstudies/game").Adjudication>(
+          "adjudications",
+          game.adjudicationId(run.branch.parent, panelId),
+        )
+      : undefined;
+    const plans = game.planAdjudication(
+      run,
+      parent ? game.parentOfAdjudication(parent) : undefined,
+    );
+    const inherited = plans.filter((plan) => plan.inherited).length;
+    if (options.dryRun) {
+      console.log(`${run.id}  ${panelId}  ${panel.judges.join(", ")}`);
+      for (const line of estimateLines(
+        plans.length,
+        inherited,
+        panel.judges,
+        judgePrices([run]),
+      )) {
+        console.log(line);
+      }
+      if (run.branch.parent && !parent) {
+        console.error(
+          `${run.id} forks from ${run.branch.parent}, whose scoring is not on record; score the root first and its pre-fork turns are copied`,
+        );
+      }
+      return;
+    }
+    const { adjudication, built, calls } = await game.adjudicateRun({
+      run,
+      ...(parent ? { parent } : {}),
+      panel,
+      panelId,
+      llm: await llmFor(log),
+      store,
+      force: Boolean(options.force),
+      concurrency: Math.max(1, Number(options.concurrency) || 1),
+      log,
+    });
+    console.log(adjudicationLine(adjudication, built));
+    console.error(
+      `${built ? "→" : "="} var/adjudications/${adjudication.id}.json` +
+        (built ? ` (${calls} call(s))` : ""),
+    );
+  });
+
+program
+  .command("study-adjudicate")
+  .description(
+    "Re-score every complete run of a study with one fixed panel, so a difference between models is a difference in play and not in scoring",
+  )
+  .argument("<studyId>", "study id")
+  .option("--judges <models>", "comma-separated judge ids or MODELS names")
+  .option("--judge-mode <mode>", "how the verdicts combine", "median")
+  .option(
+    "--as <name>",
+    "store the scorings under this name instead of the panel hash",
+  )
+  .option("--force", "rebuild scorings already on record")
+  .option(
+    "--concurrency <n>",
+    "judge calls in flight, across every (run, turn) pair",
+    "8",
+  )
+  .option("--dry-run", "print the calls and the estimate; call nothing")
+  .action(async (studyId: string, options) => {
+    const log = createCliLog("study-adjudicate");
+    const { FileStore } = await import("@modelstudies/workflows");
+    const game = await import("@modelstudies/game");
+    const store = new FileStore(varRoot());
+    const { panel, panelId } = await adjudicationPanel(options);
+    if (options.dryRun) {
+      const plan = await game.planStudyAdjudication(
+        store,
+        studyId,
+        panel.judges.length,
+      );
+      const study = await game.loadStudy(store, studyId);
+      const runs = await game.studyRuns(store, study);
+      console.log(
+        `${studyId}  ${panelId}  ${panel.judges.join(", ")}  ${plan.runs} run(s)`,
+      );
+      for (const line of estimateLines(
+        plan.turns,
+        plan.inherited,
+        panel.judges,
+        judgePrices(runs),
+      )) {
+        console.log(line);
+      }
+      return;
+    }
+    const result = await game.adjudicateStudy({
+      id: studyId,
+      panel,
+      panelId,
+      llm: await llmFor(log),
+      store,
+      force: Boolean(options.force),
+      concurrency: Math.max(1, Number(options.concurrency) || 1),
+      log,
+    });
+    for (const set of result.adjudications.sort((a, b) =>
+      a.id.localeCompare(b.id),
+    )) {
+      console.log(adjudicationLine(set));
+    }
+    const spend = result.adjudications.reduce(
+      (sum, set) =>
+        sum + (set.usage ?? []).reduce((n, item) => n + (item.usd ?? 0), 0),
+      0,
+    );
+    console.error(
+      `${studyId}: ${result.runs} complete run(s); built ${result.built}, kept ${result.kept}, failed ${result.failed};` +
+        ` ${result.calls} call(s), ${usd(spend)}`,
+    );
+    console.error(
+      `study-report ${studyId} --adjudication ${panelId} builds the report over it`,
+    );
+    if (result.failed) process.exitCode = 1;
   });
 
 const usd = (value: number): string => `$${value.toFixed(4)}`;

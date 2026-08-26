@@ -200,7 +200,8 @@ const seededShuffle = <T>(items: T[], seed: string): T[] => {
   return shuffled;
 };
 
-const pool = async <T, R>(
+/** run `task` over `items`, at most `concurrency` in flight */
+export const pool = async <T, R>(
   items: T[],
   concurrency: number,
   task: (item: T) => Promise<R>,

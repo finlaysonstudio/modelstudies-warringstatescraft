@@ -7,6 +7,7 @@ import type {
   HumanPlayer,
   JudgeVerdict,
   PanelConfig,
+  PanelMode,
   PanelVerdict,
   Run,
   Scenario,
@@ -118,18 +119,49 @@ export interface AdjudicateOptions {
   turn: TurnRecord;
 }
 
+/**
+ * What the panel needs, without a narrator. The caller passes the run as
+ * the seats saw it when the turn was played: during play that is the run
+ * before the turn is pushed, and re-scoring a stored run must truncate to
+ * the same point (see `adjudicateRun`).
+ */
+export interface ScoreTurnOptions {
+  /** answers for HUMAN_MODEL on the panel */
+  human?: HumanPlayer;
+  llm: LlmClient;
+  /** judges (HUMAN_MODEL allowed) and how their verdicts combine */
+  panel: PanelConfig;
+  run: Run;
+  scenario: Scenario;
+  turn: TurnRecord;
+}
+
+export interface TurnPanel {
+  panel: PanelVerdict[];
+  mode: PanelMode;
+  escalation: number;
+  unscored?: true;
+  /** the context both halves share, so the narrator is not rebuilt */
+  context: string;
+}
+
 const clampLevel = (scenario: Scenario, level: number): number =>
   Math.max(0, Math.min(scenario.escalationLadder.length - 1, level));
 
-export const adjudicateTurn = async ({
+/**
+ * The panel's half of a turn: the judge prompt, every judge's verdict, and
+ * the combined level. The one implementation of the judge prompt, the
+ * clamp, the median fold, and the `unscored` rule; `adjudicateTurn` adds
+ * the narrator and `adjudicateRun` re-scores a stored run without one.
+ */
+export const scoreTurn = async ({
   human,
   llm,
   panel: config,
-  narrator,
   run,
   scenario,
   turn,
-}: AdjudicateOptions): Promise<TurnAdjudication> => {
+}: ScoreTurnOptions): Promise<TurnPanel> => {
   const t = stringsFor(scenario);
   const context =
     `${t.crisisRecord}\n${publicRecord(run, scenario)}\n\n` +
@@ -198,6 +230,35 @@ export const adjudicateTurn = async ({
   // `unscored` records the absence instead.
   const unscored = scores.length === 0;
   const escalation = unscored ? 0 : COMBINE[config.mode](scores);
+  return {
+    panel,
+    mode: config.mode,
+    escalation,
+    ...(unscored ? { unscored: true as const } : {}),
+    context,
+  };
+};
+
+export const adjudicateTurn = async ({
+  human,
+  llm,
+  panel: config,
+  narrator,
+  run,
+  scenario,
+  turn,
+}: AdjudicateOptions): Promise<TurnAdjudication> => {
+  const t = stringsFor(scenario);
+  const { panel, mode, escalation, unscored, context } = await scoreTurn({
+    ...(human ? { human } : {}),
+    llm,
+    panel: config,
+    run,
+    scenario,
+    turn,
+  });
+  const maskedTurn = maskTurn(turn);
+  const history = run.turns.map(maskTurn);
 
   const narratePrompt = `${context}\n\n${
     unscored
@@ -241,7 +302,7 @@ export const adjudicateTurn = async ({
 
   return {
     panel,
-    mode: config.mode,
+    mode,
     escalation,
     ...(unscored ? { unscored: true as const } : {}),
     narrative,

@@ -342,6 +342,50 @@ export interface TurnAdjudication {
   narratorUsage?: Usage;
 }
 
+/**
+ * One turn's score under a re-adjudication: the panel half of
+ * `TurnAdjudication`, and nothing else. A re-scoring never carries a
+ * narrative, because the narrative is what the seats played against and
+ * rewriting it would score a game that was never played.
+ */
+export interface TurnScore {
+  /** the turn's own index, as `TurnRecord.index` carries it */
+  index: number;
+  panel: PanelVerdict[];
+  mode: PanelMode;
+  /** 0..ladder.length-1 consensus escalation for the turn */
+  escalation: number;
+  /** no judge returned a finite escalation (see `TurnAdjudication.unscored`) */
+  unscored?: true;
+  /** inherited from the parent run and copied from its score, not re-scored */
+  inherited?: true;
+}
+
+/**
+ * A run re-scored by a panel other than the one that played it. The run is
+ * untouched: this carries scores only, never narrative, because the
+ * narrative is what the seats played against. Files land at
+ * var/adjudications/<runId>.<panelId>.json.
+ */
+export interface Adjudication {
+  /** `${runId}.${panelId}` */
+  id: string;
+  model: "adjudications";
+  /** the run, so `queryByScope` gathers every scoring of it */
+  scope?: string;
+  runId: string;
+  /** study the run belongs to, when it was played as a study arm */
+  study?: string;
+  scenario: string;
+  /** short stable name for this panel; see `panelIdOf` */
+  panelId: string;
+  panel: PanelConfig;
+  createdAt: string;
+  /** the calls this scoring made, in the order the turns were assembled */
+  usage?: Usage;
+  turns: TurnScore[];
+}
+
 export interface TurnRecord {
   index: number;
   title: string;

@@ -64,6 +64,7 @@ export type {
   CellCoverage,
   CellUsage,
   Estimate,
+  ReportAdjudication,
   ReportBase,
   ReportDefinition,
   ReportInput,

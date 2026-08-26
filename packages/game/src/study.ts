@@ -3,12 +3,25 @@ import { randomUUID } from "node:crypto";
 import { BadRequestError, NotFoundError } from "@jaypie/errors";
 import type { LlmClient, Store } from "@modelstudies/workflows";
 
+import {
+  adjudicateRun,
+  adjudicationCoverage,
+  applyAdjudications,
+  createGate,
+  loadAdjudications,
+  panelIdOf,
+  parentOfRun,
+  planAdjudication,
+} from "./adjudicateRun";
+import type { AdjudicateRunResult } from "./adjudicateRun";
 import { GameEngine, type GameLog } from "./engine";
 import { getReport, scenarioReport } from "./reports";
-import type { ReportBase } from "./reports";
+import type { ReportAdjudication, ReportBase } from "./reports";
 import { getScenario } from "./scenarios";
 import type {
+  Adjudication,
   ElicitOption,
+  HumanPlayer,
   Language,
   Naming,
   PanelConfig,
@@ -339,6 +352,14 @@ export interface BuildStudyReportOptions {
   seed?: number;
   /** write the report to the store (model "reports") */
   save?: boolean;
+  /**
+   * build over a re-scoring on record rather than the panels that played
+   * the runs (see `adjudicateRun`); the report lands at
+   * var/reports/<studyId>.<panelId>.json
+   */
+  adjudication?: string;
+  /** build even when the re-scoring covers only some of the study's runs */
+  partial?: boolean;
 }
 
 /** every run the study produced: the arms' roots and their branches */
@@ -361,6 +382,31 @@ export const buildStudyReport = async (
   options: BuildStudyReportOptions,
 ): Promise<ReportBase> => {
   const study = await loadStudy(options.store, options.id);
+  const played = await studyRuns(options.store, study);
+  let runs = played;
+  let adjudication: ReportAdjudication | undefined;
+  if (options.adjudication) {
+    const sets = await loadAdjudications(
+      options.store,
+      played,
+      options.adjudication,
+    );
+    const coverage = adjudicationCoverage(played, sets);
+    if (coverage.runs === 0) {
+      throw new NotFoundError(
+        `No scoring "${options.adjudication}" on record for ${study.id}`,
+      );
+    }
+    // a partial overlay reads half one panel and half another, which is the
+    // confound the whole exercise removes; it is named, never silent
+    if (coverage.runs < coverage.of && !options.partial) {
+      throw new BadRequestError(
+        `adjudicated: ${coverage.runs} of ${coverage.of} run(s); --partial builds anyway`,
+      );
+    }
+    runs = applyAdjudications(played, sets);
+    adjudication = { id: options.adjudication, sets, ...coverage };
+  }
   const report = await getReport(study.report).build({
     study,
     scenarios: study.scenarios.map((id) =>
@@ -370,11 +416,156 @@ export const buildStudyReport = async (
         pivot: study.pivot,
       }),
     ),
-    runs: await studyRuns(options.store, study),
+    runs,
+    played,
+    ...(adjudication ? { adjudication } : {}),
     store: options.store,
     bootstrap: options.bootstrap,
     seed: options.seed,
   });
   if (options.save) await options.store.update(report);
   return report;
+};
+
+export interface AdjudicateStudyOptions {
+  id: string;
+  panel: PanelConfig;
+  /** default `panelIdOf(panel)`; `--as` overrides it for a readable name */
+  panelId?: string;
+  /** answers for HUMAN_MODEL on the panel */
+  human?: HumanPlayer;
+  llm: LlmClient;
+  store: Store;
+  force?: boolean;
+  /** judge calls in flight, across every (run, turn) pair of the study */
+  concurrency?: number;
+  log?: GameLog;
+}
+
+export interface AdjudicateStudyResult {
+  panelId: string;
+  adjudications: Adjudication[];
+  /** runs the study produced that are complete and have turns */
+  runs: number;
+  built: number;
+  kept: number;
+  failed: number;
+  calls: number;
+}
+
+/** the complete runs of a study, roots before the children that inherit from them */
+export const adjudicableRuns = (
+  runs: Run[],
+): { roots: Run[]; children: Run[] } => {
+  const usable = runs.filter(
+    (run) => run.status === "complete" && run.turns.length > 0,
+  );
+  return {
+    roots: usable.filter((run) => !run.branch.parent),
+    children: usable.filter((run) => Boolean(run.branch.parent)),
+  };
+};
+
+/**
+ * The calls a re-scoring of a study would make, without making any: the
+ * turns each run was scored on, less the pre-fork turns a child inherits
+ * from its root. Deduping those is not an optimisation — on a study with
+ * decision-point branches it is close to half the bill.
+ */
+export const planStudyAdjudication = async (
+  store: Store,
+  id: string,
+  judges: number,
+): Promise<{
+  runs: number;
+  turns: number;
+  inherited: number;
+  calls: number;
+}> => {
+  const study = await loadStudy(store, id);
+  const { roots, children } = adjudicableRuns(await studyRuns(store, study));
+  let turns = 0;
+  let inherited = 0;
+  const byRoot = new Map(roots.map((run) => [run.id, run]));
+  for (const run of [...roots, ...children]) {
+    const parent = run.branch.parent
+      ? byRoot.get(run.branch.parent)
+      : undefined;
+    for (const plan of planAdjudication(
+      run,
+      parent ? parentOfRun(parent) : undefined,
+    )) {
+      turns += 1;
+      if (plan.inherited) inherited += 1;
+    }
+  }
+  return {
+    runs: roots.length + children.length,
+    turns,
+    inherited,
+    calls: (turns - inherited) * judges,
+  };
+};
+
+/**
+ * Re-score every complete run of a study with one panel. Roots first, then
+ * the children that copy their pre-fork turns from them; the gate is shared
+ * across runs, so the pool is over (run, turn) pairs.
+ */
+export const adjudicateStudy = async (
+  options: AdjudicateStudyOptions,
+): Promise<AdjudicateStudyResult> => {
+  const study = await loadStudy(options.store, options.id);
+  const panelId = options.panelId ?? panelIdOf(options.panel);
+  const { roots, children } = adjudicableRuns(
+    await studyRuns(options.store, study),
+  );
+  const gate = createGate(options.concurrency ?? 4);
+  const result: AdjudicateStudyResult = {
+    panelId,
+    adjudications: [],
+    runs: roots.length + children.length,
+    built: 0,
+    kept: 0,
+    failed: 0,
+    calls: 0,
+  };
+  const byRun = new Map<string, Adjudication>();
+  const score = async (run: Run, parent?: Adjudication) => {
+    try {
+      const outcome: AdjudicateRunResult = await adjudicateRun({
+        ...(options.human ? { human: options.human } : {}),
+        run,
+        ...(parent ? { parent } : {}),
+        panel: options.panel,
+        panelId,
+        llm: options.llm,
+        store: options.store,
+        force: options.force ?? false,
+        gate,
+        ...(options.log ? { log: options.log } : {}),
+      });
+      byRun.set(run.id, outcome.adjudication);
+      result.adjudications.push(outcome.adjudication);
+      result.calls += outcome.calls;
+      if (outcome.built) result.built += 1;
+      else result.kept += 1;
+      options.log?.trace(
+        `[${study.id}] ${outcome.built ? "→" : "="} ${outcome.adjudication.id}` +
+          ` (${outcome.adjudication.turns.length} turn(s), ${outcome.calls} call(s))`,
+      );
+    } catch (error) {
+      result.failed += 1;
+      options.log?.error(
+        `[${study.id}] ${run.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  };
+  await Promise.all(roots.map((run) => score(run)));
+  await Promise.all(
+    children.map((run) =>
+      score(run, run.branch.parent ? byRun.get(run.branch.parent) : undefined),
+    ),
+  );
+  return result;
 };
