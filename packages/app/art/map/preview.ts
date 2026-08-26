@@ -18,8 +18,11 @@ import {
   type Image,
 } from "../vendor/png";
 import {
+  againstOf,
+  groundMask,
   isWater,
   orientationOf,
+  pairIdOf,
   rasterize,
   tilesetIdOf,
   variantOf,
@@ -45,17 +48,25 @@ export interface PreviewOptions {
   window?: [number, number, number, number];
 }
 
-const sheetsOf = (layers: string[], tile: number): Map<Ground, Image> => {
-  const sheets = new Map<Ground, Image>();
+const sheetsOf = (layers: string[], tile: number): Map<string, Image> => {
+  const sheets = new Map<string, Image>();
+  const grounds = DRAW_ORDER.concat("grass");
+  const ids = grounds
+    .map(tilesetIdOf)
+    .concat(
+      grounds.flatMap((ground) =>
+        grounds.map((lower) => pairIdOf(ground, lower)),
+      ),
+    );
   for (const dir of layers) {
-    for (const ground of DRAW_ORDER.concat("grass")) {
-      const file = path.join(dir, `${tilesetIdOf(ground)}.png`);
+    for (const id of ids) {
+      const file = path.join(dir, `${id}.png`);
       if (!existsSync(file)) continue;
       const sheet = readPng(file);
       // a sheet of another set's tile belongs to another map; the map build's
       // coverage check is what reports a ground this set leaves unanswered
       if (sheet.width !== BLOB_COLUMNS * tile) continue;
-      sheets.set(ground, sheet);
+      sheets.set(id, sheet);
     }
   }
   return sheets;
@@ -85,9 +96,19 @@ export const previewMap = ({
 }: PreviewOptions): Image => {
   const grid = rasterize(geo);
   const sheets = sheetsOf(layers, tile);
+  const pairs = new Set(
+    [...sheets.keys()].filter((id) => id.includes("@")),
+  ) as ReadonlySet<string>;
+  const against = againstOf(grid, pairs);
   const canvas = blankImage(geo.width * tile, geo.height * tile);
-  const draw = (ground: Ground, index: number, x: number, y: number): void => {
-    const sheet = sheets.get(ground);
+  const draw = (
+    ground: Ground,
+    index: number,
+    x: number,
+    y: number,
+    id = tilesetIdOf(ground),
+  ): void => {
+    const sheet = sheets.get(id) ?? sheets.get(tilesetIdOf(ground));
     if (!sheet) return;
     // the same orientation the map builder stamps on a fully surrounded tile
     const flip =
@@ -113,19 +134,20 @@ export const previewMap = ({
       draw("grass", variantOf(x, y) * BLOB_TILE_COUNT + BLOB_FULL, x, y);
     }
   }
-  const same =
-    (ground: Ground) => (x: number, y: number) => (dx: number, dy: number) => {
-      const nx = x + dx;
-      const ny = y + dy;
-      if (nx < 0 || ny < 0 || nx >= geo.width || ny >= geo.height) return true;
-      return grid[ny][nx] === ground;
-    };
   for (const ground of DRAW_ORDER) {
+    const mask = groundMask(grid, against, ground);
     for (let y = 0; y < geo.height; y += 1) {
       for (let x = 0; x < geo.width; x += 1) {
         if (grid[y][x] !== ground) continue;
+        const lower = against[y][x];
         // a water sheet stacks a blob block per frame; the first frame is enough
-        draw(ground, blobIndexOf(maskOf(same(ground)(x, y))), x, y);
+        draw(
+          ground,
+          blobIndexOf(maskOf(mask(x, y))),
+          x,
+          y,
+          lower ? pairIdOf(ground, lower) : tilesetIdOf(ground),
+        );
       }
     }
   }

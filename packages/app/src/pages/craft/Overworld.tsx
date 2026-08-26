@@ -281,6 +281,10 @@ export function Overworld() {
     });
   };
 
+  /** Roll a move and leave the panel reading it back, so a roll is a starting
+   * point to adjust rather than something that happens once and is gone. The
+   * panel is set from the same values the direction carries, so pressing play
+   * afterwards repeats the roll exactly. */
   const playRandom = () => {
     if (parties.length === 0) return;
     const pick = <T,>(list: T[]): T =>
@@ -291,14 +295,26 @@ export function Overworld() {
     const landings = places.filter(
       (place) => place.kind !== "region" && place.key !== actor.home,
     );
+    if (randomRule.places !== "home" && landings.length === 0) return;
+    const landing = landings.length > 0 ? pick(landings).key : "";
+    const figures = randomRule.count ?? 1;
+
+    setKind(randomKind);
+    setSeat(actor.seat);
+    setFrom(actor.home);
+    if (randomRule.places === "route") setTo(landing);
+    if (randomRule.places === "at") setAt(landing);
+    setCount(figures);
+    setEffect("default");
+
     play({
       kind: randomKind,
       actor: { seat: actor.seat, archetype: randomRule.actor },
       ...(randomRule.places === "route"
-        ? { from: actor.home, to: pick(landings).key }
+        ? { from: actor.home, to: landing }
         : {}),
-      ...(randomRule.places === "at" ? { at: pick(landings).key } : {}),
-      ...(randomRule.count !== undefined ? { count: randomRule.count } : {}),
+      ...(randomRule.places === "at" ? { at: landing } : {}),
+      ...(figures > 1 ? { count: figures } : {}),
       ...(randomRule.effect !== undefined ? { effect: randomRule.effect } : {}),
     });
   };
@@ -565,9 +581,10 @@ export function Overworld() {
           )}
         </div>
         <p className="mt-4 font-plex-mono text-[10px] text-zinc-600">
-          Moves queue and play in order; each fades when done. The vocabulary,
-          the arity rules, and the walk pacing are the ones the recorded games
-          use.
+          Moves queue and play in order; each fades when done. A random move
+          leaves the panel set to what it rolled, ready to adjust and play
+          again. The vocabulary, the arity rules, and the walk pacing are the
+          ones the recorded games use.
         </p>
       </section>
     </div>

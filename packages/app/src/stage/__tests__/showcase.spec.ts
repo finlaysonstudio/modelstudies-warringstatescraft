@@ -6,6 +6,7 @@ import {
   PATCH,
   groupOf,
   islandShape,
+  lowerOf,
   patchIndexes,
   showcaseOf,
 } from "../showcase";
@@ -46,11 +47,19 @@ describe("groupOf", () => {
     expect(groupOf("sprite.envoy")).toBe("figure");
     expect(groupOf("effect.fire")).toBeNull();
   });
+
+  it("reads a transition as its own group, whichever ground it draws", () => {
+    expect(groupOf("terrain.mountain@forest")).toBe("pair");
+    expect(groupOf("water.river@tallgrass")).toBe("pair");
+    expect(lowerOf("terrain.mountain@forest")).toBe("forest");
+    expect(lowerOf("terrain.mountain")).toBeNull();
+  });
 });
 
 describe("showcaseOf", () => {
   const manifest = manifestOf([
     asset("terrain.mountain", "period", 1),
+    asset("terrain.mountain@forest", "period", 1),
     asset("terrain.grass", "period", 2),
     asset("terrain.road", "fallback"),
     asset("image.court", "period", 1),
@@ -65,7 +74,7 @@ describe("showcaseOf", () => {
     );
     expect(ids).not.toContain("sprite.knight");
     expect(ids).not.toContain("terrain.road");
-    expect(showcase.count).toBe(4);
+    expect(showcase.count).toBe(5);
   });
 
   it("orders a section by the catalog, not by the manifest", () => {
@@ -75,17 +84,24 @@ describe("showcaseOf", () => {
       "terrain.grass",
       "terrain.mountain",
     ]);
+    // a transition answers an adjacency, not a catalog id, so it sits in its
+    // own section rather than after the grounds
+    const pairs = showcaseOf(manifest).sections[1];
+    expect(pairs.group).toBe("pair");
+    expect(pairs.assets.map((entry) => entry.id)).toEqual([
+      "terrain.mountain@forest",
+    ]);
   });
 
   it("drops a section with nothing in it", () => {
     const groups = showcaseOf(manifest).sections.map(
       (section) => section.group,
     );
-    expect(groups).toEqual(["ground", "place", "figure"]);
+    expect(groups).toEqual(["ground", "pair", "place", "figure"]);
   });
 
   it("totals the generations the layer cost", () => {
-    expect(showcaseOf(manifest).generations).toBe(10);
+    expect(showcaseOf(manifest).generations).toBe(11);
   });
 
   it("names what the set still borrows, and the layer standing in", () => {

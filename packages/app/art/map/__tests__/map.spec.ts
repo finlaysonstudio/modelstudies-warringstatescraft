@@ -12,14 +12,19 @@ import {
   E,
   N,
   S,
+  SE,
+  SW,
   W,
 } from "../../vendor/blob";
 import {
   GROUND_VARIANTS,
+  againstOf,
   asciiOf,
   buildTiledMap,
   featureFileOf,
   flipAt,
+  groundMask,
+  pairIdOf,
   rasterize,
   variantOf,
   type Geography,
@@ -174,6 +179,86 @@ describe("buildTiledMap", () => {
     const grass = map.tilesets.find((set) => set.name === "terrain.grass")!;
     expect(grass.tilecount).toBe(BLOB_TILE_COUNT * GROUND_VARIANTS);
     expect(grass.tiles ?? []).toEqual([]);
+  });
+});
+
+describe("transitions", () => {
+  // a wood with a range standing in it: every non-grass adjacency on the map
+  // is this shape, one ground laid over another rather than over the field
+  const wooded = (): Geography => ({
+    width: 6,
+    height: 5,
+    fills: [
+      { terrain: "forest", rect: [0, 2, 6, 3] },
+      { terrain: "mountain", rect: [2, 3, 3, 2] },
+    ],
+    places: {},
+  });
+  const pair = pairIdOf("mountain", "forest");
+  const pairs = new Set([pair]);
+  const grid = rasterize(wooded());
+
+  it("draws a ground against the lower ground it mostly meets", () => {
+    const against = againstOf(grid, pairs);
+    expect(against[3][2]).toBe("forest");
+    expect(against[3][4]).toBe("forest");
+    // the range's bottom row runs off the map, which counts as its own ground
+    expect(against[4][3]).toBeNull();
+    // the wood itself meets grass, which every plain sheet is drawn against
+    expect(against[2][2]).toBeNull();
+    expect(against[0][0]).toBeNull();
+  });
+
+  it("leaves a ground plain when no sheet draws the pair", () => {
+    expect(againstOf(grid, new Set())[3][2]).toBeNull();
+  });
+
+  it("runs the lower ground whole beneath a neighbour that draws the boundary", () => {
+    const against = againstOf(grid, pairs);
+    // the range's tile carries the whole boundary, so the wood beneath it
+    // does not stop short and show an edge of its own under that art
+    expect(groundMask(grid, against, "forest")(2, 2)(0, 1)).toBe(true);
+    expect(groundMask(grid, against, "forest")(2, 2)(0, -1)).toBe(false);
+    // without the pair the wood draws its own edge against the range
+    expect(
+      groundMask(grid, againstOf(grid, new Set()), "forest")(2, 2)(0, 1),
+    ).toBe(false);
+  });
+
+  it("lays the pair's own tileset where it applies and the plain one elsewhere", () => {
+    const map = buildTiledMap({ geo: wooded(), pairs });
+    const laid = map.tilesets.find((set) => set.name === pair)!;
+    const plain = map.tilesets.find((set) => set.name === "terrain.mountain")!;
+    const range = map.layers.find((layer) => layer.name === "mountain")!;
+    expect(laid).toBeDefined();
+    // the range's north-west corner: forest to the N, W, and NW, its own
+    // ground to the E, S, and SE
+    expect(range.data![3 * 6 + 2]).toBe(
+      laid.firstgid + blobIndexOf(E | S | SE),
+    );
+    const wood = map.layers.find((layer) => layer.name === "forest")!;
+    const forest = map.tilesets.find((set) => set.name === "terrain.forest")!;
+    // the wood above the range reads it as its own, so only the range's tile
+    // draws the boundary
+    expect(wood.data![2 * 6 + 2]).toBe(
+      forest.firstgid + blobIndexOf(E | S | SE | W | SW),
+    );
+    expect(plain.firstgid).toBeLessThan(laid.firstgid);
+  });
+
+  it("registers no pair tileset when the set supplies none", () => {
+    const map = buildTiledMap({ geo: wooded() });
+    expect(map.tilesets.some((set) => set.name.includes("@"))).toBe(false);
+  });
+
+  it("registers only the pairs the map actually lays", () => {
+    const map = buildTiledMap({
+      geo: wooded(),
+      pairs: new Set([pair, pairIdOf("mountain", "marsh")]),
+    });
+    expect(map.tilesets.filter((set) => set.name.includes("@"))).toHaveLength(
+      1,
+    );
   });
 });
 

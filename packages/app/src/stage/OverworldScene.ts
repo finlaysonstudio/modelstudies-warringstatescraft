@@ -239,6 +239,12 @@ export class OverworldScene extends Phaser.Scene {
     };
     TERRAINS.forEach((terrain) => image(terrainId(terrain)));
     WATERS.forEach((water) => image(waterId(water)));
+    // the transition sheets the set carries (`terrain.mountain@forest`, one
+    // ground as it meets another): the map names the ones it lays and `create`
+    // binds a tileset by its name, so loading the set's own is enough
+    Object.keys(manifest.assets)
+      .filter((id) => id.includes("@"))
+      .forEach((id) => image(id));
     MARKERS.forEach((marker) => image(markerId(marker)));
     Object.values(MARKER_VARIANTS)
       .flat()

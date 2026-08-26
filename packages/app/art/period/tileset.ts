@@ -75,20 +75,29 @@ type Box = WangTileMeta["bounding_box"];
 const keyOf = (nw: number, ne: number, sw: number, se: number): string =>
   `${nw}${ne}${sw}${se}`;
 
-/** tile boxes by corner configuration (NW, NE, SW, SE; 1 = upper) */
+/**
+ * Tile boxes by corner configuration (NW, NE, SW, SE; 1 = upper).
+ *
+ * A generation at a deep transition comes back as a 25-tile sheet whose four
+ * extra tiles are cliff walls: they repeat a corner configuration a plain tile
+ * already holds, and they belong in the map cell *below* the boundary, which a
+ * blob sheet has no cell to put them in. The first tile of a configuration
+ * wins, so a wall never displaces the tile the quadrant sampler expects. A
+ * corner the generator calls `transition` is neither terrain, and reads as the
+ * lower one, which is where those tiles sit.
+ */
 export const wangIndex = (meta: WangMetadata): Map<string, Box> => {
   const index = new Map<string, Box>();
   for (const tile of meta.tileset_data.tiles) {
     const bit = (value: WangCornerValue): number => (value === "upper" ? 1 : 0);
-    index.set(
-      keyOf(
-        bit(tile.corners.NW),
-        bit(tile.corners.NE),
-        bit(tile.corners.SW),
-        bit(tile.corners.SE),
-      ),
-      tile.bounding_box,
+    const key = keyOf(
+      bit(tile.corners.NW),
+      bit(tile.corners.NE),
+      bit(tile.corners.SW),
+      bit(tile.corners.SE),
     );
+    if (index.has(key)) continue;
+    index.set(key, tile.bounding_box);
   }
   return index;
 };
@@ -431,6 +440,79 @@ export const adjustColour = (
         Math.max(0, Math.min(1, v * value)),
       );
       setPixel(out, x, y, [clamp(nr), clamp(ng), clamp(nb), a]);
+    }
+  }
+  return out;
+};
+
+/**
+ * What a sheet's colour is brought into the map's range by. The generator
+ * picks its own palette, so every terrain carries one of these.
+ */
+export interface SheetFinish {
+  /** grey blue-dominant pixels toward luminance by this amount (0..1) */
+  desaturate?: number;
+  /** turn the hue and scale saturation and value */
+  adjust?: ColourAdjustment;
+}
+
+export const applyFinish = (image: Image, finish: SheetFinish = {}): Image => {
+  let out = image;
+  if (finish.desaturate) out = greyBlue(out, finish.desaturate);
+  if (finish.adjust) out = adjustColour(out, finish.adjust);
+  return out;
+};
+
+export interface SplitFinishOptions {
+  /** the colours of the sheet's plain lower tile */
+  lowerPalette: Rgba[];
+  /** the colours of the sheet's plain upper tile */
+  upperPalette: Rgba[];
+  /** the finish the lower terrain wears everywhere else on the map */
+  lower?: SheetFinish;
+  /** the finish this sheet's own terrain wears */
+  upper?: SheetFinish;
+}
+
+const nearest = (pixel: Rgba, palette: Rgba[]): number => {
+  let best = Infinity;
+  for (const colour of palette) {
+    const dr = pixel[0] - colour[0];
+    const dg = pixel[1] - colour[1];
+    const db = pixel[2] - colour[2];
+    const distance = dr * dr + dg * dg + db * db;
+    if (distance < best) best = distance;
+  }
+  return best;
+};
+
+/**
+ * Finishes a sheet in two halves. A sheet drawn against another terrain
+ * carries both terrains, and each already wears a correction of its own: the
+ * range is lifted and saturated, the grass it stands in is dulled and
+ * darkened. One finish over the whole sheet puts the range's correction on the
+ * grass, so each pixel takes the finish of the terrain it is nearer to.
+ *
+ * Nearest, not a tolerance around the lower palette: the band the generator
+ * draws between two terrains — the saplings at a wood's edge, the scree at a
+ * range's foot — is made of colours that are neither terrain's, and a rule
+ * that can only recognise the lower exactly leaves that whole band lit for the
+ * upper. Which is a halo: a bright rim around every wood, on grass that has
+ * been darkened around it.
+ */
+export const splitFinish = (
+  image: Image,
+  { lowerPalette, upperPalette, lower, upper }: SplitFinishOptions,
+): Image => {
+  const lowered = applyFinish(image, lower);
+  const uppered = applyFinish(image, upper);
+  const out = blankImage(image.width, image.height);
+  for (let y = 0; y < image.height; y += 1) {
+    for (let x = 0; x < image.width; x += 1) {
+      const pixel = pixelAt(image, x, y);
+      const isLower =
+        nearest(pixel, lowerPalette) <= nearest(pixel, upperPalette);
+      setPixel(out, x, y, pixelAt(isLower ? lowered : uppered, x, y));
     }
   }
   return out;

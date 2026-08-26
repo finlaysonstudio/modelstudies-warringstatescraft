@@ -10,6 +10,7 @@
       "kind": "tileset",
       "file": "tilesets32/forest.png",
       "metadata": "tilesets32/forest.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -22,12 +23,11 @@
       "jobId": "cd62aa26-4e90-492e-a31a-67f0979f6c9b",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
       "keyTolerance": 20,
       "adjust": {
         "hue": -10,
-        "saturation": 0.7,
-        "value": 1.25
+        "saturation": 0.62,
+        "value": 0.98
       }
     },
     {
@@ -35,6 +35,7 @@
       "kind": "tileset",
       "file": "tilesets32/loess.png",
       "metadata": "tilesets32/loess.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -47,7 +48,6 @@
       "jobId": "aa9a4829-fb57-465f-a312-81bf41ae3577",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "lower",
       "keyTolerance": 16,
       "adjust": {
         "hue": -5,
@@ -60,6 +60,7 @@
       "kind": "tileset",
       "file": "tilesets32/steppe.png",
       "metadata": "tilesets32/steppe.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -72,7 +73,6 @@
       "jobId": "18ac0b5d-1317-4255-9037-f3d581fb8e2c",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "lower",
       "keyTolerance": 16,
       "adjust": {
         "hue": 14,
@@ -85,6 +85,7 @@
       "kind": "tileset",
       "file": "tilesets32/marsh.png",
       "metadata": "tilesets32/marsh.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -97,7 +98,6 @@
       "jobId": "dae8bac6-8946-4d15-b73b-26a495241891",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
       "keyTolerance": 20,
       "adjust": {
         "hue": 38,
@@ -110,6 +110,7 @@
       "kind": "tileset",
       "file": "tilesets32/field.png",
       "metadata": "tilesets32/field.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -122,7 +123,6 @@
       "jobId": "5a31a0bc-d5dd-4296-9b94-0cb274950392",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
       "keyTolerance": 20,
       "adjust": {
         "hue": 8,
@@ -135,6 +135,7 @@
       "kind": "tileset",
       "file": "tilesets32/bamboo.png",
       "metadata": "tilesets32/bamboo.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -147,7 +148,6 @@
       "jobId": "353dd665-3a70-4140-9a5a-75545df2c233",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
       "keyTolerance": 10,
       "adjust": {
         "hue": 12,
@@ -186,6 +186,7 @@
       "kind": "tileset",
       "file": "tilesets32/tallgrass.png",
       "metadata": "tilesets32/tallgrass.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -198,7 +199,6 @@
       "jobId": "869a1023-9539-44b8-ae2b-05b2f6b737a7",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "lower",
       "keyTolerance": 16,
       "adjust": {
         "hue": 10,
@@ -211,6 +211,7 @@
       "kind": "tileset",
       "file": "tilesets32/scrub.png",
       "metadata": "tilesets32/scrub.json",
+      "against": "grass",
       "tool": "create_topdown_tileset",
       "settings": {
         "tile": 32,
@@ -223,7 +224,6 @@
       "jobId": "69556012-db4a-45f6-b811-34ae47e2509e",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "lower",
       "keyTolerance": 16,
       "adjust": {
         "hue": 4,
@@ -252,8 +252,8 @@
       "jobId": "8fc0a979-2023-44cb-b467-8a914f99c118",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 24,
+      "key": "lower",
+      "keyTolerance": 16,
       "adjust": {
         "hue": -8,
         "saturation": 0.6,
@@ -281,8 +281,8 @@
       "jobId": "cbeb2b1f-17c6-4938-a4d4-51d54706ee6b",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 20
+      "key": "lower",
+      "keyTolerance": 16
     },
     {
       "id": "terrain.qinling",
@@ -305,8 +305,8 @@
       "jobId": "38ebbbd8-1f57-4726-a82e-978823133b09",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 20,
+      "key": "lower",
+      "keyTolerance": 16,
       "adjust": {
         "hue": 30,
         "saturation": 1.3,
@@ -334,8 +334,8 @@
       "jobId": "9c373526-159f-4968-ae38-069c979e7e57",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 10,
+      "key": "lower",
+      "keyTolerance": 16,
       "adjust": {
         "hue": -6,
         "saturation": 1.35,
@@ -363,8 +363,8 @@
       "jobId": "73d1d26e-5a3e-415b-957a-d4ca154ef668",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 20,
+      "key": "lower",
+      "keyTolerance": 16,
       "adjust": {
         "hue": -24,
         "saturation": 0.9,
@@ -388,8 +388,8 @@
       "jobId": "f88a1f2d-a8a0-454c-9458-02a4eff03cc5",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 44,
+      "key": "lower",
+      "keyTolerance": 16,
       "frames": 3,
       "adjust": {
         "hue": 11,
@@ -414,8 +414,8 @@
       "jobId": "72bc3b3b-be25-43ed-8ff4-7bcd0072f695",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 44,
+      "key": "lower",
+      "keyTolerance": 16,
       "frames": 3,
       "adjust": {
         "hue": -5,
@@ -440,8 +440,8 @@
       "jobId": "52539534-ed29-44f9-94ff-5ec425627beb",
       "date": "2026-08-25",
       "generations": 2,
-      "key": "upper",
-      "keyTolerance": 18,
+      "key": "lower",
+      "keyTolerance": 16,
       "note": "The first generation came back as brick paving despite the prompt refusing it; the second names bare soil and ruts and refuses masonry five ways.",
       "adjust": {
         "hue": 14,
@@ -466,8 +466,8 @@
       "jobId": "01a6c8ce-b543-475e-96fc-76e87bbf9342",
       "date": "2026-08-25",
       "generations": 1,
-      "key": "upper",
-      "keyTolerance": 18,
+      "key": "lower",
+      "keyTolerance": 16,
       "note": "the paved ground inside a court, borrowed from the fallback in the sixteen-pixel set",
       "adjust": {
         "saturation": 0.35,
@@ -1214,6 +1214,1018 @@
       "date": "2026-08-25",
       "generations": 20,
       "note": "one still rotation per cardinal facing, laid out as a one-frame walk so the fleet sprite reads like any other"
+    },
+    {
+      "id": "water.river@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-tallgrass.png",
+      "metadata": "tilesets32/river-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 the tall blades leaning out over the water's edge and a narrow strip of wet dark mud along the bank",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "94884925-1033-44d0-9a9c-417ebb4c2c35",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "water.river@field",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-field.png",
+      "metadata": "tilesets32/river-on-field.json",
+      "against": "field",
+      "tool": "create_topdown_tileset",
+      "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 a low earth bank between the furrows and the water, damp dark soil crumbling at the edge of the plots",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "fd7f45b8-681e-41b5-a2ee-9a56643453a3",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "terrain.road@field",
+      "kind": "tileset",
+      "file": "tilesets32/road-on-field.png",
+      "metadata": "tilesets32/road-on-field.json",
+      "against": "field",
+      "tool": "create_topdown_tileset",
+      "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink \u2197 bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry \u00b7 the cart track cutting through the furrows, loose pale dust spilling onto the tilled earth at the edge of the plots",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "05dfc6f7-9b7b-4475-a7ae-d219e4a8848a",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "road as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "id": "water.river@loess",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-loess.png",
+      "metadata": "tilesets32/river-on-loess.json",
+      "against": "loess",
+      "tool": "create_topdown_tileset",
+      "prompt": "a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 the pale silt bank slumping into the water, a strip of wet tan mud and small gullies at the edge",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "a2b75484-379b-452a-b41b-9c6a0db686fb",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "b091095b-aa6d-427d-b2ea-f0e03bead638",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets loess: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "water.river@scrub",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-scrub.png",
+      "metadata": "tilesets32/river-on-scrub.json",
+      "against": "scrub",
+      "tool": "create_topdown_tileset",
+      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 low shrubs thinning at the water's edge, a narrow band of pale dry gravel along the bank",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "86612588-f1fb-44c2-a119-17958ab1158b",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "terrain.road@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/road-on-tallgrass.png",
+      "metadata": "tilesets32/road-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry \u00b7 the track worn through the grass, dust spilling into the blades and thin grass closing over the ruts at the edge",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "503d7ac5-621a-43d6-a410-5ca649e53d3b",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "road as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "id": "terrain.marsh@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/marsh-on-tallgrass.png",
+      "metadata": "tilesets32/marsh-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds \u00b7 the grass standing in shallow water at the edge of the swamp, blades thinning into reed and dark wet ground",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+      },
+      "jobId": "b1017e63-ca9b-4944-87d1-74ae8e0fcd0c",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "marsh as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 38,
+        "saturation": 0.75,
+        "value": 1.45
+      }
+    },
+    {
+      "id": "water.river@road",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-road.png",
+      "metadata": "tilesets32/river-on-road.json",
+      "against": "road",
+      "tool": "create_topdown_tileset",
+      "prompt": "bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 the track running down to a shallow gravel ford, loose stones and wet dust at the water's edge",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "21c918ae-de7b-4a1d-9cc2-10f6d8f24eda",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets road: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "water.river@marsh",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-marsh.png",
+      "metadata": "tilesets32/river-on-marsh.json",
+      "against": "marsh",
+      "tool": "create_topdown_tileset",
+      "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 reed beds thinning where the open channel begins, dark wet mud and standing sedge along the edge",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "e2465fa3-764a-4613-b4eb-15c0a219bf34",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets marsh: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "water.sea@river",
+      "kind": "tileset",
+      "file": "tilesets32/sea-on-river.png",
+      "metadata": "tilesets32/sea-on-river.json",
+      "against": "river",
+      "tool": "create_topdown_tileset",
+      "prompt": "a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u2197 deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey \u00b7 the green-blue channel widening and darkening into open ocean, a band of mixed jade and azure water",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9",
+        "upper_base_tile_id": "c61dc6e6-158b-4b77-892c-f144d55a24fa"
+      },
+      "jobId": "0ef85133-78cf-4e86-9a56-a3cfc90bc3a3",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "sea as it meets river: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": -5,
+        "saturation": 0.6,
+        "value": 0.8
+      }
+    },
+    {
+      "id": "terrain.taihang@scrub",
+      "kind": "tileset",
+      "file": "tilesets32/taihang-on-scrub.png",
+      "metadata": "tilesets32/taihang-on-scrub.json",
+      "against": "scrub",
+      "tool": "create_topdown_tileset",
+      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow \u2197 a steep dark mountain scarp seen from above, one long unbroken wall of rock with a sheer cliff face, narrow flat crest, deep shadow along its foot, dark slate and charcoal stone, strictly grey, no purple, no blue \u00b7 low thorny bushes at the foot of the cliff, broken dark slate scree scattered among the shrubs",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "upper_base_tile_id": "0d6b21bb-534e-4c4b-967e-e5daaea82431"
+      },
+      "jobId": "103f473e-e70f-4a67-956b-632f96d7ea51",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "taihang as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -6,
+        "saturation": 1.35,
+        "value": 1.55
+      }
+    },
+    {
+      "id": "terrain.hills@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/hills-on-tallgrass.png",
+      "metadata": "tilesets32/hills-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 low rolling hills seen from above, gentle rounded green shoulders with soft shadow in the hollows between them, thin dry grass on the crowns and a little bare brown earth showing through, no rock, no cliffs, strictly green and warm brown \u00b7 the tall grass climbing the lower shoulders, thinning into dry tufts on the rising ground",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "322cc2c7-1716-43cc-b993-ab0bcbcc0c7a"
+      },
+      "jobId": "1725ca2c-a4ec-460a-86a9-bcac0117b3e3",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "hills as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -8,
+        "saturation": 0.6,
+        "value": 0.9
+      }
+    },
+    {
+      "id": "water.river@mountain",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-mountain.png",
+      "metadata": "tilesets32/river-on-mountain.json",
+      "against": "mountain",
+      "tool": "create_topdown_tileset",
+      "prompt": "a modest stony mountain range seen from above, rounded grey rock ridges with shallow clefts, worn and weathered, patches of dry grass on the shoulders, strictly grey stone and dull green, no purple, no blue \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 the water running between grey boulders, wet dark stone and a narrow gravel shelf at the edge",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "b61b2624-49ab-4b20-8909-456d77142c45",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "1d8889f8-444b-49d9-964d-c733c45717b3",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets mountain: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "terrain.loess@scrub",
+      "kind": "tileset",
+      "file": "tilesets32/loess-on-scrub.png",
+      "metadata": "tilesets32/loess-on-scrub.json",
+      "against": "scrub",
+      "tool": "create_topdown_tileset",
+      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow \u2197 a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth \u00b7 shrubs thinning on the pale silt, dry gullies opening between the last low bushes",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "upper_base_tile_id": "a2b75484-379b-452a-b41b-9c6a0db686fb"
+      },
+      "jobId": "616c6a1e-711f-44b2-bba1-c0f07833641b",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "loess as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -5,
+        "saturation": 1.2,
+        "value": 0.85
+      }
+    },
+    {
+      "id": "terrain.mountain@loess",
+      "kind": "tileset",
+      "file": "tilesets32/mountain-on-loess.png",
+      "metadata": "tilesets32/mountain-on-loess.json",
+      "against": "loess",
+      "tool": "create_topdown_tileset",
+      "prompt": "a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth \u2197 a modest stony mountain range seen from above, rounded grey rock ridges with shallow clefts, worn and weathered, patches of dry grass on the shoulders, strictly grey stone and dull green, no purple, no blue \u00b7 grey stone breaking through the pale silt, scree and slumped terrace edges at the foot of the ridge",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "a2b75484-379b-452a-b41b-9c6a0db686fb",
+        "upper_base_tile_id": "b61b2624-49ab-4b20-8909-456d77142c45"
+      },
+      "jobId": "26ca59e1-e8cd-4aca-ba80-ec917f5b7843",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "mountain as it meets loess: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut"
+    },
+    {
+      "id": "terrain.shu@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/shu-on-tallgrass.png",
+      "metadata": "tilesets32/shu-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 jagged pale limestone karst peaks seen from above, a crowd of narrow steep-sided towers of pale grey stone with dark green vegetation in the clefts between them, chaotic and broken, strictly pale grey and dark green, no purple, no blue \u00b7 tall grass ending abruptly at the pale limestone towers, dark clefts and broken stone at their base",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "7d04e6df-bdce-4be4-9f18-9dbb468e26e6"
+      },
+      "jobId": "094cb5bf-930c-4b04-8711-784a65155404",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "shu as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -24,
+        "saturation": 0.9,
+        "value": 0.78
+      }
+    },
+    {
+      "id": "water.sea@forest",
+      "kind": "tileset",
+      "file": "tilesets32/sea-on-forest.png",
+      "metadata": "tilesets32/sea-on-forest.json",
+      "against": "forest",
+      "tool": "create_topdown_tileset",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns \u2197 deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey \u00b7 the last treetops at the shore, a narrow band of dark wet rock and pale surf below the canopy",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+        "upper_base_tile_id": "c61dc6e6-158b-4b77-892c-f144d55a24fa"
+      },
+      "jobId": "78442646-2c3d-444d-a243-cab149056202",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "sea as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": -5,
+        "saturation": 0.6,
+        "value": 0.8
+      }
+    },
+    {
+      "id": "water.river@steppe",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-steppe.png",
+      "metadata": "tilesets32/river-on-steppe.json",
+      "against": "steppe",
+      "tool": "create_topdown_tileset",
+      "prompt": "dry steppe grassland seen from above, pale straw and gold wild grass bent by the wind in long streaks, thin tufts of tawny bunchgrass, no bare earth, no brown soil, no sand \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 a narrow band of pale dry gravel along the bank with the straw grass thinning at the water's edge, no outline, no cream rim, no dark line",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "292d1bd7-d878-4aa1-a0d3-cfecfcf5a0d5",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "88fe8480-b81b-46ce-b1e2-0f275eaf7629",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "river as it meets steppe: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "terrain.qinling@scrub",
+      "kind": "tileset",
+      "file": "tilesets32/qinling-on-scrub.png",
+      "metadata": "tilesets32/qinling-on-scrub.json",
+      "against": "scrub",
+      "tool": "create_topdown_tileset",
+      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow \u2197 a pine-covered mountain range seen from above, rounded rock ridges with shallow clefts like worn grey stone shoulders, dark pine forest lying in the clefts and thinning on the crests so the grey rock shows through, weathered and irregular, strictly grey stone and dark pine green \u00b7 low shrubs giving way to dark pine and grey rock at the foot of the ridge",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "upper_base_tile_id": "df484296-8274-4de7-856c-37567b90ae22"
+      },
+      "jobId": "08b86f05-b9d6-468e-bf1f-98b601d924bb",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "qinling as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 30,
+        "saturation": 1.3,
+        "value": 0.78
+      }
+    },
+    {
+      "id": "terrain.marsh@forest",
+      "kind": "tileset",
+      "file": "tilesets32/marsh-on-forest.png",
+      "metadata": "tilesets32/marsh-on-forest.json",
+      "against": "forest",
+      "tool": "create_topdown_tileset",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns \u2197 a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds \u00b7 the last trees standing in shallow water at the swamp's edge, dark trunks and reed between the crowns",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+        "upper_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+      },
+      "jobId": "9f81a625-21ab-47a1-9928-77de8f3f35de",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "marsh as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 38,
+        "saturation": 0.75,
+        "value": 1.45
+      }
+    },
+    {
+      "id": "terrain.field@scrub",
+      "kind": "tileset",
+      "file": "tilesets32/field-on-scrub.png",
+      "metadata": "tilesets32/field-on-scrub.json",
+      "against": "scrub",
+      "tool": "create_topdown_tileset",
+      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow \u2197 cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink \u00b7 the shrubs cleared back to the plot edge, a low earth bank between the heath and the furrows",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+      },
+      "jobId": "b260ad3e-3ad4-41f9-a832-63c5d243c776",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "field as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 8,
+        "saturation": 0.62,
+        "value": 0.9
+      }
+    },
+    {
+      "id": "terrain.qinling@forest",
+      "kind": "tileset",
+      "file": "tilesets32/qinling-on-forest.png",
+      "metadata": "tilesets32/qinling-on-forest.json",
+      "against": "forest",
+      "tool": "create_topdown_tileset",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns \u2197 a pine-covered mountain range seen from above, rounded rock ridges with shallow clefts like worn grey stone shoulders, dark pine forest lying in the clefts and thinning on the crests so the grey rock shows through, weathered and irregular, strictly grey stone and dark pine green \u00b7 the broadleaf crowns giving way to dark pine on the rising grey rock",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+        "upper_base_tile_id": "df484296-8274-4de7-856c-37567b90ae22"
+      },
+      "jobId": "32d723b7-d671-491e-ae8e-40c7d4b80c54",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "qinling as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 30,
+        "saturation": 1.3,
+        "value": 0.78
+      }
+    },
+    {
+      "id": "water.river@bamboo",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-bamboo.png",
+      "metadata": "tilesets32/river-on-bamboo.json",
+      "against": "bamboo",
+      "tool": "create_topdown_tileset",
+      "prompt": "a dense bamboo grove seen from above, tight clumps of slender bamboo canes with narrow leaves, deep green with cool shadow between the clumps, strictly green, no yellow, no gold, no cream \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 bamboo canes leaning over the water, a narrow strip of dark wet mud between the clumps and the current",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "d6d97023-64c9-4670-b2da-173b5f7c183c",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "700415b2-73c8-4f98-803a-0b510649f0a8",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets bamboo: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "terrain.road@qinling",
+      "kind": "tileset",
+      "file": "tilesets32/road-on-qinling.png",
+      "metadata": "tilesets32/road-on-qinling.json",
+      "against": "qinling",
+      "tool": "create_topdown_tileset",
+      "prompt": "a pine-covered mountain range seen from above, rounded rock ridges with shallow clefts like worn grey stone shoulders, dark pine forest lying in the clefts and thinning on the crests so the grey rock shows through, weathered and irregular, strictly grey stone and dark pine green \u2197 bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry \u00b7 the track climbing between the pines onto the grey rock, loose dust worn over broken stone",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "df484296-8274-4de7-856c-37567b90ae22",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "8a8fee70-40ae-4772-a26c-94c667e101f7",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "road as it meets qinling: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "id": "terrain.hills@forest",
+      "kind": "tileset",
+      "file": "tilesets32/hills-on-forest.png",
+      "metadata": "tilesets32/hills-on-forest.json",
+      "against": "forest",
+      "tool": "create_topdown_tileset",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns \u2197 low rolling hills seen from above, gentle rounded green shoulders with soft shadow in the hollows between them, thin dry grass on the crowns and a little bare brown earth showing through, no rock, no cliffs, strictly green and warm brown \u00b7 the canopy thinning on the rounded green shoulders, scattered crowns on the rising ground",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+        "upper_base_tile_id": "322cc2c7-1716-43cc-b993-ab0bcbcc0c7a"
+      },
+      "jobId": "5ed2d1d3-e019-4d7e-b1ea-3018c1c280a0",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "hills as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -8,
+        "saturation": 0.6,
+        "value": 0.9
+      }
+    },
+    {
+      "id": "terrain.mountain@bamboo",
+      "kind": "tileset",
+      "file": "tilesets32/mountain-on-bamboo.png",
+      "metadata": "tilesets32/mountain-on-bamboo.json",
+      "against": "bamboo",
+      "tool": "create_topdown_tileset",
+      "prompt": "a dense bamboo grove seen from above, tight clumps of slender bamboo canes with narrow leaves, deep green with cool shadow between the clumps, strictly green, no yellow, no gold, no cream \u2197 a modest stony mountain range seen from above, rounded grey rock ridges with shallow clefts, worn and weathered, patches of dry grass on the shoulders, strictly grey stone and dull green, no purple, no blue \u00b7 bamboo clumps ending against grey boulders and scree at the foot of the ridge",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "d6d97023-64c9-4670-b2da-173b5f7c183c",
+        "upper_base_tile_id": "b61b2624-49ab-4b20-8909-456d77142c45"
+      },
+      "jobId": "c1f75b60-af0f-432e-a5cf-6b676cf35bb8",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "mountain as it meets bamboo: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut"
+    },
+    {
+      "id": "terrain.scrub@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/scrub-on-tallgrass.png",
+      "metadata": "tilesets32/scrub-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow \u00b7 the tall blades thinning into drab khaki grass with the first small grey-green shrubs among them, flat level ground throughout, no bank, no cliff, no step, no bare earth, no pale outline",
+      "settings": {
+        "transition_size": 0.0,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a"
+      },
+      "jobId": "4dc1522e-3471-402b-9f5f-a5103cd54985",
+      "date": "2026-08-25",
+      "generations": 2,
+      "note": "scrub as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 4,
+        "saturation": 0.5,
+        "value": 1.08
+      }
+    },
+    {
+      "id": "terrain.forest@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/forest-on-tallgrass.png",
+      "metadata": "tilesets32/forest-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns \u00b7 scattered saplings and low bushes standing in the tall grass at the forest edge",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324"
+      },
+      "jobId": "ea5b3703-a404-4d15-817d-a41ff5cb8e9e",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "forest as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -10,
+        "saturation": 0.62,
+        "value": 0.98
+      }
+    },
+    {
+      "id": "terrain.field@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/field-on-tallgrass.png",
+      "metadata": "tilesets32/field-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink \u00b7 the grass cut back to a low earth bank at the edge of the tilled plots",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+      },
+      "jobId": "4f18a88e-e057-466c-bfbc-6faf299bd945",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "field as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 8,
+        "saturation": 0.62,
+        "value": 0.9
+      }
+    },
+    {
+      "id": "terrain.road@hills",
+      "kind": "tileset",
+      "file": "tilesets32/road-on-hills.png",
+      "metadata": "tilesets32/road-on-hills.json",
+      "against": "hills",
+      "tool": "create_topdown_tileset",
+      "prompt": "low rolling hills seen from above, gentle rounded green shoulders with soft shadow in the hollows between them, thin dry grass on the crowns and a little bare brown earth showing through, no rock, no cliffs, strictly green and warm brown \u2197 bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry \u00b7 the track worn over the rounded shoulders, pale dust cut into the thin grass of the slope",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "322cc2c7-1716-43cc-b993-ab0bcbcc0c7a",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "97dc11f9-1a2c-4fcb-bff9-d728e99ada88",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "road as it meets hills: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "id": "terrain.bamboo@forest",
+      "kind": "tileset",
+      "file": "tilesets32/bamboo-on-forest.png",
+      "metadata": "tilesets32/bamboo-on-forest.json",
+      "against": "forest",
+      "tool": "create_topdown_tileset",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns \u2197 a dense bamboo grove seen from above, tight clumps of slender bamboo canes with narrow leaves, deep green with cool shadow between the clumps, strictly green, no yellow, no gold, no cream \u00b7 broadleaf crowns giving way to tight clumps of slender bamboo canes",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+        "upper_base_tile_id": "d6d97023-64c9-4670-b2da-173b5f7c183c"
+      },
+      "jobId": "144d61fe-cd79-402b-9c83-98f7c1c9ca77",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "bamboo as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 12,
+        "saturation": 0.45,
+        "value": 1.05
+      }
+    },
+    {
+      "id": "water.sea@marsh",
+      "kind": "tileset",
+      "file": "tilesets32/sea-on-marsh.png",
+      "metadata": "tilesets32/sea-on-marsh.json",
+      "against": "marsh",
+      "tool": "create_topdown_tileset",
+      "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds \u2197 deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey \u00b7 reed beds and muddy shallows opening into deep blue water, a band of brackish grey-blue",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+        "upper_base_tile_id": "c61dc6e6-158b-4b77-892c-f144d55a24fa"
+      },
+      "jobId": "139541b2-f5eb-4780-a089-a950ec13be88",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "sea as it meets marsh: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": -5,
+        "saturation": 0.6,
+        "value": 0.8
+      }
+    },
+    {
+      "id": "water.river@shu",
+      "kind": "tileset",
+      "file": "tilesets32/river-on-shu.png",
+      "metadata": "tilesets32/river-on-shu.json",
+      "against": "shu",
+      "tool": "create_topdown_tileset",
+      "prompt": "jagged pale limestone karst peaks seen from above, a crowd of narrow steep-sided towers of pale grey stone with dark green vegetation in the clefts between them, chaotic and broken, strictly pale grey and dark green, no purple, no blue \u2197 a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle \u00b7 the water running in a narrow gorge between pale limestone towers, wet grey stone at its edge",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "7d04e6df-bdce-4be4-9f18-9dbb468e26e6",
+        "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+      },
+      "jobId": "1293d553-3c44-4b05-9273-4136ac7e41c3",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "river as it meets shu: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "frames": 3,
+      "adjust": {
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
+      }
+    },
+    {
+      "id": "terrain.road@shu",
+      "kind": "tileset",
+      "file": "tilesets32/road-on-shu.png",
+      "metadata": "tilesets32/road-on-shu.json",
+      "against": "shu",
+      "tool": "create_topdown_tileset",
+      "prompt": "jagged pale limestone karst peaks seen from above, a crowd of narrow steep-sided towers of pale grey stone with dark green vegetation in the clefts between them, chaotic and broken, strictly pale grey and dark green, no purple, no blue \u2197 bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry \u00b7 the track threading between the pale limestone towers, loose dust worn over broken stone",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "7d04e6df-bdce-4be4-9f18-9dbb468e26e6",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "1e773d09-1f2f-42df-8dd0-f83dfae6c244",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "road as it meets shu: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "id": "terrain.shu@forest",
+      "kind": "tileset",
+      "file": "tilesets32/shu-on-forest.png",
+      "metadata": "tilesets32/shu-on-forest.json",
+      "against": "forest",
+      "tool": "create_topdown_tileset",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns \u2197 jagged pale limestone karst peaks seen from above, a crowd of narrow steep-sided towers of pale grey stone with dark green vegetation in the clefts between them, chaotic and broken, strictly pale grey and dark green, no purple, no blue \u00b7 the canopy breaking against pale limestone towers, dark vegetation crowding their base",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+        "upper_base_tile_id": "7d04e6df-bdce-4be4-9f18-9dbb468e26e6"
+      },
+      "jobId": "9dd004bf-4ac7-4162-96fe-eb9df722c791",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "shu as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -24,
+        "saturation": 0.9,
+        "value": 0.78
+      }
+    },
+    {
+      "id": "terrain.steppe@loess",
+      "kind": "tileset",
+      "file": "tilesets32/steppe-on-loess.png",
+      "metadata": "tilesets32/steppe-on-loess.json",
+      "against": "loess",
+      "tool": "create_topdown_tileset",
+      "prompt": "a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth \u2197 dry steppe grassland seen from above, pale straw and gold wild grass bent by the wind in long streaks, thin tufts of tawny bunchgrass, no bare earth, no brown soil, no sand \u00b7 pale straw grass taking hold on the silt, thin tufts of tawny bunchgrass over dry tan earth",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "a2b75484-379b-452a-b41b-9c6a0db686fb",
+        "upper_base_tile_id": "292d1bd7-d878-4aa1-a0d3-cfecfcf5a0d5"
+      },
+      "jobId": "c8d9fd33-34bc-48ff-b12e-8d4d5ab2ac19",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "steppe as it meets loess: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 14,
+        "saturation": 1.1,
+        "value": 1.1
+      }
+    },
+    {
+      "id": "terrain.bamboo@tallgrass",
+      "kind": "tileset",
+      "file": "tilesets32/bamboo-on-tallgrass.png",
+      "metadata": "tilesets32/bamboo-on-tallgrass.json",
+      "against": "tallgrass",
+      "tool": "create_topdown_tileset",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above \u2197 a dense bamboo grove seen from above, tight clumps of slender bamboo canes with narrow leaves, deep green with cool shadow between the clumps, strictly green, no yellow, no gold, no cream \u00b7 the tall blades giving way to tight clumps of slender bamboo canes",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+        "upper_base_tile_id": "d6d97023-64c9-4670-b2da-173b5f7c183c"
+      },
+      "jobId": "6a0e4ee7-f4a7-433d-bb66-5d634634a45e",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "bamboo as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": 12,
+        "saturation": 0.45,
+        "value": 1.05
+      }
+    },
+    {
+      "id": "terrain.hills@bamboo",
+      "kind": "tileset",
+      "file": "tilesets32/hills-on-bamboo.png",
+      "metadata": "tilesets32/hills-on-bamboo.json",
+      "against": "bamboo",
+      "tool": "create_topdown_tileset",
+      "prompt": "a dense bamboo grove seen from above, tight clumps of slender bamboo canes with narrow leaves, deep green with cool shadow between the clumps, strictly green, no yellow, no gold, no cream \u2197 low rolling hills seen from above, gentle rounded green shoulders with soft shadow in the hollows between them, thin dry grass on the crowns and a little bare brown earth showing through, no rock, no cliffs, strictly green and warm brown \u00b7 bamboo clumps thinning on the rounded green shoulders of the rising ground",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "d6d97023-64c9-4670-b2da-173b5f7c183c",
+        "upper_base_tile_id": "322cc2c7-1716-43cc-b993-ab0bcbcc0c7a"
+      },
+      "jobId": "617bc2d0-576a-4906-80ec-c697126c1011",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "hills as it meets bamboo: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "adjust": {
+        "hue": -8,
+        "saturation": 0.6,
+        "value": 0.9
+      }
+    },
+    {
+      "id": "terrain.mountain@forest",
+      "kind": "tileset",
+      "file": "tilesets32/mountain-on-forest.png",
+      "metadata": "tilesets32/mountain-on-forest.json",
+      "against": "forest",
+      "tool": "create_topdown_tileset",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens \u2197 a modest stony mountain range seen from above, rounded grey rock ridges with shallow clefts, worn and weathered, patches of dry grass on the shoulders, strictly grey stone and dull green, no purple, no blue \u00b7 the outermost treetops breaking against grey boulders and scree at the foot of the ridge",
+      "settings": {
+        "transition_size": 0.5,
+        "detail": "highly detailed",
+        "shading": "medium shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+        "upper_base_tile_id": "b61b2624-49ab-4b20-8909-456d77142c45"
+      },
+      "jobId": "64941d80-fd91-4dc5-942b-18acd4d3a402",
+      "date": "2026-08-25",
+      "generations": 1,
+      "note": "mountain as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut"
     }
   ]
 }

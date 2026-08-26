@@ -24,9 +24,15 @@ import { stageSet, type StageSet } from "./sets";
  * their licence keeps them out of anything that travels.
  */
 
-export type ShowcaseGroup = "ground" | "place" | "decor" | "figure";
+export type ShowcaseGroup = "ground" | "pair" | "place" | "decor" | "figure";
+
+/** The lower ground a transition sheet is drawn against, or null for a plain one. */
+export const lowerOf = (id: string): string | null =>
+  id.includes("@") ? (id.split("@")[1] ?? null) : null;
 
 export const groupOf = (id: string): ShowcaseGroup | null => {
+  // a transition is named for the ground it draws and the one it is laid over
+  if (id.includes("@")) return "pair";
   if (id.startsWith("terrain.") || id.startsWith("water.")) return "ground";
   if (id.startsWith("image.")) return "place";
   if (id.startsWith("decor.")) return "decor";
@@ -37,6 +43,9 @@ export const groupOf = (id: string): ShowcaseGroup | null => {
 /** The ids the map asks for, per group, in the order a reader should meet them. */
 export const CATALOG_ORDER: Record<ShowcaseGroup, string[]> = {
   ground: [...TERRAINS.map(terrainId), ...WATERS.map(waterId)],
+  // a transition answers an adjacency the geography happens to draw, not a
+  // catalog entry, so the set's own ids are the order and they sort by name
+  pair: [],
   place: MARKERS.flatMap(
     (marker) => MARKER_VARIANTS[marker] ?? [markerId(marker)],
   ),
@@ -91,6 +100,12 @@ const SECTIONS: { group: ShowcaseGroup; title: string; blurb: string }[] = [
     title: "Ground",
     blurb:
       "One sixteen-tile corner sheet per biome, expanded to the forty-seven tile blob layout the map addresses. Each patch below is autotiled by the map's own rule, so what shows is the transition, not a swatch.",
+  },
+  {
+    group: "pair",
+    title: "Transitions",
+    blurb:
+      "Where two terrains meet and neither is grass, a sheet of its own draws the boundary. Each was generated against both neighbours' base tiles, so it reproduces them exactly and the map can lay it in place of the plain sheet. Each patch below stands on the ground it is laid over rather than on grass.",
   },
   {
     group: "place",

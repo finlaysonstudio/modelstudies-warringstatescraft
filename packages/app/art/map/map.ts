@@ -287,10 +287,98 @@ export interface BuildTiledMapOptions {
   imageDir?: string;
   tile?: number;
   frames?: number;
+  /**
+   * The pair sheets the set's art layers supply (`terrain.mountain@forest`).
+   * A pair the map has no art for is simply not drawn, so a set that carries
+   * none builds exactly the map it built before pairs existed.
+   */
+  pairs?: ReadonlySet<string>;
 }
 
 export const tilesetIdOf = (ground: Ground): string =>
   isWater(ground) ? `water.${ground}` : `terrain.${ground}`;
+
+/**
+ * The sheet that draws `ground` where it is laid over `lower`: the same blob
+ * layout as the plain sheet, but generated against that terrain rather than
+ * against grass, so the two meet with a drawn boundary. `terrain.mountain@forest`
+ * is the range as it meets the wood. Absent one of these, a ground falls back
+ * to its plain sheet and wears a collar of grass wherever it meets anything
+ * that is not grass.
+ */
+export const pairIdOf = (ground: Ground, lower: Ground): string =>
+  `${tilesetIdOf(ground)}@${lower}`;
+
+/** Where a ground sits in the stack; grass, the bed everything is laid on, is 0. */
+const rankOf = (ground: Ground): number => DRAW_ORDER.indexOf(ground) + 1;
+
+/**
+ * For every cell, the lower ground its boundary is drawn against, or null for
+ * the plain sheet. A tile can carry one transition, so where a cell's edge
+ * faces two terrains the more numerous of them wins and the other is met by
+ * whatever the tile's own surround holds: the alternative is a grass collar
+ * against both. Only a ground drawn beneath this one is a candidate, because
+ * a ground drawn above covers this boundary itself.
+ */
+export const againstOf = (
+  grid: Ground[][],
+  pairs: ReadonlySet<string>,
+): (Ground | null)[][] => {
+  const height = grid.length;
+  const width = grid[0]?.length ?? 0;
+  return Array.from({ length: height }, (_, y) =>
+    Array.from({ length: width }, (_, x) => {
+      const ground = grid[y][x];
+      const rank = rankOf(ground);
+      const counts = new Map<Ground, number>();
+      for (let dy = -1; dy <= 1; dy += 1) {
+        for (let dx = -1; dx <= 1; dx += 1) {
+          if (!dx && !dy) continue;
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+          const neighbour = grid[ny][nx];
+          if (neighbour === ground || rankOf(neighbour) > rank) continue;
+          counts.set(neighbour, (counts.get(neighbour) ?? 0) + 1);
+        }
+      }
+      let best: Ground | null = null;
+      let most = 0;
+      for (const [neighbour, count] of counts) {
+        // ties go to the ground drawn highest, which is the one this cell's
+        // edge is most likely to be read against
+        if (
+          count > most ||
+          (count === most && best && rankOf(neighbour) > rankOf(best))
+        ) {
+          best = neighbour;
+          most = count;
+        }
+      }
+      if (!best || best === "grass") return null;
+      return pairs.has(pairIdOf(ground, best)) ? best : null;
+    }),
+  );
+};
+
+/**
+ * Whether the neighbour at (dx, dy) counts as this ground for the blob mask.
+ * Its own cells do, and so does a cell of a higher ground that draws its
+ * transition from this one: that cell carries the whole boundary inside its
+ * tile, so this ground runs whole beneath it rather than stopping short and
+ * showing an edge of its own under the art meant to cover it.
+ */
+export const groundMask =
+  (grid: Ground[][], against: (Ground | null)[][], ground: Ground) =>
+  (x: number, y: number) =>
+  (dx: number, dy: number): boolean => {
+    const nx = x + dx;
+    const ny = y + dy;
+    if (ny < 0 || ny >= grid.length) return true;
+    if (nx < 0 || nx >= (grid[ny]?.length ?? 0)) return true;
+    if (grid[ny][nx] === ground) return true;
+    return against[ny][nx] === ground;
+  };
 
 const hashAt = (x: number, y: number): number =>
   Math.imul((x * 73856093) ^ (y * 19349663), 0x85ebca6b);
@@ -340,12 +428,13 @@ export const buildTiledMap = ({
   imageDir = "fallback",
   tile = 16,
   frames = 3,
+  pairs = new Set<string>(),
 }: BuildTiledMapOptions): TiledMap => {
+  const against = againstOf(grid, pairs);
   const tilesets: (TiledTileset & { firstgid: number })[] = [];
-  const firstgid: Partial<Record<Ground, number>> = {};
+  const firstgid = new Map<string, number>();
   let next = 1;
-  for (const ground of GROUNDS) {
-    const id = tilesetIdOf(ground);
+  const register = (id: string, ground: Ground): void => {
     const blocks = blocksOf(ground, frames);
     const set = blobTileset({
       name: id,
@@ -357,16 +446,22 @@ export const buildTiledMap = ({
       frames: isWater(ground) ? blocks : 1,
     });
     tilesets.push({ firstgid: next, ...set });
-    firstgid[ground] = next;
+    firstgid.set(id, next);
     next += set.tilecount;
+  };
+  for (const ground of GROUNDS) register(tilesetIdOf(ground), ground);
+  // the pairs this map actually lays, in draw order, so a set's unused art
+  // costs the scene nothing to load
+  for (const ground of DRAW_ORDER) {
+    for (const lower of DRAW_ORDER) {
+      const id = pairIdOf(ground, lower);
+      if (!pairs.has(id) || firstgid.has(id)) continue;
+      const used = against.some((row, y) =>
+        row.some((at, x) => at === lower && grid[y][x] === ground),
+      );
+      if (used) register(id, ground);
+    }
   }
-  const same =
-    (ground: Ground) => (x: number, y: number) => (dx: number, dy: number) => {
-      const nx = x + dx;
-      const ny = y + dy;
-      if (nx < 0 || ny < 0 || nx >= geo.width || ny >= geo.height) return true;
-      return grid[ny][nx] === ground;
-    };
   const layers: TiledLayer[] = [];
   let layerId = 1;
   const tileLayer = (name: string, data: number[]): void => {
@@ -392,7 +487,7 @@ export const buildTiledMap = ({
       const y = Math.floor(cell / geo.width);
       const variant = variantOf(x, y);
       return (
-        (firstgid.grass ?? 1) +
+        (firstgid.get("terrain.grass") ?? 1) +
         variant * BLOB_TILE_COUNT +
         BLOB_FULL +
         flipAt(x, y)
@@ -403,14 +498,18 @@ export const buildTiledMap = ({
     const present = grid.some((row) => row.includes(ground));
     if (!present) continue;
     const data = new Array<number>(cells).fill(0);
+    const mask = groundMask(grid, against, ground);
     for (let y = 0; y < geo.height; y += 1) {
       for (let x = 0; x < geo.width; x += 1) {
         if (grid[y][x] !== ground) continue;
-        const index = blobIndexOf(maskOf(same(ground)(x, y)));
+        const index = blobIndexOf(maskOf(mask(x, y)));
         // a water tile's art is a wave that reads in one direction, and its
         // three frames have to agree, so leave its gids plain
         const flip = index === BLOB_FULL && !isWater(ground) ? flipAt(x, y) : 0;
-        data[y * geo.width + x] = (firstgid[ground] ?? 0) + index + flip;
+        const lower = against[y][x];
+        const sheet = lower ? pairIdOf(ground, lower) : tilesetIdOf(ground);
+        const base = firstgid.get(sheet) ?? firstgid.get(tilesetIdOf(ground));
+        data[y * geo.width + x] = (base ?? 0) + index + flip;
       }
     }
     tileLayer(ground, data);

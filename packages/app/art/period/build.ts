@@ -19,17 +19,18 @@ import {
 } from "../vendor/png";
 import { FACINGS, type SpriteMeta } from "../vendor/slice";
 import {
-  adjustColour,
+  applyFinish,
   cornerPalette,
-  greyBlue,
   keepPalette,
   keyPalette,
   lowerPalette,
+  splitFinish,
   wangBlobSheet,
   variantSheet,
   wangFillSheet,
   waterFrames,
   type ColourAdjustment,
+  type SheetFinish,
   type WangMetadata,
 } from "./tileset";
 
@@ -80,15 +81,35 @@ export interface PeriodTilesetItem extends PeriodRecord {
   /** grey blue-dominant pixels toward luminance by this amount (0..1) */
   desaturate?: number;
   /**
+   * The ground this sheet's lower terrain is: the sheet was generated against
+   * that terrain's own base tile, so its surround is the art the map already
+   * lays there and the two meet with a drawn boundary rather than a cut. The
+   * build then finishes the sheet in two halves, because the lower terrain
+   * wears its own colour correction everywhere else on the map and must wear
+   * it here (`splitFinish`). An id of the form `terrain.mountain@forest` is
+   * the mountain as it meets the forest; the plain id is the sheet the ground
+   * falls back to, which is drawn against grass.
+   */
+  against?: string;
+  /**
    * Key the lower terrain out to transparency so the map's layer beneath
    * shows through the surround instead of a collar of this tileset's own
-   * lower rendering. Off for a `fill` sheet (it is the lower terrain) and
-   * for a biome whose interior shares the lower palette. `upper` keeps only
-   * the upper terrain's own colours, which also drops the collar the
-   * generator paints across the transition.
+   * lower rendering. Wanted whenever the generator drew a lower terrain of
+   * its own invention rather than the one the map lays, and off when the
+   * sheet is chained (`against`), where the surround is the real thing.
+   *
+   * `upper` keeps only the upper terrain's own colours instead. It is the
+   * wrong instrument for any biome whose own tile legitimately carries the
+   * lower terrain's colours — a range with dry grass on its shoulders, a
+   * canopy with sun on it — because the collar then falls inside the palette
+   * it keeps and survives as a halo.
    */
   key?: "lower" | "upper";
-  /** per-channel distance from the lower palette that still keys (default 0) */
+  /**
+   * Per-channel distance from the lower palette that still counts as the
+   * lower terrain (default 0). One predicate serves both readers: what `key`
+   * removes, and which half of a chained sheet `against` finishes as ground.
+   */
   keyTolerance?: number;
   /**
    * Stack this many animation frames, cycling the upper terrain's brightest
@@ -182,6 +203,7 @@ export const assembleSprite = (
 const finishOf = (item: PeriodItem): Record<string, unknown> | undefined => {
   if (item.kind !== "tileset") return undefined;
   const finish: Record<string, unknown> = {};
+  if (item.against) finish.against = item.against;
   if (item.fill) finish.fill = item.fill;
   if (item.desaturate) finish.desaturate = item.desaturate;
   if (item.key) finish.key = item.key;
@@ -211,6 +233,30 @@ export const recordOf = (item: PeriodItem): AssetRecord => {
   };
 };
 
+/**
+ * The finish the ground named by `against` wears everywhere else on the map.
+ * A chained sheet paints that ground in its own surround, so it has to be
+ * corrected the same way or the map shows a patch of differently-lit grass
+ * around every range.
+ */
+export const finishAgainst = (
+  spec: PeriodSpec,
+  against: string,
+): SheetFinish => {
+  const item = spec.items.find(
+    (candidate) =>
+      candidate.kind === "tileset" &&
+      (candidate.id === `terrain.${against}` ||
+        candidate.id === `water.${against}`),
+  ) as PeriodTilesetItem | undefined;
+  if (!item) {
+    throw new BadRequestError(
+      `no tileset item draws "${against}", which another sheet is drawn against`,
+    );
+  }
+  return { desaturate: item.desaturate, adjust: item.adjust };
+};
+
 export interface BuildPeriodOptions {
   spec: PeriodSpec;
   root: string;
@@ -230,12 +276,25 @@ export const buildPeriod = async ({
     const file = `${item.id}.png`;
     if (item.kind === "tileset") {
       const tile = spec.tile;
-      let sheet = await readPng(path.join(root, item.file));
-      if (item.desaturate) sheet = greyBlue(sheet, item.desaturate);
-      if (item.adjust) sheet = adjustColour(sheet, item.adjust);
+      const raw = await readPng(path.join(root, item.file));
       const meta = JSON.parse(
         await readFile(path.join(root, item.metadata), "utf8"),
       ) as WangMetadata;
+      const own: SheetFinish = {
+        desaturate: item.desaturate,
+        adjust: item.adjust,
+      };
+      const beneath = item.against
+        ? finishAgainst(spec, item.against)
+        : undefined;
+      const sheet = beneath
+        ? splitFinish(raw, {
+            lowerPalette: lowerPalette(raw, meta, tile),
+            upperPalette: cornerPalette(raw, meta, "upper", tile),
+            lower: beneath,
+            upper: own,
+          })
+        : applyFinish(raw, own);
       let image = item.fill
         ? wangFillSheet({ sheet, meta, tile, fill: item.fill })
         : wangBlobSheet({ sheet, meta, tile });

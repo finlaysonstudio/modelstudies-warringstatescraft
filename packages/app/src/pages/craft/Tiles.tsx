@@ -10,6 +10,7 @@ import { STAGE_SETS, stageSetOf } from "../../stage/sets";
 import {
   PATCH,
   islandShape,
+  lowerOf,
   patchIndexes,
   showcaseOf,
   type Showcase,
@@ -42,6 +43,8 @@ type LoadState =
       /** the beds a card stands its art on */
       grass?: StageAsset;
       river?: StageAsset;
+      /** every ground a transition may be laid over, by its bare name */
+      beds: Record<string, StageAsset>;
     };
 
 export function Tiles() {
@@ -62,6 +65,16 @@ export function Tiles() {
           tile: manifest.tile,
           grass: manifest.assets["terrain.grass"],
           river: manifest.assets["water.river"],
+          beds: Object.fromEntries(
+            Object.values(manifest.assets)
+              .filter((asset) => !asset.id.includes("@"))
+              .flatMap((asset) => {
+                const [kind, name] = asset.id.split(".");
+                return kind === "terrain" || kind === "water"
+                  ? [[name, asset] as const]
+                  : [];
+              }),
+          ),
         });
       } catch (error) {
         if (!cancelled) {
@@ -81,6 +94,7 @@ export function Tiles() {
   const tile = state.phase === "ready" ? state.tile : set.tile;
   const grass = state.phase === "ready" ? state.grass : undefined;
   const river = state.phase === "ready" ? state.river : undefined;
+  const beds = state.phase === "ready" ? state.beds : {};
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
@@ -176,13 +190,16 @@ export function Tiles() {
           </p>
           <div className="mt-5 grid gap-5 lg:grid-cols-2">
             {section.assets.map((asset) => {
-              // a boat is shown on the water it sails, everything else on the
-              // field the map lays every other terrain over
+              // a boat is shown on the water it sails, a transition on the
+              // ground it is laid over, everything else on the field the map
+              // lays every other terrain over
+              const lower = lowerOf(asset.id);
+              const under = lower ? (beds[lower] ?? grass) : grass;
               const bed = asset.id.endsWith(".boat") ? river : grass;
               return (
                 <Card key={asset.id} asset={asset}>
-                  {section.group === "ground" ? (
-                    <GroundPatch asset={asset} bed={grass} tile={tile} />
+                  {section.group === "ground" || section.group === "pair" ? (
+                    <GroundPatch asset={asset} bed={under} tile={tile} />
                   ) : section.group === "figure" ? (
                     <FigureStrip asset={asset} bed={bed} tile={tile} />
                   ) : (

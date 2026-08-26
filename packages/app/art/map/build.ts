@@ -28,6 +28,7 @@ import {
   rasterMapOf,
   tilesetIdOf,
   type Geography,
+  type Ground,
 } from "./map";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -42,6 +43,42 @@ export interface GroundCoverage {
   /** ground ids whose sheet carries fewer blocks than the map addresses */
   short: string[];
 }
+
+/**
+ * The pair sheets a set's layers supply at its own tile: an id of the form
+ * `terrain.mountain@forest`, whose upper half is a ground the map draws and
+ * whose lower half is the ground it is laid over. A pair at another set's
+ * tile belongs to another map and is left out rather than bound as garbage.
+ */
+export const pairsOf = (
+  set: StageSet,
+  layers: Map<string, VendorManifest>,
+): Set<string> => {
+  const grounds = new Set<string>(GROUNDS);
+  const pairs = new Set<string>();
+  for (const source of set.sources) {
+    const manifest = layers.get(source);
+    if (!manifest) continue;
+    const tile = manifest.tile ?? BASE_TILE;
+    for (const id of Object.keys(manifest.assets)) {
+      const [sheet, lower] = id.split("@");
+      if (!lower || !grounds.has(lower)) continue;
+      const ground = sheet.split(".")[1];
+      if (!grounds.has(ground)) continue;
+      if (tile !== set.tile) {
+        pairs.delete(id);
+        continue;
+      }
+      const blocks = Math.floor(manifest.assets[id].height / (6 * set.tile));
+      if (blocks < blocksOf(ground as Ground)) {
+        pairs.delete(id);
+        continue;
+      }
+      pairs.add(id);
+    }
+  }
+  return pairs;
+};
 
 export const coverageOf = (
   set: StageSet,
@@ -102,17 +139,20 @@ for (const source of new Set(STAGE_SETS.flatMap((set) => set.sources))) {
 
 let failed = false;
 for (const set of STAGE_SETS) {
+  const pairs = pairsOf(set, layers);
   const map = buildTiledMap({
     geo,
     grid,
     tile: set.tile,
     imageDir: set.sources[set.sources.length - 1],
+    pairs,
   });
   writeFileSync(join(publicStage, basename(set.map)), JSON.stringify(map));
   const places = checkPlaces(placesOfTiledMap(map as never));
   const ground = coverageOf(set, layers);
+  const laid = map.tilesets.filter((tileset) => tileset.name.includes("@"));
   console.log(
-    `${set.id}: ${geo.width}×${geo.height} at ${set.tile} px, ${map.layers.length} layers, ${Object.keys(geo.places).length} places (${places.present.length} required present, ${places.missing.length} missing, ${places.extra.length} extra) → ${basename(set.map)}`,
+    `${set.id}: ${geo.width}×${geo.height} at ${set.tile} px, ${map.layers.length} layers, ${Object.keys(geo.places).length} places (${places.present.length} required present, ${places.missing.length} missing, ${places.extra.length} extra), ${laid.length} of ${pairs.size} transitions laid → ${basename(set.map)}`,
   );
   if (places.missing.length)
     console.log(`  missing: ${places.missing.join(", ")}`);
