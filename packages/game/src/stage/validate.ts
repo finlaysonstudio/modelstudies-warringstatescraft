@@ -4,7 +4,7 @@
  * on its retry and the CLI prints.
  */
 import type { Places } from "./places";
-import type { StageBeat, StageDirection, StageScript } from "./types";
+import type { StageBeat, StageDirection, StageSequence } from "./types";
 import { ARCHETYPES, DIRECTIONS, EFFECTS } from "./vocabulary";
 
 export interface ValidationContext {
@@ -146,9 +146,9 @@ export const validateBeat = (
   return errors;
 };
 
-/** every error in the script; an empty list is a valid script */
+/** every error in the sequence; an empty list is a valid one */
 export const validateScript = (
-  script: StageScript,
+  script: StageSequence,
   places: Places,
 ): string[] => {
   const context: ValidationContext = {

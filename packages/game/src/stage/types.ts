@@ -43,7 +43,34 @@ export type StageDirectionKind =
   | "sack"
   | "flood"
   | "extinguish"
-  | "tripods";
+  | "tripods"
+  // The Annals (scope `annals`, `DIRECTIONS`): kinds an authored episode of
+  // the period needs and a played game has no use for. They carry a band so
+  // a caption can be grouped, and `directionsFor("game")` keeps every one of
+  // them out of the coder prompt, the fallback's cue table, and the random
+  // stager.
+  | "decree"
+  | "covenant"
+  | "enthrone"
+  | "usurp"
+  | "partition"
+  | "abdicate"
+  | "audience"
+  | "debate"
+  | "divine"
+  | "funeral"
+  | "flee"
+  | "assassinate"
+  | "duel"
+  | "surrender"
+  | "bury"
+  | "canal-cut"
+  | "tomb-burn"
+  | "mint"
+  | "measure"
+  | "tally-split"
+  | "jade-return"
+  | "oxen";
 
 /** the figures that act; one drawing each, palette-swapped per state */
 export type StageArchetype =
@@ -62,7 +89,27 @@ export type StageArchetype =
   | "hostage"
   | "labourer"
   | "court"
-  | "boat";
+  | "boat"
+  // the Annals: the figures a scripted history needs on the floor of a hall,
+  // in a camp, or at an altar
+  | "dowager"
+  | "chancellor"
+  | "minister"
+  | "eunuch"
+  | "herald"
+  | "guard"
+  | "diviner"
+  | "physician"
+  | "executioner"
+  | "persuader"
+  | "retainer"
+  | "spy"
+  | "engineer"
+  | "horse-archer"
+  | "charioteer"
+  | "drummer"
+  | "standard-bearer"
+  | "ox";
 
 /** the effect a direction plays at its place or on arrival */
 export type StageEffect =
@@ -77,7 +124,18 @@ export type StageEffect =
   | "arrows"
   | "splash"
   | "flood"
-  | "grey";
+  | "grey"
+  // the Annals: weather, light, and the objects an episode turns on
+  | "night"
+  | "rain"
+  | "snow"
+  | "torch"
+  | "jade"
+  | "tally"
+  | "bronze"
+  | "bell"
+  | "stele"
+  | "oxen-fire";
 
 export interface StageActor {
   /** the seat whose figure acts */
@@ -103,7 +161,40 @@ export interface StageDirection {
 }
 
 export type StageBeatKind =
-  "inject" | "brief" | "verdict" | "narrative" | "debrief";
+  | "inject"
+  | "brief"
+  | "verdict"
+  | "narrative"
+  | "debrief"
+  /** the Annals: one authored scene of an episode */
+  | "scene";
+
+/**
+ * A venue is where a beat plays. Only `overworld` is built today; the rest
+ * are the interior and close-exterior sets of the venue plan, declared here
+ * so an episode can name the set it wants before the set exists and the
+ * player can fall back to the country.
+ */
+export type VenueId =
+  | "overworld"
+  | "hall"
+  | "square"
+  | "gates"
+  | "field"
+  | "camp"
+  | "chamber"
+  | "road"
+  | "river"
+  | "works"
+  | "academy"
+  | "altar";
+
+/** a line of dialogue under the stage, written in both languages */
+export interface StageLine {
+  /** a cast key, a people key, or a bare name */
+  speaker: string;
+  text: Record<Language, string>;
+}
 
 /**
  * One beat of the script. Beats are addressed by id from the watch page
@@ -131,6 +222,18 @@ export interface StageBeat {
   fallback?: true;
   /** fallback beats: the cue words that chose the directions */
   cues?: string[];
+  // The four fields below belong to authored sequences (the Annals). The run
+  // path never writes them and every reader treats them as optional.
+  /** where the beat plays; `overworld` when absent */
+  venue?: VenueId;
+  /** the state whose colours and props dress the venue */
+  dressing?: string;
+  /** a title card at the head of the scene */
+  card?: { title: Record<Language, string>; date?: string };
+  /** the subtitle track */
+  lines?: StageLine[];
+  /** lake document ids, rendered under the stage and never near a prompt */
+  cite?: string[];
 }
 
 /** how a staging was produced */
@@ -147,23 +250,35 @@ export interface StageSeat {
   model: string;
 }
 
-export interface StageScript {
+/**
+ * What the stage can play: a list of beats, the seats that act in them, and
+ * the places they address. Two things are sequences — a `StageScript`, coded
+ * from a run's record, and an `Episode` of the Annals, authored from the
+ * period itself — and everything downstream of the data (`validateScript`,
+ * `beatsRevealed`, `planBeat`, `Stage`, `OverworldScene`) takes this base
+ * rather than either of them.
+ */
+export interface StageSequence {
   id: string;
-  model: "stagings";
-  run: string;
-  scenario: string;
+  model: string;
   language: Language;
   naming: Naming;
   createdAt: string;
+  seats: Record<string, StageSeat>;
+  /** every place key the beats address, in first-seen order */
+  places: string[];
+  beats: StageBeat[];
+}
+
+export interface StageScript extends StageSequence {
+  model: "stagings";
+  run: string;
+  scenario: string;
   source: StageSource;
   /** random stagings: the seed that chose the directions */
   seed?: number;
   /** coder stagings: the model that coded the turns */
   coder?: string;
-  seats: Record<string, StageSeat>;
-  /** every place key the beats address, in first-seen order */
-  places: string[];
-  beats: StageBeat[];
   /** coder stagings: turns the fallback stood in for */
   fallbackTurns?: number[];
   /** the coder calls, in the order they were made */

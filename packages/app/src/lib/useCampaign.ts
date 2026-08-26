@@ -9,5 +9,7 @@ import { CAMPAIGNS, type Campaign } from "../campaigns";
 export function useCampaign(): Campaign | null {
   const { pathname } = useLocation();
   const segment = pathname.split("/")[1];
-  return segment === "craft" || segment === "awry" ? CAMPAIGNS[segment] : null;
+  return segment === "craft" || segment === "awry" || segment === "annals"
+    ? CAMPAIGNS[segment]
+    : null;
 }

@@ -12,10 +12,15 @@ export {
   CONSEQUENCES,
   DIRECTIONS,
   DIRECTION_KINDS,
+  directionsFor,
   directionsInBand,
   EFFECTS,
+  GAME_ARCHETYPES,
+  GAME_EFFECTS,
+  GAME_KINDS,
+  scopeOf,
 } from "./vocabulary";
-export type { DirectionRule, PlaceRule } from "./vocabulary";
+export type { DirectionRule, DirectionScope, PlaceRule } from "./vocabulary";
 export { HOMES, homeOf } from "./homes";
 export {
   chapterPlaceKeys,

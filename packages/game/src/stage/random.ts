@@ -16,7 +16,7 @@ import {
 import { placeDirection } from "./fallback";
 import { chapterPlaceKeys, type Places } from "./places";
 import type { StageDirection, StageDirectionKind } from "./types";
-import { DIRECTIONS, DIRECTION_KINDS } from "./vocabulary";
+import { DIRECTIONS, GAME_KINDS } from "./vocabulary";
 
 export interface RandomOptions {
   run: Run;
@@ -51,7 +51,7 @@ const pick = <T>(random: () => number, list: T[]): T =>
 export const randomTurn =
   (random: () => number, chapterKeys: string[]) =>
   (context: TurnContext): TurnChoice => {
-    const kinds = DIRECTION_KINDS.filter((kind) => kind !== "idle");
+    const kinds = GAME_KINDS.filter((kind) => kind !== "idle");
     const keys = chapterKeys.filter((key) => context.places.has(key));
     const seats: TurnChoice["seats"] = {};
     for (const seat of Object.keys(context.seats)) {

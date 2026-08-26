@@ -17,9 +17,20 @@ export type PlaceRule =
   /** `at` optional, the actor's home when absent: a posture at court */
   | "home";
 
+/**
+ * Where a kind may be used. `game` kinds are the played vocabulary: the coder
+ * is offered them, the fallback reads a decision for them, the random stager
+ * draws from them. `annals` kinds belong to the authored episodes of the
+ * period and reach none of those, which is what keeps a history out of a
+ * staging (`stage.spec.ts` holds it).
+ */
+export type DirectionScope = "game" | "annals";
+
 export interface DirectionRule {
   /** 0..7, the ladder band the kind belongs to */
   band: number;
+  /** `game` when absent */
+  scope?: DirectionScope;
   places: PlaceRule;
   actor: StageArchetype;
   effect?: StageEffect;
@@ -29,8 +40,11 @@ export interface DirectionRule {
   martial?: true;
   /** one line for the coder prompt and the key under the stage */
   gloss: string;
-  /** lowercase substrings, en and zh, that pick the kind from a decision */
-  cues: string[];
+  /**
+   * Lowercase substrings, en and zh, that pick the kind from a decision.
+   * Annals kinds carry none: nothing reads a decision for them.
+   */
+  cues?: string[];
 }
 
 export const DIRECTIONS: Record<StageDirectionKind, DirectionRule> = {
@@ -524,9 +538,209 @@ export const DIRECTIONS: Record<StageDirectionKind, DirectionRule> = {
     gloss: "the royal tripods are carried off",
     cues: ["tripod", "鼎", "九鼎"],
   },
+
+  // --- the Annals ------------------------------------------------------
+  // Authored history only. Each carries a band so its caption groups with
+  // the played kinds, and none of them is offered to the coder, the
+  // fallback, or the random stager (`directionsFor`).
+  decree: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "clerk",
+    effect: "scroll",
+    gloss: "a proclamation is read out and posted",
+  },
+  enthrone: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "court",
+    effect: "bell",
+    gloss: "a ruler takes the seat and the bells are struck",
+  },
+  abdicate: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "court",
+    gloss: "a ruler gives the seat away and steps down",
+  },
+  debate: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "scholar",
+    count: 4,
+    gloss: "two files of scholars argue and one of them stands",
+  },
+  divine: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "diviner",
+    gloss: "a shell is cracked and the answer is read off it",
+  },
+  funeral: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "court",
+    count: 4,
+    effect: "bell",
+    gloss: "a body is carried out and the court stands in white",
+  },
+  measure: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "clerk",
+    effect: "bronze",
+    gloss: "one axle, one script, one weight: the standards are laid down",
+  },
+  audience: {
+    band: 1,
+    scope: "annals",
+    places: "home",
+    actor: "envoy",
+    gloss: "a visitor is received before the dais and speaks",
+  },
+  covenant: {
+    band: 1,
+    scope: "annals",
+    places: "at",
+    actor: "court",
+    count: 3,
+    effect: "bronze",
+    gloss: "an oath is sworn over a victim at an altar",
+  },
+  "jade-return": {
+    band: 1,
+    scope: "annals",
+    places: "route",
+    actor: "minister",
+    effect: "jade",
+    gloss: "a treasure is carried out of a court and brought home whole",
+  },
+  mint: {
+    band: 2,
+    scope: "annals",
+    places: "home",
+    actor: "clerk",
+    effect: "coin",
+    gloss: "coin is cast and the weight on it is changed",
+  },
+  "canal-cut": {
+    band: 3,
+    scope: "annals",
+    places: "at",
+    actor: "engineer",
+    count: 4,
+    effect: "splash",
+    gloss: "a channel is cut and the water is let into it",
+  },
+  "tally-split": {
+    band: 4,
+    scope: "annals",
+    places: "route",
+    actor: "herald",
+    effect: "tally",
+    gloss: "the halves of a tiger tally travel to be matched at a camp",
+  },
+  usurp: {
+    band: 5,
+    scope: "annals",
+    places: "home",
+    actor: "chancellor",
+    effect: "banner",
+    gloss: "a minister's house takes the seat it served",
+  },
+  flee: {
+    band: 5,
+    scope: "annals",
+    places: "route",
+    actor: "retainer",
+    count: 2,
+    gloss: "a figure leaves a place at speed and is not received at the next",
+  },
+  assassinate: {
+    band: 6,
+    scope: "annals",
+    places: "at",
+    actor: "assassin",
+    gloss: "a knife comes out where no weapon was allowed",
+  },
+  duel: {
+    band: 6,
+    scope: "annals",
+    places: "at",
+    actor: "general",
+    effect: "arrows",
+    gloss: "two commanders meet and one of them does not leave",
+  },
+  oxen: {
+    band: 6,
+    scope: "annals",
+    places: "route",
+    actor: "ox",
+    count: 6,
+    effect: "oxen-fire",
+    gloss:
+      "beasts with blades on their horns and fire at their tails charge out",
+  },
+  "tomb-burn": {
+    band: 7,
+    scope: "annals",
+    places: "at",
+    actor: "infantry",
+    effect: "fire",
+    gloss: "the ancestral tombs of a house are opened and fired",
+  },
+  bury: {
+    band: 7,
+    scope: "annals",
+    places: "at",
+    actor: "infantry",
+    count: 6,
+    effect: "stele",
+    gloss: "ground is covered over an army and a stone is set on it",
+  },
+  surrender: {
+    band: 7,
+    scope: "annals",
+    places: "at",
+    actor: "court",
+    gloss: "a gate opens without a fight and the seals are handed over",
+  },
+  partition: {
+    band: 7,
+    scope: "annals",
+    places: "at",
+    actor: "court",
+    count: 3,
+    effect: "grey",
+    gloss: "a state is divided among the houses that held it",
+  },
 };
 
 export const DIRECTION_KINDS = Object.keys(DIRECTIONS) as StageDirectionKind[];
+
+export const scopeOf = (kind: StageDirectionKind): DirectionScope =>
+  DIRECTIONS[kind].scope ?? "game";
+
+/**
+ * The kinds one scope may use. `game` is the played vocabulary and is what
+ * the coder prompt, the fallback, and the random stager see; `annals` is
+ * every kind, because an authored episode marches columns and lays sieges
+ * like any other sequence and needs the historical kinds besides.
+ */
+export const directionsFor = (scope: DirectionScope): StageDirectionKind[] =>
+  scope === "annals"
+    ? DIRECTION_KINDS
+    : DIRECTION_KINDS.filter((kind) => scopeOf(kind) === "game");
+
+/** the played vocabulary, computed once */
+export const GAME_KINDS: StageDirectionKind[] = directionsFor("game");
 
 export const ARCHETYPES: StageArchetype[] = [
   "envoy",
@@ -545,6 +759,24 @@ export const ARCHETYPES: StageArchetype[] = [
   "labourer",
   "court",
   "boat",
+  "dowager",
+  "chancellor",
+  "minister",
+  "eunuch",
+  "herald",
+  "guard",
+  "diviner",
+  "physician",
+  "executioner",
+  "persuader",
+  "retainer",
+  "spy",
+  "engineer",
+  "horse-archer",
+  "charioteer",
+  "drummer",
+  "standard-bearer",
+  "ox",
 ];
 
 export const EFFECTS: StageEffect[] = [
@@ -560,7 +792,33 @@ export const EFFECTS: StageEffect[] = [
   "splash",
   "flood",
   "grey",
+  "night",
+  "rain",
+  "snow",
+  "torch",
+  "jade",
+  "tally",
+  "bronze",
+  "bell",
+  "stele",
+  "oxen-fire",
 ];
+
+/**
+ * The archetypes and effects the played vocabulary names. The coder is
+ * offered these rather than the whole list, because an archetype the Annals
+ * added (the ox, the executioner, the dowager) belongs to a scene a model
+ * never codes, and naming it in the prompt is an invitation to reach for it.
+ * Validation still accepts every member of `ARCHETYPES` and `EFFECTS`.
+ */
+export const GAME_ARCHETYPES: StageArchetype[] = ARCHETYPES.filter(
+  (archetype) =>
+    GAME_KINDS.some((kind) => DIRECTIONS[kind].actor === archetype),
+);
+
+export const GAME_EFFECTS: StageEffect[] = EFFECTS.filter((effect) =>
+  GAME_KINDS.some((kind) => DIRECTIONS[kind].effect === effect),
+);
 
 /** the eight bands of plan §3.1, by index */
 export const BANDS: string[] = [
@@ -589,9 +847,9 @@ export const bandOf = (rung: number, ladderLength: number): number => {
   return Math.round((clamped * (BAND_COUNT - 1)) / top);
 };
 
-/** the kinds of one band, in vocabulary order */
+/** the played kinds of one band, in vocabulary order */
 export const directionsInBand = (band: number): StageDirectionKind[] =>
-  DIRECTION_KINDS.filter((kind) => DIRECTIONS[kind].band === band);
+  GAME_KINDS.filter((kind) => DIRECTIONS[kind].band === band);
 
 /** the consequence a band shows at the focus when no interaction derives one */
 export const CONSEQUENCES: Record<number, StageDirectionKind | null> = {

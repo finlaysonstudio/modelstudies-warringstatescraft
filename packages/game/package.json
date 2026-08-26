@@ -7,6 +7,9 @@
   "exports": {
     ".": {
       "import": "./src/index.ts"
+    },
+    "./annals": {
+      "import": "./src/annals/index.ts"
     }
   },
   "dependencies": {

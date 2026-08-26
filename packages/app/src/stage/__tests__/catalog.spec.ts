@@ -2,8 +2,19 @@ import { describe, expect, it } from "vitest";
 
 // the vocabulary module directly: the game package index pulls the node
 // graph, which the app's DOM-lib typecheck refuses
-import { BANDS, DIRECTIONS } from "../../../../game/src/stage/vocabulary";
-import { BAND_LABELS, DIRECTION_CAPTIONS, DIRECTION_RULES } from "../catalog";
+import {
+  ARCHETYPES as GAME_ARCHETYPES,
+  BANDS,
+  DIRECTIONS,
+  EFFECTS as GAME_EFFECTS,
+} from "../../../../game/src/stage/vocabulary";
+import {
+  ARCHETYPES,
+  BAND_LABELS,
+  DIRECTION_CAPTIONS,
+  DIRECTION_RULES,
+  EFFECTS,
+} from "../catalog";
 
 // The catalog is the browser mirror of the stage vocabulary; these hold the
 // mirrored rules, bands, and captions to the game package so drift fails CI.
@@ -18,6 +29,7 @@ describe("catalog mirrors the stage vocabulary", () => {
         kind,
       ).toEqual({
         band: rule.band,
+        ...(rule.scope !== undefined ? { scope: rule.scope } : {}),
         places: rule.places,
         actor: rule.actor,
         ...(rule.effect !== undefined ? { effect: rule.effect } : {}),
@@ -28,6 +40,11 @@ describe("catalog mirrors the stage vocabulary", () => {
 
   it("labels every band", () => {
     expect(BAND_LABELS).toEqual(BANDS);
+  });
+
+  it("mirrors every archetype and effect", () => {
+    expect([...ARCHETYPES]).toEqual(GAME_ARCHETYPES);
+    expect([...EFFECTS]).toEqual(GAME_EFFECTS);
   });
 
   it("captions every direction", () => {

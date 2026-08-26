@@ -211,7 +211,7 @@ export const HEAVY_COIN_TEXT: ScenarioText = {
           "Post two reckonings at the scales and take a toll on the difference",
           "Offer the rival court a rate by weight of metal, fixed at {tao}",
           "Cast a heavy coin of the state's own to outweigh the rival's",
-          "Call the spade-coin courts of the old Jin to a covenant on the roads",
+          "Call the spade-coin courts of the partition to a covenant on the roads",
         ],
       },
       {

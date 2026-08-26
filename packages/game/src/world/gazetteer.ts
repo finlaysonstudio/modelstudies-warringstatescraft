@@ -13,6 +13,9 @@ import type { Language, Naming } from "../types";
  *
  * Real persons have no entry on purpose: seats are courts and bodies, and
  * the played text names no one (see `world/README` in the plan, rule 3).
+ * The Annals do name them, and keep them in `annals/people.ts` rather than
+ * here, so the masked-leak sweep every chapter spec runs cannot pick one up
+ * and no chapter can render one by accident.
  */
 
 export type Localized = Record<Language, string>;
@@ -73,6 +76,16 @@ export const CAST_NAMES: Gazetteer = {
     ["the covenant council", "合从之会"],
     ["the Oathfold", "盟会"],
   ),
+  // Houses the Annals open with and the chapters never meet: the state the
+  // three marquesses came out of, the house they destroyed to do it, the
+  // small states swallowed early, and the herdsmen on Qin's western flank.
+  // They hold no seat in any chapter; they are here so an episode can name
+  // an actor the map can fly a flag for.
+  jin: entry(["Jin", "晋"], ["the Elder March", "旧塞"]),
+  zhi: entry(["the Zhi house", "智氏"], ["the Wardenhouse", "守氏"]),
+  zheng: entry(["Zheng", "郑"], ["Wayhold", "道邦"]),
+  ba: entry(["Ba", "巴"], ["Gorgeland", "峡邦"]),
+  yiqu: entry(["the Yiqu", "义渠"], ["the western herdsmen", "西牧"]),
 };
 
 /** places: cities, passes, rivers, regions */
@@ -124,6 +137,30 @@ export const PLACE_NAMES: Gazetteer = {
     ["the Greatwall range", "长岭"],
   ),
   huai: entry(["the Huai", "淮水"], ["the Southwater", "南水"]),
+  // The Annals' own ground: nineteen places the chapters never name because
+  // no chapter is set at them, and every one of which an episode is.
+  xinzheng: entry(["Xinzheng", "新郑"], ["Newhold", "新邑"]),
+  anyi: entry(["Anyi", "安邑"], ["Calmstead", "宁邑"]),
+  xihe: entry(["the land west of the River", "西河"], ["the Westbank", "西岸"]),
+  guiling: entry(["Guiling", "桂陵"], ["Baytree Rise", "樟丘"]),
+  maling: entry(["Maling", "马陵"], ["Colt Hollow", "驹陉"]),
+  xuzhou: entry(["Xuzhou", "徐州"], ["Elmford", "榆津"]),
+  danyang: entry(["Danyang", "丹阳"], ["Vermeil Bank", "朱岸"]),
+  wuguan: entry(["the Wu pass", "武关"], ["the Thornbar pass", "棘关"]),
+  chuisha: entry(["Chuisha", "垂沙"], ["the Sandreach", "沙陲"]),
+  yique: entry(["Yique", "伊阙"], ["the Cleftgate", "裂门"]),
+  ju: entry(["Ju", "莒"], ["Lastward", "末城"]),
+  jimo: entry(["Jimo", "即墨"], ["Blackwater", "黑水邑"]),
+  mianchi: entry(["Mianchi", "渑池"], ["Frogmere", "蛙池"]),
+  yiling: entry(["Yiling", "夷陵"], ["the Barrow-mounds", "陵冢"]),
+  chen: entry(["Chen", "陈"], ["Reedhold", "苇邑"]),
+  yuyu: entry(["Yuyu", "阏与"], ["the Narrow Hole", "狭窦"]),
+  dujiang: entry(
+    ["the Dujiang weir", "都江堰"],
+    ["the Riversplit weir", "分水堰"],
+  ),
+  yong: entry(["Yong", "雍"], ["Oldcourt", "故庭"]),
+  shouchun: entry(["Shouchun", "寿春"], ["Lastholm", "终邑"]),
 };
 
 /**
@@ -150,6 +187,8 @@ export const FEATURE_NAMES: Gazetteer = {
     ["the Boxgate road", "匣谷道"],
   ),
   plankroad: entry(["the plank roads", "栈道"], ["the trestle roads", "架道"]),
+  changcheng: entry(["the long walls", "长城"], ["the Long Rampart", "长垒"]),
+  si: entry(["the Si river", "泗水"], ["the Sedgewater", "莎水"]),
 };
 
 export const GAZETTEER: Gazetteer = {

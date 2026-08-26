@@ -169,6 +169,26 @@ const SPRITE_COLORS: Record<StageArchetype, { body: string; accent: string }> =
     labourer: { body: "#b07d3a", accent: "#6b4f31" },
     court: { body: "#e8c547", accent: "#b3261e" },
     boat: { body: "#8b5a2b", accent: "#ecf0f1" },
+    // the Annals: the court, the bureau, and the road, plus the one beast
+    // the vocabulary asks for by name
+    dowager: { body: "#7d3c98", accent: "#e8c547" },
+    chancellor: { body: "#4a235a", accent: "#e8c547" },
+    minister: { body: "#1f4e79", accent: "#ecf0f1" },
+    eunuch: { body: "#5d6d7e", accent: "#d4ac0d" },
+    herald: { body: "#c0392b", accent: "#f7dc6f" },
+    guard: { body: "#4d5656", accent: "#c0c0c0" },
+    diviner: { body: "#e8daef", accent: "#5b2c6f" },
+    physician: { body: "#d5f5e3", accent: "#186a3b" },
+    executioner: { body: "#641e16", accent: "#2c2c2c" },
+    persuader: { body: "#1abc9c", accent: "#f3e7c9" },
+    retainer: { body: "#8d6e63", accent: "#d7ccc8" },
+    spy: { body: "#212f3d", accent: "#5d6d7e" },
+    engineer: { body: "#7e5109", accent: "#aeb6bf" },
+    "horse-archer": { body: "#784212", accent: "#f5b942" },
+    charioteer: { body: "#935116", accent: "#e8c547" },
+    drummer: { body: "#a04000", accent: "#f3e7c9" },
+    "standard-bearer": { body: "#922b21", accent: "#f7dc6f" },
+    ox: { body: "#8d6748", accent: "#f2f0e8" },
   };
 
 const SKIN = rgba("#f1c9a5");
@@ -203,7 +223,37 @@ const drawPerson = (
     );
     return;
   }
-  const mounted = archetype === "cavalry" || archetype === "chariot";
+  if (archetype === "ox") {
+    // a beast rather than a person: a long body, a low head, and horns
+    rect(out, fx + 2, fy + 16 + bob, 12, 8, bodyColor);
+    rect(out, fx + 2, fy + 22 + bob, 12, 2, shade(bodyColor, 0.75));
+    const nose = facing === "left" ? fx : fx + 12;
+    rect(out, nose, fy + 18 + bob, 4, 5, shade(bodyColor, 1.1));
+    rect(
+      out,
+      nose + (facing === "left" ? 0 : 3),
+      fy + 15 + bob,
+      1,
+      3,
+      accentColor,
+    );
+    rect(
+      out,
+      nose + (facing === "left" ? 3 : 0),
+      fy + 15 + bob,
+      1,
+      3,
+      accentColor,
+    );
+    for (const lx of [3, 6, 9, 12])
+      rect(out, fx + lx, fy + 24 + bob, 2, 5, DARK);
+    return;
+  }
+  const mounted =
+    archetype === "cavalry" ||
+    archetype === "chariot" ||
+    archetype === "horse-archer" ||
+    archetype === "charioteer";
   if (mounted) {
     // a mount beneath the rider
     rect(
@@ -212,11 +262,11 @@ const drawPerson = (
       fy + 21 + bob,
       14,
       6,
-      archetype === "cavalry" ? HORSE : bodyColor,
+      archetype === "chariot" || archetype === "charioteer" ? bodyColor : HORSE,
     );
     rect(out, fx + 2, fy + 27, 2, 4, DARK);
     rect(out, fx + 12, fy + 27, 2, 4, DARK);
-    if (archetype === "chariot") {
+    if (archetype === "chariot" || archetype === "charioteer") {
       disc(out, fx + 4, fy + 28, 2.2, DARK);
       disc(out, fx + 12, fy + 28, 2.2, DARK);
     } else {
@@ -251,17 +301,26 @@ const drawPerson = (
   switch (archetype) {
     case "general":
     case "court":
+    case "dowager":
+    case "chancellor":
       rect(out, fx + 4, fy + headY - 6 + bob, 8, 3, accentColor);
       break;
     case "scholar":
     case "clerk":
+    case "minister":
+    case "persuader":
+    case "physician":
       rect(out, fx + 5, fy + headY - 6 + bob, 6, 3, rgba("#2c3e50"));
       break;
     case "envoy":
+    case "eunuch":
+    case "retainer":
       rect(out, fx + 5, fy + headY - 5 + bob, 6, 2, accentColor);
       break;
     case "mohist":
     case "assassin":
+    case "spy":
+    case "executioner":
       rect(out, fx + 4, fy + headY - 4 + bob, 8, 5, bodyColor);
       break;
     case "infantry":
@@ -278,6 +337,30 @@ const drawPerson = (
       break;
     case "hostage":
       rect(out, fx + 2, fy + 21 + bob, 12, 1, rgba("#9aa0a6"));
+      break;
+    case "guard":
+      // a helm and a shafted weapon held upright
+      rect(out, fx + 4, fy + headY - 6 + bob, 8, 3, rgba("#c0c0c0"));
+      line(out, fx + 13, fy + 4 + bob, fx + 13, fy + 26 + bob, DARK);
+      break;
+    case "herald":
+    case "standard-bearer":
+      // a staff with a pennant
+      line(out, fx + 13, fy + 3 + bob, fx + 13, fy + 26 + bob, DARK);
+      rect(out, fx + 9, fy + 4 + bob, 4, 5, accentColor);
+      break;
+    case "drummer":
+      disc(out, fx + 12, fy + 19 + bob, 3.4, accentColor);
+      rect(out, fx + 9, fy + 14 + bob, 1, 4, DARK);
+      break;
+    case "diviner":
+      // a cracked shell held up
+      disc(out, fx + 12, fy + 16 + bob, 3, rgba("#f2f0e8"));
+      line(out, fx + 11, fy + 14 + bob, fx + 13, fy + 18 + bob, DARK);
+      break;
+    case "engineer":
+      // a measuring rod across the body
+      line(out, fx + 2, fy + 20 + bob, fx + 14, fy + 15 + bob, rgba("#a67c52"));
       break;
     default:
       break;
@@ -423,6 +506,122 @@ const paintEffect = (
     }
     case "grey": {
       rect(out, fx + 1, 1, 14, 14, rgba("#6c6c6c", Math.round(60 + 120 * t)));
+      break;
+    }
+    // the Annals: weather, light, and the things a scene is about
+    case "night": {
+      rect(out, fx, 0, 16, 16, rgba("#101a2c", Math.round(70 + 90 * t)));
+      for (const [sx, sy] of [
+        [3, 3],
+        [9, 2],
+        [13, 6],
+        [6, 9],
+      ] as const) {
+        if ((sx + frame) % 3 !== 0) continue;
+        setPixel(out, fx + sx, sy, rgba("#f3e7c9"));
+      }
+      break;
+    }
+    case "rain": {
+      const drop = rgba("#8fb8e0", 210);
+      for (let i = 0; i < 6; i += 1) {
+        const x = fx + 1 + i * 2.6;
+        const y = (i * 3 + frame * 3) % 16;
+        line(out, Math.round(x), y, Math.round(x) - 1, y + 3, drop);
+      }
+      break;
+    }
+    case "snow": {
+      const flake = rgba("#f2f0e8", 235);
+      for (let i = 0; i < 7; i += 1) {
+        const x = fx + 1 + ((i * 5 + frame) % 14);
+        const y = (i * 2 + frame * 2) % 16;
+        setPixel(out, x, y, flake);
+      }
+      break;
+    }
+    case "torch": {
+      line(out, fx + 8, 15, fx + 8, 8, rgba("#6b4f31"));
+      const h = 3 + Math.round(2 * Math.abs(Math.sin(frame * 1.5)));
+      triangle(
+        out,
+        [
+          [fx + 6, 8],
+          [fx + 10, 8],
+          [fx + 8, 8 - h],
+        ],
+        rgba("#f5b942"),
+      );
+      disc(out, fx + 8, 9, 4 + t, rgba("#f5b942", Math.round(70 - 40 * t)));
+      break;
+    }
+    case "jade": {
+      const green = rgba("#7fd1ae");
+      ring(out, fx + 8, 8, 5, green);
+      ring(out, fx + 8, 8, 2, green);
+      ring(
+        out,
+        fx + 8,
+        8,
+        5 + 3 * t,
+        rgba("#d5f5e3", Math.round(200 - 170 * t)),
+      );
+      break;
+    }
+    case "tally": {
+      // two halves of a tiger tally closing on each other
+      const gap = Math.round(4 * (1 - t));
+      rect(out, fx + 2 - gap, 6, 6, 5, rgba("#b87333"));
+      rect(out, fx + 8 + gap, 6, 6, 5, rgba("#b87333"));
+      rect(out, fx + 2 - gap, 6, 6, 1, rgba("#d8a05a"));
+      rect(out, fx + 8 + gap, 6, 6, 1, rgba("#d8a05a"));
+      break;
+    }
+    case "bronze": {
+      const body = rgba("#7b8b6f");
+      rect(out, fx + 4, 6 + (frame % 2), 8, 6, body);
+      rect(out, fx + 3, 5 + (frame % 2), 10, 2, shade(body, 1.2));
+      rect(out, fx + 5, 12 + (frame % 2), 1, 3, shade(body, 0.7));
+      rect(out, fx + 10, 12 + (frame % 2), 1, 3, shade(body, 0.7));
+      break;
+    }
+    case "bell": {
+      const body = rgba("#a9946f");
+      const sway = Math.round(1.5 * Math.sin(frame * 1.2));
+      rect(out, fx + 5 + sway, 4, 6, 8, body);
+      rect(out, fx + 4 + sway, 12, 8, 2, shade(body, 0.8));
+      ring(
+        out,
+        fx + 8,
+        9,
+        5 + 4 * t,
+        rgba("#e8c547", Math.round(160 - 140 * t)),
+      );
+      break;
+    }
+    case "stele": {
+      const stoneColor = rgba("#8c8c88");
+      const rise = Math.round(6 * (1 - t));
+      rect(out, fx + 6, 4 + rise, 4, 11, stoneColor);
+      rect(out, fx + 6, 4 + rise, 4, 1, shade(stoneColor, 1.25));
+      rect(out, fx + 4, 14, 8, 2, shade(stoneColor, 0.8));
+      break;
+    }
+    case "oxen-fire": {
+      const horse = rgba("#8d6748");
+      const x = fx + 1 + Math.round(4 * t);
+      rect(out, x, 8, 9, 5, horse);
+      rect(out, x + 8, 6, 2, 3, rgba("#f2f0e8"));
+      const h = 3 + Math.round(3 * Math.abs(Math.sin(frame * 1.4)));
+      triangle(
+        out,
+        [
+          [x - 1, 12],
+          [x + 2, 12],
+          [x, 12 - h],
+        ],
+        rgba("#e25822"),
+      );
       break;
     }
     default:
@@ -607,6 +806,124 @@ const marker = (kind: Marker): Image => {
       rect(out, 0, 11, 16, 2, rgba("#d9c39a"));
       for (let x = 2; x < 16; x += 3) rect(out, x, 5, 1, 7, wood);
       rect(out, 7, 4, 2, 9, shade(wood, 1.2));
+      return out;
+    }
+    // the Annals: what a scripted history puts on the country
+    case "canal": {
+      const out = blankImage(16, 16);
+      rect(out, 0, 5, 16, 6, rgba("#d9c39a"));
+      rect(out, 0, 6, 16, 4, rgba("#3d7bc4"));
+      rect(out, 0, 6, 16, 1, rgba("#8fd3ff"));
+      for (let x = 1; x < 16; x += 4) rect(out, x, 11, 1, 2, shade(wood, 0.8));
+      return out;
+    }
+    case "dike": {
+      const out = blankImage(16, 16);
+      rect(out, 0, 9, 16, 5, rgba("#3d7bc4"));
+      rect(out, 0, 5, 16, 4, rgba("#c9a86a"));
+      rect(out, 0, 5, 16, 1, rgba("#e0c9a6"));
+      for (let x = 2; x < 16; x += 5) rect(out, x, 3, 2, 2, rgba("#7a8c34"));
+      return out;
+    }
+    case "tomb": {
+      const out = blankImage(16, 16);
+      disc(out, 8, 13, 7, shade(rgba("#c9a86a"), 0.85));
+      disc(out, 8, 10, 5.5, rgba("#c9a86a"));
+      rect(out, 7, 3, 2, 5, stone);
+      rect(out, 6, 3, 4, 1, shade(stone, 1.2));
+      return out;
+    }
+    case "wall": {
+      const out = blankImage(32, 16);
+      rect(out, 0, 7, 32, 6, rgba("#a09880"));
+      rect(out, 0, 7, 32, 1, shade(rgba("#a09880"), 1.25));
+      for (let x = 0; x < 32; x += 6) rect(out, x, 4, 4, 3, rgba("#a09880"));
+      rect(out, 14, 2, 5, 11, shade(rgba("#a09880"), 0.85));
+      return out;
+    }
+    case "foundry": {
+      const out = blankImage(16, 16);
+      rect(out, 2, 7, 12, 8, rgba("#5a5a5a"));
+      rect(out, 5, 3, 4, 4, rgba("#4a4a4a"));
+      rect(out, 5, 1, 4, 2, rgba("#8a8a8a"));
+      rect(out, 5, 10, 6, 3, rgba("#e25822"));
+      return out;
+    }
+    case "mint": {
+      const out = blankImage(16, 16);
+      rect(out, 2, 6, 12, 9, rgba("#d9c39a"));
+      rect(out, 1, 4, 14, 3, wall);
+      disc(out, 8, 10, 3.4, rgba("#e8c547"));
+      rect(out, 7, 9, 2, 2, rgba("#d9c39a"));
+      return out;
+    }
+    case "bridge": {
+      const out = blankImage(32, 16);
+      rect(out, 0, 8, 32, 4, rgba("#3d7bc4"));
+      rect(out, 2, 5, 28, 3, wood);
+      rect(out, 2, 5, 28, 1, shade(wood, 1.25));
+      for (const x of [6, 15, 24]) rect(out, x, 8, 2, 5, shade(wood, 0.7));
+      return out;
+    }
+    case "ferry": {
+      const out = blankImage(16, 16);
+      rect(out, 0, 8, 16, 5, rgba("#3d7bc4"));
+      rect(out, 3, 7, 10, 4, wood);
+      rect(out, 4, 11, 8, 1, shade(wood, 0.7));
+      line(out, 8, 1, 8, 7, shade(wood, 0.8));
+      return out;
+    }
+    case "waystation": {
+      const out = blankImage(16, 16);
+      rect(out, 3, 8, 10, 6, rgba("#d9c39a"));
+      triangle(
+        out,
+        [
+          [1, 8],
+          [15, 8],
+          [8, 3],
+        ],
+        shade(wood, 0.8),
+      );
+      rect(out, 7, 11, 2, 3, wood);
+      rect(out, 13, 2, 1, 6, DARK);
+      return out;
+    }
+    case "beacon-tower": {
+      const out = blankImage(16, 32);
+      rect(out, 4, 12, 8, 19, rgba("#a09880"));
+      rect(out, 3, 8, 10, 5, shade(rgba("#a09880"), 1.1));
+      rect(out, 5, 4, 6, 4, wood);
+      triangle(
+        out,
+        [
+          [5, 4],
+          [11, 4],
+          [8, 0],
+        ],
+        rgba("#e25822"),
+      );
+      return out;
+    }
+    case "ruin": {
+      const out = blankImage(16, 16);
+      rect(out, 2, 9, 4, 6, shade(rgba("#d9c39a"), 0.8));
+      rect(out, 8, 11, 3, 4, shade(rgba("#d9c39a"), 0.7));
+      rect(out, 12, 8, 2, 7, shade(rgba("#d9c39a"), 0.8));
+      for (const [rx, ry] of [
+        [6, 14],
+        [11, 15],
+        [3, 15],
+      ] as const)
+        setPixel(out, rx, ry, stone);
+      return out;
+    }
+    case "shrine": {
+      const out = blankImage(16, 16);
+      rect(out, 4, 8, 8, 7, rgba("#f3e7c9"));
+      rect(out, 2, 6, 12, 3, roof);
+      rect(out, 7, 11, 2, 4, wood);
+      rect(out, 6, 2, 4, 4, shade(roof, 0.8));
       return out;
     }
     default:

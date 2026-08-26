@@ -692,6 +692,618 @@
         }
       }
     },
+    "sprite.dowager": {
+      "file": "sprite.dowager.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.chancellor": {
+      "file": "sprite.chancellor.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.minister": {
+      "file": "sprite.minister.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.eunuch": {
+      "file": "sprite.eunuch.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.herald": {
+      "file": "sprite.herald.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.guard": {
+      "file": "sprite.guard.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.diviner": {
+      "file": "sprite.diviner.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.physician": {
+      "file": "sprite.physician.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.executioner": {
+      "file": "sprite.executioner.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.persuader": {
+      "file": "sprite.persuader.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.retainer": {
+      "file": "sprite.retainer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.spy": {
+      "file": "sprite.spy.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.engineer": {
+      "file": "sprite.engineer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.horse-archer": {
+      "file": "sprite.horse-archer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.charioteer": {
+      "file": "sprite.charioteer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.drummer": {
+      "file": "sprite.drummer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.standard-bearer": {
+      "file": "sprite.standard-bearer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.ox": {
+      "file": "sprite.ox.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
     "effect.scroll": {
       "file": "effect.scroll.png",
       "width": 96,
@@ -836,6 +1448,126 @@
         "height": 16
       }
     },
+    "effect.night": {
+      "file": "effect.night.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.rain": {
+      "file": "effect.rain.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.snow": {
+      "file": "effect.snow.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.torch": {
+      "file": "effect.torch.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.jade": {
+      "file": "effect.jade.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.tally": {
+      "file": "effect.tally.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.bronze": {
+      "file": "effect.bronze.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.bell": {
+      "file": "effect.bell.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.stele": {
+      "file": "effect.stele.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
+    "effect.oxen-fire": {
+      "file": "effect.oxen-fire.png",
+      "width": 96,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "effect",
+      "frames": 6,
+      "frame": {
+        "width": 16,
+        "height": 16
+      }
+    },
     "image.court": {
       "file": "image.court.png",
       "width": 32,
@@ -929,6 +1661,90 @@
     },
     "image.weir": {
       "file": "image.weir.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.canal": {
+      "file": "image.canal.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.dike": {
+      "file": "image.dike.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.tomb": {
+      "file": "image.tomb.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.wall": {
+      "file": "image.wall.png",
+      "width": 32,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.foundry": {
+      "file": "image.foundry.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.mint": {
+      "file": "image.mint.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.bridge": {
+      "file": "image.bridge.png",
+      "width": 32,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.ferry": {
+      "file": "image.ferry.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.waystation": {
+      "file": "image.waystation.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.beacon-tower": {
+      "file": "image.beacon-tower.png",
+      "width": 16,
+      "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.ruin": {
+      "file": "image.ruin.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.shrine": {
+      "file": "image.shrine.png",
       "width": 16,
       "height": 16,
       "pack": "fallback",

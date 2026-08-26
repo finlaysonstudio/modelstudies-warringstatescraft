@@ -66,6 +66,21 @@ export const MARKERS = [
   "academy",
   "altar",
   "weir",
+  // the Annals: what a scripted history puts on the country the chapters
+  // never had to name — the works, the walls, the tombs, and what a sacked
+  // city leaves behind
+  "canal",
+  "dike",
+  "tomb",
+  "wall",
+  "foundry",
+  "mint",
+  "bridge",
+  "ferry",
+  "waystation",
+  "beacon-tower",
+  "ruin",
+  "shrine",
 ] as const;
 export type Marker = (typeof MARKERS)[number];
 
@@ -108,6 +123,16 @@ export const EFFECTS: readonly StageEffect[] = [
   "splash",
   "flood",
   "grey",
+  "night",
+  "rain",
+  "snow",
+  "torch",
+  "jade",
+  "tally",
+  "bronze",
+  "bell",
+  "stele",
+  "oxen-fire",
 ];
 
 export const ARCHETYPES: readonly StageArchetype[] = [
@@ -127,6 +152,24 @@ export const ARCHETYPES: readonly StageArchetype[] = [
   "labourer",
   "court",
   "boat",
+  "dowager",
+  "chancellor",
+  "minister",
+  "eunuch",
+  "herald",
+  "guard",
+  "diviner",
+  "physician",
+  "executioner",
+  "persuader",
+  "retainer",
+  "spy",
+  "engineer",
+  "horse-archer",
+  "charioteer",
+  "drummer",
+  "standard-bearer",
+  "ox",
 ];
 
 /**
@@ -151,6 +194,24 @@ export const ARCHETYPE_SPRITES: Record<StageArchetype, string[]> = {
   labourer: ["sprite.labourer"],
   court: ["sprite.court", "sprite.king-gold"],
   boat: ["sprite.boat"],
+  dowager: ["sprite.dowager"],
+  chancellor: ["sprite.chancellor", "sprite.official"],
+  minister: ["sprite.minister", "sprite.official"],
+  eunuch: ["sprite.eunuch"],
+  herald: ["sprite.herald"],
+  guard: ["sprite.guard", "sprite.soldier"],
+  diviner: ["sprite.diviner"],
+  physician: ["sprite.physician"],
+  executioner: ["sprite.executioner"],
+  persuader: ["sprite.persuader", "sprite.sage"],
+  retainer: ["sprite.retainer"],
+  spy: ["sprite.spy"],
+  engineer: ["sprite.engineer", "sprite.monk"],
+  "horse-archer": ["sprite.horse-archer", "sprite.horse"],
+  charioteer: ["sprite.charioteer"],
+  drummer: ["sprite.drummer"],
+  "standard-bearer": ["sprite.standard-bearer"],
+  ox: ["sprite.ox"],
 };
 
 export const terrainId = (terrain: Terrain): string => `terrain.${terrain}`;
@@ -173,9 +234,14 @@ export const seatColor = (index: number): number =>
 /** which place keys a direction takes (mirror of `PlaceRule` in the vocabulary) */
 export type PlaceRule = "route" | "at" | "home";
 
+/** where a kind may be used (a mirror of `DirectionScope`) */
+export type DirectionScope = "game" | "annals";
+
 export interface DirectionRule {
   /** 0..7, the ladder band the kind belongs to */
   band: number;
+  /** `game` when absent: the Annals' own kinds carry `annals` */
+  scope?: DirectionScope;
   places: PlaceRule;
   actor: StageArchetype;
   effect?: StageEffect;
@@ -252,6 +318,136 @@ export const DIRECTION_RULES: Record<StageDirectionKind, DirectionRule> = {
   flood: { band: 7, places: "at", actor: "mohist", effect: "flood" },
   extinguish: { band: 7, places: "home", actor: "court", effect: "grey" },
   tripods: { band: 7, places: "route", actor: "labourer", count: 3 },
+  decree: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "clerk",
+    effect: "scroll",
+  },
+  enthrone: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "court",
+    effect: "bell",
+  },
+  abdicate: { band: 0, scope: "annals", places: "home", actor: "court" },
+  debate: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "scholar",
+    count: 4,
+  },
+  divine: { band: 0, scope: "annals", places: "home", actor: "diviner" },
+  funeral: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "court",
+    count: 4,
+    effect: "bell",
+  },
+  measure: {
+    band: 0,
+    scope: "annals",
+    places: "home",
+    actor: "clerk",
+    effect: "bronze",
+  },
+  audience: { band: 1, scope: "annals", places: "home", actor: "envoy" },
+  covenant: {
+    band: 1,
+    scope: "annals",
+    places: "at",
+    actor: "court",
+    count: 3,
+    effect: "bronze",
+  },
+  "jade-return": {
+    band: 1,
+    scope: "annals",
+    places: "route",
+    actor: "minister",
+    effect: "jade",
+  },
+  mint: {
+    band: 2,
+    scope: "annals",
+    places: "home",
+    actor: "clerk",
+    effect: "coin",
+  },
+  "canal-cut": {
+    band: 3,
+    scope: "annals",
+    places: "at",
+    actor: "engineer",
+    count: 4,
+    effect: "splash",
+  },
+  "tally-split": {
+    band: 4,
+    scope: "annals",
+    places: "route",
+    actor: "herald",
+    effect: "tally",
+  },
+  usurp: {
+    band: 5,
+    scope: "annals",
+    places: "home",
+    actor: "chancellor",
+    effect: "banner",
+  },
+  flee: {
+    band: 5,
+    scope: "annals",
+    places: "route",
+    actor: "retainer",
+    count: 2,
+  },
+  assassinate: { band: 6, scope: "annals", places: "at", actor: "assassin" },
+  duel: {
+    band: 6,
+    scope: "annals",
+    places: "at",
+    actor: "general",
+    effect: "arrows",
+  },
+  oxen: {
+    band: 6,
+    scope: "annals",
+    places: "route",
+    actor: "ox",
+    count: 6,
+    effect: "oxen-fire",
+  },
+  "tomb-burn": {
+    band: 7,
+    scope: "annals",
+    places: "at",
+    actor: "infantry",
+    effect: "fire",
+  },
+  bury: {
+    band: 7,
+    scope: "annals",
+    places: "at",
+    actor: "infantry",
+    count: 6,
+    effect: "stele",
+  },
+  surrender: { band: 7, scope: "annals", places: "at", actor: "court" },
+  partition: {
+    band: 7,
+    scope: "annals",
+    places: "at",
+    actor: "court",
+    count: 3,
+    effect: "grey",
+  },
 };
 
 /** One-line captions per direction (a browser mirror of the vocabulary's glosses). */
@@ -287,4 +483,26 @@ export const DIRECTION_CAPTIONS: Record<
   flood: { en: "floods", zh: "水攻" },
   extinguish: { en: "extinguishes", zh: "灭国" },
   tripods: { en: "carries off the tripods", zh: "迁鼎" },
+  decree: { en: "proclaims", zh: "颁令" },
+  enthrone: { en: "takes the seat", zh: "即位" },
+  abdicate: { en: "gives up the seat", zh: "禅让" },
+  debate: { en: "disputes", zh: "辩论" },
+  divine: { en: "divines", zh: "卜筮" },
+  funeral: { en: "mourns", zh: "举丧" },
+  measure: { en: "sets the standards", zh: "同度量" },
+  audience: { en: "is received", zh: "朝见" },
+  covenant: { en: "swears a covenant", zh: "盟誓" },
+  "jade-return": { en: "brings the treasure home whole", zh: "归璧" },
+  mint: { en: "casts coin", zh: "铸币" },
+  "canal-cut": { en: "cuts a canal", zh: "凿渠" },
+  "tally-split": { en: "matches the tally", zh: "合符" },
+  usurp: { en: "takes the seat it served", zh: "篡位" },
+  flee: { en: "flees", zh: "出奔" },
+  assassinate: { en: "strikes with a knife", zh: "行刺" },
+  duel: { en: "meets in single combat", zh: "决斗" },
+  oxen: { en: "looses the fire oxen", zh: "纵火牛" },
+  "tomb-burn": { en: "fires the tombs", zh: "焚陵" },
+  bury: { en: "buries the army", zh: "坑卒" },
+  surrender: { en: "surrenders", zh: "出降" },
+  partition: { en: "partitions", zh: "瓜分" },
 };

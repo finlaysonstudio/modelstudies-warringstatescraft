@@ -2,6 +2,7 @@
  * The place list a script is validated against, and the check that the
  * map carries every key the chronicle can address.
  */
+import { ANNALS_PLACES } from "../annals/places";
 import { GAZETTEER } from "../world/gazetteer";
 import { listScenarioTexts } from "../scenarios";
 import type { ScenarioBody } from "../scenario/render";
@@ -82,15 +83,17 @@ export const chapterPlaceKeys = (id: string): string[] => {
 };
 
 /**
- * Every place key any registered chapter can address: the gazetteer keys
- * its texts name in either language, and every seat's home. The map is
- * complete when `checkPlaces` reports none missing.
+ * Every place key the country has to carry: the gazetteer keys any
+ * registered chapter's text names in either language, every seat's home,
+ * and the places the Annals are set at. The map is complete when
+ * `checkPlaces` reports none missing.
  */
 export const requiredPlaceKeys = (): string[] => {
   const keys = new Set<string>(Object.values(HOMES));
   for (const text of listScenarioTexts()) {
     for (const key of chapterPlaceKeys(text.id)) keys.add(key);
   }
+  for (const key of ANNALS_PLACES) keys.add(key);
   return [...keys].sort();
 };
 

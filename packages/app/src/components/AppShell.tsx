@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 import { CAMPAIGNS } from "../campaigns";
 
 // Site chrome: three-row grid, main is the only scroll container. The top
-// bar carries the three campaign-level destinations; the Craft sub site adds
-// its own section bar beneath. Branding lives in the bottom bar.
+// bar carries the campaign-level destinations; the Craft sub site adds its
+// own section bar beneath. Branding lives in the bottom bar.
 export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const inCraft = pathname === "/craft" || pathname.startsWith("/craft/");
@@ -19,6 +19,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <NavLink to={CAMPAIGNS.craft.path} label={CAMPAIGNS.craft.title} />
           <Dot />
           <NavLink to={CAMPAIGNS.awry.path} label={CAMPAIGNS.awry.title} />
+          <Dot />
+          <NavLink to={CAMPAIGNS.annals.path} label={CAMPAIGNS.annals.title} />
         </div>
         {inCraft && (
           <div className="border-t border-white/5">

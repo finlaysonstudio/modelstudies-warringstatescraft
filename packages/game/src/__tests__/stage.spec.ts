@@ -14,7 +14,10 @@ import {
   cueHits,
   DIRECTIONS,
   DIRECTION_KINDS,
+  directionsFor,
   directionsInBand,
+  GAME_KINDS,
+  scopeOf,
   EFFECTS,
   fallbackStage,
   HOMES,
@@ -165,14 +168,32 @@ describe("the direction vocabulary", () => {
   });
 
   it("covers every band and declares a known actor and effect for every kind", () => {
-    const bands = new Set(DIRECTION_KINDS.map((kind) => DIRECTIONS[kind].band));
+    const bands = new Set(GAME_KINDS.map((kind) => DIRECTIONS[kind].band));
     expect([...bands].sort()).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
     for (const kind of DIRECTION_KINDS) {
       const rule = DIRECTIONS[kind];
       expect(ARCHETYPES).toContain(rule.actor);
       if (rule.effect) expect(EFFECTS).toContain(rule.effect);
-      expect(rule.cues.length).toBeGreaterThan(0);
       expect(rule.gloss.length).toBeGreaterThan(0);
+      // a played kind is chosen by reading a decision, so it needs cues; an
+      // authored one is written down and never read for
+      if (scopeOf(kind) === "game") {
+        expect(rule.cues?.length, kind).toBeGreaterThan(0);
+      } else {
+        expect(rule.cues, kind).toBeUndefined();
+      }
+    }
+  });
+
+  it("keeps the Annals out of the played vocabulary", () => {
+    expect(GAME_KINDS.length).toBeLessThan(DIRECTION_KINDS.length);
+    for (const kind of GAME_KINDS) expect(scopeOf(kind)).toBe("game");
+    expect(directionsFor("annals")).toEqual(DIRECTION_KINDS);
+    // nothing the coder is offered, and nothing the fallback can reach
+    for (const band of [0, 1, 2, 3, 4, 5, 6, 7]) {
+      for (const kind of directionsInBand(band)) {
+        expect(scopeOf(kind), kind).toBe("game");
+      }
     }
   });
 

@@ -505,6 +505,138 @@ export const MARKER_NOTES: Record<Marker | "region", LegendNote> = {
       zh: "其名或先于今之诸侯，亦后于将来之国。都可迁，城可改，而两山之间地名不易。",
     },
   },
+  canal: {
+    title: { en: "Canal", zh: "渠" },
+    what: {
+      en: "A cut channel carrying water, and boats, where no river ran.",
+      zh: "凿地引水之道，兼可通舟。",
+    },
+    history: {
+      en: "The most productive thing a state of this age could spend a hundred thousand labourers on. A canal waters terrace ground that grain would not grow on, and it carries the tax of one province to the army of another at a fraction of what carts cost.",
+      zh: "此世发十万之众所为，无过于此者。渠可溉舄卤之田，又可漕一方之粟以给他方之军，其费不及车运什一。",
+    },
+  },
+  dike: {
+    title: { en: "Dike", zh: "堤" },
+    what: {
+      en: "A raised earth bank holding a river off the plain it would otherwise take.",
+      zh: "筑土以束水，使不没平原。",
+    },
+    history: {
+      en: "The River runs above its own plain, so the plain lives behind banks that have to be maintained every year by whoever holds them. A dike is therefore both the most expensive public work on the map and a weapon: cutting one drowns a neighbour's harvest without crossing his border.",
+      zh: "河高于野，故平原恃堤而居，岁岁修之。堤者，天下之大役，亦兵器也：决之则邻国之稼尽没，而未尝出境。",
+    },
+  },
+  tomb: {
+    title: { en: "Royal tombs", zh: "陵" },
+    what: {
+      en: "The burial mounds of a ruling house, walled and served by a guard.",
+      zh: "王室之葬，有垣有守。",
+    },
+    history: {
+      en: "A house's tombs are where its claim is kept. Sacrifice at them is what makes a ruler the heir rather than the occupant, which is why an invader who wanted to end a house rather than beat it burned the tombs first and the palace second.",
+      zh: "宗庙陵墓，所以存其统也。祭于陵者乃为嗣君，非徒据其位。故欲绝人之国者，先焚其陵，后毁其宫。",
+    },
+  },
+  wall: {
+    title: { en: "Long wall", zh: "长城" },
+    what: {
+      en: "A rammed-earth wall run along a ridge line, with towers at intervals.",
+      zh: "循山脊而筑之土垣，间置亭燧。",
+    },
+    history: {
+      en: "Not a border and not a barrier a large army could not cross. It is a line that a raiding party cannot cross with stolen cattle: it slows them at the wall, and the beacons on it buy the garrison behind the time to ride out.",
+      zh: "非疆界，亦非大军所不能越。其所御者，掠而归之骑耳：牛马难逾，烽火既举，后军得以出。",
+    },
+  },
+  foundry: {
+    title: { en: "Foundry", zh: "冶" },
+    what: {
+      en: "Furnaces, bellows, and casting floors where ore becomes iron.",
+      zh: "鼓橐、炉冶、范铸之所。",
+    },
+    history: {
+      en: "Cast iron came early here and changed two things at once: a plough that turns heavy soil, and a crossbow lock that a peasant can be handed and taught in a week. States that held ore and charcoal together taxed the trade heavily and often took it into their own hands.",
+      zh: "铸铁之术早成，其效有二：耒耜可耕重壤，弩机可授农夫而旬日能用。有矿有炭者，重税其利，往往收为官营。",
+    },
+  },
+  mint: {
+    title: { en: "Mint", zh: "钱府" },
+    what: {
+      en: "The office that casts coin and stamps the weight it is worth.",
+      zh: "铸钱之官，权其轻重而刊之。",
+    },
+    history: {
+      en: "Coin here is cast, not struck, in shapes that say whose it is: spades in the old northern lands, knives in the east, round coin with a square hole in the west. Because the metal is the value, a state that casts light coin at the old face is taxing everyone who holds the old coin.",
+      zh: "钱皆范铸，其形示国：北地为布，东方为刀，西方为圜金方孔。以铜为直，故轻其铸而仍其名者，是取民之藏钱而税之。",
+    },
+  },
+  bridge: {
+    title: { en: "Bridge", zh: "梁" },
+    what: {
+      en: "A timber crossing on piles, wide enough for carts.",
+      zh: "架木为梁，可通车。",
+    },
+    history: {
+      en: "Rarer than fords and worth more: it carries a supply train in weather that would stop a crossing. It is also the thing a retreating army destroys behind it, which is why the accounts of a campaign so often turn on who reached one first.",
+      zh: "梁少于津而用重：虽水涨亦可运粮。退军必焚之，故战纪所载，常在先至者。",
+    },
+  },
+  ferry: {
+    title: { en: "Ferry", zh: "渡" },
+    what: {
+      en: "A landing with boats, where the water is too deep to wade.",
+      zh: "水深不可涉，置舟以济。",
+    },
+    history: {
+      en: "The ferry is the ford's expensive cousin: it needs boats, boatmen, and a landing on both banks, so it belongs to whoever holds the near bank. Refusing passage at one is an act short of war that stops an army as thoroughly as a battle would.",
+      zh: "渡者，津之费者也：须舟、须人、须两岸之埠，故属近岸之主。绝人之渡，未及于战，而止敌之师与战同。",
+    },
+  },
+  waystation: {
+    title: { en: "Way station", zh: "亭传" },
+    what: {
+      en: "A posting house on a trunk road: fresh horses, a bed, a register of who passed.",
+      zh: "官道之传舍：易马、宿客、录过所之人。",
+    },
+    history: {
+      en: "The nervous system of an administered state. Relays of horses carry an order faster than any army moves, and the register at each station is how a man travelling without a permit is caught — including, once, the minister who wrote the permit law.",
+      zh: "治国之脉络也。传马递书，速于行军；过所之籍，所以得无传而行者——其法之所自出者，亦尝为之所困。",
+    },
+  },
+  "beacon-tower": {
+    title: { en: "Beacon tower", zh: "烽燧" },
+    what: {
+      en: "A tower on high ground with wood and dung ready to fire.",
+      zh: "据高而筑，积薪与粪以待举。",
+    },
+    history: {
+      en: "Smoke by day, fire by night, and a signal that outruns a horse: a raid on the frontier is known at the court behind it within hours. The system is old enough by this period that its most famous story is already a cautionary one about lighting the beacons for no reason.",
+      zh: "昼则燔烟，夜则举火，其速过于走马：边有寇警，数刻而闻于内。其制已古，故有戏举烽火而失信于诸侯之戒。",
+    },
+  },
+  ruin: {
+    title: { en: "Ruin", zh: "墟" },
+    what: {
+      en: "A walled place that was taken and not rebuilt.",
+      zh: "城破而不复者。",
+    },
+    history: {
+      en: "Sacking a city was rarely the point; moving its households onto another register usually was. What is left when the register moves is a wall with nothing behind it, and the map of this period is dotted with them long after the campaign that made them is forgotten.",
+      zh: "屠城非其本意，徙其民而著于新籍者，乃所欲也。民徙则城空，垣存而无人。当时之图，处处有之，而致之之役久已忘矣。",
+    },
+  },
+  shrine: {
+    title: { en: "Shrine", zh: "祠" },
+    what: {
+      en: "A small enclosure where a local spirit or a dead man is served.",
+      zh: "小垣之内，祀土神或先人。",
+    },
+    history: {
+      en: "Below the ancestral altars of the houses lies a much older layer of local worship: the god of a river reach, the spirit of a hill, an official the district decided to keep feeding after his death. States that reformed hard tended to leave these alone, because putting them down cost more than they were worth.",
+      zh: "宗庙之下，尚有里社之祀：一川之神、一丘之灵、殁而民不忍绝食之吏。变法之国多不禁焉，禁之所费，逾其所得。",
+    },
+  },
 };
 
 /** The note for one picked thing, or null when nothing is said about it. */
@@ -708,6 +840,28 @@ export const FEATURE_NOTES: Record<string, FeatureNote> = {
     history: {
       en: "Beams set into holes cut in the rock, with planks laid over them, hung above gorges that have no floor to build on. They are how a grain convoy reaches Shu at all, they can be burned behind an army to show it is not coming back, and the state that built them turned a mountain province into a supply base.",
       zh: "凿石置梁，铺木其上，悬于绝谷之侧。粟运入蜀，唯此可通；亦可焚之以示不返。筑之者遂化山郡为军储之地。",
+    },
+  },
+  changcheng: {
+    title: { en: "The long walls", zh: "长城" },
+    what: {
+      en: "Rammed-earth walls run along the ridges: the northern lines of Zhao and Yan against the steppe, and the eastern line of Qi along the hills above the plain.",
+      zh: "循山脊而筑之土垣：赵、燕之北垣以御漠北，齐之东垣循丘而下临平原。",
+    },
+    history: {
+      en: "Every one of these is older than the single wall that later joined them up, and none of them was built to stop an army. They were built to stop a raid getting home: horsemen can cross a wall, but not with cattle, and the beacons on it reach the garrison before the raiders reach the grass.",
+      zh: "皆先于后世连而为一者，其筑亦非以御大军。所御者，掠而归之骑也：骑可越垣，牛马不可；烽火之至，先于寇之出塞。",
+    },
+  },
+  si: {
+    title: { en: "The Si", zh: "泗水" },
+    what: {
+      en: "The river of the eastern plain, running south past the small states between Qi and Chu to join the Huai.",
+      zh: "东方平原之川，南流经齐楚间小国而注于淮。",
+    },
+    history: {
+      en: "The country along it held Lu, Song, Xue, and a dozen smaller houses, which is why the phrase for that whole world was the states of the Si. They were swallowed one by one, and by the last generation of this period there was nothing between Qi and Chu but the river itself. One of the royal tripods is supposed to have gone into it and never been recovered.",
+      zh: "其上有鲁、宋、薛及小国十数，故并称泗上诸侯。皆以次见并，至末世齐楚之间唯余此水而已。九鼎之一，相传沉于泗而不可得。",
     },
   },
 };

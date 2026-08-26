@@ -5,9 +5,11 @@ import { Link, useParams } from "react-router-dom";
 import { Bar, Section } from "../../components/PonyBenchPrimitives";
 import { campaignOf } from "../../campaigns";
 import { libraryOf, type LibraryGame } from "../../lib/library";
+import { episodeForChapter } from "../../lib/annals";
 import type {
   BasicReport,
   Estimate,
+  EpisodeIndexEntry,
   MaterialsRendering,
   Report,
   RunIndexEntry,
@@ -253,6 +255,8 @@ export function Chapter() {
           {materials.createdAt.slice(0, 10)}
         </p>
       </header>
+
+      <InTheRecord chapter={chapterBase} />
 
       <Results
         base={chapterBase}
@@ -799,5 +803,60 @@ function SchemaFields({
         </div>
       ))}
     </dl>
+  );
+}
+
+/**
+ * The episode of the Annals this chapter bends. The pairing is the argument
+ * for the exhibit: a reader watches what happened, then plays the seat that
+ * had to decide it. The panel is silent when no episode anchors the chapter
+ * and when the Annals are not built, because it is an addition to the page
+ * rather than part of it.
+ */
+function InTheRecord({ chapter }: { chapter: string }) {
+  const [episodes, setEpisodes] = useState<EpisodeIndexEntry[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch("/data/episodes.json");
+        if (!res.ok) return;
+        const list = (await res.json()) as EpisodeIndexEntry[];
+        if (!cancelled) setEpisodes(list);
+      } catch {
+        // the Annals are not built: the panel simply does not appear
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const episode = episodeForChapter(episodes, chapter);
+  if (!episode) return null;
+  return (
+    <section className="mt-10" aria-label="In the record">
+      <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+        In the record
+      </p>
+      <div className="mt-3 max-w-3xl rounded-sm border border-white/10 px-4 py-3">
+        <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+          {episode.date}
+        </p>
+        <p className="mt-1 text-base text-white">{episode.title.en}</p>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+          {episode.blurb.en}
+        </p>
+        <p className="mt-3 text-xs leading-relaxed text-zinc-600">
+          This chapter bends that episode at its decision point and puts a model
+          in the seat. The Annals are an exhibit and are scored by nobody.
+        </p>
+        <Link
+          to={`/annals/${episode.id}`}
+          className="mt-3 inline-block cursor-pointer rounded-sm border border-white/10 px-3 py-1.5 font-plex-mono text-[10px] tracking-wide text-zinc-300 uppercase hover:bg-white/5"
+        >
+          watch it on the stage
+        </Link>
+      </div>
+    </section>
   );
 }

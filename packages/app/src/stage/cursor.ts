@@ -1,4 +1,4 @@
-import type { StageBeat, StageScript } from "../lib/types";
+import type { StageBeat, StageSequence } from "../lib/types";
 
 /** The watch page's reveal steps, in the order the page shows them. */
 export type WatchStepKind =
@@ -54,7 +54,7 @@ export const beatsRevealed = ({
   done = false,
   context,
 }: {
-  script: StageScript;
+  script: StageSequence;
   steps: WatchStep[];
   revealed: number;
   done?: boolean;

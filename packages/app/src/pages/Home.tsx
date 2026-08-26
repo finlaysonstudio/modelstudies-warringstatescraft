@@ -9,6 +9,8 @@ interface Headline {
   craftGames: number;
   awryGames: number;
   awryModels: number;
+  annalsEpisodes: number;
+  annalsAnchored: number;
 }
 
 // Home: the project in one line, the method in one paragraph, and the two
@@ -20,15 +22,19 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
     let cancelled = false;
     void (async () => {
       try {
-        const [runsRes, studiesRes] = await Promise.all([
+        const [runsRes, studiesRes, episodesRes] = await Promise.all([
           fetch("/data/runs.json"),
           fetch("/data/studies.json"),
+          fetch("/data/episodes.json"),
         ]);
         const runs = runsRes.ok
           ? ((await runsRes.json()) as RunIndexEntry[])
           : [];
         const studies = studiesRes.ok
           ? ((await studiesRes.json()) as StudyIndexEntry[])
+          : [];
+        const episodes = episodesRes.ok
+          ? ((await episodesRes.json()) as { chapter?: string }[])
           : [];
         const library = libraryOf(runs);
         const craft = library.filter(
@@ -50,6 +56,8 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
             craftGames: craft.length,
             awryGames: awry.length,
             awryModels: awryModels.size,
+            annalsEpisodes: episodes.length,
+            annalsAnchored: episodes.filter((entry) => entry.chapter).length,
           });
         }
       } catch {
@@ -85,7 +93,7 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
         )}
       </header>
 
-      <div className="mt-12 grid gap-6 md:grid-cols-2">
+      <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <CampaignCard
           campaign={CAMPAIGNS.craft}
           stats={
@@ -109,6 +117,21 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
               : []
           }
           delay={120}
+        />
+        <CampaignCard
+          campaign={CAMPAIGNS.annals}
+          stats={
+            headline
+              ? [
+                  { value: headline.annalsEpisodes, label: "episodes staged" },
+                  {
+                    value: headline.annalsAnchored,
+                    label: "chapters anchored",
+                  },
+                ]
+              : []
+          }
+          delay={180}
         />
       </div>
     </div>

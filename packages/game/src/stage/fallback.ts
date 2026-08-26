@@ -16,7 +16,7 @@ import {
 import { focusOf, mentionsOf, mergeMentions } from "./mentions";
 import type { Places } from "./places";
 import type { StageDirection, StageDirectionKind, StageSeat } from "./types";
-import { DIRECTIONS, DIRECTION_KINDS, directionsInBand } from "./vocabulary";
+import { DIRECTIONS, GAME_KINDS, directionsInBand } from "./vocabulary";
 
 export interface FallbackOptions {
   run: Run;
@@ -34,8 +34,10 @@ interface Hit {
 /** cue hits per kind over a lowercased text */
 export const cueHits = (text: string): Hit[] => {
   const lower = text.toLowerCase();
-  return DIRECTION_KINDS.map((kind) => {
-    const cues = DIRECTIONS[kind].cues.filter((cue) => lower.includes(cue));
+  return GAME_KINDS.map((kind) => {
+    const cues = (DIRECTIONS[kind].cues ?? []).filter((cue) =>
+      lower.includes(cue),
+    );
     return { kind, hits: cues.length, cues };
   });
 };

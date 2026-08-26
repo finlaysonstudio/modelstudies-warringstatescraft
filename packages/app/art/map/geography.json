@@ -1189,6 +1189,71 @@
           56
         ]
       ]
+    },
+    {
+      "terrain": "cobble",
+      "path": [
+        [
+          58,
+          3
+        ],
+        [
+          68,
+          4
+        ],
+        [
+          78,
+          5
+        ],
+        [
+          88,
+          6
+        ]
+      ],
+      "width": 1,
+      "feature": "changcheng"
+    },
+    {
+      "terrain": "cobble",
+      "path": [
+        [
+          96,
+          33
+        ],
+        [
+          102,
+          36
+        ],
+        [
+          108,
+          39
+        ]
+      ],
+      "width": 1,
+      "feature": "changcheng"
+    },
+    {
+      "terrain": "river",
+      "path": [
+        [
+          99,
+          41
+        ],
+        [
+          100,
+          47
+        ],
+        [
+          98,
+          52
+        ],
+        [
+          96,
+          55
+        ]
+      ],
+      "width": 1,
+      "feature": "si"
     }
   ],
   "places": {
@@ -1468,6 +1533,100 @@
     "yue": {
       "x": 118,
       "y": 78
+    },
+    "yong": {
+      "x": 23,
+      "y": 42,
+      "marker": "town"
+    },
+    "yuyu": {
+      "x": 56,
+      "y": 24,
+      "marker": "pass"
+    },
+    "anyi": {
+      "x": 55,
+      "y": 38,
+      "marker": "court"
+    },
+    "xihe": {
+      "x": 47,
+      "y": 33
+    },
+    "mianchi": {
+      "x": 54,
+      "y": 44,
+      "marker": "town"
+    },
+    "yique": {
+      "x": 57,
+      "y": 50,
+      "marker": "pass"
+    },
+    "xinzheng": {
+      "x": 66,
+      "y": 53,
+      "marker": "court"
+    },
+    "guiling": {
+      "x": 77,
+      "y": 44,
+      "marker": "camp"
+    },
+    "maling": {
+      "x": 86,
+      "y": 38,
+      "marker": "camp"
+    },
+    "xuzhou": {
+      "x": 92,
+      "y": 47,
+      "marker": "altar"
+    },
+    "ju": {
+      "x": 106,
+      "y": 38,
+      "marker": "town"
+    },
+    "jimo": {
+      "x": 113,
+      "y": 31,
+      "marker": "town"
+    },
+    "wuguan": {
+      "x": 38,
+      "y": 53,
+      "marker": "pass"
+    },
+    "danyang": {
+      "x": 44,
+      "y": 61,
+      "marker": "camp"
+    },
+    "chuisha": {
+      "x": 52,
+      "y": 66,
+      "marker": "camp"
+    },
+    "yiling": {
+      "x": 54,
+      "y": 73,
+      "marker": "tomb"
+    },
+    "chen": {
+      "x": 76,
+      "y": 58,
+      "marker": "court"
+    },
+    "shouchun": {
+      "x": 92,
+      "y": 58,
+      "marker": "court"
+    },
+    "dujiang": {
+      "x": 16,
+      "y": 65,
+      "marker": "weir"
     }
   },
   "decor": [

@@ -2,6 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
+import { AnnalsHome } from "./pages/annals/AnnalsHome";
+import { EpisodePage } from "./pages/annals/EpisodePage";
 import { AwryHome } from "./pages/awry/AwryHome";
 import { Chapter } from "./pages/craft/Chapter";
 import { Interview } from "./pages/craft/Interview";
@@ -39,6 +41,8 @@ if (root) {
             <Route path="/awry" element={<AwryHome />} />
             <Route path="/awry/studies/:id" element={<StudyView />} />
             <Route path="/awry/replays/:id" element={<RunReplay />} />
+            <Route path="/annals" element={<AnnalsHome />} />
+            <Route path="/annals/:id" element={<EpisodePage />} />
             <Route path="*" element={<Home notFound />} />
           </Routes>
         </AppShell>

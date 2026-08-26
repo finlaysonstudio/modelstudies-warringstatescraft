@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
-import type { StageBeat, StageScript } from "../lib/types";
+import type { StageBeat, StageScript, StageSequence } from "../lib/types";
 import { loadStageManifest } from "./assets";
 import type { StagePlan } from "./beats";
 import { DIRECTION_CAPTIONS } from "./catalog";
@@ -18,7 +18,8 @@ import {
 import { DEFAULT_STAGE_SET, stageSet, type StageSetId } from "./sets";
 
 export interface StageProps {
-  script: StageScript;
+  /** what the stage plays: a run's coded script or an authored episode */
+  script: StageSequence;
   /** The beats the page has revealed so far, in reveal order. */
   beats: StageBeat[];
   /** place key → label */
@@ -276,10 +277,7 @@ export function Stage({
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between px-3 py-2">
         {eyebrow !== false && (
           <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
-            {eyebrow ??
-              `Stage · ${script.source}${
-                script.seed !== undefined ? ` · seed ${script.seed}` : ""
-              }`}
+            {eyebrow ?? sourceEyebrow(script)}
             {status.phase === "ready"
               ? ` · ${set.title} · ${status.sources} art`
               : ""}
@@ -398,6 +396,19 @@ export function Stage({
     </section>
   );
 }
+
+/**
+ * The default eyebrow: how a staging was produced. An authored sequence names
+ * itself instead, through the `eyebrow` prop, so the fallback only has to
+ * answer a coded script.
+ */
+const sourceEyebrow = (script: StageSequence): string => {
+  const coded = script as Partial<StageScript>;
+  if (!coded.source) return "Stage";
+  return `Stage · ${coded.source}${
+    coded.seed !== undefined ? ` · seed ${coded.seed}` : ""
+  }`;
+};
 
 /**
  * A name as a heading. The gazetteer drops the English article, which leaves

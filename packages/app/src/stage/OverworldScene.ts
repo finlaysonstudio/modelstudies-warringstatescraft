@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-import type { StageBeat, StageScript } from "../lib/types";
+import type { StageBeat, StageSequence } from "../lib/types";
 import { spriteFor } from "./assets";
 import {
   facingOf,
@@ -137,7 +137,7 @@ export interface OverworldCallbacks {
 
 export interface OverworldConfig extends OverworldCallbacks {
   manifest: StageManifest;
-  script: StageScript;
+  script: StageSequence;
   /** place key → label in the run's language */
   names: Record<string, string>;
   /** seat → colour */

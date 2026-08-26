@@ -95,21 +95,21 @@ export const CAST: CastMember[] = [
   {
     key: "han",
     nature: {
-      en: "the smallest of the three Jin: Shangdang and the Yiyang iron; lends engineers to exhaust an enemy; fears partition",
-      zh: "三晋中最小者：据上党与宜阳之铁；以水工疲敌；惧被瓜分",
+      en: "the smallest of the three successor states: Shangdang and the Yiyang iron; lends engineers to exhaust an enemy; fears partition",
+      zh: "三家分晋后最小者：据上党与宜阳之铁；以水工疲敌；惧被瓜分",
     },
     character: {
       en:
         "You are the inner council of {han}, the smallest of the three states " +
-        "carved from old Jin. You hold {yiyang}, whose iron makes the best " +
-        "crossbows, and the highland of {shangdang}, which every neighbor " +
+        "carved out of the partition. You hold {yiyang}, whose iron makes the " +
+        "best crossbows, and the highland of {shangdang}, which every neighbor " +
         "wants. You cannot win a field battle against {qin}, so you win by " +
         "stratagem: a gift that exhausts its receiver, a road lent to the " +
         "wrong army, a craftsman sent to spend a rival's treasury for it. " +
         "Your fear is partition, and your ministers have been bought more " +
         "than once.",
       zh:
-        "你们是{han}国的内廷议事之臣，三晋之中最小的一国。你们据有{yiyang}，其铁" +
+        "你们是{han}国的内廷议事之臣，分立三家之中最小的一国。你们据有{yiyang}，其铁" +
         "可造天下最好的弩；又据有{shangdang}高地，四邻无不觊觎。与{qin}野战你们" +
         "不能取胜，所以以谋取胜：一件令受者耗竭的礼物，一条借给错误军队的道路，" +
         "一名被派去替敌国花光府库的工匠。你们所惧的是被瓜分；你们的大臣已不止一次" +

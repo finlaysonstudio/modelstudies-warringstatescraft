@@ -27,8 +27,10 @@ import {
   ARCHETYPES,
   BANDS,
   DIRECTIONS,
-  DIRECTION_KINDS,
   EFFECTS,
+  GAME_ARCHETYPES,
+  GAME_EFFECTS,
+  GAME_KINDS,
 } from "./vocabulary";
 
 export interface BuildStageScriptOptions {
@@ -73,7 +75,7 @@ export const stageFormat = (
   const direction = {
     type: "object",
     properties: {
-      kind: { type: "string", enum: DIRECTION_KINDS },
+      kind: { type: "string", enum: GAME_KINDS },
       seat: { type: "string", enum: seats },
       archetype: { type: "string", enum: ARCHETYPES },
       from: { type: ["string", "null"], enum: [...places, null] },
@@ -141,7 +143,7 @@ export const coderSystem = (context: TurnContext, places: string[]): string => {
     renderName(GAZETTEER, key, naming, language) ??
     renderName(GAZETTEER, key, "chronicle", "en") ??
     key;
-  const vocabulary = DIRECTION_KINDS.map((kind) => {
+  const vocabulary = GAME_KINDS.map((kind) => {
     const rule = DIRECTIONS[kind];
     return `- ${kind} (band ${rule.band}, ${placeRuleText(kind)}; ${rule.actor}${rule.count ? ` ×${rule.count}` : ""}${rule.effect ? `, ${rule.effect}` : ""}): ${rule.gloss}`;
   }).join("\n");
@@ -167,8 +169,8 @@ export const coderSystem = (context: TurnContext, places: string[]): string => {
     "",
     "Place rules: `from`/`to` directions walk from one place key to another (distinct keys); `at` directions happen at one key; a home direction happens at the seat's own court. Use place keys exactly as listed. `against` names the seat on the other side of a battle, siege, raid, gate, or refusal, never the actor's own seat. `count` is the size of a group (1 to 16); `effect` is what plays on arrival. Leave a field null when the kind does not take it.",
     "",
-    `Archetypes: ${ARCHETYPES.join(", ")}.`,
-    `Effects: ${EFFECTS.join(", ")}.`,
+    `Archetypes: ${GAME_ARCHETYPES.join(", ")}.`,
+    `Effects: ${GAME_EFFECTS.join(", ")}.`,
     "",
     "Seats:",
     seatLines,

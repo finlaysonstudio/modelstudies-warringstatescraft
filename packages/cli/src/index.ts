@@ -686,6 +686,17 @@ const stageRun = async ({
   return { script, built: true };
 };
 
+/** one episode as a line: where it sits, what it plays, and what it anchors */
+const episodeLine = (
+  episode: import("@modelstudies/game/annals").Episode,
+  built?: boolean,
+) =>
+  `${built === undefined ? "" : built ? "→ " : "= "}${episode.id.padEnd(22)} ${episode.date.padEnd(18)}` +
+  ` scenes:${String(episode.beats.length).padStart(2)}` +
+  `  places:${String(episode.places.length).padStart(2)}` +
+  `  venues:${episode.venues.length}` +
+  (episode.chapter ? `  chapter:${episode.chapter}` : "");
+
 const stagingLine = (script: import("@modelstudies/game").StageScript) => {
   const usage = (script.usage ?? []).reduce(
     (sum, item) => sum + (item.usd ?? 0),
@@ -865,6 +876,129 @@ program
       if (check.extra.length) console.log(`extra: ${check.extra.join(" ")}`);
     }
     if (check.missing.length) process.exitCode = 1;
+  });
+
+/**
+ * The Annals: authored episodes built to `var/episodes/<id>.json` and served
+ * to the app like any other store model. Nothing here is played or scored,
+ * so there is no model call and no cost.
+ */
+program
+  .command("annals-build")
+  .description(
+    "Build the Annals to var/episodes/<id>.json; --id builds one episode, --force rewrites what is already there",
+  )
+  .option("--id <id>", "one episode instead of all of them")
+  .option("--force", "rewrite episodes already on record")
+  .option(
+    "--map <path>",
+    "the Tiled map to validate against (default packages/app/public/stage/overworld.tmj)",
+  )
+  .action(async (options) => {
+    const { getEpisode, listEpisodes } =
+      await import("@modelstudies/game/annals");
+    const { validateScript } = await import("@modelstudies/game");
+    const { FileStore } = await import("@modelstudies/workflows");
+    const { BadRequestError } = await import("@jaypie/errors");
+    const log = createCliLog("annals-build");
+    const store = new FileStore(varRoot());
+    const { places, file } = await stagePlaces(log, options.map);
+    if (file) log.trace(`validating against ${file}`);
+    const episodes = options.id ? [getEpisode(options.id)] : listEpisodes();
+    let built = 0;
+    for (const episode of episodes) {
+      const errors = validateScript(episode, places);
+      if (errors.length) {
+        throw new BadRequestError(
+          `${episode.id}: ${errors.length} invalid direction(s)\n  ${errors.join("\n  ")}`,
+        );
+      }
+      const existing = await store.get("episodes", episode.id);
+      if (existing && !options.force) {
+        console.log(episodeLine(episode, false));
+        continue;
+      }
+      if (existing) await store.update(episode);
+      else await store.create(episode);
+      built += 1;
+      console.log(episodeLine(episode, true));
+    }
+    console.error(
+      `${built} of ${episodes.length} episode(s) written to var/episodes/`,
+    );
+  });
+
+program
+  .command("annals-check")
+  .description(
+    "Validate every episode against the map and report the acts, the venues, the chapters anchored, and the places the map still lacks",
+  )
+  .option(
+    "--map <path>",
+    "the Tiled map (default packages/app/public/stage/overworld.tmj)",
+  )
+  .option("--json", "print the check as JSON")
+  .action(async (options) => {
+    const { ACTS, ANNALS_PLACES, listEpisodes } =
+      await import("@modelstudies/game/annals");
+    const { validateScript } = await import("@modelstudies/game");
+    const log = createCliLog("annals-check");
+    const { places, file } = await stagePlaces(log, options.map);
+    const episodes = listEpisodes();
+    const invalid = episodes
+      .map((episode) => ({
+        id: episode.id,
+        errors: validateScript(episode, places),
+      }))
+      .filter((entry) => entry.errors.length > 0);
+    const addressed = new Set(episodes.flatMap((episode) => episode.places));
+    const missing = ANNALS_PLACES.filter((key) => !places.has(key));
+    const unstaged = ANNALS_PLACES.filter((key) => !addressed.has(key));
+    const venues = [...new Set(episodes.flatMap((episode) => episode.venues))];
+    const chapters = episodes
+      .filter((episode) => episode.chapter)
+      .map((episode) => `${episode.chapter} ← ${episode.id}`);
+    if (options.json) {
+      console.log(
+        JSON.stringify(
+          {
+            file,
+            episodes: episodes.length,
+            acts: ACTS.map((act) => ({
+              id: act.id,
+              episodes: episodes.filter((episode) => episode.act === act.id)
+                .length,
+            })),
+            venues,
+            chapters,
+            invalid,
+            missing,
+            unstaged,
+          },
+          null,
+          2,
+        ),
+      );
+    } else {
+      for (const act of ACTS) {
+        const inAct = episodes.filter((episode) => episode.act === act.id);
+        console.log(
+          `${String(act.order).padStart(2)}. ${act.title.en.padEnd(24)} ${act.date.padEnd(18)} ${String(inAct.length).padStart(2)} episode(s)`,
+        );
+        for (const episode of inAct) console.log(`    ${episodeLine(episode)}`);
+      }
+      console.log(`\nvenues: ${venues.join(" ")}`);
+      console.log(`chapters anchored: ${chapters.length}`);
+      for (const line of chapters) console.log(`  ${line}`);
+      if (missing.length) console.log(`places missing: ${missing.join(" ")}`);
+      if (unstaged.length)
+        console.log(`places declared but never staged: ${unstaged.join(" ")}`);
+      for (const entry of invalid) {
+        console.log(`${entry.id}: ${entry.errors.length} error(s)`);
+        for (const error of entry.errors) console.log(`  ${error}`);
+      }
+    }
+    if (invalid.length || missing.length) process.exitCode = 1;
   });
 
 program

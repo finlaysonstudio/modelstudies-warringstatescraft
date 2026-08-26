@@ -352,6 +352,68 @@ async function buildIndex(): Promise<object[]> {
   return index;
 }
 
+interface EpisodeFile {
+  id?: string;
+  act?: string;
+  order?: number;
+  date?: string;
+  year?: number;
+  title?: Record<string, string>;
+  blurb?: Record<string, string>;
+  chapter?: string;
+  venues?: string[];
+  places?: string[];
+  beats?: unknown[];
+}
+
+/**
+ * One entry per episode of the Annals, in chronicle order. The timeline
+ * reads this; the player page reads the episode itself.
+ */
+async function buildEpisodeIndex(): Promise<object[]> {
+  const dir = modelDir("episodes");
+  let files: string[] = [];
+  try {
+    files = (await readdir(dir)).filter((file) => file.endsWith(".json"));
+  } catch {
+    return [];
+  }
+  const index: {
+    id: string;
+    act: string;
+    order: number;
+    date: string;
+    year: number;
+    title: Record<string, string>;
+    blurb: Record<string, string>;
+    chapter?: string;
+    venues: string[];
+    sceneCount: number;
+  }[] = [];
+  for (const file of files) {
+    try {
+      const episode = JSON.parse(
+        await readFile(path.join(dir, file), "utf8"),
+      ) as EpisodeFile;
+      index.push({
+        id: episode.id ?? file.replace(/\.json$/, ""),
+        act: episode.act ?? "",
+        order: episode.order ?? 0,
+        date: episode.date ?? "",
+        year: episode.year ?? 0,
+        title: episode.title ?? { en: "", zh: "" },
+        blurb: episode.blurb ?? { en: "", zh: "" },
+        ...(episode.chapter ? { chapter: episode.chapter } : {}),
+        venues: episode.venues ?? [],
+        sceneCount: Array.isArray(episode.beats) ? episode.beats.length : 0,
+      });
+    } catch {
+      // unreadable file: skip it
+    }
+  }
+  return index.sort((a, b) => a.order - b.order);
+}
+
 const handler: Connect.NextHandleFunction = (req, res, next) => {
   const url = (req.url ?? "").split("?")[0];
   if (req.method !== "GET" || !url.startsWith("/data/")) {
@@ -389,6 +451,11 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       res.end(JSON.stringify(await buildStagingIndex()));
       return;
     }
+    if (url === "/data/episodes.json") {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(await buildEpisodeIndex()));
+      return;
+    }
     // every probe of one sitting: var/probe/<interviewId>#<item>.json
     const probes = /^\/data\/probes\/([A-Za-z0-9._-]+)\.json$/.exec(url);
     if (probes) {
@@ -414,7 +481,7 @@ const handler: Connect.NextHandleFunction = (req, res, next) => {
       return;
     }
     const match =
-      /^\/data\/(runs|studies|scorecards|scenarios|reports|fielding|interview|instruments|stagings|world)\/([A-Za-z0-9._-]+)\.json$/.exec(
+      /^\/data\/(runs|studies|scorecards|scenarios|reports|fielding|interview|instruments|stagings|episodes|world)\/([A-Za-z0-9._-]+)\.json$/.exec(
         url,
       );
     if (match) {

@@ -935,7 +935,30 @@ export type StageDirectionKind =
   | "sack"
   | "flood"
   | "extinguish"
-  | "tripods";
+  | "tripods"
+  // the Annals (scope "annals"): authored history only, never coded
+  | "decree"
+  | "enthrone"
+  | "abdicate"
+  | "debate"
+  | "divine"
+  | "funeral"
+  | "measure"
+  | "audience"
+  | "covenant"
+  | "jade-return"
+  | "mint"
+  | "canal-cut"
+  | "tally-split"
+  | "usurp"
+  | "flee"
+  | "assassinate"
+  | "duel"
+  | "oxen"
+  | "tomb-burn"
+  | "bury"
+  | "surrender"
+  | "partition";
 
 export type StageArchetype =
   | "envoy"
@@ -953,7 +976,26 @@ export type StageArchetype =
   | "hostage"
   | "labourer"
   | "court"
-  | "boat";
+  | "boat"
+  // the Annals: the court, the bureau, the road, and the one beast
+  | "dowager"
+  | "chancellor"
+  | "minister"
+  | "eunuch"
+  | "herald"
+  | "guard"
+  | "diviner"
+  | "physician"
+  | "executioner"
+  | "persuader"
+  | "retainer"
+  | "spy"
+  | "engineer"
+  | "horse-archer"
+  | "charioteer"
+  | "drummer"
+  | "standard-bearer"
+  | "ox";
 
 export type StageEffect =
   | "scroll"
@@ -967,7 +1009,18 @@ export type StageEffect =
   | "arrows"
   | "splash"
   | "flood"
-  | "grey";
+  | "grey"
+  // the Annals: weather, light, and the things a scene is about
+  | "night"
+  | "rain"
+  | "snow"
+  | "torch"
+  | "jade"
+  | "tally"
+  | "bronze"
+  | "bell"
+  | "stele"
+  | "oxen-fire";
 
 export interface StageActor {
   seat: string;
@@ -986,7 +1039,27 @@ export interface StageDirection {
 }
 
 export type StageBeatKind =
-  "inject" | "brief" | "verdict" | "narrative" | "debrief";
+  "inject" | "brief" | "verdict" | "narrative" | "debrief" | "scene";
+
+/** where a beat plays; only `overworld` is built today */
+export type VenueId =
+  | "overworld"
+  | "hall"
+  | "square"
+  | "gates"
+  | "field"
+  | "camp"
+  | "chamber"
+  | "road"
+  | "river"
+  | "works"
+  | "academy"
+  | "altar";
+
+export interface StageLine {
+  speaker: string;
+  text: Record<Language, string>;
+}
 
 export interface StageBeat {
   /** `t1.inject`, `t1.brief.qin`, `t1.verdict`, `t1.narrative`, `debrief` */
@@ -1004,6 +1077,12 @@ export interface StageBeat {
   /** the coder fell back for this turn */
   fallback?: true;
   cues?: string[];
+  /** authored sequences only (the Annals); the run path never writes these */
+  venue?: VenueId;
+  dressing?: string;
+  card?: { title: Record<Language, string>; date?: string };
+  lines?: StageLine[];
+  cite?: string[];
 }
 
 export type StageSource = "fallback" | "coder" | "random";
@@ -1015,22 +1094,82 @@ export interface StageSeat {
   model: string;
 }
 
-export interface StageScript {
+/**
+ * What the stage can play: beats, the seats that act in them, and the places
+ * they address. A `StageScript` is one coded from a run; an `Episode` is one
+ * authored from the period. Everything downstream takes the base.
+ */
+export interface StageSequence {
   id: string;
-  model: "stagings";
-  run: string;
-  scenario: string;
+  model: string;
   language: Language;
   naming: Naming;
   createdAt: string;
-  source: StageSource;
-  seed?: number;
-  coder?: string;
   seats: Record<string, StageSeat>;
   places: string[];
   beats: StageBeat[];
+}
+
+export interface StageScript extends StageSequence {
+  model: "stagings";
+  run: string;
+  scenario: string;
+  source: StageSource;
+  seed?: number;
+  coder?: string;
   fallbackTurns?: number[];
   usage?: UsageItem[];
+}
+
+// ---------------------------------------------------------------------------
+// The Annals (mirror of packages/game/src/annals/types.ts)
+// ---------------------------------------------------------------------------
+
+export type Localized = Record<Language, string>;
+
+/** the five acts, in chronicle order */
+export type ActId =
+  "partition" | "reformers" | "kings" | "ledger" | "unification";
+
+export interface Act {
+  id: ActId;
+  order: number;
+  date: string;
+  title: Localized;
+  blurb: Localized;
+}
+
+/** what an episode leaves changed on the country */
+export type WorldChange =
+  { place: string; marker: string } | { state: string; status: "extinguished" };
+
+/** one authored episode of the Annals, played on the same overworld */
+export interface Episode extends StageSequence {
+  model: "episodes";
+  act: ActId;
+  order: number;
+  date: string;
+  year: number;
+  title: Localized;
+  blurb: Localized;
+  chapter?: string;
+  sources: string[];
+  venues: VenueId[];
+  effects?: WorldChange[];
+}
+
+/** one entry of the generated /data/episodes.json index */
+export interface EpisodeIndexEntry {
+  id: string;
+  act: ActId;
+  order: number;
+  date: string;
+  year: number;
+  title: Localized;
+  blurb: Localized;
+  chapter?: string;
+  venues: VenueId[];
+  sceneCount: number;
 }
 
 /** one entry of the generated /data/stagings.json index */
