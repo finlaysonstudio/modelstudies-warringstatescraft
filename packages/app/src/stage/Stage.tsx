@@ -38,8 +38,12 @@ export interface StageProps {
   interactive?: boolean;
   /** whether the camera flies to each beat (default true) */
   follow?: boolean;
-  /** replaces the "Stage · source" part of the eyebrow */
-  eyebrow?: string;
+  /**
+   * Replaces the "Stage · source" part of the eyebrow; `false` hides the strip
+   * altogether, for a page that is the map itself rather than a replay playing
+   * on one and has already said in its own text what the reader is looking at.
+   */
+  eyebrow?: string | false;
   /** which art set to play on (default `DEFAULT_STAGE_SET`) */
   set?: StageSetId;
 }
@@ -270,22 +274,24 @@ export function Stage({
         style={{ aspectRatio: `${view.width} / ${view.height}` }}
       />
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between px-3 py-2">
-        <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
-          {eyebrow ??
-            `Stage · ${script.source}${
-              script.seed !== undefined ? ` · seed ${script.seed}` : ""
-            }`}
-          {status.phase === "ready"
-            ? ` · ${set.title} · ${status.sources} art`
-            : ""}
-        </p>
+        {eyebrow !== false && (
+          <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
+            {eyebrow ??
+              `Stage · ${script.source}${
+                script.seed !== undefined ? ` · seed ${script.seed}` : ""
+              }`}
+            {status.phase === "ready"
+              ? ` · ${set.title} · ${status.sources} art`
+              : ""}
+          </p>
+        )}
         {status.phase === "loading" && (
-          <p className="rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] text-zinc-500">
+          <p className="ml-auto rounded-sm bg-black/70 px-2 py-1 font-plex-mono text-[10px] text-zinc-500">
             loading…
           </p>
         )}
         {status.phase === "error" && (
-          <p className="font-plex-mono text-[10px] text-red-400">
+          <p className="ml-auto font-plex-mono text-[10px] text-red-400">
             {status.message}
           </p>
         )}
@@ -347,7 +353,13 @@ export function Stage({
         </div>
       )}
       {pick && note && (
-        <div className="absolute top-10 left-3 max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3">
+        <div
+          className={clsx(
+            "absolute left-3 max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3",
+            // the note sits under the eyebrow where there is one
+            eyebrow === false ? "top-3" : "top-10",
+          )}
+        >
           <div className="flex items-start justify-between gap-x-3">
             <p className="font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
               {KIND_LABELS[pick.kind][language]}

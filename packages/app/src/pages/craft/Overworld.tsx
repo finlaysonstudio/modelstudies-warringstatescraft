@@ -419,7 +419,7 @@ export function Overworld() {
           interactive
           follow={follow}
           set={set.id}
-          eyebrow="Overworld · drag or scroll · pinch zooms · click to read"
+          eyebrow={false}
         />
       </section>
 
