@@ -11,13 +11,17 @@ import type {
  * always finds something under each id.
  */
 /**
- * The terrain vocabulary. Four of these are the mountain family: `mountain`
+ * The terrain vocabulary. Five of these are the mountain family: `mountain`
  * is the generic lesser range every unnamed chain wears, and `qinling`,
- * `taihang`, and `shu` are the three ranges the chronicle's geography gives a
- * character of their own (the folded southern wall, the eastern scarp, the
- * western crags). `hills` is the low rolling swell. The grasses are `grass`
+ * `taihang`, `luliang`, and `shu` are the four ranges the chronicle's
+ * geography gives a character of their own (the folded southern wall, the
+ * eastern scarp, the loess-mantled ridges above the gorge, the western
+ * crags). `hills` is the low rolling swell. The grasses are `grass`
  * (the ground every other terrain is laid over), `tallgrass` on the wet river
- * plains, `scrub` on the dry margins, and `steppe` in the north.
+ * plains, `scrub` on the dry margins, and `steppe` in the north. `road`,
+ * `cobble`, and `wall` are the built country: the last is the long walls, the
+ * rammed-earth lines the northern states and Qi ran along the ridges, drawn as
+ * a line the way a road is rather than as an area.
  */
 export const TERRAINS = [
   "grass",
@@ -27,12 +31,14 @@ export const TERRAINS = [
   "steppe",
   "road",
   "cobble",
+  "wall",
   "forest",
   "bamboo",
   "hills",
   "mountain",
   "qinling",
   "taihang",
+  "luliang",
   "shu",
   "marsh",
   "field",
@@ -40,7 +46,13 @@ export const TERRAINS = [
 export type Terrain = (typeof TERRAINS)[number];
 
 /** The mountain family: `mountain` is the generic style for lesser ranges. */
-export const RANGES = ["mountain", "qinling", "taihang", "shu"] as const;
+export const RANGES = [
+  "mountain",
+  "qinling",
+  "taihang",
+  "luliang",
+  "shu",
+] as const;
 
 export const WATERS = ["river", "sea"] as const;
 export type Water = (typeof WATERS)[number];
@@ -81,6 +93,11 @@ export const MARKERS = [
   "beacon-tower",
   "ruin",
   "shrine",
+  // the natural wonders: what the country itself put there, rather than what
+  // a court built on it
+  "falls",
+  "peak",
+  "gorge",
 ] as const;
 export type Marker = (typeof MARKERS)[number];
 

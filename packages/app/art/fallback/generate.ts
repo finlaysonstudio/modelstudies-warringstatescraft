@@ -64,12 +64,14 @@ const TERRAIN_COLORS: Record<
   steppe: { fill: "#b3ab66", rim: "#8f884e", dots: "#a49d5c" },
   road: { fill: "#8a6a45", rim: "#6b4f31" },
   cobble: { fill: "#8c8c88", rim: "#63635f", dots: "#7a7a76" },
+  wall: { fill: "#b39b72", rim: "#7d6845" },
   forest: { fill: "#2f6b2f", rim: "#1f4a1f", dots: "#255a25" },
   bamboo: { fill: "#7fae3c", rim: "#5e872b", dots: "#71a034" },
   hills: { fill: "#6f8f52", rim: "#55703c", dots: "#638047" },
   mountain: { fill: "#7d7468", rim: "#4e463d", dots: "#6a6257" },
   qinling: { fill: "#5e5f63", rim: "#3a3b3f", dots: "#4e4f53" },
   taihang: { fill: "#4c5057", rim: "#2f3238", dots: "#3f434a" },
+  luliang: { fill: "#8a7a5c", rim: "#5c5140", dots: "#75674e" },
   shu: { fill: "#a29a86", rim: "#726b5c", dots: "#8e8674" },
   marsh: { fill: "#4f7a5a", rim: "#3a5c44", dots: "#436a4e" },
   field: { fill: "#9bb04a", rim: "#7a8c34", dots: "#889a3e" },
@@ -924,6 +926,46 @@ const marker = (kind: Marker): Image => {
       rect(out, 2, 6, 12, 3, roof);
       rect(out, 7, 11, 2, 4, wood);
       rect(out, 6, 2, 4, 4, shade(roof, 0.8));
+      return out;
+    }
+    case "peak": {
+      const out = blankImage(16, 24);
+      triangle(
+        out,
+        [
+          [0, 23],
+          [16, 23],
+          [8, 1],
+        ],
+        stone,
+      );
+      triangle(
+        out,
+        [
+          [8, 23],
+          [16, 23],
+          [8, 1],
+        ],
+        shade(stone, 0.7),
+      );
+      return out;
+    }
+    case "falls": {
+      const out = blankImage(16, 16);
+      rect(out, 0, 0, 16, 6, rgba("#7a6a3c"));
+      rect(out, 0, 6, 16, 2, rgba("#f3f3ef"));
+      rect(out, 0, 8, 16, 8, rgba("#dfe6e4"));
+      rect(out, 0, 5, 3, 11, shade(stone, 0.6));
+      rect(out, 13, 5, 3, 11, shade(stone, 0.6));
+      return out;
+    }
+    case "gorge": {
+      const out = blankImage(16, 16);
+      rect(out, 0, 0, 6, 16, stone);
+      rect(out, 10, 0, 6, 16, stone);
+      rect(out, 5, 0, 1, 16, DARK);
+      rect(out, 10, 0, 1, 16, DARK);
+      rect(out, 6, 0, 4, 16, rgba("#4a6b5e"));
       return out;
     }
     default:

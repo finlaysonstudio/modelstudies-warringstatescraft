@@ -116,6 +116,8 @@ const geo = JSON.parse(
 ) as Geography;
 const raster = rasterMapOf(geo);
 const grid = raster.grid;
+/** the grounds a fill actually puts on the country, whatever the vocabulary holds */
+const drawn = new Set<Ground>(grid.flat());
 writeFileSync(join(here, "overworld.txt"), `${asciiOf(grid)}\n`);
 
 // the named country, written once: the grid is the same for every set, and
@@ -157,6 +159,20 @@ for (const set of STAGE_SETS) {
   if (places.missing.length)
     console.log(`  missing: ${places.missing.join(", ")}`);
   if (places.extra.length) console.log(`  extra: ${places.extra.join(", ")}`);
+  // what the set carries and the map never lays: a terrain in the vocabulary
+  // that no fill uses, or a pair whose ground has moved out from under it.
+  // Neither is a fault -- a sheet is the record of a generation, and the
+  // vocabulary is allowed to run ahead of the geography -- but an unlaid sheet
+  // is invisible, so the build names it rather than leaving it to be noticed.
+  // a plain ground is measured against the grid rather than against the map's
+  // tilesets, because every ground in the vocabulary is registered whether or
+  // not a fill uses it; a pair is registered only where it is actually laid
+  const names = new Set(map.tilesets.map((tileset) => tileset.name));
+  const unlaid = [
+    ...GROUNDS.filter((ground) => !drawn.has(ground)).map(tilesetIdOf),
+    ...[...pairs.keys()].filter((id) => !names.has(id)),
+  ];
+  if (unlaid.length) console.log(`  unlaid: ${unlaid.sort().join(", ")}`);
   for (const [what, ids] of Object.entries(ground)) {
     if (!ids.length) continue;
     failed = true;

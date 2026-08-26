@@ -107,6 +107,17 @@ export const TERRAIN_NOTES: Partial<Record<Terrain, LegendNote>> = {
       zh: "车辙经时即深数寸。不能徙其车，则易其地。",
     },
   },
+  wall: {
+    title: { en: "Earthen wall", zh: "土垣" },
+    what: {
+      en: "A wall of earth tamped in courses between board forms, with a track along the top.",
+      zh: "版筑夯土之垣，其上可行。",
+    },
+    history: {
+      en: "Poured between boards a course at a time and tamped solid, in whatever earth the line ran through. The method wanted no brick, no stone, and no craftsman, which is why a court could reckon a wall in man-days and levy it the way it levied grain, and why the courses are still legible in what stands.",
+      zh: "版筑之法：夹板实土，逐层夯之，就地取材而已。不用砖石，不待工匠，故其役可以人日计，如赋粟然。今所存者，层理犹可辨。",
+    },
+  },
   forest: {
     title: { en: "Woodland", zh: "林" },
     what: {
@@ -171,6 +182,17 @@ export const TERRAIN_NOTES: Partial<Record<Terrain, LegendNote>> = {
     history: {
       en: "A wall four hundred li long broken by a handful of gorge routes. The uplands on top of it command everything below, which is why the surrender of one upland commandery drew two great states into the worst battle of the age.",
       zh: "绵亘数百里，唯数陉可通。据其上则俯瞰平原，故上党之降，遂致两强大战。",
+    },
+  },
+  luliang: {
+    title: { en: "The Lüliang", zh: "吕梁山" },
+    what: {
+      en: "The range that rises straight out of the gorge and walls the river off from the Fen valley behind it.",
+      zh: "拔起于峡岸之山，隔大河与汾川。",
+    },
+    history: {
+      en: "The one range that wears the plateau it stands in: silt lies on its flanks and the gullies cut it the way they cut the open country across the water. Its crest is the far side of the gorge, so a state holding the Fen valley behind it faces the river down a wall it need not build.",
+      zh: "此山亦戴黄土：坡有积壤，沟壑纵横，与河西高原无异。其脊即峡之东岸，故据汾川者，临河而有不筑之城。",
     },
   },
   shu: {
@@ -637,6 +659,39 @@ export const MARKER_NOTES: Record<Marker | "region", LegendNote> = {
       zh: "宗庙之下，尚有里社之祀：一川之神、一丘之灵、殁而民不忍绝食之吏。变法之国多不禁焉，禁之所费，逾其所得。",
     },
   },
+  falls: {
+    title: { en: "Falls", zh: "瀑" },
+    what: {
+      en: "A river forced into a slot in the rock and dropped down it.",
+      zh: "水束于石罅而坠。",
+    },
+    history: {
+      en: "A hard stop on a river road. Grain and timber moving down the water had to come out above it and go back in below, which put a portage, a market, and a place worth taxing wherever one falls.",
+      zh: "水道之绝处也。粟材顺流而下者，必上岸而复入，故瀑下多有陆运、有市、有征。",
+    },
+  },
+  peak: {
+    title: { en: "Sacred peak", zh: "岳" },
+    what: {
+      en: "A mountain a court sacrifices to, not one it marches over.",
+      zh: "国之所祀，非所越也。",
+    },
+    history: {
+      en: "By this century a handful of peaks were held to stand for the well-being of a state, though which ones was not yet fixed and would not be for another two hundred years. A ruler who sacrificed at one was making a claim about his standing, which is why the question of whether he was entitled to was worth a minister's argument.",
+      zh: "是时已有以数山系国之休咎者，然其名未定，后二百年乃著。人君祭岳，所以自表其位，故可否之辩，臣下争之。",
+    },
+  },
+  gorge: {
+    title: { en: "River gate", zh: "水门" },
+    what: {
+      en: "A place where the whole river is forced between two rock walls.",
+      zh: "全河束于两崖之间。",
+    },
+    history: {
+      en: "Attributed to Yu, who was said to have cut them to let the flood out. What they are in practice is a gate: a narrows no boat passes at will and no army crosses off a ford, so whoever holds both banks of one holds the river.",
+      zh: "相传禹所凿，以泄洪水。其实为门：舟不得任过，兵不得越渡，故据两岸者制河。",
+    },
+  },
 };
 
 /** The note for one picked thing, or null when nothing is said about it. */
@@ -754,6 +809,17 @@ export const FEATURE_NOTES: Record<string, FeatureNote> = {
       zh: "无桥可渡。有舟者以为道，无舟者以为险；楚擅舟楫，故转粟运兵之速，北国非渠不能及。",
     },
   },
+  luliang: {
+    title: { en: "The Lüliang", zh: "吕梁山" },
+    what: {
+      en: "The range along the east bank of the gorge, between the River and the Fen.",
+      zh: "峡东之山，介于河、汾之间。",
+    },
+    history: {
+      en: "It went to Zhao when the Jin lands were divided, and it is why the division held: the western march of that inheritance is a range with a river in a trench at its foot, and an army coming from the west has to get up out of the trench before it can fight.",
+      zh: "三家分晋，此山属赵，而分得以久者以此：其西界一山，山下之河在壑中，自西来者，必先出壑而后可战。",
+    },
+  },
   hanshui: {
     title: { en: "The Han", zh: "汉水" },
     what: {
@@ -845,8 +911,8 @@ export const FEATURE_NOTES: Record<string, FeatureNote> = {
   changcheng: {
     title: { en: "The long walls", zh: "长城" },
     what: {
-      en: "Rammed-earth walls run along the ridges: the northern lines of Zhao and Yan against the steppe, and the eastern line of Qi along the hills above the plain.",
-      zh: "循山脊而筑之土垣：赵、燕之北垣以御漠北，齐之东垣循丘而下临平原。",
+      en: "Rammed-earth walls run along the ridges: the northern lines of Zhao and Yan against the steppe, and the southern line of Qi along the hills between the plain and the sea.",
+      zh: "循山脊而筑之土垣：赵、燕北界以拒胡，齐则循泰山之脊，自河东至于海。",
     },
     history: {
       en: "Every one of these is older than the single wall that later joined them up, and none of them was built to stop an army. They were built to stop a raid getting home: horsemen can cross a wall, but not with cattle, and the beacons on it reach the garrison before the raiders reach the grass.",

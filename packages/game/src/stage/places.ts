@@ -4,6 +4,7 @@
  */
 import { ANNALS_PLACES } from "../annals/places";
 import { GAZETTEER } from "../world/gazetteer";
+import { WONDER_PLACES } from "../world/wonders";
 import { listScenarioTexts } from "../scenarios";
 import type { ScenarioBody } from "../scenario/render";
 
@@ -85,8 +86,9 @@ export const chapterPlaceKeys = (id: string): string[] => {
 /**
  * Every place key the country has to carry: the gazetteer keys any
  * registered chapter's text names in either language, every seat's home,
- * and the places the Annals are set at. The map is complete when
- * `checkPlaces` reports none missing.
+ * the places the Annals are set at, and the natural wonders (which no text
+ * names, and which the map carries for the reader rather than for a scene).
+ * The map is complete when `checkPlaces` reports none missing.
  */
 export const requiredPlaceKeys = (): string[] => {
   const keys = new Set<string>(Object.values(HOMES));
@@ -94,6 +96,7 @@ export const requiredPlaceKeys = (): string[] => {
     for (const key of chapterPlaceKeys(text.id)) keys.add(key);
   }
   for (const key of ANNALS_PLACES) keys.add(key);
+  for (const key of WONDER_PLACES) keys.add(key);
   return [...keys].sort();
 };
 

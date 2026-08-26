@@ -26,6 +26,11 @@ const PLAYED = new Set<string>([
   "academy",
   "altar",
   "weir",
+  // the natural wonders: on the map from the start, and nothing an episode
+  // leaves behind, since no court built them
+  "falls",
+  "peak",
+  "gorge",
 ]);
 
 describe("what the Annals leave on the map", () => {

@@ -161,6 +161,17 @@ export const PLACE_NAMES: Gazetteer = {
   ),
   yong: entry(["Yong", "雍"], ["Oldcourt", "故庭"]),
   shouchun: entry(["Shouchun", "寿春"], ["Lastholm", "终邑"]),
+  // The natural wonders: what the country itself put on the map. None is a
+  // seat, a home, or a chapter's ground, and no chapter names one; they are
+  // here so the explorer can label them under either naming.
+  hukou: entry(["the Kettle Mouth", "壶口"], ["the Spout", "泻喉"]),
+  longmen: entry(["the Dragon Gate", "龙门"], ["the Rivergate", "水阖"]),
+  sanmen: entry(["the Three Gates", "三门"], ["the Three Sills", "三阈"]),
+  taishan: entry(["Mount Tai", "泰山"], ["Sunrise Mount", "旭岭"]),
+  huashan: entry(["Mount Hua", "华山"], ["Flowercrag", "英崖"]),
+  songshan: entry(["Mount Song", "嵩山"], ["Midmount", "中岑"]),
+  jieshi: entry(["Jieshi", "碣石"], ["the Seamark", "海碑"]),
+  yanchi: entry(["the Salt Lake", "解池"], ["the Brine Mere", "卤泽"]),
 };
 
 /**
@@ -189,6 +200,10 @@ export const FEATURE_NAMES: Gazetteer = {
   plankroad: entry(["the plank roads", "栈道"], ["the trestle roads", "架道"]),
   changcheng: entry(["the long walls", "长城"], ["the Long Rampart", "长垒"]),
   si: entry(["the Si river", "泗水"], ["the Sedgewater", "莎水"]),
+  luliang: entry(
+    ["the Lüliang range", "吕梁山"],
+    ["the Backbone range", "脊岭"],
+  ),
 };
 
 export const GAZETTEER: Gazetteer = {

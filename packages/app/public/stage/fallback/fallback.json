@@ -58,6 +58,14 @@
       "kind": "blob",
       "tileset": "terrain.cobble.tsj"
     },
+    "terrain.wall": {
+      "file": "terrain.wall.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.wall.tsj"
+    },
     "terrain.forest": {
       "file": "terrain.forest.png",
       "width": 128,
@@ -105,6 +113,14 @@
       "pack": "fallback",
       "kind": "blob",
       "tileset": "terrain.taihang.tsj"
+    },
+    "terrain.luliang": {
+      "file": "terrain.luliang.png",
+      "width": 128,
+      "height": 96,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.luliang.tsj"
     },
     "terrain.shu": {
       "file": "terrain.shu.png",
@@ -1745,6 +1761,27 @@
     },
     "image.shrine": {
       "file": "image.shrine.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.falls": {
+      "file": "image.falls.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.peak": {
+      "file": "image.peak.png",
+      "width": 16,
+      "height": 24,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.gorge": {
+      "file": "image.gorge.png",
       "width": 16,
       "height": 16,
       "pack": "fallback",

@@ -63,6 +63,10 @@ export interface PeriodImageItem extends PeriodRecord {
   kind: "image";
   /** the raw download, relative to the source root */
   file: string;
+  /** grey blue-dominant pixels toward luminance, as a sheet's finish does */
+  desaturate?: number;
+  /** turn the hue and scale saturation and value, as a sheet's finish does */
+  adjust?: ColourAdjustment;
 }
 
 export interface PeriodSpriteItem extends PeriodRecord {
@@ -427,7 +431,13 @@ export const buildPeriod = async ({
       continue;
     }
     if (item.kind === "image") {
-      const image = await readPng(path.join(root, item.file));
+      // an object takes the same `desaturate` / `adjust` finish a sheet does:
+      // the generator drifts rock toward violet whatever it is drawing, and a
+      // marker off the map's range is the same fault as a tile off it
+      const image = applyFinish(await readPng(path.join(root, item.file)), {
+        desaturate: item.desaturate,
+        adjust: item.adjust,
+      });
       await writePng(path.join(outDir, file), image);
       assets[item.id] = {
         file,

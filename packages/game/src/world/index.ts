@@ -5,4 +5,5 @@ export type { CastMember } from "./states";
 export { CHRONICLE, chronicleChapter, memoryBefore } from "./chronicle";
 export type { ChronicleChapter } from "./chronicle";
 export { VOCABULARY } from "./vocabulary";
+export { WONDER_PLACES } from "./wonders";
 export type { VocabularyEntry } from "./vocabulary";

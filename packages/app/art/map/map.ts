@@ -71,11 +71,19 @@ export const GROUNDS: readonly Ground[] = [...TERRAINS, ...WATERS];
 export const GROUND_VARIANTS = 4;
 
 /**
- * Blob layers above the grass ground, bottom to top: the other grasses, then
- * the flat country, then the raised ground (hills below the ranges, so a
- * range that meets a hill stands on it), then the works and the water.
+ * Blob layers above the grass ground, bottom to top: the fen, then the other
+ * grasses, then the flat country, then the raised ground (hills below the
+ * ranges, so a range that meets a hill stands on it), then the works and the
+ * water.
+ *
+ * `marsh` is first, below every other terrain. A fen is the low ground by
+ * definition: whatever it meets stands over it and draws the boundary down
+ * into it, and the alternative reads as a plateau of mud lifted above the
+ * grass around it. Water is at the top and so covers it anyway, which leaves
+ * the fen the low element against everything.
  */
 export const DRAW_ORDER: readonly Ground[] = [
+  "marsh",
   "tallgrass",
   "scrub",
   "loess",
@@ -83,14 +91,15 @@ export const DRAW_ORDER: readonly Ground[] = [
   "field",
   "forest",
   "bamboo",
-  "marsh",
   "hills",
   "mountain",
   "qinling",
   "taihang",
+  "luliang",
   "shu",
   "cobble",
   "road",
+  "wall",
   "river",
   "sea",
 ];
@@ -103,12 +112,14 @@ export const LETTERS: Record<Ground, string> = {
   steppe: ",",
   road: "-",
   cobble: "#",
+  wall: "|",
   forest: "T",
   bamboo: "y",
   hills: "n",
   mountain: "^",
   qinling: "Q",
   taihang: "H",
+  luliang: "L",
   shu: "K",
   marsh: "%",
   field: '"',
