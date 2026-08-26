@@ -2,6 +2,7 @@ import { BadRequestError } from "@jaypie/errors";
 
 import {
   BLOB_COLUMNS,
+  BLOB_FULL,
   BLOB_MASKS,
   BLOB_ROWS,
   E,
@@ -399,19 +400,31 @@ export const shiftTiles = (
 };
 
 /**
- * Stacks `count` rearrangements of a fill sheet, so the ground layer can pick
- * one per cell and a wide field of one terrain stops reading as a grid. A
- * generated Wang tile's plain fill is flat by construction — it has to tile
- * against itself on every side — so the variety has to come from arranging
+ * Stacks `count` rearrangements of a sheet, so the ground layer can pick one
+ * per cell and a wide field of one terrain stops reading as a grid. A
+ * generated Wang tile's plain fill is flat by construction -- it has to tile
+ * against itself on every side -- so the variety has to come from arranging
  * the few pixels it does carry, not from asking for a busier tile.
+ *
+ * Only the tiles in `vary` are rearranged, and every other tile of a later
+ * block is a verbatim copy of the first block's. The map addresses a later
+ * block only where a cell is fully surrounded by its own ground, because an
+ * edge tile's art has to face its boundary and a cyclic shift would wrap that
+ * boundary around the tile. Copying the rest rather than shifting it keeps the
+ * sheet honest about that: a block differs from the first exactly where a
+ * block is addressed, so the showcase and the map cannot disagree.
  */
 export const variantSheet = (
   image: Image,
   count: number,
-  { tone = 0, tile = 16 }: { tone?: number; tile?: number } = {},
+  {
+    tone = 0,
+    tile = 16,
+    vary = [BLOB_FULL],
+  }: { tone?: number; tile?: number; vary?: number[] } = {},
 ): Image => {
   const out = blankImage(image.width, image.height * count);
-  for (let variant = 0; variant < count; variant += 1) {
+  const blockOf = (variant: number): Image => {
     const shifted =
       variant === 0
         ? image
@@ -419,22 +432,40 @@ export const variantSheet = (
     // a few pixels rearranged is not much on a near-flat tile, so each block
     // also carries its own tone: the field mottles instead of reading as one
     // colour under a grid of speckles
-    const block =
-      tone === 0 || count < 2
-        ? shifted
-        : adjustColour(shifted, {
-            value: 1 + tone * ((variant / (count - 1)) * 2 - 1),
-          });
+    return tone === 0 || count < 2
+      ? shifted
+      : adjustColour(shifted, {
+          value: 1 + tone * ((variant / (count - 1)) * 2 - 1),
+        });
+  };
+  const first = blockOf(0);
+  for (let variant = 0; variant < count; variant += 1) {
     copyRect({
-      source: block,
+      source: first,
       sx: 0,
       sy: 0,
-      width: block.width,
-      height: block.height,
+      width: first.width,
+      height: first.height,
       target: out,
       tx: 0,
       ty: variant * image.height,
     });
+    if (variant === 0) continue;
+    const block = blockOf(variant);
+    for (const position of vary) {
+      const sx = (position % BLOB_COLUMNS) * tile;
+      const sy = Math.floor(position / BLOB_COLUMNS) * tile;
+      copyRect({
+        source: block,
+        sx,
+        sy,
+        width: tile,
+        height: tile,
+        target: out,
+        tx: sx,
+        ty: variant * image.height + sy,
+      });
+    }
   }
   return out;
 };

@@ -7,7 +7,7 @@
       "file": "terrain.forest.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -25,6 +25,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": -10,
             "saturation": 0.62,
@@ -37,7 +38,7 @@
       "file": "terrain.loess.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -61,6 +62,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": 11,
             "saturation": 0.8,
@@ -73,7 +75,7 @@
       "file": "terrain.steppe.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -93,6 +95,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": 5,
             "saturation": 0.6,
@@ -105,7 +108,7 @@
       "file": "terrain.wall.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -124,6 +127,7 @@
         "note": "the long walls: the rammed-earth lines Zhao and Yan ran along the northern frontier and Qi along the hills between the plain and the sea. Drawn as a line the way a road is rather than as an area. They had been laid in cobble, which is the paved way of a city gate and reads as neither earth nor a wall",
         "finish": {
           "against": "grass",
+          "variants": 4,
           "adjust": {
             "hue": 10,
             "saturation": 0.85,
@@ -136,7 +140,7 @@
       "file": "terrain.marsh.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -154,6 +158,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": 38,
             "saturation": 0.75,
@@ -166,7 +171,7 @@
       "file": "terrain.field.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -184,6 +189,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": 8,
             "saturation": 0.62,
@@ -196,7 +202,7 @@
       "file": "terrain.bamboo.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -215,6 +221,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 10,
+          "variants": 4,
           "adjust": {
             "hue": 12,
             "saturation": 0.45,
@@ -258,7 +265,7 @@
       "file": "terrain.tallgrass.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -276,6 +283,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": 10,
             "saturation": 0.7,
@@ -288,7 +296,7 @@
       "file": "terrain.scrub.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -306,7 +314,8 @@
         "note": "the first heath was the same tone as the meadow it stands in, so the region read as a drawn outline around nothing. The second gave the ground its own dry sage tone but drew the boundary as a dark berm with a highlight, which put a wall around the heath: a Wang transition tile is an edge, and a flat ground meeting a flat ground has no relief to spend on one, so the third asks for no transition at all (transition 0), as scrub-on-tallgrass already does",
         "finish": {
           "against": "grass",
-          "keyTolerance": 16
+          "keyTolerance": 16,
+          "variants": 4
         }
       }
     },
@@ -314,7 +323,7 @@
       "file": "terrain.hills.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -338,6 +347,7 @@
         "finish": {
           "against": "grass",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": 14,
             "saturation": 0.8,
@@ -350,7 +360,7 @@
       "file": "terrain.mountain.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -373,7 +383,8 @@
         "note": "regenerated at transition 0.25: pro mode promotes 0.5 past its 0.4 threshold to a 25-tile cliff sheet, whose pure-lower corner is a transition tile rather than grass, so the range could not reproduce the field it stands in and had to be keyed, which cut the drawn scree into floating specks. At 0.25 it is a 16-tile Wang sheet chained to grass, so the scree apron is laid as drawn",
         "finish": {
           "against": "grass",
-          "keyTolerance": 16
+          "keyTolerance": 16,
+          "variants": 4
         }
       }
     },
@@ -381,7 +392,7 @@
       "file": "terrain.qinling.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -404,7 +415,8 @@
         "note": "the Qinling is a range before it is a wood, and naming the pine first got pine first: the second sheet read as forest with the occasional mountain in it. The third puts ridge upon ridge of bare rock across the whole area and crowds the pine into the clefts alone",
         "finish": {
           "against": "grass",
-          "keyTolerance": 16
+          "keyTolerance": 16,
+          "variants": 4
         }
       }
     },
@@ -412,7 +424,7 @@
       "file": "terrain.taihang.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -435,7 +447,8 @@
         "note": "the first Taihang was a 25-tile cliff sheet (pro at 0.5) keyed against grass, which cut the slate wall out of the country rather than standing it in it. The second drew the ridges on the boundary alone and left a flat khaki plateau inside, because a named crest and a large slope are both invitations to draw the middle empty: the third names ridge after ridge across the whole area, forbids flat ground, and drops slope_size to 0.25",
         "finish": {
           "against": "grass",
-          "keyTolerance": 16
+          "keyTolerance": 16,
+          "variants": 4
         }
       }
     },
@@ -443,7 +456,7 @@
       "file": "terrain.shu.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -466,7 +479,8 @@
         "note": "regenerated at 0.25 with the rest of the range family; the towers are named as separate pinnacles with shadow in the gaps, which is what makes a karst field read as many towers rather than one broken mass",
         "finish": {
           "against": "grass",
-          "keyTolerance": 16
+          "keyTolerance": 16,
+          "variants": 4
         }
       }
     },
@@ -536,7 +550,7 @@
       "file": "terrain.road.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -555,6 +569,7 @@
         "finish": {
           "key": "lower",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": 14,
             "saturation": 0.62,
@@ -567,7 +582,7 @@
       "file": "terrain.cobble.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -587,6 +602,7 @@
           "desaturate": 0.8,
           "key": "lower",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "saturation": 0.35,
             "value": 1.15
@@ -2599,7 +2615,7 @@
         "jobId": "86d6ff6f-808f-4ccc-9714-901a14b29078",
         "date": "2026-08-25",
         "generations": 3,
-        "note": "kept as a record: the strip of generic range on the west bank of the gorge was the only ground this pair was laid on, and that strip is loess now (there is no range on the Shaanxi side). The sheet still builds, so the map may lay it again",
+        "note": "kept as a record: the strip of generic range on the west bank of the gorge was the only ground this pair was laid on, and that strip is loess now (there is no range on the Shaanxi side). The sheet still builds, so the map may lay it again. Unlaid since 2026-08-26, and stale twice over since the loess was regenerated in pro mode: it reproduces neither neighbour now, which is why `verify-pairs` names it",
         "finish": {
           "against": "loess"
         }
@@ -3160,7 +3176,7 @@
       "file": "terrain.luliang.png",
       "kind": "blob",
       "width": 256,
-      "height": 192,
+      "height": 768,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -3182,7 +3198,8 @@
         "generations": 2,
         "note": "the range on the east bank of the gorge. The first drew the loess mantle the real range carries and came back a field of wheat sheaves: two tones of tan in a repeating ridge motif read as a crop, not as rock, which the Taihang gets away with only because slate is grey. Naming the rock first and the dust as scree in the ravines keeps the loess character without letting it take the sheet, and `no leaves, no grain, no feathers` is the failure written into the prompt",
         "finish": {
-          "against": "grass"
+          "against": "grass",
+          "variants": 4
         }
       }
     },

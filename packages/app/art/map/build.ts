@@ -25,6 +25,7 @@ import {
   buildTiledMap,
   featureFileOf,
   GROUNDS,
+  pairBlocksOf,
   rasterMapOf,
   tilesetIdOf,
   type Geography,
@@ -70,7 +71,7 @@ export const pairsOf = (
         continue;
       }
       const blocks = Math.floor(manifest.assets[id].height / (6 * set.tile));
-      if (blocks < blocksOf(ground as Ground)) {
+      if (blocks < pairBlocksOf(ground as Ground)) {
         pairs.delete(id);
         continue;
       }

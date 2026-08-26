@@ -140,10 +140,17 @@ export const previewMap = ({
       for (let x = 0; x < geo.width; x += 1) {
         if (grid[y][x] !== ground) continue;
         const lower = against[y][x];
+        const index = blobIndexOf(maskOf(mask(x, y)));
+        // the same stacked rearrangement the map builder picks: a fully
+        // surrounded tile of a plain land sheet, and nothing else
+        const block =
+          index === BLOB_FULL && !isWater(ground) && !lower
+            ? variantOf(x, y) * BLOB_TILE_COUNT
+            : 0;
         // a water sheet stacks a blob block per frame; the first frame is enough
         draw(
           ground,
-          blobIndexOf(maskOf(mask(x, y))),
+          block + index,
           x,
           y,
           lower ? pairIdOf(ground, lower) : tilesetIdOf(ground),

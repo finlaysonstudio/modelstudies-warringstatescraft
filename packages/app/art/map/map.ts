@@ -410,19 +410,36 @@ const hashAt = (x: number, y: number): number =>
 export const orientationOf = (x: number, y: number): number =>
   (hashAt(x, y) >>> 29) % 2;
 
-/** Which stacked rearrangement of the grass fill the cell at (x, y) takes. */
+/** Which stacked rearrangement of a ground's plain sheet the cell at (x, y) takes. */
 export const variantOf = (x: number, y: number): number =>
   (hashAt(y, x) >>> 17) % GROUND_VARIANTS;
 
 /**
- * How many stacked blob blocks a ground's sheet carries: a frame apiece for
- * water, a rearrangement apiece for the ground the whole map is laid on, one
- * for everything else. Every art layer builds to this, because a layer that
- * supplies fewer blocks than the map addresses renders blank where a later
- * block is asked for, and the layers shadow one another by id.
+ * How many stacked blob blocks a ground's plain sheet carries: a frame apiece
+ * for water, a rearrangement apiece for every ground on land. Every art layer
+ * builds to this, because a layer that supplies fewer blocks than the map
+ * addresses renders blank where a later block is asked for, and the layers
+ * shadow one another by id.
+ *
+ * Land takes rearrangements and water takes frames because they are the same
+ * stack: a cell picking its own frame out of a wave would shimmer against its
+ * neighbours, so water spends the stack on motion and land on variety. The
+ * rule has no exceptions on land, including the grounds the geography lays as
+ * a one-tile ribbon with no interior at all (the roads and the walls today):
+ * which grounds have a wide field is a fact about the country, and the art
+ * build must not shift when a fill moves.
  */
 export const blocksOf = (ground: Ground, frames = 3): number =>
-  isWater(ground) ? frames : ground === "grass" ? GROUND_VARIANTS : 1;
+  isWater(ground) ? frames : GROUND_VARIANTS;
+
+/**
+ * How many a pair sheet carries. A pair draws one boundary and nothing else,
+ * and a boundary is never rearranged, so a land pair carries one block where
+ * its plain sheet carries four. Water still needs its frames: a river laid
+ * over loess has to keep moving.
+ */
+export const pairBlocksOf = (ground: Ground, frames = 3): number =>
+  isWater(ground) ? frames : 1;
 
 /** Tiled's gid flip flags. They are added, never OR-ed: `|` is int32 in JS. */
 const FLIPPED_HORIZONTALLY = 0x80000000;
@@ -450,8 +467,8 @@ export const buildTiledMap = ({
   const tilesets: (TiledTileset & { firstgid: number })[] = [];
   const firstgid = new Map<string, number>();
   let next = 1;
-  const register = (id: string, ground: Ground): void => {
-    const blocks = blocksOf(ground, frames);
+  const register = (id: string, ground: Ground, pair = false): void => {
+    const blocks = (pair ? pairBlocksOf : blocksOf)(ground, frames);
     const set = blobTileset({
       name: id,
       image: `${imageDir}/${id}.png`,
@@ -475,7 +492,7 @@ export const buildTiledMap = ({
       const used = against.some((row, y) =>
         row.some((at, x) => at === lower && grid[y][x] === ground),
       );
-      if (used) register(id, ground);
+      if (used) register(id, ground, true);
     }
   }
   const layers: TiledLayer[] = [];
@@ -521,11 +538,16 @@ export const buildTiledMap = ({
         const index = blobIndexOf(maskOf(mask(x, y)));
         // a water tile's art is a wave that reads in one direction, and its
         // three frames have to agree, so leave its gids plain
-        const flip = index === BLOB_FULL && !isWater(ground) ? flipAt(x, y) : 0;
+        const full = index === BLOB_FULL && !isWater(ground);
+        const flip = full ? flipAt(x, y) : 0;
         const lower = against[y][x];
         const sheet = lower ? pairIdOf(ground, lower) : tilesetIdOf(ground);
         const base = firstgid.get(sheet) ?? firstgid.get(tilesetIdOf(ground));
-        data[y * geo.width + x] = (base ?? 0) + index + flip;
+        // only a fully surrounded tile takes a rearrangement, and only from the
+        // plain sheet: an edge tile's art faces its boundary, and a pair sheet
+        // is a boundary and carries one block
+        const block = full && !lower ? variantOf(x, y) * BLOB_TILE_COUNT : 0;
+        data[y * geo.width + x] = (base ?? 0) + block + index + flip;
       }
     }
     tileLayer(ground, data);

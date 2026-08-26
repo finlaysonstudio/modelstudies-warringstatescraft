@@ -26,6 +26,8 @@ import {
   groundMask,
   pairIdOf,
   rasterize,
+  blocksOf,
+  pairBlocksOf,
   variantOf,
   type Geography,
 } from "../map";
@@ -94,6 +96,25 @@ describe("featureFileOf", () => {
   });
 });
 
+describe("blocksOf", () => {
+  it("gives water its frames and every ground on land its rearrangements", () => {
+    expect(blocksOf("river", 3)).toBe(3);
+    expect(blocksOf("sea", 3)).toBe(3);
+    expect(blocksOf("grass")).toBe(GROUND_VARIANTS);
+    expect(blocksOf("loess")).toBe(GROUND_VARIANTS);
+    // a ground the geography lays as a one-tile ribbon is no exception: which
+    // grounds have a wide field is a fact about the country, not the art
+    expect(blocksOf("road")).toBe(GROUND_VARIANTS);
+  });
+
+  it("gives a pair one block on land, because a boundary never varies", () => {
+    expect(pairBlocksOf("loess")).toBe(1);
+    expect(pairBlocksOf("road")).toBe(1);
+    // a river laid over loess still has to keep moving
+    expect(pairBlocksOf("river", 3)).toBe(3);
+  });
+});
+
 describe("buildTiledMap", () => {
   const geo = tiny();
   const map = buildTiledMap({ geo });
@@ -138,9 +159,12 @@ describe("buildTiledMap", () => {
       forest.firstgid + blobIndexOf(E | S | 8),
     );
     // the block's bottom-right corner touches the map edge on two sides, so
-    // it reads as fully surrounded and takes the cell's orientation
+    // it reads as fully surrounded and takes the cell's own orientation and
+    // its own rearrangement: an edge tile takes neither, because its art has
+    // to face the boundary it draws
     expect(forestLayer.data![3 * 6 + 5]).toBe(
       forest.firstgid +
+        variantOf(5, 3) * BLOB_TILE_COUNT +
         blobIndexOf(N | W | 128 | E | S | 8 | 32 | 2) +
         flipAt(5, 3),
     );

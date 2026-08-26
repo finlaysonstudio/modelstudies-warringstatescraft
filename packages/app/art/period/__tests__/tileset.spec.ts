@@ -3,12 +3,13 @@ import { describe, expect, it } from "vitest";
 import {
   BLOB_COLUMNS,
   BLOB_FULL,
+  BLOB_ROWS,
   blobIndexOf,
   E,
   N,
   NE,
 } from "../../vendor/blob";
-import { blankImage, pixelAt } from "../../vendor/png";
+import { blankImage, pixelAt, setPixel } from "../../vendor/png";
 import {
   adjustColour,
   greyBlue,
@@ -175,29 +176,57 @@ describe("adjustColour", () => {
 });
 
 describe("variantSheet", () => {
+  // a real blob sheet, since a block differs from the first only in the tiles
+  // the map addresses from it and those are named by position
   const source = (): ReturnType<typeof blankImage> => {
-    const image = blankImage(TILE, TILE);
-    image.data.set([80, 80, 80, 255], 0);
+    const image = blankImage(BLOB_COLUMNS * TILE, BLOB_ROWS * TILE);
+    for (let position = 0; position < BLOB_COLUMNS * BLOB_ROWS; position += 1) {
+      const x = (position % BLOB_COLUMNS) * TILE;
+      const y = Math.floor(position / BLOB_COLUMNS) * TILE;
+      setPixel(image, x, y, [80, 80, 80, 255]);
+    }
     return image;
   };
+  const fullX = (BLOB_FULL % BLOB_COLUMNS) * TILE;
+  const fullY = Math.floor(BLOB_FULL / BLOB_COLUMNS) * TILE;
 
   it("stacks a block per variant, the first one untouched", () => {
     const out = variantSheet(source(), 3, { tile: TILE });
-    expect(out.height).toBe(TILE * 3);
-    expect(pixelAt(out, 0, 0)).toEqual([80, 80, 80, 255]);
+    expect(out.height).toBe(BLOB_ROWS * TILE * 3);
+    expect(pixelAt(out, fullX, fullY)).toEqual([80, 80, 80, 255]);
   });
 
-  it("shifts each later block within the tile, wrapping at its edge", () => {
+  it("shifts the varied tile of each later block, wrapping at its edge", () => {
     const out = variantSheet(source(), 2, { tile: TILE });
     // block 1 samples (x + 5, y + 7), so the corner pixel lands where the
     // shift wraps it back to
     const dx = (TILE - (5 % TILE)) % TILE;
     const dy = (TILE - (7 % TILE)) % TILE;
-    expect(pixelAt(out, dx, TILE + dy)).toEqual([80, 80, 80, 255]);
+    const block = BLOB_ROWS * TILE;
+    expect(pixelAt(out, fullX + dx, block + fullY + dy)).toEqual([
+      80, 80, 80, 255,
+    ]);
+  });
+
+  it("copies every other tile of a later block verbatim", () => {
+    const out = variantSheet(source(), 2, { tile: TILE });
+    // an edge tile's art faces the boundary it draws, so a later block leaves
+    // it exactly where the first block has it
+    const block = BLOB_ROWS * TILE;
+    expect(pixelAt(out, TILE, block)).toEqual([80, 80, 80, 255]);
+  });
+
+  it("varies only the tiles it is given", () => {
+    const out = variantSheet(source(), 2, { tile: TILE, vary: [1] });
+    const block = BLOB_ROWS * TILE;
+    const dx = (TILE - (5 % TILE)) % TILE;
+    const dy = (TILE - (7 % TILE)) % TILE;
+    expect(pixelAt(out, TILE + dx, block + dy)).toEqual([80, 80, 80, 255]);
+    expect(pixelAt(out, fullX, block + fullY)).toEqual([80, 80, 80, 255]);
   });
 
   it("gives each block its own tone when asked", () => {
     const out = variantSheet(source(), 2, { tone: 0.5, tile: TILE });
-    expect(pixelAt(out, 0, 0)[0]).toBe(40);
+    expect(pixelAt(out, fullX, fullY)[0]).toBe(40);
   });
 });

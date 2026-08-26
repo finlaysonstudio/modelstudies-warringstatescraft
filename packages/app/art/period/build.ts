@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { BadRequestError } from "@jaypie/errors";
 
 import type { StageSource } from "../../src/stage/manifest";
+import { blocksOf, GROUNDS, tilesetIdOf, type Ground } from "../map/map";
 import type {
   AssetEntry,
   AssetRecord,
@@ -126,11 +127,6 @@ export interface PeriodTilesetItem extends PeriodRecord {
    * whole blob block per frame.
    */
   frames?: number;
-  /**
-   * Stack this many rearrangements of a `fill` sheet, so the ground layer can
-   * pick one per cell. Must match `GROUND_VARIANTS` in the map builder.
-   */
-  variants?: number;
   /** value swing between variant blocks (0 leaves every block the same tone) */
   variantTone?: number;
   /** turn the hue and scale saturation and value (the defaults leave them) */
@@ -205,6 +201,14 @@ export const assembleSprite = (
 };
 
 /**
+ * The ground a plain sheet id names, or null for a pair (`terrain.x@y`) or
+ * anything that is not a ground at all. A pair draws a boundary and carries
+ * one block, so only a plain sheet stacks rearrangements.
+ */
+const groundOfId = (id: string): Ground | null =>
+  GROUNDS.find((ground) => tilesetIdOf(ground) === id) ?? null;
+
+/**
  * What the build did to the download. `items.json` carries these beside the
  * prompt, and they are as much of the art as the generation is: the same
  * sheet keyed two ways is two different biomes on the map.
@@ -218,7 +222,12 @@ const finishOf = (item: PeriodItem): Record<string, unknown> | undefined => {
   if (item.key) finish.key = item.key;
   if (item.keyTolerance) finish.keyTolerance = item.keyTolerance;
   if (item.frames) finish.frames = item.frames;
-  if (item.variants) finish.variants = item.variants;
+  const ground = groundOfId(item.id);
+  // the block count is derived rather than declared, and the showcase still
+  // wants to see it, so the record carries what the build applied
+  if (ground && !item.frames && blocksOf(ground) > 1) {
+    finish.variants = blocksOf(ground);
+  }
   if (item.variantTone) finish.variantTone = item.variantTone;
   if (item.adjust) finish.adjust = item.adjust;
   return Object.keys(finish).length ? finish : undefined;
@@ -412,8 +421,13 @@ export const buildPeriod = async ({
           palette: cornerPalette(sheet, meta, "upper", tile),
         });
       }
-      if (item.variants) {
-        image = variantSheet(image, item.variants, {
+      // how many rearrangements a plain ground stacks is the map builder's
+      // rule, not the author's: a sheet short of what the map addresses
+      // renders blank, and the author is the one who would forget
+      const ground = groundOfId(item.id);
+      const variants = ground && !item.frames ? blocksOf(ground) : 1;
+      if (variants > 1) {
+        image = variantSheet(image, variants, {
           tone: item.variantTone,
           tile,
         });

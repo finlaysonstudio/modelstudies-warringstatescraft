@@ -925,7 +925,6 @@
       "date": "2026-08-25",
       "generations": 2,
       "note": "the ground layer is this tile over all 13,824 cells, so its texture carries most of the map; taken as the upper because the generator renders a lower description flat (the first base, 20e5a230, was three near-identical limes over 73% of the tile)",
-      "variants": 4,
       "adjust": {
         "hue": -14,
         "saturation": 0.52,

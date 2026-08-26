@@ -1060,7 +1060,7 @@
       "file": "terrain.forest.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1078,6 +1078,7 @@
         "finish": {
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": -15,
             "saturation": 0.72,
@@ -1090,7 +1091,7 @@
       "file": "terrain.loess.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1108,6 +1109,7 @@
         "finish": {
           "key": "lower",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "saturation": 2.5,
             "value": 0.82
@@ -1119,7 +1121,7 @@
       "file": "terrain.steppe.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1138,6 +1140,7 @@
         "finish": {
           "key": "lower",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": 5,
             "saturation": 1.15,
@@ -1150,7 +1153,7 @@
       "file": "terrain.marsh.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1169,6 +1172,7 @@
         "finish": {
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": 40,
             "saturation": 1.3,
@@ -1181,7 +1185,7 @@
       "file": "terrain.field.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1200,6 +1204,7 @@
         "finish": {
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "saturation": 0.9,
             "value": 1
@@ -1211,7 +1216,7 @@
       "file": "terrain.bamboo.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1230,6 +1235,7 @@
         "finish": {
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": -6,
             "saturation": 0.75,
@@ -1520,7 +1526,7 @@
       "file": "terrain.tallgrass.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1539,6 +1545,7 @@
         "finish": {
           "key": "lower",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": -28,
             "saturation": 0.7,
@@ -1551,7 +1558,7 @@
       "file": "terrain.scrub.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1570,6 +1577,7 @@
         "finish": {
           "key": "lower",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "saturation": 0.9,
             "value": 0.95
@@ -1581,7 +1589,7 @@
       "file": "terrain.hills.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1604,6 +1612,7 @@
         "finish": {
           "key": "lower",
           "keyTolerance": 16,
+          "variants": 4,
           "adjust": {
             "hue": -10,
             "saturation": 0.55,
@@ -1616,7 +1625,7 @@
       "file": "terrain.mountain.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1639,6 +1648,7 @@
         "finish": {
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "saturation": 2,
             "value": 1.5
@@ -1650,7 +1660,7 @@
       "file": "terrain.qinling.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1674,6 +1684,7 @@
           "desaturate": 0.7,
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": -134,
             "saturation": 6,
@@ -1686,7 +1697,7 @@
       "file": "terrain.taihang.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1709,6 +1720,7 @@
         "finish": {
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": -16,
             "saturation": 1.1,
@@ -1721,7 +1733,7 @@
       "file": "terrain.shu.png",
       "kind": "blob",
       "width": 128,
-      "height": 96,
+      "height": 384,
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
@@ -1744,6 +1756,7 @@
         "finish": {
           "key": "upper",
           "keyTolerance": 20,
+          "variants": 4,
           "adjust": {
             "hue": -25,
             "saturation": 0.6,
