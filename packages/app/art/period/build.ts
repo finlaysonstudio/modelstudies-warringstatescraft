@@ -22,9 +22,11 @@ import { FACINGS, type SpriteMeta } from "../vendor/slice";
 import {
   applyFinish,
   cornerPalette,
+  cornerSwatches,
   keepPalette,
   keyPalette,
   lowerPalette,
+  lowerSwatches,
   splitFinish,
   wangBlobSheet,
   variantSheet,
@@ -32,6 +34,7 @@ import {
   waterFrames,
   type ColourAdjustment,
   type SheetFinish,
+  type Swatch,
   type WangMetadata,
 } from "./tileset";
 
@@ -264,27 +267,82 @@ export const finishAgainst = (
 };
 
 /**
- * The colours the ground named by `against` actually wears on the map: its own
- * sheet's plain tile, finished the way that sheet is finished. A chained sheet
- * paints that ground in its own surround, and the generator reproduces the base
- * tile it was chained to only sometimes, so the surround is recoloured onto
- * these rather than corrected the same way and hoped over.
+ * One tileset item's sheet as the build finishes it, before it is expanded to
+ * blob tiles. Split out of the build because a sheet drawn against a ground has
+ * to be recoloured onto the colours that ground wears, and a plain sheet is
+ * itself drawn against grass: reading the plain sheet's raw tile would answer
+ * with colours the map never shows, since `splitFinish` repaints every pixel it
+ * classifies as the lower ground. Cached per item, since a pair asks for both
+ * of its neighbours and every ground has several pairs.
+ */
+const finishedSheet = async (
+  spec: PeriodSpec,
+  root: string,
+  item: PeriodTilesetItem,
+  cache: Map<string, Promise<{ sheet: Image; meta: WangMetadata }>>,
+  drawing: string[] = [],
+): Promise<{ sheet: Image; meta: WangMetadata }> => {
+  const cached = cache.get(item.id);
+  if (cached) return cached;
+  if (drawing.includes(item.id)) {
+    throw new BadRequestError(
+      `"${item.id}" is drawn against itself: ${[...drawing, item.id].join(" → ")}`,
+    );
+  }
+  const work = (async () => {
+    const tile = spec.tile;
+    const raw = await readPng(path.join(root, item.file));
+    const meta = JSON.parse(
+      await readFile(path.join(root, item.metadata), "utf8"),
+    ) as WangMetadata;
+    const own: SheetFinish = {
+      desaturate: item.desaturate,
+      adjust: item.adjust,
+    };
+    if (!item.against) return { sheet: applyFinish(raw, own), meta };
+    const drawn = upperGroundOf(item.id);
+    const next = [...drawing, item.id];
+    return {
+      sheet: splitFinish(raw, {
+        lowerPalette: lowerSwatches(raw, meta, tile),
+        upperPalette: cornerSwatches(raw, meta, "upper", tile),
+        lower: finishAgainst(spec, item.against),
+        upper: own,
+        lowerTarget: await paletteAgainst(
+          spec,
+          root,
+          item.against,
+          cache,
+          next,
+        ),
+        upperTarget: drawn
+          ? await paletteAgainst(spec, root, drawn, cache, next)
+          : undefined,
+      }),
+      meta,
+    };
+  })();
+  cache.set(item.id, work);
+  return work;
+};
+
+/**
+ * The colours the ground named by `against` actually wears on the map: the pure
+ * tile of its own sheet, finished. A chained sheet paints that ground in its own
+ * surround, and the generator reproduces the base tile it was chained to only
+ * sometimes, so the surround is recoloured onto these rather than corrected the
+ * same way and hoped over.
  */
 export const paletteAgainst = async (
   spec: PeriodSpec,
   root: string,
   against: string,
-): Promise<Rgba[]> => {
+  cache: Map<string, Promise<{ sheet: Image; meta: WangMetadata }>> = new Map(),
+  drawing: string[] = [],
+): Promise<Swatch[]> => {
   const item = itemDrawing(spec, against);
-  const raw = await readPng(path.join(root, item.file));
-  const meta = JSON.parse(
-    await readFile(path.join(root, item.metadata), "utf8"),
-  ) as WangMetadata;
-  const finished = applyFinish(raw, {
-    desaturate: item.desaturate,
-    adjust: item.adjust,
-  });
-  return cornerPalette(finished, meta, "upper", spec.tile);
+  const { sheet, meta } = await finishedSheet(spec, root, item, cache, drawing);
+  return cornerSwatches(sheet, meta, "upper", spec.tile);
 };
 
 /**
@@ -314,32 +372,15 @@ export const buildPeriod = async ({
 }: BuildPeriodOptions): Promise<VendorManifest> => {
   await mkdir(outDir, { recursive: true });
   const assets: Record<string, AssetEntry> = {};
+  const sheets = new Map<
+    string,
+    Promise<{ sheet: Image; meta: WangMetadata }>
+  >();
   for (const item of spec.items) {
     const file = `${item.id}.png`;
     if (item.kind === "tileset") {
       const tile = spec.tile;
-      const raw = await readPng(path.join(root, item.file));
-      const meta = JSON.parse(
-        await readFile(path.join(root, item.metadata), "utf8"),
-      ) as WangMetadata;
-      const own: SheetFinish = {
-        desaturate: item.desaturate,
-        adjust: item.adjust,
-      };
-      const against = item.against;
-      const drawn = upperGroundOf(item.id);
-      const sheet = against
-        ? splitFinish(raw, {
-            lowerPalette: lowerPalette(raw, meta, tile),
-            upperPalette: cornerPalette(raw, meta, "upper", tile),
-            lower: finishAgainst(spec, against),
-            upper: own,
-            lowerTarget: await paletteAgainst(spec, root, against),
-            upperTarget: drawn
-              ? await paletteAgainst(spec, root, drawn)
-              : undefined,
-          })
-        : applyFinish(raw, own);
+      const { sheet, meta } = await finishedSheet(spec, root, item, sheets);
       let image = item.fill
         ? wangFillSheet({ sheet, meta, tile, fill: item.fill })
         : wangBlobSheet({ sheet, meta, tile });

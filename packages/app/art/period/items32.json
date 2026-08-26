@@ -219,18 +219,14 @@
         "view": "high top-down",
         "detail": "highly detailed",
         "shading": "detailed shading",
-        "transition": 0.25
+        "transition": 0
       },
-      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow; transition: green grass giving way to drab olive tufts and small shrubs",
-      "jobId": "69556012-db4a-45f6-b811-34ae47e2509e",
+      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers; transition: the meadow simply becoming heath, flat ground throughout, no bank, no ridge, no wall, no hedge, no dark line, no pale highlight, no outline, no edge",
+      "jobId": "deccf78f-d7dd-4cf6-9c3f-67d48bd8c3c6",
       "date": "2026-08-25",
-      "generations": 1,
+      "generations": 3,
       "keyTolerance": 16,
-      "adjust": {
-        "hue": 4,
-        "saturation": 0.5,
-        "value": 1.08
-      }
+      "note": "the first heath was the same tone as the meadow it stands in, so the region read as a drawn outline around nothing. The second gave the ground its own dry sage tone but drew the boundary as a dark berm with a highlight, which put a wall around the heath: a Wang transition tile is an edge, and a flat ground meeting a flat ground has no relief to spend on one, so the third asks for no transition at all (transition 0), as scrub-on-tallgrass already does"
     },
     {
       "id": "terrain.hills",
@@ -251,16 +247,16 @@
         "spread_x": 0.85,
         "lower_base_tile_id": "bb50318d-3817-4e1c-b112-7ace3e260efd"
       },
-      "prompt": "low rounded grassy hills seen from above, each hill a soft green dome with a lit crown and a dark green shadow curving along its lower side, hollows of deeper green between them, a little dry straw-coloured grass on the crowns, no rock, no cliff, no grey, no bare earth, no pink, no mauve, no violet, no red, no flowers, no petals; transition: the flat meadow rising gently onto the first shoulder, the grass thinning as it climbs, nothing but grass",
-      "jobId": "c516a29c-dfc6-4738-8e57-80287b9a6cd0",
+      "prompt": "high rolling downland seen from directly above, each hill a broad dome of fresh light green turf, the crown a bright yellow-green catching the sun and only the lower side carrying a soft grey-green shadow, the hollows between them a light sage green, fine grass texture over the whole surface, plainly greener and lighter than the meadow around it, no dark green, no deep green, no black, no white, no cream, no ivory, no grey stone, no rock, no bare earth, no pink, no mauve, no violet; transition: the meadow rising gently onto the first shoulder, the grass lightening as it climbs, nothing but grass",
+      "jobId": "22c23909-d8a4-4828-be93-3575cad65b7b",
       "date": "2026-08-25",
-      "generations": 3,
+      "generations": 5,
       "keyTolerance": 16,
-      "note": "the first hills read as flat camouflage: a 25-tile cliff sheet (pro at 0.5) with no relief to it. The second gave the domes, naming the shadow per hill rather than per hollow, but scattered mauve slivers through the grass: asking for bare brown earth is what invites a colour off the green scale, so the third asks for dry straw on the crowns instead and forbids the family the second drew",
+      "note": "the third sheet had the shape but read as low ground: dark green shadow per dome, deeper green in the hollows, and an adjust that dropped both saturation and value. High ground catches light. The fourth put the whole crown in pale green-grey and went past green into cream, so the domes read as pebbles on a paper cut-out. The fifth keeps the crown bright and the shadow a narrow band on the lower side alone and forbids both ends, and came back an acid lime: that last step is a palette, not a shape, so the adjust turns it toward green and takes half its saturation out rather than spending a sixth generation",
       "adjust": {
-        "hue": -8,
+        "hue": 20,
         "saturation": 0.6,
-        "value": 0.9
+        "value": 1
       }
     },
     {
@@ -304,16 +300,16 @@
         "transition": 0.25,
         "mode": "pro",
         "lower_base_tile_id": "bb50318d-3817-4e1c-b112-7ace3e260efd",
-        "raggedness": 0.45,
-        "slope_size": 0.6,
-        "spread_x": 0.6
+        "raggedness": 0.5,
+        "slope_size": 0.3,
+        "spread_x": 0.5
       },
-      "prompt": "a pine-covered mountain range seen from above, dark green conifer crowns massed over grey rock ridges, bare stone showing along the crests and in the clefts, deep forest green and cool grey, no purple, no violet, no blue, no snow; transition: the pine cover thinning down the slope into scattered single trees and loose grey stones lying on the grass",
-      "jobId": "deb6c3f9-ba7f-48ac-ad08-d0a42d8456ee",
+      "prompt": "a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow; transition: the outermost ridge dropping into the grass, scattered pines and loose grey stones lying at its foot",
+      "jobId": "e4f31609-c8ad-474a-9b98-646eae34f993",
       "date": "2026-08-25",
-      "generations": 2,
+      "generations": 3,
       "keyTolerance": 16,
-      "note": "regenerated at 0.25 with the rest of the range family: the 25-tile cliff sheet it had been was keyed against grass, and the pine cover reads as a range only when its foot is drawn into the field"
+      "note": "the Qinling is a range before it is a wood, and naming the pine first got pine first: the second sheet read as forest with the occasional mountain in it. The third puts ridge upon ridge of bare rock across the whole area and crowds the pine into the clefts alone"
     },
     {
       "id": "terrain.taihang",
@@ -1325,18 +1321,18 @@
       "metadata": "tilesets32/river-on-scrub.json",
       "against": "scrub",
       "tool": "create_topdown_tileset",
-      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · low shrubs thinning at the water's edge, a narrow band of pale dry gravel along the bank",
+      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · low shrubs thinning at the water's edge, a narrow band of pale dry gravel along the bank",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
-        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
         "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
       },
-      "jobId": "86612588-f1fb-44c2-a119-17958ab1158b",
+      "jobId": "3a9811eb-bfba-4191-8cfb-f023c0ef5c88",
       "date": "2026-08-25",
-      "generations": 1,
+      "generations": 2,
       "note": "river as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
       "frames": 3,
       "adjust": {
@@ -1380,17 +1376,17 @@
       "tool": "create_topdown_tileset",
       "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds · the grass standing in shallow water at the edge of the swamp, blades thinning into reed and dark wet ground",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
         "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
         "upper_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4"
       },
-      "jobId": "b1017e63-ca9b-4944-87d1-74ae8e0fcd0c",
+      "jobId": "19afb8f3-9bde-4b32-8317-667bd3f20cf1",
       "date": "2026-08-25",
-      "generations": 1,
-      "note": "marsh as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "generations": 2,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
       "adjust": {
         "hue": 38,
         "saturation": 0.75,
@@ -1485,19 +1481,19 @@
       "metadata": "tilesets32/taihang-on-scrub.json",
       "against": "scrub",
       "tool": "create_topdown_tileset",
-      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow ↗ a wall of dark slate mountains seen from directly above, ridge after parallel ridge of grey-blue slate packed edge to edge across the whole area with a deep black cleft between every ridge, hard angular broken rock everywhere, no flat ground, no plateau, no open crest, no bare earth, no grass, no purple, no snow · low thorny bushes at the foot of the wall, broken dark slate scree scattered among the shrubs",
+      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a wall of dark slate mountains seen from directly above, ridge after parallel ridge of grey-blue slate packed edge to edge across the whole area with a deep black cleft between every ridge, hard angular broken rock everywhere, no flat ground, no plateau, no open crest, no bare earth, no grass, no purple, no snow · low thorny bushes at the foot of the wall, broken dark slate scree scattered among the shrubs",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
-        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
         "upper_base_tile_id": "8b3ac2e0-cca2-4c2f-9776-2f128cb51934"
       },
-      "jobId": "1ce0ddca-470a-41af-a224-ac90968ea353",
+      "jobId": "65be85e1-5d14-43c6-a61e-1ccb42891a57",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 4,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
       "adjust": {
         "hue": -6,
         "saturation": 1.35,
@@ -1511,19 +1507,20 @@
       "metadata": "tilesets32/hills-on-tallgrass.json",
       "against": "tallgrass",
       "tool": "create_topdown_tileset",
-      "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ low rounded grassy hills seen from above, each hill a soft green dome with a lit crown and a dark green shadow curving along its lower side, hollows of deeper green between them, a little dry straw-coloured grass on the crowns, no rock, no cliff, no grey, no bare earth, no pink, no mauve, no violet, no red, no flowers, no petals · the tall grass climbing the lower shoulders, thinning into dry tufts on the rising ground",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ high rolling downland seen from directly above, broad domes of fresh mid green turf with fine grass texture, only the very top of a dome catching a slightly lighter green and the lower side a soft grey-green shadow, the hollows between them a light sage green, no pale rim, no bright edge, no yellow outline, no cream, no ivory, no white, no dark green, no black, no grey stone, no rock, no bare earth · the tall grass climbing the lower shoulders and thinning as it rises, giving way to turf of the same mid green as the downland above, an even boundary with no lightening along it, no pale band at the edge",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
-        "upper_base_tile_id": "5454efdd-a7d5-43a5-a3c2-171461b5bd29"
+        "upper_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
+        "outline": "lineless"
       },
-      "jobId": "d45b18cd-8733-4a58-8115-bfe39288b46d",
+      "jobId": "abc48a3e-144e-4d42-91fb-84be82dd6e2e",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 5,
+      "note": "regenerated 2026-08-25 lineless: the transition was drawn as a bright lit shoulder in the downland's crown colour, which the palette match kept bright, so a pale ribbon traced every hills boundary. The upper description now names the downland by its body green and demotes the crown, the transition says the turf between the thinning canopy is that same green, and `outline: lineless` drops the yellow line the generator traced along the contact",
       "adjust": {
         "hue": -8,
         "saturation": 0.6,
@@ -1564,18 +1561,18 @@
       "metadata": "tilesets32/loess-on-scrub.json",
       "against": "scrub",
       "tool": "create_topdown_tileset",
-      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow ↗ a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth · shrubs thinning on the pale silt, dry gullies opening between the last low bushes",
+      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth · shrubs thinning on the pale silt, dry gullies opening between the last low bushes",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
-        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
         "upper_base_tile_id": "a2b75484-379b-452a-b41b-9c6a0db686fb"
       },
-      "jobId": "616c6a1e-711f-44b2-bba1-c0f07833641b",
+      "jobId": "4473beb4-87e4-4ed6-8d19-78585e299f57",
       "date": "2026-08-25",
-      "generations": 1,
+      "generations": 2,
       "note": "loess as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
       "adjust": {
         "hue": -5,
@@ -1592,17 +1589,17 @@
       "tool": "create_topdown_tileset",
       "prompt": "a loess plateau seen from above, pale tan wind-blown silt cut into stepped terraces, curved terrace edges casting thin shadows, dry gullies branching across it, dusty yellow-brown earth ↗ a worn grey stone mountain range seen from directly above, a spine of rounded rock ridges running across it with narrow shadowed clefts between them, bare weathered stone in grey and slate grey, thin dry grass caught in the hollows, no purple, no violet, no blue, no snow · grey stone breaking through the pale silt, scree and slumped terrace edges at the foot of the ridge",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "a2b75484-379b-452a-b41b-9c6a0db686fb",
         "upper_base_tile_id": "fc5202d7-e31e-4814-b74f-33ec2808da03"
       },
-      "jobId": "74fe8672-a118-4c3b-a7f3-606613e1bfd6",
+      "jobId": "86d6ff6f-808f-4ccc-9714-901a14b29078",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet"
+      "generations": 3,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square"
     },
     {
       "id": "terrain.shu@tallgrass",
@@ -1613,17 +1610,17 @@
       "tool": "create_topdown_tileset",
       "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a crowd of steep pale limestone karst towers seen from above, many separate rounded pinnacles of near-white cream stone packed close together with deep dark shadow in the narrow gaps between them, scrubby green clinging to the tops, no purple, no blue, no pink, no snow · tall grass ending abruptly at the pale limestone towers, dark clefts and broken stone at their base",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
         "upper_base_tile_id": "f267ecc3-ed00-4fec-abd5-59110469a295"
       },
-      "jobId": "03f0492a-02f7-41dd-a261-a6b065f93c66",
+      "jobId": "fd7e3537-37bf-4d44-8ec5-51ebfe862ec5",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 3,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
       "adjust": {
         "hue": -24,
         "saturation": 0.9,
@@ -1691,19 +1688,19 @@
       "metadata": "tilesets32/qinling-on-scrub.json",
       "against": "scrub",
       "tool": "create_topdown_tileset",
-      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow ↗ a pine-covered mountain range seen from above, dark green conifer crowns massed over grey rock ridges, bare stone showing along the crests and in the clefts, deep forest green and cool grey, no purple, no violet, no blue, no snow · low shrubs giving way to dark pine and grey rock at the foot of the ridge",
+      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow · low shrubs giving way to loose grey stone and the first pines at the foot of the ridge",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
-        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
-        "upper_base_tile_id": "40946da8-1eb1-4cb4-891c-f8d29e0dfab3"
+        "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+        "upper_base_tile_id": "5b2dc3e6-257e-4387-9ce2-7a84e7103cb1"
       },
-      "jobId": "3f7db6c9-7686-4ab0-a1a7-78870f9ca4c8",
+      "jobId": "d1d95f27-a124-4eae-966d-3051a4375881",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 4,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
       "adjust": {
         "hue": 30,
         "saturation": 1.3,
@@ -1719,17 +1716,17 @@
       "tool": "create_topdown_tileset",
       "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds · the last trees standing in shallow water at the swamp's edge, dark trunks and reed between the crowns",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
         "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
         "upper_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4"
       },
-      "jobId": "9f81a625-21ab-47a1-9928-77de8f3f35de",
+      "jobId": "6c57af48-9c44-4087-9de9-7e9f48af8a1b",
       "date": "2026-08-25",
-      "generations": 1,
-      "note": "marsh as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+      "generations": 2,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
       "adjust": {
         "hue": 38,
         "saturation": 0.75,
@@ -1743,18 +1740,18 @@
       "metadata": "tilesets32/field-on-scrub.json",
       "against": "scrub",
       "tool": "create_topdown_tileset",
-      "prompt": "dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the shrubs cleared back to the plot edge, a low earth bank between the heath and the furrows",
+      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the shrubs cleared back to the plot edge, a low earth bank between the heath and the furrows",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
-        "lower_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a",
+        "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
         "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
       },
-      "jobId": "b260ad3e-3ad4-41f9-a832-63c5d243c776",
+      "jobId": "403fb53f-b564-47b8-8ae2-b038e9c87ce1",
       "date": "2026-08-25",
-      "generations": 1,
+      "generations": 2,
       "note": "field as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
       "adjust": {
         "hue": 8,
@@ -1769,19 +1766,19 @@
       "metadata": "tilesets32/qinling-on-forest.json",
       "against": "forest",
       "tool": "create_topdown_tileset",
-      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a pine-covered mountain range seen from above, dark green conifer crowns massed over grey rock ridges, bare stone showing along the crests and in the clefts, deep forest green and cool grey, no purple, no violet, no blue, no snow · the broadleaf crowns giving way to dark pine on the rising grey rock",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow · the broadleaf crowns breaking against the grey rock at the foot of the ridge",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
-        "upper_base_tile_id": "40946da8-1eb1-4cb4-891c-f8d29e0dfab3"
+        "upper_base_tile_id": "5b2dc3e6-257e-4387-9ce2-7a84e7103cb1"
       },
-      "jobId": "d089210b-05aa-4292-af3c-3e55ef575d75",
+      "jobId": "d316df2b-0d5f-4868-84a9-bcb91c20a681",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 4,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
       "adjust": {
         "hue": 30,
         "saturation": 1.3,
@@ -1822,18 +1819,18 @@
       "metadata": "tilesets32/road-on-qinling.json",
       "against": "qinling",
       "tool": "create_topdown_tileset",
-      "prompt": "a pine-covered mountain range seen from above, dark green conifer crowns massed over grey rock ridges, bare stone showing along the crests and in the clefts, deep forest green and cool grey, no purple, no violet, no blue, no snow ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the track climbing between the pines onto the grey rock, loose dust worn over broken stone",
+      "prompt": "a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the track climbing between the ridges, loose dust worn over broken grey stone",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
-        "lower_base_tile_id": "40946da8-1eb1-4cb4-891c-f8d29e0dfab3",
+        "lower_base_tile_id": "5b2dc3e6-257e-4387-9ce2-7a84e7103cb1",
         "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
       },
-      "jobId": "24c1f973-89be-4964-af0d-bfe60cda9530",
+      "jobId": "a01e1ea6-70a5-4046-9f33-367bcaf459e0",
       "date": "2026-08-25",
-      "generations": 2,
+      "generations": 3,
       "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
       "adjust": {
         "hue": 14,
@@ -1848,19 +1845,20 @@
       "metadata": "tilesets32/hills-on-forest.json",
       "against": "forest",
       "tool": "create_topdown_tileset",
-      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ low rounded grassy hills seen from above, each hill a soft green dome with a lit crown and a dark green shadow curving along its lower side, hollows of deeper green between them, a little dry straw-coloured grass on the crowns, no rock, no cliff, no grey, no bare earth, no pink, no mauve, no violet, no red, no flowers, no petals · the canopy thinning on the rounded green shoulders, scattered crowns on the rising ground",
+      "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ high rolling downland seen from directly above, broad domes of fresh mid green turf with fine grass texture, only the very top of a dome catching a slightly lighter green and the lower side a soft grey-green shadow, the hollows between them a light sage green, no pale rim, no bright edge, no yellow outline, no cream, no ivory, no white, no dark green, no black, no grey stone, no rock, no bare earth · the canopy thinning to scattered crowns on the rising ground, the turf showing between them in the same mid green as the downland above, an even boundary with no lightening along it, no pale band at the edge of the wood",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
-        "upper_base_tile_id": "5454efdd-a7d5-43a5-a3c2-171461b5bd29"
+        "upper_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
+        "outline": "lineless"
       },
-      "jobId": "5eec87a5-9aca-4e48-ad01-f0da549b459c",
+      "jobId": "c036e2a0-ea82-45ac-85a1-ce405d0b874f",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 5,
+      "note": "regenerated 2026-08-25 lineless: the transition was drawn as a bright lit shoulder in the downland's crown colour, which the palette match kept bright, so a pale ribbon traced every hills boundary. The upper description now names the downland by its body green and demotes the crown, the transition says the turf between the thinning canopy is that same green, and `outline: lineless` drops the yellow line the generator traced along the contact",
       "adjust": {
         "hue": -8,
         "saturation": 0.6,
@@ -1876,17 +1874,17 @@
       "tool": "create_topdown_tileset",
       "prompt": "a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream ↗ a worn grey stone mountain range seen from directly above, a spine of rounded rock ridges running across it with narrow shadowed clefts between them, bare weathered stone in grey and slate grey, thin dry grass caught in the hollows, no purple, no violet, no blue, no snow · bamboo clumps ending against grey boulders and scree at the foot of the ridge",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "f4102f48-9e9d-4d11-8624-7fce988ed2eb",
         "upper_base_tile_id": "fc5202d7-e31e-4814-b74f-33ec2808da03"
       },
-      "jobId": "2584d232-f2e4-4165-ae57-233726c124bc",
+      "jobId": "073c3aa4-6e3d-4a04-a4c3-83115425cc0b",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet"
+      "generations": 3,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square"
     },
     {
       "id": "terrain.scrub@tallgrass",
@@ -1895,18 +1893,18 @@
       "metadata": "tilesets32/scrub-on-tallgrass.json",
       "against": "tallgrass",
       "tool": "create_topdown_tileset",
-      "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ dry olive-green heath seen from above, drab khaki grass covered in small round grey-green shrubs and low thorny bushes, muted and dusty green, no sand, no bare earth, no yellow · the tall blades thinning into drab khaki grass with the first small grey-green shrubs among them, flat level ground throughout, no bank, no cliff, no step, no bare earth, no pale outline",
+      "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers · the tall blades simply becoming heath, flat level ground throughout, no bank, no cliff, no step, no wall, no dark line, no pale outline",
       "settings": {
         "transition_size": 0,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
         "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
-        "upper_base_tile_id": "4a25fc7e-dc60-4cf2-92ed-dd5ca7efbf5a"
+        "upper_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13"
       },
-      "jobId": "4dc1522e-3471-402b-9f5f-a5103cd54985",
+      "jobId": "012b64aa-9c49-440f-84d7-06abeb34cc52",
       "date": "2026-08-25",
-      "generations": 2,
+      "generations": 3,
       "note": "scrub as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
       "adjust": {
         "hue": 4,
@@ -1973,19 +1971,19 @@
       "metadata": "tilesets32/road-on-hills.json",
       "against": "hills",
       "tool": "create_topdown_tileset",
-      "prompt": "low rounded grassy hills seen from above, each hill a soft green dome with a lit crown and a dark green shadow curving along its lower side, hollows of deeper green between them, a little dry straw-coloured grass on the crowns, no rock, no cliff, no grey, no bare earth, no pink, no mauve, no violet, no red, no flowers, no petals ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the track worn over the rounded shoulders, pale dust cut into the thin grass of the slope",
+      "prompt": "undefined ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the track worn over the rounded shoulders, pale dust cut into the light grass of the slope",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
-        "lower_base_tile_id": "5454efdd-a7d5-43a5-a3c2-171461b5bd29",
+        "lower_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
         "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
       },
-      "jobId": "b815e9ec-a6e2-45c4-a3f9-34c57a3b0330",
+      "jobId": "16b4bad8-6897-4237-9fa2-e2b46cb5660d",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 3,
+      "note": "regenerated with the fifth hills sheet: the range was redrawn lighter so it reads as high ground, and a pair carrying the old domes would have shown them beside the new ones",
       "adjust": {
         "hue": 14,
         "saturation": 0.62,
@@ -2107,17 +2105,17 @@
       "tool": "create_topdown_tileset",
       "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a crowd of steep pale limestone karst towers seen from above, many separate rounded pinnacles of near-white cream stone packed close together with deep dark shadow in the narrow gaps between them, scrubby green clinging to the tops, no purple, no blue, no pink, no snow · the canopy breaking against pale limestone towers, dark vegetation crowding their base",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
         "upper_base_tile_id": "f267ecc3-ed00-4fec-abd5-59110469a295"
       },
-      "jobId": "1605d9c9-688d-41ee-8941-5d3ba1f76479",
+      "jobId": "7f66db0e-b2a1-4209-98e4-5a58a8829157",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 3,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
       "adjust": {
         "hue": -24,
         "saturation": 0.9,
@@ -2183,19 +2181,20 @@
       "metadata": "tilesets32/hills-on-bamboo.json",
       "against": "bamboo",
       "tool": "create_topdown_tileset",
-      "prompt": "a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream ↗ low rounded grassy hills seen from above, each hill a soft green dome with a lit crown and a dark green shadow curving along its lower side, hollows of deeper green between them, a little dry straw-coloured grass on the crowns, no rock, no cliff, no grey, no bare earth, no pink, no mauve, no violet, no red, no flowers, no petals · bamboo clumps thinning on the rounded green shoulders of the rising ground",
+      "prompt": "a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream ↗ high rolling downland seen from directly above, broad domes of fresh mid green turf with fine grass texture, only the very top of a dome catching a slightly lighter green and the lower side a soft grey-green shadow, the hollows between them a light sage green, no pale rim, no bright edge, no yellow outline, no cream, no ivory, no white, no dark green, no black, no grey stone, no rock, no bare earth · the bamboo clumps thinning on the rising ground, the turf showing between them in the same mid green as the downland above, an even boundary with no lightening along it, no pale band at the edge of the grove",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "f4102f48-9e9d-4d11-8624-7fce988ed2eb",
-        "upper_base_tile_id": "5454efdd-a7d5-43a5-a3c2-171461b5bd29"
+        "upper_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
+        "outline": "lineless"
       },
-      "jobId": "cc8231c5-f908-49a5-86f6-c6a56138cf7e",
+      "jobId": "d2de45d0-b224-4c3a-b6ca-59b4a9fc4f09",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+      "generations": 5,
+      "note": "regenerated 2026-08-25 lineless: the transition was drawn as a bright lit shoulder in the downland's crown colour, which the palette match kept bright, so a pale ribbon traced every hills boundary. The upper description now names the downland by its body green and demotes the crown, the transition says the turf between the thinning canopy is that same green, and `outline: lineless` drops the yellow line the generator traced along the contact",
       "adjust": {
         "hue": -8,
         "saturation": 0.6,
@@ -2211,17 +2210,17 @@
       "tool": "create_topdown_tileset",
       "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a worn grey stone mountain range seen from directly above, a spine of rounded rock ridges running across it with narrow shadowed clefts between them, bare weathered stone in grey and slate grey, thin dry grass caught in the hollows, no purple, no violet, no blue, no snow · the outermost treetops breaking against grey boulders and scree at the foot of the ridge",
       "settings": {
-        "transition_size": 0.5,
+        "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "medium shading",
         "tile_size": 32,
         "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
         "upper_base_tile_id": "fc5202d7-e31e-4814-b74f-33ec2808da03"
       },
-      "jobId": "f9939c10-c337-4c7c-bcf8-ff09bcfea040",
+      "jobId": "4edb2da5-9781-49bf-bdcd-82ba5bc0ddcf",
       "date": "2026-08-25",
-      "generations": 2,
-      "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet"
+      "generations": 3,
+      "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square"
     }
   ]
 }

@@ -202,30 +202,63 @@ export const wangFillSheet = ({
   return out;
 };
 
+/**
+ * A colour and how much of the tile it covers. The share is what tells a body
+ * from a highlight: a palette alone says which shades a terrain is drawn in,
+ * and only the count says which of them is the ground and which is the glint
+ * on one crown.
+ */
+export interface Swatch {
+  colour: Rgba;
+  /** pixels of the tile wearing it */
+  count: number;
+}
+
+/** The colours of a Wang tileset's plain lower or upper tile, with their area. */
+export const cornerSwatches = (
+  sheet: Image,
+  meta: WangMetadata,
+  corner: WangCornerValue,
+  tile = 16,
+): Swatch[] => {
+  const index = wangIndex(meta);
+  const bit = corner === "upper" ? 1 : 0;
+  const box = boxOf(index, keyOf(bit, bit, bit, bit));
+  const at = new Map<number, Swatch>();
+  const swatches: Swatch[] = [];
+  for (let y = 0; y < tile; y += 1) {
+    for (let x = 0; x < tile; x += 1) {
+      const pixel = pixelAt(sheet, box.x + x, box.y + y);
+      if (pixel[3] === 0) continue;
+      const packed = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
+      const seen = at.get(packed);
+      if (seen) {
+        seen.count += 1;
+        continue;
+      }
+      const swatch = { colour: pixel, count: 1 };
+      at.set(packed, swatch);
+      swatches.push(swatch);
+    }
+  }
+  return swatches;
+};
+
 /** The distinct colours of a Wang tileset's plain lower or upper tile. */
 export const cornerPalette = (
   sheet: Image,
   meta: WangMetadata,
   corner: WangCornerValue,
   tile = 16,
-): Rgba[] => {
-  const index = wangIndex(meta);
-  const bit = corner === "upper" ? 1 : 0;
-  const box = boxOf(index, keyOf(bit, bit, bit, bit));
-  const seen = new Set<number>();
-  const palette: Rgba[] = [];
-  for (let y = 0; y < tile; y += 1) {
-    for (let x = 0; x < tile; x += 1) {
-      const pixel = pixelAt(sheet, box.x + x, box.y + y);
-      if (pixel[3] === 0) continue;
-      const packed = (pixel[0] << 16) | (pixel[1] << 8) | pixel[2];
-      if (seen.has(packed)) continue;
-      seen.add(packed);
-      palette.push(pixel);
-    }
-  }
-  return palette;
-};
+): Rgba[] =>
+  cornerSwatches(sheet, meta, corner, tile).map((swatch) => swatch.colour);
+
+/** The colours of a Wang tileset's plain lower tile, with their area. */
+export const lowerSwatches = (
+  sheet: Image,
+  meta: WangMetadata,
+  tile = 16,
+): Swatch[] => cornerSwatches(sheet, meta, "lower", tile);
 
 /** The distinct colours of a Wang tileset's plain lower tile. */
 export const lowerPalette = (
@@ -464,10 +497,10 @@ export const applyFinish = (image: Image, finish: SheetFinish = {}): Image => {
 };
 
 export interface SplitFinishOptions {
-  /** the colours of the sheet's plain lower tile */
-  lowerPalette: Rgba[];
-  /** the colours of the sheet's plain upper tile */
-  upperPalette: Rgba[];
+  /** the colours of the sheet's plain lower tile, with the area each covers */
+  lowerPalette: Swatch[];
+  /** the colours of the sheet's plain upper tile, with the area each covers */
+  upperPalette: Swatch[];
   /** the finish the lower terrain wears everywhere else on the map */
   lower?: SheetFinish;
   /** the finish this sheet's own terrain wears */
@@ -479,7 +512,7 @@ export interface SplitFinishOptions {
    * tile it was chained to and a correction cannot close the gap when it does
    * not.
    */
-  lowerTarget?: Rgba[];
+  lowerTarget?: Swatch[];
   /**
    * The colours this sheet's own terrain wears on the map, where that terrain is
    * drawn by another sheet: a pair's upper half against the plain sheet of the
@@ -489,7 +522,7 @@ export interface SplitFinishOptions {
    * laid. Recolouring the upper half onto the plain sheet's colours is what makes
    * the two indistinguishable; it is identity for a pair that already matched.
    */
-  upperTarget?: Rgba[];
+  upperTarget?: Swatch[];
 }
 
 const nearestIndex = (pixel: Rgba, palette: Rgba[]): number => {
@@ -508,11 +541,62 @@ const nearestIndex = (pixel: Rgba, palette: Rgba[]): number => {
   return at;
 };
 
+export interface MatchPaletteOptions {
+  /** the colours the image is drawn in, with the area each covers */
+  from: Swatch[];
+  /** the colours it is to be drawn in, with the area each covers */
+  to: Swatch[];
+  /**
+   * What the region being recoloured actually wears, with the area each colour
+   * covers. A generator draws a boundary in shades the plain tile never carries,
+   * and every one of those snaps to whichever palette entry it sits nearest: a
+   * wide lit shoulder a shade off the ground's highlight becomes the highlight
+   * outright, and the map reads a pale ribbon tracing every boundary. Given the
+   * region's own histogram, a colour `from` does not carry is placed by where
+   * its own area sits instead, which puts a band covering the middle of the
+   * region onto the shade covering the middle of the target. The entries `from`
+   * does carry keep their `from`-derived place, so the plain tile still
+   * reproduces pixel for pixel.
+   */
+  area?: Swatch[];
+}
+
+const colourKey = (colour: Rgba): string =>
+  `${colour[0]},${colour[1]},${colour[2]}`;
+
 /**
- * Recolours an image from one palette onto another by luminance rank: the
- * darkest colour of `from` becomes the darkest of `to`, the lightest the
- * lightest, and a pixel takes the colour its nearest entry maps to. Alpha is
- * kept.
+ * Places each shade of one histogram on the target shade covering the same
+ * share of area, darkest onto darkest. Returns a colour per input swatch, in
+ * the order given.
+ */
+const placeByArea = (
+  swatches: Swatch[],
+  toRanked: Swatch[],
+  toEnds: number[],
+): Rgba[] => {
+  const total = swatches.reduce((sum, swatch) => sum + swatch.count, 0) || 1;
+  const ranked = swatches
+    .map((swatch, at) => ({ swatch, at }))
+    .sort((a, b) => luminance(a.swatch.colour) - luminance(b.swatch.colour));
+  const placed: Rgba[] = new Array(swatches.length);
+  let below = 0;
+  for (const { swatch, at } of ranked) {
+    // the middle of this shade's own band, so a shade is placed by where its
+    // area sits rather than by how many other shades happen to be listed
+    const middle = (below + swatch.count / 2) / total;
+    below += swatch.count;
+    const found = toEnds.findIndex((end) => middle <= end);
+    placed[at] = toRanked[found === -1 ? toRanked.length - 1 : found].colour;
+  }
+  return placed;
+};
+
+/**
+ * Recolours an image from one palette onto another by luminance, darkest onto
+ * darkest and lightest onto lightest, with each shade landing where the same
+ * area of the target lies: a shade covering the middle half of one tile becomes
+ * the shade covering the middle half of the other. A pixel takes the colour its
+ * nearest entry maps to; alpha is kept.
  *
  * This is how a sheet's surround is made the ground it stands in rather than
  * something close to it. Chaining a generation to a base tile asks for that
@@ -521,28 +605,52 @@ const nearestIndex = (pixel: Rgba, palette: Rgba[]): number => {
  * so the build closes the gap after the fact. Rank rather than nearest-in-
  * target, because two renderings of the same material carry the same few
  * shades in the same order and rank preserves the shading a nearest match
- * would flatten.
+ * would flatten. Weighted by area rather than by position in that order,
+ * because the two renderings do not carry the same number of shades: spreading
+ * nine evenly over six puts the body of one on the highlight of the other, and
+ * the patch reads a grade lighter than the ground it is standing in.
  */
-export const matchPalette = (image: Image, from: Rgba[], to: Rgba[]): Image => {
+export const matchPalette = (
+  image: Image,
+  { from, to, area }: MatchPaletteOptions,
+): Image => {
   if (!from.length || !to.length) return image;
-  const fromRanked = from
-    .map((colour, at) => ({ colour, at }))
-    .sort((a, b) => luminance(a.colour) - luminance(b.colour));
-  const toRanked = [...to].sort((a, b) => luminance(a) - luminance(b));
-  const mapped: Rgba[] = new Array(from.length);
-  fromRanked.forEach(({ at }, rank) => {
-    const target =
-      fromRanked.length === 1
-        ? 0
-        : Math.round((rank * (toRanked.length - 1)) / (fromRanked.length - 1));
-    mapped[at] = toRanked[target];
-  });
+  const colours = from.map((swatch) => swatch.colour);
+  const byLuminance = (a: Swatch, b: Swatch): number =>
+    luminance(a.colour) - luminance(b.colour);
+  const toRanked = [...to].sort(byLuminance);
+  // where each target shade ends, as a share of the tile
+  const toTotal = toRanked.reduce((sum, swatch) => sum + swatch.count, 0) || 1;
+  let running = 0;
+  const toEnds = toRanked.map((swatch) => (running += swatch.count / toTotal));
+  const mapped = placeByArea(from, toRanked, toEnds);
+  // A colour the plain tile does not carry is one the generator invented for
+  // the boundary, so it is placed by its share of the region rather than by the
+  // entry it happens to sit nearest. Only ever downward: the fault being
+  // corrected is a band reading brighter than the ground it belongs to, and
+  // taking the darker of the two placements is what keeps the correction from
+  // putting a light mark anywhere a nearest match did not already have one.
+  const known = new Set(colours.map(colourKey));
+  const strays = new Map<string, Rgba>();
+  if (area) {
+    const placed = placeByArea(area, toRanked, toEnds);
+    area.forEach((swatch, at) => {
+      const key = colourKey(swatch.colour);
+      if (known.has(key)) return;
+      const near = mapped[nearestIndex(swatch.colour, colours)];
+      strays.set(
+        key,
+        luminance(placed[at]) < luminance(near) ? placed[at] : near,
+      );
+    });
+  }
   const out = blankImage(image.width, image.height);
   for (let y = 0; y < image.height; y += 1) {
     for (let x = 0; x < image.width; x += 1) {
       const pixel = pixelAt(image, x, y);
       if (pixel[3] === 0) continue;
-      const colour = mapped[nearestIndex(pixel, from)];
+      const colour =
+        strays.get(colourKey(pixel)) ?? mapped[nearestIndex(pixel, colours)];
       setPixel(out, x, y, [colour[0], colour[1], colour[2], pixel[3]]);
     }
   }
@@ -586,19 +694,46 @@ export const splitFinish = (
     upperTarget,
   }: SplitFinishOptions,
 ): Image => {
-  const lowered = lowerTarget
-    ? matchPalette(image, lowerPalette, lowerTarget)
-    : applyFinish(image, lower);
-  const uppered = upperTarget
-    ? matchPalette(image, upperPalette, upperTarget)
-    : applyFinish(image, upper);
-  const out = blankImage(image.width, image.height);
+  const lowerColours = lowerPalette.map((swatch) => swatch.colour);
+  const upperColours = upperPalette.map((swatch) => swatch.colour);
+  // classify before recolouring, so each half is matched against what it
+  // actually wears: the transition band belongs to whichever half claims it,
+  // and its area is what keeps it from being read as that ground's highlight
+  const belongsLower = new Uint8Array(image.width * image.height);
+  const areas = [new Map<string, Swatch>(), new Map<string, Swatch>()];
   for (let y = 0; y < image.height; y += 1) {
     for (let x = 0; x < image.width; x += 1) {
       const pixel = pixelAt(image, x, y);
       const isLower =
-        nearest(pixel, lowerPalette) <= nearest(pixel, upperPalette);
-      setPixel(out, x, y, pixelAt(isLower ? lowered : uppered, x, y));
+        nearest(pixel, lowerColours) <= nearest(pixel, upperColours);
+      belongsLower[y * image.width + x] = isLower ? 1 : 0;
+      if (pixel[3] === 0) continue;
+      const into = areas[isLower ? 0 : 1];
+      const key = colourKey(pixel);
+      const seen = into.get(key);
+      if (seen) seen.count += 1;
+      else into.set(key, { colour: [...pixel], count: 1 });
+    }
+  }
+  const lowered = lowerTarget
+    ? matchPalette(image, {
+        from: lowerPalette,
+        to: lowerTarget,
+        area: [...areas[0].values()],
+      })
+    : applyFinish(image, lower);
+  const uppered = upperTarget
+    ? matchPalette(image, {
+        from: upperPalette,
+        to: upperTarget,
+        area: [...areas[1].values()],
+      })
+    : applyFinish(image, upper);
+  const out = blankImage(image.width, image.height);
+  for (let y = 0; y < image.height; y += 1) {
+    for (let x = 0; x < image.width; x += 1) {
+      const from = belongsLower[y * image.width + x] ? lowered : uppered;
+      setPixel(out, x, y, pixelAt(from, x, y));
     }
   }
   return out;
