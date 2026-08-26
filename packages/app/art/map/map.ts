@@ -384,15 +384,20 @@ const hashAt = (x: number, y: number): number =>
   Math.imul((x * 73856093) ^ (y * 19349663), 0x85ebca6b);
 
 /**
- * One of four orientations for the tile at (x, y): bit 1 mirrors across the
- * vertical axis, bit 2 across the horizontal. Only a fully surrounded tile
- * may take one — an edge tile's art has to face its boundary — but an
- * interior tile is isotropic, and turning it breaks up the grid the eye
- * otherwise reads across a wide field of one terrain. Free variety: no extra
- * art, and it holds for whichever layer supplies the asset.
+ * The orientation of the tile at (x, y): bit 1 mirrors across the vertical
+ * axis. Only a fully surrounded tile may take one — an edge tile's art has to
+ * face its boundary — and mirroring it breaks up the grid the eye otherwise
+ * reads across a wide field of one terrain. Free variety: no extra art, and it
+ * holds for whichever layer supplies the asset.
+ *
+ * The horizontal mirror is the only one. A tile is not isotropic: top-down art
+ * is lit from the top of the tile, so mirroring it across the horizontal axis
+ * moves the light to the bottom and a field of it reads as a checkerboard of
+ * alternating light. A hill drawn as a lit crown over a shadowed lower side is
+ * where that shows worst, and it shows on any shaded ground.
  */
 export const orientationOf = (x: number, y: number): number =>
-  (hashAt(x, y) >>> 29) % 4;
+  (hashAt(x, y) >>> 29) % 2;
 
 /** Which stacked rearrangement of the grass fill the cell at (x, y) takes. */
 export const variantOf = (x: number, y: number): number =>

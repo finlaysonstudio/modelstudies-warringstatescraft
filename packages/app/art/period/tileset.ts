@@ -472,7 +472,82 @@ export interface SplitFinishOptions {
   lower?: SheetFinish;
   /** the finish this sheet's own terrain wears */
   upper?: SheetFinish;
+  /**
+   * The colours the lower terrain actually wears on the map. When given, the
+   * lower half is recoloured onto them (`matchPalette`) instead of wearing
+   * their correction, because the generator only sometimes reproduces the base
+   * tile it was chained to and a correction cannot close the gap when it does
+   * not.
+   */
+  lowerTarget?: Rgba[];
+  /**
+   * The colours this sheet's own terrain wears on the map, where that terrain is
+   * drawn by another sheet: a pair's upper half against the plain sheet of the
+   * same ground. Chaining fixes the base tile and nothing else, so a pair can
+   * reproduce the tile it was given and still draw the rest of the range in its
+   * own palette, which puts a bright patch of the range wherever that pair is
+   * laid. Recolouring the upper half onto the plain sheet's colours is what makes
+   * the two indistinguishable; it is identity for a pair that already matched.
+   */
+  upperTarget?: Rgba[];
 }
+
+const nearestIndex = (pixel: Rgba, palette: Rgba[]): number => {
+  let best = Infinity;
+  let at = 0;
+  for (let i = 0; i < palette.length; i += 1) {
+    const dr = pixel[0] - palette[i][0];
+    const dg = pixel[1] - palette[i][1];
+    const db = pixel[2] - palette[i][2];
+    const distance = dr * dr + dg * dg + db * db;
+    if (distance < best) {
+      best = distance;
+      at = i;
+    }
+  }
+  return at;
+};
+
+/**
+ * Recolours an image from one palette onto another by luminance rank: the
+ * darkest colour of `from` becomes the darkest of `to`, the lightest the
+ * lightest, and a pixel takes the colour its nearest entry maps to. Alpha is
+ * kept.
+ *
+ * This is how a sheet's surround is made the ground it stands in rather than
+ * something close to it. Chaining a generation to a base tile asks for that
+ * tile back, and the generator returns it exactly for some sheets and returns
+ * its own brighter meadow for others; there is no setting that decides which,
+ * so the build closes the gap after the fact. Rank rather than nearest-in-
+ * target, because two renderings of the same material carry the same few
+ * shades in the same order and rank preserves the shading a nearest match
+ * would flatten.
+ */
+export const matchPalette = (image: Image, from: Rgba[], to: Rgba[]): Image => {
+  if (!from.length || !to.length) return image;
+  const fromRanked = from
+    .map((colour, at) => ({ colour, at }))
+    .sort((a, b) => luminance(a.colour) - luminance(b.colour));
+  const toRanked = [...to].sort((a, b) => luminance(a) - luminance(b));
+  const mapped: Rgba[] = new Array(from.length);
+  fromRanked.forEach(({ at }, rank) => {
+    const target =
+      fromRanked.length === 1
+        ? 0
+        : Math.round((rank * (toRanked.length - 1)) / (fromRanked.length - 1));
+    mapped[at] = toRanked[target];
+  });
+  const out = blankImage(image.width, image.height);
+  for (let y = 0; y < image.height; y += 1) {
+    for (let x = 0; x < image.width; x += 1) {
+      const pixel = pixelAt(image, x, y);
+      if (pixel[3] === 0) continue;
+      const colour = mapped[nearestIndex(pixel, from)];
+      setPixel(out, x, y, [colour[0], colour[1], colour[2], pixel[3]]);
+    }
+  }
+  return out;
+};
 
 const nearest = (pixel: Rgba, palette: Rgba[]): number => {
   let best = Infinity;
@@ -502,10 +577,21 @@ const nearest = (pixel: Rgba, palette: Rgba[]): number => {
  */
 export const splitFinish = (
   image: Image,
-  { lowerPalette, upperPalette, lower, upper }: SplitFinishOptions,
+  {
+    lowerPalette,
+    upperPalette,
+    lower,
+    upper,
+    lowerTarget,
+    upperTarget,
+  }: SplitFinishOptions,
 ): Image => {
-  const lowered = applyFinish(image, lower);
-  const uppered = applyFinish(image, upper);
+  const lowered = lowerTarget
+    ? matchPalette(image, lowerPalette, lowerTarget)
+    : applyFinish(image, lower);
+  const uppered = upperTarget
+    ? matchPalette(image, upperPalette, upperTarget)
+    : applyFinish(image, upper);
   const out = blankImage(image.width, image.height);
   for (let y = 0; y < image.height; y += 1) {
     for (let x = 0; x < image.width; x += 1) {

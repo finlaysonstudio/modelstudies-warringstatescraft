@@ -16,6 +16,7 @@ import {
   readPng,
   writePng,
   type Image,
+  type Rgba,
 } from "../vendor/png";
 import { FACINGS, type SpriteMeta } from "../vendor/slice";
 import {
@@ -239,22 +240,63 @@ export const recordOf = (item: PeriodItem): AssetRecord => {
  * corrected the same way or the map shows a patch of differently-lit grass
  * around every range.
  */
+const itemDrawing = (spec: PeriodSpec, ground: string): PeriodTilesetItem => {
+  const item = spec.items.find(
+    (candidate) =>
+      candidate.kind === "tileset" &&
+      (candidate.id === `terrain.${ground}` ||
+        candidate.id === `water.${ground}`),
+  ) as PeriodTilesetItem | undefined;
+  if (!item) {
+    throw new BadRequestError(
+      `no tileset item draws "${ground}", which another sheet is drawn against`,
+    );
+  }
+  return item;
+};
+
 export const finishAgainst = (
   spec: PeriodSpec,
   against: string,
 ): SheetFinish => {
-  const item = spec.items.find(
-    (candidate) =>
-      candidate.kind === "tileset" &&
-      (candidate.id === `terrain.${against}` ||
-        candidate.id === `water.${against}`),
-  ) as PeriodTilesetItem | undefined;
-  if (!item) {
-    throw new BadRequestError(
-      `no tileset item draws "${against}", which another sheet is drawn against`,
-    );
-  }
+  const item = itemDrawing(spec, against);
   return { desaturate: item.desaturate, adjust: item.adjust };
+};
+
+/**
+ * The colours the ground named by `against` actually wears on the map: its own
+ * sheet's plain tile, finished the way that sheet is finished. A chained sheet
+ * paints that ground in its own surround, and the generator reproduces the base
+ * tile it was chained to only sometimes, so the surround is recoloured onto
+ * these rather than corrected the same way and hoped over.
+ */
+export const paletteAgainst = async (
+  spec: PeriodSpec,
+  root: string,
+  against: string,
+): Promise<Rgba[]> => {
+  const item = itemDrawing(spec, against);
+  const raw = await readPng(path.join(root, item.file));
+  const meta = JSON.parse(
+    await readFile(path.join(root, item.metadata), "utf8"),
+  ) as WangMetadata;
+  const finished = applyFinish(raw, {
+    desaturate: item.desaturate,
+    adjust: item.adjust,
+  });
+  return cornerPalette(finished, meta, "upper", spec.tile);
+};
+
+/**
+ * The ground a pair draws, read from its id: `terrain.mountain@forest` is the
+ * mountain as it meets the wood. Undefined for a plain sheet, which is the sheet
+ * every pair of that ground has to match.
+ */
+export const upperGroundOf = (id: string): string | undefined => {
+  const at = id.indexOf("@");
+  if (at < 0) return undefined;
+  const dot = id.indexOf(".");
+  return id.slice(dot + 1, at);
 };
 
 export interface BuildPeriodOptions {
@@ -284,15 +326,18 @@ export const buildPeriod = async ({
         desaturate: item.desaturate,
         adjust: item.adjust,
       };
-      const beneath = item.against
-        ? finishAgainst(spec, item.against)
-        : undefined;
-      const sheet = beneath
+      const against = item.against;
+      const drawn = upperGroundOf(item.id);
+      const sheet = against
         ? splitFinish(raw, {
             lowerPalette: lowerPalette(raw, meta, tile),
             upperPalette: cornerPalette(raw, meta, "upper", tile),
-            lower: beneath,
+            lower: finishAgainst(spec, against),
             upper: own,
+            lowerTarget: await paletteAgainst(spec, root, against),
+            upperTarget: drawn
+              ? await paletteAgainst(spec, root, drawn)
+              : undefined,
           })
         : applyFinish(raw, own);
       let image = item.fill
