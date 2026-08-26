@@ -43,18 +43,22 @@
         "detail": "highly detailed",
         "shading": "detailed shading",
         "transition": 0.25,
-        "lower_base_tile_id": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+        "mode": "pro",
+        "lower_base_tile_id": "bb50318d-3817-4e1c-b112-7ace3e260efd",
+        "raggedness": 0.55,
+        "slope_size": 0.3,
+        "spread_x": 0.35
       },
-      "prompt": "a dissected loess upland seen from directly above, deep narrow gullies with steep pale walls branching in a tree pattern across the whole area, rounded knolls and flat-topped ridges of yellow-buff wind-blown silt between them, every gully casting a hard shadow on one side, dry ochre earth, no terraces, no steps, no green, no rock, no sand; transition: the meadow grass thinning onto dry buff silt, the first shallow gullies opening in the bare earth",
-      "jobId": "c6a981da-a7ff-490e-b923-2b12beb8ef52",
+      "prompt": "a dissected loess upland seen from directly above, deep narrow ravines branching in a tree pattern through pale yellow-buff silt, steep vertical walls, rounded knolls and flat ridges of dry ochre earth between them, hard shadow down one side of every ravine, no terraces, no steps, no green, no plants, no rock, no sand; transition: the meadow grass thinning onto dry buff silt, the first shallow gullies opening in the bare earth",
+      "jobId": "4bf9a915-6d00-4609-b740-8a8c214c4c6d",
       "date": "2026-08-26",
-      "generations": 2,
+      "generations": 6,
       "keyTolerance": 16,
-      "note": "the first loess asked for stepped terraces and came back a flat orange fill with no relief at all: the terraced staircase of every modern photograph of the plateau is a later engineering campaign, and asking for it first put the gullies second and got neither. Loess cleaves vertically, so the landform is dissection rather than steps -- gullies, and the flat-topped tableland, ridge, and knoll left between them -- and the second names those and forbids the terraces. Regenerated at transition 0.25 with the rest, since the sheet is chained to grass and a band that deep leaves no pure meadow in the composed blob sheet",
+      "note": "the first loess asked for stepped terraces and came back a flat orange fill with no relief at all: the terraced staircase of every modern photograph of the plateau is a later engineering campaign, and asking for it first put the gullies second and got neither. Loess cleaves vertically, so the landform is dissection rather than steps -- gullies, and the flat-topped tableland, ridge, and knoll left between them. The second named those and forbade the terraces and still came back flat: standard mode draws a texture, and a dendritic gully network is geometry. Four more were run side by side and compared as autotiled patches over grass (`var/scratch/loess-cand.mts`): harder shading gave a fainter hatch on the same flat ground, `badlands` gave a regular diagonal corduroy that reads as weaving, `large simple landforms` gave a blank cream shelf, and pro mode with `raggedness` 0.55 drew the branching tree outright. The lesson is which knob answers: shading and wording move the texture, and only pro's shape controls move the landform",
       "adjust": {
-        "hue": 12,
-        "saturation": 0.85,
-        "value": 0.8
+        "hue": 11,
+        "saturation": 0.8,
+        "value": 0.88
       }
     },
     {
@@ -1324,19 +1328,19 @@
       "metadata": "tilesets32/river-on-loess.json",
       "against": "loess",
       "tool": "create_topdown_tileset",
-      "prompt": "a dissected loess upland seen from directly above, deep narrow gullies with steep pale walls branching in a tree pattern across the whole area, rounded knolls and flat-topped ridges of yellow-buff wind-blown silt between them, every gully casting a hard shadow on one side, dry ochre earth, no terraces, no steps, no green, no rock, no sand ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the rim of a deep gorge, sheer pale silt and rock walls dropping straight to the water with a hard shadow down the shaded side, a narrow shelf of wet tan mud and fallen blocks at the foot, gully mouths notching the rim",
+      "prompt": "a dissected loess upland seen from directly above, deep narrow ravines branching in a tree pattern through pale yellow-buff silt, steep vertical walls, rounded knolls and flat ridges of dry ochre earth between them, hard shadow down one side of every ravine, no terraces, no steps, no green, no plants, no rock, no sand ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the rim of a deep gorge, sheer pale silt and rock walls dropping straight to the water with a hard shadow down the shaded side, a narrow shelf of wet tan mud and fallen blocks at the foot, gully mouths notching the rim",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
-        "lower_base_tile_id": "108e1a89-802e-49fe-9b9a-ae0b8b908f53",
+        "lower_base_tile_id": "f73722ce-11cb-405a-9468-879ff607f97c",
         "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
       },
-      "jobId": "c4c509d3-9771-45f0-abf3-0b9c4ea8c145",
+      "jobId": "15827aa6-6cad-40af-ab8b-aaf036106ca8",
       "date": "2026-08-26",
-      "generations": 3,
-      "note": "regenerated 2026-08-26 as the gorge it actually is: the He on the west bank runs 150 to 300 m below the plateau it cut, so the transition is a rim with a shadowed wall rather than a bank slumping into the water",
+      "generations": 4,
+      "note": "regenerated 2026-08-26 against the pro loess: a pair reproduces the plain sheet it was chained to, so a new plain sheet is a new pair",
       "frames": 3,
       "adjust": {
         "hue": 11,
@@ -1565,19 +1569,19 @@
       "metadata": "tilesets32/loess-on-scrub.json",
       "against": "scrub",
       "tool": "create_topdown_tileset",
-      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a dissected loess upland seen from directly above, deep narrow gullies with steep pale walls branching in a tree pattern across the whole area, rounded knolls and flat-topped ridges of yellow-buff wind-blown silt between them, every gully casting a hard shadow on one side, dry ochre earth, no terraces, no steps, no green, no rock, no sand · shrubs thinning on the dry buff silt, the first shallow gullies opening between the last low bushes",
+      "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a dissected loess upland seen from directly above, deep narrow ravines branching in a tree pattern through pale yellow-buff silt, steep vertical walls, rounded knolls and flat ridges of dry ochre earth between them, hard shadow down one side of every ravine, no terraces, no steps, no green, no plants, no rock, no sand · shrubs thinning on the dry buff silt, the first shallow ravines opening between the last low bushes",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
         "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
-        "upper_base_tile_id": "108e1a89-802e-49fe-9b9a-ae0b8b908f53"
+        "upper_base_tile_id": "f73722ce-11cb-405a-9468-879ff607f97c"
       },
-      "jobId": "d7094af1-ccaa-48bc-bc82-0f17ae411c96",
+      "jobId": "6d9d89ef-7368-4728-b13d-c5c00b39e264",
       "date": "2026-08-26",
-      "generations": 3,
-      "note": "regenerated 2026-08-26: chained to the new base tile, since a pair reproduces the plain sheet it was chained to and the old one is gone",
+      "generations": 4,
+      "note": "regenerated 2026-08-26 against the pro loess: a pair reproduces the plain sheet it was chained to, so a new plain sheet is a new pair",
       "adjust": {
         "hue": 12,
         "saturation": 0.85,
@@ -1841,7 +1845,7 @@
       "jobId": "86d6ff6f-808f-4ccc-9714-901a14b29078",
       "date": "2026-08-25",
       "generations": 3,
-      "note": "kept as a record: the strip of generic range on the west bank of the gorge was the only ground this pair was laid on, and that strip is loess now (there is no range on the Shaanxi side). The sheet still builds, so the map may lay it again"
+      "note": "kept as a record: the strip of generic range on the west bank of the gorge was the only ground this pair was laid on, and that strip is loess now (there is no range on the Shaanxi side). The sheet still builds, so the map may lay it again. Unlaid since 2026-08-26, and stale twice over since the loess was regenerated in pro mode: it reproduces neither neighbour now, which is why `verify-pairs` names it"
     },
     {
       "id": "terrain.mountain@bamboo",
@@ -2107,19 +2111,19 @@
       "metadata": "tilesets32/steppe-on-loess.json",
       "against": "loess",
       "tool": "create_topdown_tileset",
-      "prompt": "a dissected loess upland seen from directly above, deep narrow gullies with steep pale walls branching in a tree pattern across the whole area, rounded knolls and flat-topped ridges of yellow-buff wind-blown silt between them, every gully casting a hard shadow on one side, dry ochre earth, no terraces, no steps, no green, no rock, no sand ↗ dry grassland seen from directly above, continuous cover of fine grass in gold, straw yellow, and olive green, laid over in long wind-combed streaks that run across the tile, tones shifting between yellow and green across the field, grass touching grass everywhere with no gaps, no bare ground, no soil, no rows, no separate plants, no flowers · pale gold grass taking hold on the silt, the sward closing over the last bare buff earth",
+      "prompt": "a dissected loess upland seen from directly above, deep narrow ravines branching in a tree pattern through pale yellow-buff silt, steep vertical walls, rounded knolls and flat ridges of dry ochre earth between them, hard shadow down one side of every ravine, no terraces, no steps, no green, no plants, no rock, no sand ↗ dry grassland seen from directly above, continuous cover of fine grass in gold, straw yellow, and olive green, laid over in long wind-combed streaks that run across the tile, tones shifting between yellow and green across the field, grass touching grass everywhere with no gaps, no bare ground, no soil, no rows, no separate plants, no flowers · pale gold grass taking hold on the silt, the sward closing over the last bare buff earth",
       "settings": {
         "transition_size": 0.25,
         "detail": "highly detailed",
         "shading": "detailed shading",
         "tile_size": 32,
-        "lower_base_tile_id": "108e1a89-802e-49fe-9b9a-ae0b8b908f53",
+        "lower_base_tile_id": "f73722ce-11cb-405a-9468-879ff607f97c",
         "upper_base_tile_id": "1ac22b57-225c-4938-bbe4-b6b68810635b"
       },
-      "jobId": "883581f3-ea80-41b8-9301-0f751ce214bd",
+      "jobId": "edf2e4cf-7071-4e05-89e1-bba6194ddadd",
       "date": "2026-08-26",
-      "generations": 2,
-      "note": "regenerated 2026-08-26: chained to the new base tile, since a pair reproduces the plain sheet it was chained to and the old one is gone",
+      "generations": 3,
+      "note": "regenerated 2026-08-26 against the pro loess: a pair reproduces the plain sheet it was chained to, so a new plain sheet is a new pair",
       "adjust": {
         "hue": 5,
         "saturation": 0.6,
