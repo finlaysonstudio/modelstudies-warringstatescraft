@@ -29,6 +29,7 @@ import {
   lowerSwatches,
   splitFinish,
   wangBlobSheet,
+  wangIndex,
   variantSheet,
   wangFillSheet,
   waterFrames,
@@ -302,10 +303,13 @@ const finishedSheet = async (
     if (!item.against) return { sheet: applyFinish(raw, own), meta };
     const drawn = upperGroundOf(item.id);
     const next = [...drawing, item.id];
+    const index = wangIndex(meta);
     return {
       sheet: splitFinish(raw, {
         lowerPalette: lowerSwatches(raw, meta, tile),
         upperPalette: cornerSwatches(raw, meta, "upper", tile),
+        lowerBox: index.get("0000"),
+        upperBox: index.get("1111"),
         lower: finishAgainst(spec, item.against),
         upper: own,
         lowerTarget: await paletteAgainst(

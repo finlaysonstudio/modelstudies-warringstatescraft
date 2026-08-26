@@ -523,7 +523,26 @@ export interface SplitFinishOptions {
    * the two indistinguishable; it is identity for a pair that already matched.
    */
   upperTarget?: Swatch[];
+  /**
+   * The two plain tiles' boxes. Each is one terrain and nothing else by
+   * construction, so no nearest-palette guess should be allowed to hand any of
+   * their pixels to the other half. Left to the guess, a fraction of a percent
+   * of the plain upper tile comes back wearing the lower ground — and that tile
+   * is what `paletteAgainst` hands every pair of the ground as its target, so a
+   * rare stray colour becomes a slot in the target for a whole transition band
+   * to land in. A quarter of the hills pairs was grass's light shade, which is a
+   * cream bar along every contact.
+   */
+  lowerBox?: Box;
+  upperBox?: Box;
 }
+
+const inBox = (box: Box | undefined, x: number, y: number): boolean =>
+  !!box &&
+  x >= box.x &&
+  x < box.x + box.width &&
+  y >= box.y &&
+  y < box.y + box.height;
 
 const nearestIndex = (pixel: Rgba, palette: Rgba[]): number => {
   let best = Infinity;
@@ -563,6 +582,13 @@ export interface MatchPaletteOptions {
 
 const colourKey = (colour: Rgba): string =>
   `${colour[0]},${colour[1]},${colour[2]}`;
+
+/**
+ * The share of a region a colour has to cover before it counts as that ground's
+ * body rather than a detail on it. A body is placed by its own area; a detail
+ * follows its nearest neighbour.
+ */
+const BODY_SHARE = 0.05;
 
 /**
  * Places each shade of one histogram on the target shade covering the same
@@ -624,23 +650,32 @@ export const matchPalette = (
   let running = 0;
   const toEnds = toRanked.map((swatch) => (running += swatch.count / toTotal));
   const mapped = placeByArea(from, toRanked, toEnds);
-  // A colour the plain tile does not carry is one the generator invented for
-  // the boundary, so it is placed by its share of the region rather than by the
-  // entry it happens to sit nearest. Only ever downward: the fault being
-  // corrected is a band reading brighter than the ground it belongs to, and
-  // taking the darker of the two placements is what keeps the correction from
-  // putting a light mark anywhere a nearest match did not already have one.
+  // A colour the plain tile does not carry is one the generator invented after
+  // it reproduced the tile it was chained to, so it is placed by its share of
+  // the region rather than by the entry it happens to sit nearest. How much of
+  // the region it covers is what says which of the two placements to trust. A
+  // shade covering a body's worth of the region is that ground as this sheet
+  // draws it, and its own area is where it goes: a pair whose turf is a shade
+  // off the plain sheet's is the case `upperTarget` exists to close, and forcing
+  // it darker leaves the pair a visibly different green from the plain sheet
+  // beside it. A rarer shade is a detail — a rim, a fleck, a dithered edge — and
+  // there the area of a handful of pixels says nothing, so it follows its
+  // nearest neighbour and may only ever be darkened: the fault that rule was
+  // written for is a band reading brighter than the ground it belongs to, and a
+  // correction that could also lighten puts a new light mark on the shore.
   const known = new Set(colours.map(colourKey));
   const strays = new Map<string, Rgba>();
   if (area) {
     const placed = placeByArea(area, toRanked, toEnds);
+    const total = area.reduce((sum, swatch) => sum + swatch.count, 0) || 1;
     area.forEach((swatch, at) => {
       const key = colourKey(swatch.colour);
       if (known.has(key)) return;
       const near = mapped[nearestIndex(swatch.colour, colours)];
+      const body = swatch.count / total >= BODY_SHARE;
       strays.set(
         key,
-        luminance(placed[at]) < luminance(near) ? placed[at] : near,
+        body || luminance(placed[at]) < luminance(near) ? placed[at] : near,
       );
     });
   }
@@ -655,6 +690,17 @@ export const matchPalette = (
     }
   }
   return out;
+};
+
+/** The share of a plain tile's area each of its colours covers. */
+const sharesOf = (swatches: Swatch[]): Map<string, number> => {
+  const total = swatches.reduce((sum, swatch) => sum + swatch.count, 0) || 1;
+  const shares = new Map<string, number>();
+  for (const swatch of swatches) {
+    const key = colourKey(swatch.colour);
+    shares.set(key, (shares.get(key) ?? 0) + swatch.count / total);
+  }
+  return shares;
 };
 
 const nearest = (pixel: Rgba, palette: Rgba[]): number => {
@@ -682,6 +728,15 @@ const nearest = (pixel: Rgba, palette: Rgba[]): number => {
  * that can only recognise the lower exactly leaves that whole band lit for the
  * upper. Which is a halo: a bright rim around every wood, on grass that has
  * been darkened around it.
+ *
+ * A colour both plain tiles carry is nearest to both, and a tie broken by which
+ * half is tested first hands a terrain's own body to the other one: the
+ * downland's turf is 40% of its plain tile and a handful of pixels of the
+ * meadow's brightest highlight, so an equal distance sent every one of those
+ * pixels to the meadow and the whole region came back painted in grass's
+ * lightest shade — a flat pale shelf a tile deep wherever the region's edge ran
+ * straight. A tie therefore goes to whichever ground actually wears the colour,
+ * by area. Only on a tie: a strictly nearer palette is still the answer.
  */
 export const splitFinish = (
   image: Image,
@@ -692,10 +747,14 @@ export const splitFinish = (
     upper,
     lowerTarget,
     upperTarget,
+    lowerBox,
+    upperBox,
   }: SplitFinishOptions,
 ): Image => {
   const lowerColours = lowerPalette.map((swatch) => swatch.colour);
   const upperColours = upperPalette.map((swatch) => swatch.colour);
+  const lowerShares = sharesOf(lowerPalette);
+  const upperShares = sharesOf(upperPalette);
   // classify before recolouring, so each half is matched against what it
   // actually wears: the transition band belongs to whichever half claims it,
   // and its area is what keeps it from being read as that ground's highlight
@@ -704,12 +763,19 @@ export const splitFinish = (
   for (let y = 0; y < image.height; y += 1) {
     for (let x = 0; x < image.width; x += 1) {
       const pixel = pixelAt(image, x, y);
-      const isLower =
-        nearest(pixel, lowerColours) <= nearest(pixel, upperColours);
+      const toLower = nearest(pixel, lowerColours);
+      const toUpper = nearest(pixel, upperColours);
+      const key = colourKey(pixel);
+      const isLower = inBox(upperBox, x, y)
+        ? false
+        : inBox(lowerBox, x, y)
+          ? true
+          : toLower === toUpper
+            ? (lowerShares.get(key) ?? 0) >= (upperShares.get(key) ?? 0)
+            : toLower < toUpper;
       belongsLower[y * image.width + x] = isLower ? 1 : 0;
       if (pixel[3] === 0) continue;
       const into = areas[isLower ? 0 : 1];
-      const key = colourKey(pixel);
       const seen = into.get(key);
       if (seen) seen.count += 1;
       else into.set(key, { colour: [...pixel], count: 1 });

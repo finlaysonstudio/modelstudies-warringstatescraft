@@ -252,11 +252,11 @@
       "date": "2026-08-25",
       "generations": 5,
       "keyTolerance": 16,
-      "note": "the third sheet had the shape but read as low ground: dark green shadow per dome, deeper green in the hollows, and an adjust that dropped both saturation and value. High ground catches light. The fourth put the whole crown in pale green-grey and went past green into cream, so the domes read as pebbles on a paper cut-out. The fifth keeps the crown bright and the shadow a narrow band on the lower side alone and forbids both ends, and came back an acid lime: that last step is a palette, not a shape, so the adjust turns it toward green and takes half its saturation out rather than spending a sixth generation",
+      "note": "the third sheet had the shape but read as low ground: dark green shadow per dome, deeper green in the hollows, and an adjust that dropped both saturation and value. High ground catches light. The fourth put the whole crown in pale green-grey and went past green into cream, so the domes read as pebbles on a paper cut-out. The fifth keeps the crown bright and the shadow a narrow band on the lower side alone and forbids both ends, and came back an acid lime: that last step is a palette, not a shape, so the adjust turns it toward green and takes half its saturation out rather than spending a sixth generation. The adjust was retuned 2026-08-25 after `splitFinish` stopped handing the downland's own turf to the meadow: half the sheet had been repainted in grass's lightest shade, so the adjust was only ever finishing the crown, and applied to the whole body it left crown and turf twenty luminance apart in mint. It now keeps four fifths of the generation's saturation and drops an eighth of its value, which puts the shadow under the meadow, the turf a clear grade over it, and the crown over that",
       "adjust": {
-        "hue": 20,
-        "saturation": 0.6,
-        "value": 1
+        "hue": 14,
+        "saturation": 0.8,
+        "value": 0.87
       }
     },
     {
