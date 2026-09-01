@@ -85,7 +85,6 @@ export function EpisodePage() {
       cancelled = true;
     };
     // the scene query is the opening position only; advancing does not refetch
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const episode = state.phase === "ready" ? state.episode : null;

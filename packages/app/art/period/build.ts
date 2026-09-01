@@ -17,7 +17,6 @@ import {
   readPng,
   writePng,
   type Image,
-  type Rgba,
 } from "../vendor/png";
 import { FACINGS, type SpriteMeta } from "../vendor/slice";
 import {

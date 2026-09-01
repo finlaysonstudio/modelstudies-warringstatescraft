@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { StatusChip } from "../../components/chips";
+import { LivePlayNotice } from "../../components/LivePlayNotice";
 import { libraryOf, type LibraryGame } from "../../lib/library";
 import { CAMPAIGNS } from "../../campaigns";
 import { formatUsd } from "../../lib/usage";
@@ -327,6 +328,7 @@ export function CraftHome() {
           >
             choose a game →
           </Link>
+          <LivePlayNotice className="mt-4" />
         </section>
 
         <section

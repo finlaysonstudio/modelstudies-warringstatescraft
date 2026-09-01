@@ -1,0 +1,29 @@
+{
+  "name": "@modelstudies/chinatalk-submission-2026",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Static snapshot of Warring States Craft for the ChinaTalk Situation Room submission, and the CDK that hosts it",
+  "scripts": {
+    "build": "tsx scripts/build.ts",
+    "cdk": "cdk",
+    "deploy": "cdk deploy",
+    "diff": "cdk diff",
+    "publish": "tsx scripts/publish.ts",
+    "serve": "tsx scripts/serve.ts",
+    "synth": "cdk synth",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jaypie/constructs": "^1.2.81",
+    "@jaypie/errors": "^1.2.6",
+    "@modelstudies/app": "*",
+    "aws-cdk-lib": "^2.250.0",
+    "constructs": "^10.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "aws-cdk": "^2.1132.0",
+    "tsx": "^4.20.0"
+  }
+}

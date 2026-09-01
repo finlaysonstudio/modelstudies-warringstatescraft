@@ -30,6 +30,13 @@ export default [
     },
   },
   {
+    // so do the submission snapshot's build, serve, and publish scripts
+    files: ["packages/chinatalk-submission-2026/scripts/**/*.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
+  {
     // vitest accepts a message as expect's second argument; the specs use it
     // to name the rendering or chapter under test.
     files: ["packages/*/src/**/__tests__/**/*.ts"],

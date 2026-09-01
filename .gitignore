@@ -5,3 +5,5 @@ dist/
 .DS_Store
 var/
 packages/app/public/stage/vendor/
+cdk.out/
+packages/chinatalk-submission-2026/site/

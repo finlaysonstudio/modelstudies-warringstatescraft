@@ -1,0 +1,92 @@
+name: Deploy Sandbox
+
+# The infrastructure alone. The site's content is the snapshot in `var/`,
+# which is git-ignored and lives on the workstation that ran the bench, so the
+# sync is `npm run submission && npm run submission:publish` from there. This
+# workflow makes the bucket and distribution the sync lands on.
+#
+# Environment variables (repository or environment scoped):
+#   AWS_ROLE_ARN        role this workflow assumes, GitHub OIDC
+#   AWS_REGION          default us-east-1
+#   AWS_HOSTED_ZONE     modelstudies.com
+#   PROJECT_NONCE       stable per environment; unset derives one from the repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      diff-only:
+        description: Print the diff and stop
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-sandbox
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy submission site
+    runs-on: ubuntu-latest
+    environment: sandbox
+    env:
+      PROJECT_ENV: sandbox
+      PROJECT_SPONSOR: modelstudies
+      PROJECT_KEY: situationeval
+      CDK_ENV_HOSTED_ZONE: ${{ vars.AWS_HOSTED_ZONE }}
+      CDK_ENV_REPO: ${{ github.repository }}
+      CDK_ENV_LOG: "true"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Resolve project nonce
+        id: project
+        shell: bash
+        env:
+          INPUT_PROJECT_NONCE: ${{ vars.PROJECT_NONCE }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [[ -n "${INPUT_PROJECT_NONCE}" ]]; then
+            PROJECT_NONCE="${INPUT_PROJECT_NONCE}"
+          else
+            PROJECT_NONCE=$(node -e '
+              const crypto = require("crypto");
+              const h = crypto.createHash("sha256").update(process.argv[1]).digest("hex");
+              let n = BigInt("0x" + h);
+              const a = "0123456789abcdefghijklmnopqrstuvwxyz";
+              let s = "";
+              while (s.length < 6) { s = a[Number(n % 36n)] + s; n /= 36n; }
+              console.log(s);
+            ' "${REPO}:sandbox")
+          fi
+          echo "PROJECT_NONCE=${PROJECT_NONCE}" >> "$GITHUB_ENV"
+          echo "Resolved PROJECT_NONCE=${PROJECT_NONCE}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Diff
+        run: npm run diff --workspace @modelstudies/chinatalk-submission-2026
+
+      - name: Deploy
+        if: ${{ !inputs.diff-only }}
+        run: |
+          npm run cdk --workspace @modelstudies/chinatalk-submission-2026 -- \
+            deploy --require-approval never SubmissionSiteStack

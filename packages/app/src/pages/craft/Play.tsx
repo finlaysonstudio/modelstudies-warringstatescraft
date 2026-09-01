@@ -8,6 +8,7 @@ import {
   pickRandom,
   type LibraryGame,
 } from "../../lib/library";
+import { LivePlayNotice } from "../../components/LivePlayNotice";
 import type { RunIndexEntry, ScenarioIndexEntry } from "../../lib/types";
 
 // Play: choose a game from the replay library and watch it. Non-interactive
@@ -159,6 +160,8 @@ export function Play() {
           by turn from the seat's vantage, the way the model saw it.
         </p>
       </header>
+
+      <LivePlayNotice className="mt-8" />
 
       <section className="mt-10 space-y-6" aria-label="Choose">
         <div>

@@ -3,6 +3,7 @@ import { Radar } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import type { ReactNode } from "react";
 import { CAMPAIGNS } from "../campaigns";
+import { SNAPSHOT, SNAPSHOT_DATE, SNAPSHOT_LABEL } from "../lib/snapshot";
 
 // Site chrome: three-row grid, main is the only scroll container. The top
 // bar carries the campaign-level destinations; the Craft sub site adds its
@@ -13,6 +14,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="grid h-dvh grid-rows-[auto_1fr_auto] bg-surface-base font-geist text-zinc-300">
       <header className="border-b border-white/10">
+        {SNAPSHOT && <SnapshotBar />}
         <div className="mx-auto flex h-12 w-full max-w-7xl items-center gap-x-4 px-6 sm:px-16">
           <NavLink to="/" label="Home" exact />
           <Dot />
@@ -75,6 +77,24 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Brand />
         </div>
       </footer>
+    </div>
+  );
+}
+
+// A snapshot is a date. The bar says so on every page rather than leaving a
+// reader to infer it from the newest study on the front page.
+function SnapshotBar() {
+  return (
+    <div className="border-b border-white/5 bg-white/[0.02]">
+      <div className="mx-auto flex h-8 w-full max-w-7xl items-center gap-x-2 px-6 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase sm:px-16">
+        <span className="text-card-accent">{SNAPSHOT_LABEL}</span>
+        {SNAPSHOT_DATE && (
+          <>
+            <Dot />
+            <span>{SNAPSHOT_DATE}</span>
+          </>
+        )}
+      </div>
     </div>
   );
 }

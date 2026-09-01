@@ -4,6 +4,12 @@
   "type": "module",
   "version": "0.0.1",
   "description": "Replay viewer and results app in the Cloud Agent Studio style",
+  "exports": {
+    "./server/data": {
+      "import": "./server/data.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "vite build",
     "dev": "vite --port 3175 --strictPort",

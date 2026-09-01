@@ -23,6 +23,7 @@ packages/
   lake/       @modelstudies/lake       — document lake seam: rights-aware retrieval over the source corpus
   cli/        @modelstudies/cli        — command-line verbs
   app/        @modelstudies/app        — campaign site (port 3175)
+  chinatalk-submission-2026/            — the static snapshot of the site and the CDK that hosts it
 var/<model>/  — every stored model as JSON: runs, studies, interview (+ <id>.jsonl journal), probe, fielding, scorecards, reports, scenarios (git-ignored)
 var/log/      — one jsonl log per CLI run (git-ignored)
 var/lake/     — the document corpus and its ingesters (git-ignored)
@@ -152,6 +153,14 @@ Every replay at `/craft/play/:id` plays on an animated overworld above the turn 
 
 The Annals are an exhibit rather than an instrument, and the separation is structural. They name real people and state real years, which the chapters may not, so no person in them enters the gazetteer the chapters render against, nothing under `scenario/` may import them, and the historical half of the stage vocabulary (a canal cut, a usurpation, a book of law promulgated, a hostage exchanged, a state extinguished) is scoped out of the coder's prompt, the fallback cue table, and the random stager. Nothing on an Annals page reaches a model or is scored. Twelve episodes are the history a chapter departs from, and each says so in both directions: the episode links to the chapter it anchors, and the chapter carries an "In the record" panel naming the episode. An episode is authored data (`packages/game/src/annals/episodes/`), built to `var/episodes/<id>.json` by `annals-build` and held to the map, the gazetteer, the lake, and both languages by `annals-check` and the specs.
 
+### The submission snapshot
+
+`packages/chinatalk-submission-2026` turns one moment of `var/` into a site an object store can serve, and holds the CDK that serves it. `npm run submission` re-exports scenario materials, builds the app bundle with `VITE_SNAPSHOT` set, and writes every `/data/*.json` URL the app can fetch as a file beside it: about 1,550 files and 116 MB in `site/` (git-ignored). `npm run submission:serve` reads it back at `http://localhost:3176` with the same SPA rewrite the distribution applies, so the deployed behaviour can be checked before it is deployed.
+
+The dev server and the snapshot read one module (`packages/app/server/data.ts`), so a `/data` URL cannot exist in development and be missing from the deployment. Two things stay behind. The purchased vendor art layer is dropped, because its licence forbids redistribution and a public bucket redistributes: every archetype names its own sprite first and the fallback and period layers both draw it, so the stage renders on art the project owns (`npm run submission -- --vendor` keeps the layer where a licence permits). And the paths that would play a game are drawn grayed rather than removed, since live play needs a server that calls the models and a snapshot has nothing to call — the site says so in its own chrome, dated, on every page.
+
+The site is `https://chinatalk-submission-2026.sandbox.modelstudies.com`: one bucket and one distribution, no compute on the request path, deep links rewritten to the entry document by a viewer-request function. Infrastructure deploys ride `.github/workflows/deploy-sandbox.yml`; content is synced from the workstation that holds `var/` with `npm run submission:publish`, which reads the bucket and distribution from SSM rather than taking them on the command line.
+
 ### Read the matrix
 
 `/craft/replays/<id>/matrix` charts every branch of a start-fork root: escalation rung by turn, one line per branch. Every comparison dimension is an axis: each seat, the judging panel (its judges and combining method), and the source root. Clicking an axis name colors the chart by it; the chips under it filter (double-click shows one value only); "split by dimension" draws one small chart per axis, and clicking a small chart zooms into it. "Color by model · any seat" recolors by where one model sat. Clicking a line isolates that branch; clicking a grid point isolates every branch through that rung on that turn.
@@ -164,6 +173,7 @@ The Annals are an exhibit rather than an instrument, and the separation is struc
 | ----------- | ----------------------------------- |
 | 3075        | web microsite (later phase)         |
 | 3175        | app (campaign site)                 |
+| 3176        | submission snapshot preview         |
 | 8075        | api (later phase)                   |
 | 9075 / 9175 | dynamo / dynamo-admin (later phase) |
 

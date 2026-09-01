@@ -1,0 +1,10 @@
+{
+  "app": "tsx src/app.ts",
+  "watch": {
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "cdk.out", "**/*.spec.ts"]
+  },
+  "context": {
+    "@aws-cdk/core:newStyleStackSynthesis": true
+  }
+}
