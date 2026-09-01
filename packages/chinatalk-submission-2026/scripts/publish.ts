@@ -21,6 +21,18 @@ const siteDir = path.resolve(
 
 const dryRun = process.argv.includes("--dry-run");
 
+// The nonce is half the SSM path, and its local default (`dev`) belongs to no
+// deployment. Without it this script reads a parameter nothing wrote and
+// reports a missing parameter rather than a missing nonce, so refuse first.
+if (!process.env.PROJECT_NONCE) {
+  throw new Error(
+    "PROJECT_NONCE is not set. It is the nonce the stack was deployed with, " +
+      "carried on the sandbox environment in GitHub:\n" +
+      "  gh variable list -R finlaysonstudio/modelstudies-warringstatescraft -e sandbox\n" +
+      "  PROJECT_NONCE=<nonce> npm run submission:publish",
+  );
+}
+
 const aws = (args: string[]): string => {
   const result = spawnSync("aws", args, { encoding: "utf8" });
   if (result.status !== 0) {

@@ -42,7 +42,7 @@ jobs:
     # environment-scoped variables; without it they resolve empty.
     env:
       PROJECT_ENV: ${{ vars.PROJECT_ENV || 'sandbox' }}
-      PROJECT_SPONSOR: ${{ vars.PROJECT_SPONSOR || 'modelstudies' }}
+      PROJECT_SPONSOR: ${{ vars.PROJECT_SPONSOR || 'finlaysonstudio' }}
       PROJECT_KEY: ${{ vars.PROJECT_KEY || 'warringstates' }}
       CDK_ENV_HOSTED_ZONE: ${{ vars.AWS_HOSTED_ZONE }}
       CDK_ENV_REPO: ${{ github.repository }}

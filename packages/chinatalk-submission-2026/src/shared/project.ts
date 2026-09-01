@@ -2,7 +2,10 @@
 // Everything here reads the environment so a deploy is configured by the CI
 // environment rather than by a value checked into the tree.
 
-export const PROJECT_SPONSOR = process.env.PROJECT_SPONSOR || "modelstudies";
+// The studio, not the project: the deployed stack reads `finlaysonstudio`
+// from an organization variable, and this default has to agree with it or a
+// local publish reads SSM under a prefix nothing was written to.
+export const PROJECT_SPONSOR = process.env.PROJECT_SPONSOR || "finlaysonstudio";
 export const PROJECT_KEY = process.env.PROJECT_KEY || "warringstates";
 export const PROJECT_ENV = process.env.PROJECT_ENV || "sandbox";
 export const PROJECT_NONCE = process.env.PROJECT_NONCE || "dev";
