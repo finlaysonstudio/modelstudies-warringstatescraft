@@ -1,6 +1,7 @@
 import { JaypieWebDeploymentBucket, envHostname } from "@jaypie/constructs";
-import { Stack, Tags, type StackProps } from "aws-cdk-lib";
+import { Duration, Stack, Tags, type StackProps } from "aws-cdk-lib";
 import type { Construct } from "constructs";
+import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import {
   HOSTED_ZONE,
@@ -36,6 +37,25 @@ export interface SubmissionSiteStackProps extends StackProps {
   zone?: string;
 }
 
+const CSP = [
+  "default-src 'self'",
+  // The bundle is the only script. Nothing is inlined and nothing is fetched
+  // from a CDN.
+  "script-src 'self'",
+  // Tailwind ships one stylesheet, but React and Phaser both set style
+  // attributes on elements they own, which `style-src` governs.
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  // blob: is the overworld: Phaser builds textures from canvases and hands
+  // them back to the page as object URLs.
+  "img-src 'self' data: blob:",
+  "connect-src 'self'",
+  "worker-src 'self' blob:",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join("; ");
+
 export class SubmissionSiteStack extends Stack {
   constructor(
     scope: Construct,
@@ -55,6 +75,64 @@ export class SubmissionSiteStack extends Stack {
       ? envHostname({ domain: zone, subdomain: SITE_SUBDOMAIN })
       : "";
 
+    // The construct's own security headers set `Cache-Control: no-store` with
+    // override on, which defeats both the CDN and the browser: every visitor
+    // re-fetches the 1.9 MB bundle and every tile of the overworld on every
+    // navigation. This policy carries the same headers and lets each object's
+    // own `Cache-Control` through, which the publish step already sets
+    // correctly (immutable for the hashed assets, five minutes for the entry
+    // document and the data files).
+    const headers = new cloudfront.ResponseHeadersPolicy(this, "SiteHeaders", {
+      securityHeadersBehavior: {
+        contentSecurityPolicy: {
+          override: true,
+          contentSecurityPolicy: CSP,
+        },
+        contentTypeOptions: { override: true },
+        frameOptions: {
+          override: true,
+          frameOption: cloudfront.HeadersFrameOption.DENY,
+        },
+        referrerPolicy: {
+          override: true,
+          referrerPolicy:
+            cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+        },
+        strictTransportSecurity: {
+          override: true,
+          accessControlMaxAge: Duration.days(730),
+          includeSubdomains: true,
+          preload: true,
+        },
+      },
+      customHeadersBehavior: {
+        customHeaders: [
+          // Phaser reads pixels back off its own canvases, which a cross
+          // origin isolated document would taint.
+          {
+            header: "Cross-Origin-Embedder-Policy",
+            override: true,
+            value: "unsafe-none",
+          },
+          {
+            header: "Cross-Origin-Opener-Policy",
+            override: true,
+            value: "same-origin",
+          },
+          {
+            header: "Cross-Origin-Resource-Policy",
+            override: true,
+            value: "same-origin",
+          },
+          {
+            header: "Permissions-Policy",
+            override: true,
+            value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+        ],
+      },
+    });
+
     const site = new JaypieWebDeploymentBucket(this, "Site", {
       // A second web bucket in the account would collide on the default
       // component name; this one is named for the submission it carries.
@@ -69,25 +147,13 @@ export class SubmissionSiteStack extends Stack {
       // Passed as a resolved string rather than a HostConfig so the name does
       // not depend on which CDK_ENV_* happen to be set at synth.
       ...(zone && { host: siteHost, zone }),
-      securityHeaders: {
-        contentSecurityPolicy: [
-          "default-src 'self'",
-          // The bundle is the only script. Nothing is inlined and nothing is
-          // fetched from a CDN.
-          "script-src 'self'",
-          // Tailwind ships one stylesheet, but React and Phaser both set style
-          // attributes on elements they own, which `style-src` governs.
-          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-          "font-src 'self' data: https://fonts.gstatic.com",
-          // blob: is the overworld: Phaser builds textures from canvases and
-          // hands them back to the page as object URLs.
-          "img-src 'self' data: blob:",
-          "connect-src 'self'",
-          "worker-src 'self' blob:",
-          "frame-ancestors 'none'",
-          "base-uri 'self'",
-          "form-action 'self'",
-        ].join("; "),
+      // Ours governs instead, so the construct's stays unbuilt rather than
+      // sitting in the template attached to nothing.
+      securityHeaders: false,
+      defaultBehavior: {
+        responseHeadersPolicy: headers,
+        // The managed policy that honours the origin's own Cache-Control.
+        cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       },
     });
 

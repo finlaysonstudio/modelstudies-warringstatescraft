@@ -136,5 +136,44 @@ describe("SubmissionSiteStack", () => {
       expect(csp).toContain("script-src 'self'");
       expect(csp).not.toContain("script-src 'self' 'unsafe-inline'");
     });
+
+    it("lets each object carry its own cache lifetime", () => {
+      // The construct's default headers set `Cache-Control: no-store` with
+      // override on, which throws away both the CDN and the browser cache: a
+      // visitor re-fetches the whole bundle and every tile on every
+      // navigation. The publish step sets the right value per object, so
+      // nothing here may override it.
+      const policies = template.findResources(
+        "AWS::CloudFront::ResponseHeadersPolicy",
+      );
+      const custom = Object.values(policies).flatMap(
+        (resource) =>
+          (
+            resource.Properties as {
+              ResponseHeadersPolicyConfig: {
+                CustomHeadersConfig?: { Items: { Header: string }[] };
+              };
+            }
+          ).ResponseHeadersPolicyConfig.CustomHeadersConfig?.Items ?? [],
+      );
+      expect(custom.map((item) => item.Header)).not.toContain("Cache-Control");
+
+      // CACHING_OPTIMIZED, the managed policy that honours the origin's own
+      // Cache-Control rather than replacing it.
+      const distributions = template.findResources(
+        "AWS::CloudFront::Distribution",
+      );
+      const behaviors = Object.values(distributions).map(
+        (resource) =>
+          (
+            resource.Properties as {
+              DistributionConfig: {
+                DefaultCacheBehavior: { CachePolicyId: string };
+              };
+            }
+          ).DistributionConfig.DefaultCacheBehavior.CachePolicyId,
+      );
+      expect(behaviors).toEqual(["658327ea-f89d-4fab-a63d-7e88639e58f6"]);
+    });
   });
 });
