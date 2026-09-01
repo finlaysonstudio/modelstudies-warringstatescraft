@@ -48,6 +48,21 @@ Bucket name, distribution id, distribution domain, and host are published to
 SSM under `/finlaysonstudio-warringstates/<env>-<nonce>/chinatalk-submission-2026/`.
 `publish.ts` reads them there rather than taking a bucket on the command line.
 
+## Publishing content
+
+From the workstation that holds `var/`, with an SSO session:
+
+```sh
+npm run submission
+AWS_PROFILE=Administrator-562880556342 PROJECT_NONCE=tsctybzp npm run submission:publish
+```
+
+The nonce is required: the local default (`dev`) belongs to no deployment, so
+the script refuses rather than reading an SSM path nothing wrote. The
+`Developer` role can write the bucket but not invalidate the distribution, so
+a publish under it uploads and then prints the invalidation command instead of
+failing.
+
 ## Environment inputs
 
 `PROJECT_SPONSOR` (`finlaysonstudio`), `PROJECT_KEY` (`warringstates`),

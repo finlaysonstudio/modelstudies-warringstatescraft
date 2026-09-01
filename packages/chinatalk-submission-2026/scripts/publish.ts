@@ -109,18 +109,36 @@ sync([
 if (dryRun) {
   console.log("\ndry run: no invalidation");
 } else {
-  const invalidation = aws([
-    "cloudfront",
-    "create-invalidation",
-    "--distribution-id",
-    distribution,
-    "--paths",
-    "/*",
-    "--query",
-    "Invalidation.Id",
-    "--output",
-    "text",
-  ]);
-  console.log(`\ninvalidation: ${invalidation}`);
+  // The sync is the publish; the invalidation only shortens the wait. The
+  // Developer SSO role can write the bucket but cannot invalidate, so report
+  // what is left to do rather than ending on a stack trace over a site that
+  // is already correct at the origin.
+  const invalidation = (() => {
+    try {
+      return aws([
+        "cloudfront",
+        "create-invalidation",
+        "--distribution-id",
+        distribution,
+        "--paths",
+        "/*",
+        "--query",
+        "Invalidation.Id",
+        "--output",
+        "text",
+      ]);
+    } catch (error) {
+      console.log(`\nuploaded, but the invalidation was refused:`);
+      console.log(`  ${(error as Error).message.split("\n")[0]}`);
+      console.log(`\nThe edge serves the old copy until each object expires.`);
+      console.log(`Run it again with a role that carries`);
+      console.log(`cloudfront:CreateInvalidation:`);
+      console.log(
+        `  AWS_PROFILE=Administrator-<account> aws cloudfront create-invalidation \\\n    --distribution-id ${distribution} --paths "/*"`,
+      );
+      return "";
+    }
+  })();
+  if (invalidation) console.log(`\ninvalidation: ${invalidation}`);
   console.log(`site:         https://${host}`);
 }
