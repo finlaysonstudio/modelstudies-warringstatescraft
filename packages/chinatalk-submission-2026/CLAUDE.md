@@ -37,7 +37,7 @@ are the record, not the site.
 ## The stack
 
 `SubmissionSiteStack`, one `JaypieWebDeploymentBucket`, named
-`cdk-modelstudies-situationeval-chinatalk-submission-2026-<env>-<nonce>`.
+`cdk-modelstudies-warringstates-chinatalk-submission-2026-<env>-<nonce>`.
 `spa: true` for deep links, `waf: false` and `destination: false` for cost, an
 explicit CSP for the Google Fonts hosts and Phaser's `blob:` textures. The
 `zone` prop defaults to `CDK_ENV_HOSTED_ZONE` or `modelstudies.com`; passing
@@ -45,12 +45,12 @@ explicit CSP for the Google Fonts hosts and Phaser's `blob:` textures. The
 synthesizes with no AWS session (resolving a zone is a lookup).
 
 Bucket name, distribution id, distribution domain, and host are published to
-SSM under `/modelstudies-situationeval/<env>-<nonce>/chinatalk-submission-2026/`.
+SSM under `/modelstudies-warringstates/<env>-<nonce>/chinatalk-submission-2026/`.
 `publish.ts` reads them there rather than taking a bucket on the command line.
 
 ## Environment inputs
 
-`PROJECT_SPONSOR` (`modelstudies`), `PROJECT_KEY` (`situationeval`),
+`PROJECT_SPONSOR` (`modelstudies`), `PROJECT_KEY` (`warringstates`),
 `PROJECT_ENV` (`sandbox`), `PROJECT_NONCE`, `CDK_ENV_HOSTED_ZONE`,
 `CDK_ENV_SUBDOMAIN` (`chinatalk-submission-2026`), `CDK_ENV_REPO` (lights up the
 GitHub OIDC deploy role). `SNAPSHOT_DATE` and `SNAPSHOT_LABEL` name the

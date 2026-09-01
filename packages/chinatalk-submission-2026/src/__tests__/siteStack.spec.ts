@@ -57,10 +57,10 @@ describe("SubmissionSiteStack", () => {
         (resource) => (resource.Properties as { Name: string }).Name,
       );
       expect(names).toContain(
-        "/modelstudies-situationeval/sandbox-dev/chinatalk-submission-2026/bucket-name",
+        `/${PROJECT_PREFIX}/sandbox-dev/chinatalk-submission-2026/bucket-name`,
       );
       expect(names).toContain(
-        "/modelstudies-situationeval/sandbox-dev/chinatalk-submission-2026/distribution-id",
+        `/${PROJECT_PREFIX}/sandbox-dev/chinatalk-submission-2026/distribution-id`,
       );
     });
   });

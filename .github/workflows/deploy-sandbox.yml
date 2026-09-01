@@ -7,7 +7,7 @@ name: Deploy Sandbox
 #
 # Variables. Repository scoped, the same in every environment:
 #   AWS_HOSTED_ZONE       modelstudies.com
-#   PROJECT_KEY           situationeval
+#   PROJECT_KEY           warringstates
 # Environment scoped (`sandbox`), because each environment answers differently:
 #   AWS_ROLE_ARN          role this workflow assumes, GitHub OIDC
 #   AWS_REGION            default us-east-1
@@ -42,7 +42,7 @@ jobs:
     env:
       PROJECT_ENV: ${{ vars.PROJECT_ENV || 'sandbox' }}
       PROJECT_SPONSOR: ${{ vars.PROJECT_SPONSOR || 'modelstudies' }}
-      PROJECT_KEY: ${{ vars.PROJECT_KEY || 'situationeval' }}
+      PROJECT_KEY: ${{ vars.PROJECT_KEY || 'warringstates' }}
       CDK_ENV_HOSTED_ZONE: ${{ vars.AWS_HOSTED_ZONE }}
       CDK_ENV_REPO: ${{ github.repository }}
       CDK_ENV_LOG: "true"

@@ -3,7 +3,7 @@
 // environment rather than by a value checked into the tree.
 
 export const PROJECT_SPONSOR = process.env.PROJECT_SPONSOR || "modelstudies";
-export const PROJECT_KEY = process.env.PROJECT_KEY || "situationeval";
+export const PROJECT_KEY = process.env.PROJECT_KEY || "warringstates";
 export const PROJECT_ENV = process.env.PROJECT_ENV || "sandbox";
 export const PROJECT_NONCE = process.env.PROJECT_NONCE || "dev";
 
