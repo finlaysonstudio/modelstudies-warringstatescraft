@@ -63,5 +63,5 @@ snapshot in the site's own chrome.
 - `npm run submission:synth` / `npm run diff` — the stack
 - `npm run submission:publish [-- --dry-run]` — sync and invalidate
 
-Infrastructure deploys ride `.github/workflows/deploy-sandbox.yml`. Never
+Infrastructure deploys ride `.github/workflows/deploy-chinatalk-submission-2026.yml`. Never
 deploy the stack from local.

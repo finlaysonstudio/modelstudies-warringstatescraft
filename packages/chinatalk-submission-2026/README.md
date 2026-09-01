@@ -40,7 +40,7 @@ Two things are deliberately not in `site/`:
 
 ## Deploy it
 
-Infrastructure rides GitHub Actions (`.github/workflows/deploy-sandbox.yml`,
+Infrastructure rides GitHub Actions (`.github/workflows/deploy-chinatalk-submission-2026.yml`,
 `workflow_dispatch`). Content is synced from the workstation that holds `var/`:
 
 ```
