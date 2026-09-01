@@ -12,8 +12,8 @@ name: Deploy Sandbox
 #   AWS_ROLE_ARN          role this workflow assumes, GitHub OIDC
 #   AWS_REGION            default us-east-1
 #   PROJECT_ENV           sandbox
-#   PROJECT_NONCE         eight characters, stable per environment; unset derives
-#                         one from the repository name
+#   PROJECT_NONCE         eight characters, set once and never changed; the
+#                         deploy refuses to run without it
 #   DATADOG_API_KEY_ARN   reserved; nothing in this stack reads it yet
 
 on:
@@ -51,28 +51,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Resolve project nonce
+      # The nonce is half the stack's name, so a deploy that invents one
+      # deploys beside the stack that is already there rather than updating
+      # it. There is no safe default: bail and let a person set the variable.
+      - name: Require project nonce
         id: project
         shell: bash
         env:
           INPUT_PROJECT_NONCE: ${{ vars.PROJECT_NONCE }}
-          REPO: ${{ github.repository }}
         run: |
-          if [[ -n "${INPUT_PROJECT_NONCE}" ]]; then
-            PROJECT_NONCE="${INPUT_PROJECT_NONCE}"
-          else
-            PROJECT_NONCE=$(node -e '
-              const crypto = require("crypto");
-              const h = crypto.createHash("sha256").update(process.argv[1]).digest("hex");
-              let n = BigInt("0x" + h);
-              const a = "0123456789abcdefghijklmnopqrstuvwxyz";
-              let s = "";
-              while (s.length < 8) { s = a[Number(n % 36n)] + s; n /= 36n; }
-              console.log(s);
-            ' "${REPO}:sandbox")
+          if [[ -z "${INPUT_PROJECT_NONCE}" ]]; then
+            echo "::error::PROJECT_NONCE is not set on the ${PROJECT_ENV} environment."
+            echo "Set it once, to eight lowercase alphanumerics, and never change it:"
+            echo "  gh variable set PROJECT_NONCE -R ${GITHUB_REPOSITORY} -e ${PROJECT_ENV} -b <nonce>"
+            exit 1
           fi
-          echo "PROJECT_NONCE=${PROJECT_NONCE}" >> "$GITHUB_ENV"
-          echo "Resolved PROJECT_NONCE=${PROJECT_NONCE}"
+          if [[ ! "${INPUT_PROJECT_NONCE}" =~ ^[a-z0-9]{8}$ ]]; then
+            echo "::error::PROJECT_NONCE must be eight lowercase alphanumerics, read '${INPUT_PROJECT_NONCE}'."
+            exit 1
+          fi
+          echo "PROJECT_NONCE=${INPUT_PROJECT_NONCE}" >> "$GITHUB_ENV"
+          echo "PROJECT_NONCE=${INPUT_PROJECT_NONCE}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
