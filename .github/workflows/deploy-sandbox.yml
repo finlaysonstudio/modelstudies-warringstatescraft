@@ -5,11 +5,15 @@ name: Deploy Sandbox
 # sync is `npm run submission && npm run submission:publish` from there. This
 # workflow makes the bucket and distribution the sync lands on.
 #
-# Environment variables (repository or environment scoped):
-#   AWS_ROLE_ARN        role this workflow assumes, GitHub OIDC
-#   AWS_REGION          default us-east-1
-#   AWS_HOSTED_ZONE     modelstudies.com
-#   PROJECT_NONCE       stable per environment; unset derives one from the repo
+# Variables. Repository scoped, the same in every environment:
+#   AWS_HOSTED_ZONE       modelstudies.com
+#   PROJECT_KEY           situationeval
+# Environment scoped (`sandbox`), because each environment answers differently:
+#   AWS_ROLE_ARN          role this workflow assumes, GitHub OIDC
+#   AWS_REGION            default us-east-1
+#   PROJECT_ENV           sandbox
+#   PROJECT_NONCE         stable per environment; unset derives one from the repo
+#   DATADOG_API_KEY_ARN   reserved; nothing in this stack reads it yet
 
 on:
   workflow_dispatch:
@@ -33,10 +37,12 @@ jobs:
     name: Deploy submission site
     runs-on: ubuntu-latest
     environment: sandbox
+    # `environment: sandbox` above is what lets this block read the
+    # environment-scoped variables; without it they resolve empty.
     env:
-      PROJECT_ENV: sandbox
-      PROJECT_SPONSOR: modelstudies
-      PROJECT_KEY: situationeval
+      PROJECT_ENV: ${{ vars.PROJECT_ENV || 'sandbox' }}
+      PROJECT_SPONSOR: ${{ vars.PROJECT_SPONSOR || 'modelstudies' }}
+      PROJECT_KEY: ${{ vars.PROJECT_KEY || 'situationeval' }}
       CDK_ENV_HOSTED_ZONE: ${{ vars.AWS_HOSTED_ZONE }}
       CDK_ENV_REPO: ${{ github.repository }}
       CDK_ENV_LOG: "true"
