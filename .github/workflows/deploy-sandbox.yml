@@ -12,7 +12,8 @@ name: Deploy Sandbox
 #   AWS_ROLE_ARN          role this workflow assumes, GitHub OIDC
 #   AWS_REGION            default us-east-1
 #   PROJECT_ENV           sandbox
-#   PROJECT_NONCE         stable per environment; unset derives one from the repo
+#   PROJECT_NONCE         eight characters, stable per environment; unset derives
+#                         one from the repository name
 #   DATADOG_API_KEY_ARN   reserved; nothing in this stack reads it yet
 
 on:
@@ -66,7 +67,7 @@ jobs:
               let n = BigInt("0x" + h);
               const a = "0123456789abcdefghijklmnopqrstuvwxyz";
               let s = "";
-              while (s.length < 6) { s = a[Number(n % 36n)] + s; n /= 36n; }
+              while (s.length < 8) { s = a[Number(n % 36n)] + s; n /= 36n; }
               console.log(s);
             ' "${REPO}:sandbox")
           fi
