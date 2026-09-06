@@ -29,8 +29,13 @@ import {
   blocksOf,
   pairBlocksOf,
   variantOf,
+  blockedOf,
+  fillsOf,
+  roofPlacementsOf,
+  wallPlacementsOf,
   type Geography,
 } from "../map";
+import { KIT, KIT_WALL_TILES } from "../../../src/stage/kit";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -316,6 +321,156 @@ describe("transitions", () => {
     expect(map.tilesets.filter((set) => set.name.includes("@"))).toHaveLength(
       1,
     );
+  });
+});
+
+describe("rooms and walls", () => {
+  const house = (): Geography => ({
+    width: 12,
+    height: 10,
+    fills: [{ terrain: "earth", rect: [0, 0, 12, 10] }],
+    rooms: [
+      {
+        id: "hall",
+        kit: "kit.hall",
+        rect: [2, 4, 6, 4],
+        doors: [{ side: "s", at: 2 }],
+      },
+      {
+        id: "ring",
+        kit: "kit.wall",
+        rect: [0, 0, 12, 10],
+        floor: null,
+        feature: "outerwall",
+      },
+    ],
+    walls: [
+      {
+        kit: "kit.wall",
+        from: [1, 2],
+        to: [10, 2],
+        gaps: [{ at: 4, width: 3 }],
+        feature: "courtwall",
+      },
+    ],
+    places: {
+      hall: { x: 4, y: 5, marker: "audience-hall", room: true },
+      yard: { x: 4, y: 8 },
+    },
+  });
+
+  it("lays a plank floor under a room and none under a ring", () => {
+    const fills = fillsOf(house());
+    expect(fills).toHaveLength(2);
+    expect(fills[1]).toEqual({ terrain: "plank", rect: [2, 4, 6, 4] });
+    const grid = rasterize(house());
+    expect(grid[5][3]).toBe("plank");
+    expect(grid[4][2]).toBe("plank");
+    expect(grid[8][4]).toBe("earth");
+  });
+
+  it("names a wall's cells after its feature and leaves their ground alone", () => {
+    const file = featureFileOf(house());
+    expect(file.features.outerwall).toContain(0);
+    expect(file.features.courtwall).toContain(2 * 12 + 1);
+    // the lintel pieces either side of the gap are the wall's; the gap is not
+    expect(file.features.courtwall).toContain(2 * 12 + 5);
+    expect(file.features.courtwall).not.toContain(2 * 12 + 6);
+    expect(rasterize(house())[0][0]).toBe("earth");
+  });
+
+  it("composes a ring of wall pieces with the door cut", () => {
+    const pieces = wallPlacementsOf(house());
+    const at = (x: number, y: number) =>
+      pieces.find((p) => p.placement.x === x && p.placement.y === y);
+    expect(at(2, 4)?.placement.piece).toBe(KIT.outer.nw);
+    expect(at(7, 7)?.placement.piece).toBe(KIT.outer.se);
+    expect(at(4, 7)?.placement.piece).toBe(KIT.door.s[0]);
+    expect(at(5, 7)?.placement.piece).toBe(KIT.door.s[1]);
+    expect(at(3, 5)).toBeUndefined();
+    expect(at(1, 2)?.placement.piece).toBe(KIT.side.n);
+    expect(at(5, 2)?.placement.piece).toBe(KIT.door.n[0]);
+    expect(at(6, 2)).toBeUndefined();
+    expect(at(7, 2)?.placement.piece).toBe(KIT.door.n[1]);
+    expect(at(0, 0)?.kit).toBe("kit.wall");
+    expect(at(2, 4)?.room).toBe("hall");
+  });
+
+  it("roofs a room with a floor, lifted by the wall's height", () => {
+    const roofs = roofPlacementsOf(house());
+    expect(roofs.every((r) => r.room === "hall")).toBe(true);
+    expect(roofs).toHaveLength(24);
+    const ys = new Set(roofs.map((r) => r.placement.y));
+    expect(Math.min(...ys)).toBe(4 - KIT_WALL_TILES);
+    expect(Math.max(...ys)).toBe(7 - KIT_WALL_TILES);
+    const nw = roofs.find(
+      (r) => r.placement.x === 2 && r.placement.y === 4 - KIT_WALL_TILES,
+    );
+    expect(nw?.placement.piece).toBe(KIT.roof.hip.nw);
+  });
+
+  it("blocks every wall piece but a doorway, and the water", () => {
+    const geo = house();
+    geo.fills.push({ terrain: "river", rect: [9, 8, 1, 1] });
+    const blocked = blockedOf(geo);
+    expect(blocked[4][2]).toBe(true);
+    expect(blocked[7][4]).toBe(false);
+    expect(blocked[5][3]).toBe(false);
+    expect(blocked[2][5]).toBe(false);
+    expect(blocked[2][1]).toBe(true);
+    expect(blocked[8][9]).toBe(true);
+  });
+
+  it("writes walls, roofs, rooms, and a room place with no stamp of its own", () => {
+    const geo = house();
+    const map = buildTiledMap({
+      geo,
+      grid: rasterize(geo),
+      tile: 32,
+      imageDir: "period32",
+      pairs: new Set(),
+    });
+    const layer = (name: string) =>
+      map.layers.find((l) => l.name === name) as { objects: unknown[] };
+    expect(layer("walls").objects.length).toBe(wallPlacementsOf(geo).length);
+    expect(layer("roofs").objects.length).toBe(24);
+    const rooms = layer("rooms").objects as { name: string; width: number }[];
+    expect(rooms.map((r) => r.name)).toEqual(["hall", "ring"]);
+    expect(rooms[0].width).toBe(6 * 32);
+    const wall = layer("walls").objects[0] as {
+      type: string;
+      x: number;
+      properties: { name: string; value: unknown }[];
+    };
+    expect(wall.type).toBe("kit.hall");
+    expect(wall.properties.map((p) => p.name)).toEqual(["piece", "room"]);
+    const places = layer("places").objects as {
+      name: string;
+      type: string;
+      properties?: { name: string; value: unknown }[];
+    }[];
+    const hall = places.find((p) => p.name === "hall")!;
+    expect(hall.type).toBe("audience-hall");
+    expect(hall.properties).toEqual([
+      { name: "room", type: "bool", value: true },
+    ]);
+  });
+
+  it("refuses a room place with no room, and a wall off a row or a column", () => {
+    const geo = house();
+    geo.places.court = { x: 1, y: 1, room: true };
+    expect(() =>
+      buildTiledMap({
+        geo,
+        grid: rasterize(geo),
+        tile: 32,
+        imageDir: "period32",
+        pairs: new Set(),
+      }),
+    ).toThrow(/no room is called court/);
+    const skew = house();
+    skew.walls = [{ kit: "kit.wall", from: [0, 0], to: [3, 2] }];
+    expect(() => wallPlacementsOf(skew)).toThrow(/not along a row/);
   });
 });
 

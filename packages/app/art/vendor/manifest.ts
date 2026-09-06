@@ -64,7 +64,18 @@ export interface PacksManifest {
   packs: PackSpec[];
 }
 
-export type AssetKind = "blob" | "water" | "sprite" | "image" | "effect";
+export type AssetKind =
+  "blob" | "water" | "sprite" | "image" | "effect" | "kit";
+
+/**
+ * Where a building kit's cell sits on each of its frames. A kit piece is
+ * drawn on a canvas taller than its cell (a wall stands up out of it, a roof
+ * hangs past it), so the scene needs the cell's offset to put the piece on
+ * the map cell it belongs to.
+ */
+export interface KitMeta {
+  cell: { x: number; y: number; size: number };
+}
 
 /**
  * How one asset was made. The period layer writes it from `items.json` (the
@@ -100,6 +111,8 @@ export interface AssetEntry {
   sprite?: SpriteMeta;
   /** blob / water: the Tiled tileset written beside the sheet. */
   tileset?: string;
+  /** kit: where the map cell sits on every frame. */
+  kit?: KitMeta;
   pack: string;
   /** period only: the prompt and the finishing the id was made with. */
   record?: AssetRecord;
@@ -121,6 +134,7 @@ export const ASSET_PREFIXES: Record<AssetKind, string> = {
   sprite: "sprite.",
   image: "image.",
   effect: "effect.",
+  kit: "kit.",
 };
 
 export const sha1Of = (bytes: Uint8Array): string =>

@@ -51,6 +51,9 @@ export const TERRAINS = [
   "mulberry",
   // the garden: vegetable beds inside a compound wall or beside a farmhouse
   "garden",
+  // the plank floor: the inside of a building drawn from a kit, laid as a
+  // ground so a figure walks it the way it walks a yard
+  "plank",
 ] as const;
 export type Terrain = (typeof TERRAINS)[number];
 
@@ -110,6 +113,22 @@ export const SETTLEMENT_MARKERS = [
   "shed",
   "pavilion",
   "screen",
+  // the interiors: furniture drawn as places inside a building the kit
+  // composes, so a figure's home is a seat and not a stamp
+  "dais",
+  "tablets",
+  "lamp",
+  "bed",
+  "table",
+  "chest",
+  "loom",
+  "desk",
+  "mat",
+  "hearth",
+  "bins",
+  "manger",
+  "trough",
+  "armrack",
 ] as const;
 
 export const MARKERS = [

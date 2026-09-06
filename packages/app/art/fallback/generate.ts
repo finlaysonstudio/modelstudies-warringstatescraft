@@ -79,6 +79,7 @@ const TERRAIN_COLORS: Record<
   platform: { fill: "#d2b072", rim: "#9c7d48" },
   mulberry: { fill: "#8fb04f", rim: "#5e4a30", dots: "#6f8f3a" },
   garden: { fill: "#6f9a3c", rim: "#5a4632", dots: "#4f3a2a" },
+  plank: { fill: "#6b4a2c", rim: "#4a3220", dots: "#7d5a38" },
 };
 
 const WATER_COLORS: Record<Water, string[]> = {

@@ -17,6 +17,7 @@ import {
   writePng,
   type Image,
 } from "../vendor/png";
+import { KIT_CELL, KIT_COLUMNS, KIT_FRAME } from "../../src/stage/kit";
 import {
   againstOf,
   groundMask,
@@ -24,8 +25,10 @@ import {
   orientationOf,
   pairIdOf,
   rasterize,
+  roofPlacementsOf,
   tilesetIdOf,
   variantOf,
+  wallPlacementsOf,
   DRAW_ORDER,
   type Geography,
   type Ground,
@@ -46,7 +49,25 @@ export interface PreviewOptions {
   zoom?: number;
   /** [x, y, width, height] in tiles; the whole map by default */
   window?: [number, number, number, number];
+  /** draw the roofs over the rooms (off to look at the interiors) */
+  roofs?: boolean;
 }
+
+/** the kit sheets the geography's rooms and walls name, highest layer winning */
+const kitsOf = (geo: Geography, layers: string[]): Map<string, Image> => {
+  const kits = new Map<string, Image>();
+  const ids = new Set([
+    ...(geo.rooms ?? []).map((room) => room.kit),
+    ...(geo.walls ?? []).map((wall) => wall.kit),
+  ]);
+  for (const dir of layers) {
+    for (const id of ids) {
+      const file = path.join(dir, `${id}.png`);
+      if (existsSync(file)) kits.set(id, readPng(file));
+    }
+  }
+  return kits;
+};
 
 const sheetsOf = (layers: string[], tile: number): Map<string, Image> => {
   const sheets = new Map<string, Image>();
@@ -93,6 +114,7 @@ export const previewMap = ({
   tile = 16,
   zoom = 1,
   window,
+  roofs = true,
 }: PreviewOptions): Image => {
   const grid = rasterize(geo);
   const sheets = sheetsOf(layers, tile);
@@ -158,6 +180,44 @@ export const previewMap = ({
       }
     }
   }
+  // the kit pieces, north to south so a southern piece's face overdraws the
+  // top of the piece behind it, walls first and the roofs over them; a kit
+  // frame is drawn at 32 px a cell and scaled to this set's tile
+  const kits = kitsOf(geo, layers);
+  const kitScale = tile / KIT_CELL.size;
+  const drawPiece = (
+    kit: string,
+    x: number,
+    y: number,
+    piece: number,
+  ): void => {
+    const sheet = kits.get(kit);
+    if (!sheet || kitScale !== 1) return;
+    blit({
+      source: sheet,
+      sx: (piece % KIT_COLUMNS) * KIT_FRAME.width,
+      sy: Math.floor(piece / KIT_COLUMNS) * KIT_FRAME.height,
+      width: KIT_FRAME.width,
+      height: KIT_FRAME.height,
+      target: canvas,
+      tx: x * tile - KIT_CELL.x,
+      ty: y * tile - KIT_CELL.y,
+    });
+  };
+  const byRow = <T extends { placement: { y: number; x: number } }>(
+    entries: T[],
+  ): T[] =>
+    [...entries].sort(
+      (a, b) => a.placement.y - b.placement.y || a.placement.x - b.placement.x,
+    );
+  for (const { kit, placement } of byRow(wallPlacementsOf(geo))) {
+    drawPiece(kit, placement.x, placement.y, placement.piece);
+  }
+  if (roofs) {
+    for (const { kit, placement } of byRow(roofPlacementsOf(geo))) {
+      drawPiece(kit, placement.x, placement.y, placement.piece);
+    }
+  }
   const cropped = window
     ? cropImage(canvas, {
         x: window[0] * tile,
@@ -203,6 +263,8 @@ if (isMain) {
     window: windowArg
       ? (windowArg.split(",").map(Number) as [number, number, number, number])
       : undefined,
+    // `--no-roofs` looks inside the rooms
+    roofs: !args.includes("--no-roofs"),
   });
   const out =
     flag("out") ??

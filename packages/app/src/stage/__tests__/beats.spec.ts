@@ -4,8 +4,11 @@ import type { StageBeat } from "../../lib/types";
 import {
   facingOf,
   formation,
+  lengthOf,
   planAction,
   planBeat,
+  routePlan,
+  walkMsOf,
   WALK_MAX_MS,
   WALK_MIN_MS,
 } from "../beats";
@@ -143,6 +146,55 @@ describe("planBeat", () => {
     });
     expect(plan.focus).toEqual(places.handan);
     expect(plan.actions).toEqual([]);
+  });
+});
+
+describe("routePlan", () => {
+  const beat: StageBeat = {
+    id: "t1.narrative",
+    kind: "narrative",
+    turn: 1,
+    directions: [
+      {
+        kind: "column",
+        actor: { seat: "qin", archetype: "infantry" },
+        from: "xianyang",
+        to: "handan",
+      },
+      {
+        kind: "garrison",
+        actor: { seat: "zhao", archetype: "infantry" },
+        at: "shangdang",
+      },
+    ],
+  };
+
+  it("lays a walk along the way round and stretches the plan to it", () => {
+    const plan = planBeat({ beat, places, homes });
+    const routed = routePlan(plan, (from, to) => [
+      from,
+      { x: from.x, y: 400 },
+      { x: to.x, y: 400 },
+      to,
+    ]);
+    const [walk, stay] = routed.actions;
+    expect(walk.path).toHaveLength(4);
+    expect(lengthOf(walk.path!)).toBe(300 + 480 + 300);
+    expect(walk.walkMs).toBe(walkMsOf(1080));
+    expect(walk.walkMs).toBeGreaterThan(plan.actions[0].walkMs);
+    expect(walk.totalMs).toBe(walk.walkMs + walk.holdMs);
+    expect(stay).toBe(plan.actions[1]);
+    expect(routed.durationMs).toBe(
+      plan.durationMs - plan.actions[0].totalMs + walk.totalMs,
+    );
+  });
+
+  it("leaves a walk straight when the route is straight or missing", () => {
+    const plan = planBeat({ beat, places, homes });
+    expect(routePlan(plan, () => null).actions[0]).toBe(plan.actions[0]);
+    expect(
+      routePlan(plan, (from, to) => [from, to]).actions[0].path,
+    ).toBeUndefined();
   });
 });
 

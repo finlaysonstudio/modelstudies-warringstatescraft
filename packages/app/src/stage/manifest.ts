@@ -10,7 +10,13 @@ export const STAGE_SOURCES: StageSource[] = [
   "period32",
 ];
 
-export type StageAssetKind = "blob" | "water" | "sprite" | "image" | "effect";
+export type StageAssetKind =
+  "blob" | "water" | "sprite" | "image" | "effect" | "kit";
+
+/** kit: where the map cell sits on every frame of the sheet */
+export interface StageKitMeta {
+  cell: { x: number; y: number; size: number };
+}
 
 export type StageFacing = "down" | "left" | "right" | "up";
 
@@ -47,6 +53,7 @@ export interface StageAssetEntry {
   frame?: { width: number; height: number };
   sprite?: StageSpriteMeta;
   tileset?: string;
+  kit?: StageKitMeta;
   pack: string;
   record?: StageAssetRecord;
 }

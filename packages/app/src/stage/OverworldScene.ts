@@ -5,11 +5,14 @@ import { spriteFor } from "./assets";
 import {
   facingOf,
   formation,
+  lengthOf,
   PAN_MS,
   planBeat,
+  routePlan,
   type StageAction,
   type StagePlaces,
   type StagePlan,
+  type StagePoint,
 } from "./beats";
 import {
   ARCHETYPES,
@@ -26,8 +29,10 @@ import {
   waterId,
   type Marker,
 } from "./catalog";
+import { KIT_PASSABLE } from "./kit";
 import { BARE_GROUND, type LegendKind } from "./legend";
 import type { StageAsset, StageManifest } from "./manifest";
+import { findPath, simplifyPath, type Grid } from "./route";
 import { BASE_TILE, DEFAULT_STAGE_SET, stageSet } from "./sets";
 
 /** the map of the set the stage plays on unless a caller names another */
@@ -164,8 +169,23 @@ interface TiledPoint {
   class?: string;
   x: number;
   y: number;
+  /** a rectangle object (a room) carries these; a point carries none */
+  width?: number;
+  height?: number;
   properties?: { name: string; value: unknown }[] | Record<string, unknown>;
 }
+
+/** a roof over one room: lifted (faded) while someone is inside */
+interface Roof {
+  room: string;
+  rect: Phaser.Geom.Rectangle;
+  images: Phaser.GameObjects.Image[];
+  alpha: number;
+}
+
+/** how far a roof fades when it lifts, and how fast it gets there */
+const ROOF_LIFTED_ALPHA = 0.12;
+const ROOF_FADE_RATE = 0.08;
 
 const propertiesOf = (object: TiledPoint): Record<string, unknown> =>
   Array.isArray(object.properties)
@@ -211,6 +231,11 @@ export class OverworldScene extends Phaser.Scene {
   /** cell → the feature that holds it, and each feature's own cells */
   private featureAt = new Map<number, string>();
   private featureCells = new Map<string, number[]>();
+  /** the rooms a kit composed, by id, in pixels */
+  private rooms = new Map<string, Phaser.Geom.Rectangle>();
+  private roofs: Roof[] = [];
+  /** the cells a figure cannot cross; absent on a map with no walls to respect */
+  private grid?: Grid;
   private reportedZoom = 0;
   /**
    * The map's tile over the base tile. Every constant below is written for a
@@ -258,6 +283,15 @@ export class OverworldScene extends Phaser.Scene {
       .flat()
       .forEach((id) => image(id));
     DECOR.forEach((decor) => image(decorId(decor)));
+    // the building kits: eighty pieces a frame apiece
+    Object.values(manifest.assets)
+      .filter((asset) => asset.kind === "kit" && asset.frame)
+      .forEach((asset) => {
+        this.load.spritesheet(asset.id, asset.url, {
+          frameWidth: asset.frame!.width,
+          frameHeight: asset.frame!.height,
+        });
+      });
     EFFECTS.forEach((effect) => {
       const asset = manifest.assets[effectId(effect)];
       if (!asset?.frame) return;
@@ -312,6 +346,7 @@ export class OverworldScene extends Phaser.Scene {
     });
 
     this.readFeatures(map);
+    this.buildRooms(map);
 
     for (const object of (map.getObjectLayer("decor")?.objects ??
       []) as TiledPoint[]) {
@@ -338,6 +373,7 @@ export class OverworldScene extends Phaser.Scene {
       const kind = object.type || object.class || "region";
       const label = this.config.names[key] ?? key;
       const pick: StagePick = { kind: "place", id: key, marker: kind };
+      const room = this.rooms.get(key);
       if (kind !== "region") {
         const candidates = MARKER_VARIANTS[kind as Marker] ?? [
           markerId(kind as Marker),
@@ -345,7 +381,11 @@ export class OverworldScene extends Phaser.Scene {
         const pool = candidates.filter((id) => this.textures.exists(id));
         const id = pool.length ? pool[hashOf(key) % pool.length] : undefined;
         const asset = id ? this.config.manifest.assets[id] : undefined;
-        if (id && asset) {
+        if (room) {
+          // a room is its own image: the walls the kit laid are what a
+          // reader sees, and a click anywhere on them reads the place
+          this.addPickable(pick, room, object.y);
+        } else if (id && asset) {
           const image = this.add
             .image(object.x, object.y, id)
             .setOrigin(0.5, 0.85)
@@ -471,6 +511,141 @@ export class OverworldScene extends Phaser.Scene {
   update(): void {
     this.updateLabels();
     this.reportZoom();
+    this.liftRoofs();
+  }
+
+  /**
+   * Reads the rooms, walls, and roofs a kit composed. A wall piece is drawn
+   * on a canvas taller than its cell, so it is placed by the cell's offset
+   * on the frame, and it sorts by the bottom of its cell so a figure north of
+   * it stands behind its face. The roof pieces of one room are kept together
+   * so the whole roof lifts when someone is inside. The walls also give the
+   * map its blocked grid, with the water the map paints, and a map with no
+   * walls keeps no grid: the overworld's routes cross rivers on purpose.
+   */
+  private buildRooms(map: Phaser.Tilemaps.Tilemap): void {
+    const walls = map.getObjectLayer("walls");
+    if (!walls) return;
+    const tile = map.tileWidth;
+    for (const object of (map.getObjectLayer("rooms")?.objects ??
+      []) as TiledPoint[]) {
+      this.rooms.set(
+        object.name,
+        new Phaser.Geom.Rectangle(
+          object.x,
+          object.y,
+          object.width ?? tile,
+          object.height ?? tile,
+        ),
+      );
+    }
+    const grid: Grid = {
+      width: map.width,
+      height: map.height,
+      blocked: new Uint8Array(map.width * map.height),
+    };
+    for (const { ground, layer } of this.grounds) {
+      if (!WATER_GROUNDS.has(ground)) continue;
+      for (let y = 0; y < map.height; y += 1) {
+        for (let x = 0; x < map.width; x += 1) {
+          if (map.getTileAt(x, y, false, layer))
+            grid.blocked[y * map.width + x] = 1;
+        }
+      }
+    }
+    const piece = (
+      object: TiledPoint,
+      depth: number,
+    ): Phaser.GameObjects.Image | null => {
+      const id = object.type || object.class || "";
+      const asset = this.config.manifest.assets[id];
+      const index = propertiesOf(object).piece;
+      if (!asset?.kit || typeof index !== "number" || !this.textures.exists(id))
+        return null;
+      const scale = this.scaleOf(asset);
+      return this.add
+        .image(
+          object.x - asset.kit.cell.x * scale,
+          object.y - asset.kit.cell.y * scale,
+          id,
+          index,
+        )
+        .setOrigin(0, 0)
+        .setScale(scale)
+        .setDepth(depth);
+    };
+    for (const object of walls.objects as TiledPoint[]) {
+      piece(object, object.y + tile);
+      const index = propertiesOf(object).piece;
+      if (typeof index === "number" && !KIT_PASSABLE.has(index)) {
+        const cx = Math.floor(object.x / tile);
+        const cy = Math.floor(object.y / tile);
+        if (cx >= 0 && cy >= 0 && cx < map.width && cy < map.height) {
+          grid.blocked[cy * map.width + cx] = 1;
+        }
+      }
+    }
+    this.grid = grid;
+    const byRoom = new Map<string, Roof>();
+    for (const object of (map.getObjectLayer("roofs")?.objects ??
+      []) as TiledPoint[]) {
+      const room = propertiesOf(object).room;
+      const rect = typeof room === "string" ? this.rooms.get(room) : undefined;
+      if (typeof room !== "string" || !rect) continue;
+      let roof = byRoom.get(room);
+      if (!roof) {
+        roof = { room, rect, images: [], alpha: 1 };
+        byRoom.set(room, roof);
+        this.roofs.push(roof);
+      }
+      const image = piece(object, rect.bottom + 1);
+      if (image) roof.images.push(image);
+    }
+  }
+
+  /** the way round the walls, in pixels, or null when the map has no grid or no way */
+  private routeOf(from: StagePoint, to: StagePoint): StagePoint[] | null {
+    const grid = this.grid;
+    const map = this.map;
+    if (!grid || !map) return null;
+    const cellOf = (point: StagePoint) => ({
+      x: Math.floor(point.x / map.tileWidth),
+      y: Math.floor(point.y / map.tileHeight),
+    });
+    const cells = findPath({ grid, from: cellOf(from), to: cellOf(to) });
+    if (!cells) return null;
+    const points = simplifyPath(cells).map((cell) => ({
+      x: (cell.x + 0.5) * map.tileWidth,
+      y: (cell.y + 0.5) * map.tileHeight,
+    }));
+    points[0] = from;
+    points[points.length - 1] = to;
+    return points;
+  }
+
+  /**
+   * Fades a roof while a figure is inside its room, or while the reader has
+   * the room open, and brings it back when the room empties.
+   */
+  private liftRoofs(): void {
+    if (!this.roofs.length) return;
+    const feet = this.live.filter(
+      (object): object is Phaser.GameObjects.Sprite =>
+        object instanceof Phaser.GameObjects.Sprite && object.active,
+    );
+    const open = this.current?.kind === "place" ? this.current.id : undefined;
+    for (const roof of this.roofs) {
+      const lifted =
+        roof.room === open ||
+        feet.some((sprite) => roof.rect.contains(sprite.x, sprite.y));
+      const target = lifted ? ROOF_LIFTED_ALPHA : 1;
+      if (roof.alpha === target) continue;
+      roof.alpha =
+        Math.abs(target - roof.alpha) < 0.01
+          ? target
+          : roof.alpha + (target - roof.alpha) * ROOF_FADE_RATE;
+      for (const image of roof.images) image.setAlpha(roof.alpha);
+    }
   }
 
   /** Tells the zoom control where the camera stands (a no-op until it moves). */
@@ -936,12 +1111,15 @@ export class OverworldScene extends Phaser.Scene {
   }
 
   private playBeat(beat: StageBeat, done: () => void): void {
-    const plan = planBeat({
+    const planned = planBeat({
       beat,
       places: this.places,
       homes: this.homes,
       unit: this.unit,
     });
+    const plan = this.grid
+      ? routePlan(planned, (from, to) => this.routeOf(from, to), this.unit)
+      : planned;
     this.clearLive();
     this.config.onBeatStart?.(beat, plan);
     if (this.follow) {
@@ -963,6 +1141,54 @@ export class OverworldScene extends Phaser.Scene {
     this.live = [];
   }
 
+  /**
+   * Walks a sprite along a polyline, turning to face each leg, and sorts it
+   * by its feet as it goes so it passes behind a wall's face and in front of
+   * a roof's eave. `onStep` follows it (the seat's flag rides on the lead).
+   */
+  private walkAlong({
+    sprite,
+    asset,
+    points,
+    ms,
+    delay,
+    onStep,
+  }: {
+    sprite: Phaser.GameObjects.Sprite;
+    asset: StageAsset;
+    points: StagePoint[];
+    ms: number;
+    delay: number;
+    onStep?: (x: number, y: number) => void;
+  }): void {
+    const total = lengthOf(points) || 1;
+    const step = (i: number): void => {
+      if (!sprite.active) return;
+      if (i >= points.length - 1) {
+        sprite.anims.stop();
+        sprite.setFrame(restFrame(asset.sprite!));
+        return;
+      }
+      const a = points[i];
+      const b = points[i + 1];
+      const leg = Math.hypot(b.x - a.x, b.y - a.y);
+      sprite.play(`${asset.id}:${facingOf(a, b)}`, true);
+      this.tweens.add({
+        targets: sprite,
+        x: b.x,
+        y: b.y,
+        duration: Math.max(1, Math.round((ms * leg) / total)),
+        ease: "Linear",
+        onUpdate: () => {
+          sprite.setDepth(sprite.y);
+          onStep?.(sprite.x, sprite.y);
+        },
+        onComplete: () => step(i + 1),
+      });
+    };
+    this.time.delayedCall(delay, () => step(0));
+  }
+
   private runAction(action: StageAction): void {
     const { direction, from, to, travels, count, walkMs, totalMs } = action;
     const asset = spriteFor(this.config.manifest, direction.actor.archetype);
@@ -970,32 +1196,37 @@ export class OverworldScene extends Phaser.Scene {
     const offsets = formation(count, 10 * this.unit);
     const facing = travels ? facingOf(from, to) : "down";
     const actors: Phaser.GameObjects.Sprite[] = [];
+    const way = action.path ?? [from, to];
     if (asset?.sprite) {
       const scale = this.scaleOf(asset);
       const stands = asset.sprite.frameHeight * scale;
+      const u = this.unit;
+      let flag: Phaser.GameObjects.Rectangle | undefined;
+      let pole: Phaser.GameObjects.Rectangle | undefined;
+      const placeFlag = (x: number, y: number): void => {
+        flag?.setPosition(x + 6 * u, y - (stands + 4 * u));
+        pole?.setPosition(x + 3 * u, y - (stands + 1 * u));
+      };
       offsets.forEach((offset, i) => {
         const sprite = this.add
           .sprite(from.x + offset.x, from.y + offset.y, asset.id)
           .setOrigin(0.5, 1)
           .setScale(scale)
-          .setDepth(1000 + from.y + offset.y);
+          .setDepth(from.y + offset.y);
         sprite.play(`${asset.id}:${facing}`);
         actors.push(sprite);
         this.live.push(sprite);
         if (travels) {
-          this.tweens.add({
-            targets: sprite,
-            x: to.x + offset.x,
-            y: to.y + offset.y,
-            duration: walkMs,
+          this.walkAlong({
+            sprite,
+            asset,
+            points: way.map((point) => ({
+              x: point.x + offset.x,
+              y: point.y + offset.y,
+            })),
+            ms: walkMs,
             delay: i * 70,
-            ease: "Linear",
-            onUpdate: () => sprite.setDepth(1000 + sprite.y),
-            onComplete: () => {
-              if (!sprite.active) return;
-              sprite.anims.stop();
-              sprite.setFrame(restFrame(asset.sprite!));
-            },
+            onStep: i === 0 ? placeFlag : undefined,
           });
         } else {
           this.time.delayedCall(700 + i * 90, () => {
@@ -1007,42 +1238,10 @@ export class OverworldScene extends Phaser.Scene {
       });
       const lead = actors[0];
       if (lead && this.config.flags !== false) {
-        const u = this.unit;
-        const flag = this.add
-          .rectangle(
-            lead.x + 6 * u,
-            lead.y - (stands + 4 * u),
-            6 * u,
-            4 * u,
-            color,
-          )
-          .setDepth(7000);
-        const pole = this.add
-          .rectangle(
-            lead.x + 3 * u,
-            lead.y - (stands + 1 * u),
-            1 * u,
-            9 * u,
-            0x0b0d10,
-          )
-          .setDepth(6999);
+        flag = this.add.rectangle(0, 0, 6 * u, 4 * u, color).setDepth(7000);
+        pole = this.add.rectangle(0, 0, 1 * u, 9 * u, 0x0b0d10).setDepth(6999);
+        placeFlag(lead.x, lead.y);
         this.live.push(flag, pole);
-        if (travels) {
-          this.tweens.add({
-            targets: flag,
-            x: to.x + offsets[0].x + 6 * u,
-            y: to.y + offsets[0].y - (stands + 4 * u),
-            duration: walkMs,
-            ease: "Linear",
-          });
-          this.tweens.add({
-            targets: pole,
-            x: to.x + offsets[0].x + 3 * u,
-            y: to.y + offsets[0].y - (stands + 1 * u),
-            duration: walkMs,
-            ease: "Linear",
-          });
-        }
       }
     }
     if (action.effect) {

@@ -272,6 +272,17 @@ export const TERRAIN_NOTES: Partial<Record<Terrain, LegendNote>> = {
       zh: "诗七月：九月筑场圃。五亩之宅，桑在其墙，蔬在其门。卿第之圃在寝之后，垣以围之，家人自治；周礼有场人、圃人之职。",
     },
   },
+  plank: {
+    title: { en: "Plank floor", zh: "地板" },
+    what: {
+      en: "The wooden floor inside a hall or a chamber, raised a step above the yard.",
+      zh: "堂室之内木板铺地，高于庭一级。",
+    },
+    history: {
+      en: "A hall of this age stood on its terrace with a boarded floor over the rammed earth, and the household sat, ate, and slept on mats laid over it: shoes came off at the step, and rank was where on the floor one sat. An outbuilding kept the beaten earth it was built on.",
+      zh: "此世之堂立于台上，夯土之上铺板，家人席地而坐、而食、而卧：升阶脱屦，位在席次。庖厩之属则仍以夯土为地。",
+    },
+  },
 };
 
 export const WATER_NOTES: Record<Water, LegendNote> = {
@@ -1276,6 +1287,160 @@ export const MARKER_NOTES: Record<Marker | "region", LegendNote> = {
     history: {
       en: "A screen inside the gate was the mark of a ruler's house, and the Analects fault Guan Zhong for setting one up as a minister. A great house of this age set one anyway: a caller stepping through the gate saw a wall and not the master, and turned to be received.",
       zh: "树塞门为国君之制，论语讥管仲以大夫树之。此世大家仍设之：客入门见墙不见主，折而后见。",
+    },
+  },
+  dais: {
+    title: { en: "Dais", zh: "主席" },
+    what: {
+      en: "The host's raised seat at the head of the hall: a low lacquered platform with a mat, an armrest, and a small table.",
+      zh: "堂上主位：漆台低设，席、几、案具。",
+    },
+    history: {
+      en: "A hall was ordered by where one sat. The host took the raised place at the head, facing south, with an armrest to lean on and a low table for the cup; a guest was seated by rank on the mats below, and the Yili's rites of audience and drinking are largely a choreography of who rises, who bows, and who sits where.",
+      zh: "堂以席次为序。主人居上位南面，凭几设案；宾以爵次坐于下席。仪礼之聘礼、乡饮酒礼，大抵是谁起、谁拜、谁坐何处之仪。",
+    },
+  },
+  tablets: {
+    title: { en: "Ancestral tablets", zh: "神主" },
+    what: {
+      en: "The ancestors' tablets on their stand, with an incense burner and offering cups before them.",
+      zh: "神主立于案上，前设香炉与爵。",
+    },
+    history: {
+      en: "A house kept its dead in the hall. The tablets stood at the west, and the master reported to them before a journey, a marriage, or a decision, and fed them at the seasons. A great house had a temple for them; a lesser one a stand in its hall, which the Liji allows.",
+      zh: "家祀先人于堂。主位于西，出行、嫁娶、大事皆告，四时祭之。大家有庙，其次设主于堂，礼记许之。",
+    },
+  },
+  lamp: {
+    title: { en: "Lamp stand", zh: "灯" },
+    what: {
+      en: "A tall bronze lamp on a round base, its dish burning oil or tallow.",
+      zh: "铜灯高立，圆座盘上燃膏。",
+    },
+    history: {
+      en: "Bronze lamps of this age survive in numbers from the tombs of Zhongshan and Chu: a column, a dish, and often a figure or a beast holding it up. Light after dark was a cost a household could afford or not, and a lit hall was itself a show of rank.",
+      zh: "此世铜灯出于中山、楚墓者甚多：一柱一盘，或以人兽承之。夜有灯火，家之所能与不能；堂上灯明，即是威仪。",
+    },
+  },
+  bed: {
+    title: { en: "Bed", zh: "床" },
+    what: {
+      en: "A low lacquered bed platform with a folded quilt, a mat, and a curtain gathered at its head.",
+      zh: "漆床低设，被褥叠置，席铺其上，帐幔收于床头。",
+    },
+    history: {
+      en: "The bed of the inner chamber was a low platform, lacquered black and red, with a mat and a quilt of silk or hemp by the household's means; the Baoshan tomb kept a folding one. The lady of the house kept the chamber, and the Liji sets the rule that the master's sons and daughters did not sit on one bed past the age of seven.",
+      zh: "内室之床为低台，黑红髹漆，上铺席被，丝麻视其家。包山楚墓有折叠床。主妇主内室；礼记谓男女七岁不同席。",
+    },
+  },
+  table: {
+    title: { en: "Low table", zh: "案" },
+    what: {
+      en: "A small lacquered table set for a meal, with a tripod bowl, eared cups, and cushions on the floor beside it.",
+      zh: "漆案低设，上置鼎、耳杯，旁铺坐席。",
+    },
+    history: {
+      en: "One ate seated on a mat at a table a hand high, and the table came to the eater rather than the eater to the table: a servant carried it in set. The eared lacquer cup is the vessel of the age, and the tripod on the table is the bronze of the ancestral hall brought down to a meal.",
+      zh: "席地而食，案高不盈尺，案就人而非人就案：仆人举案而进。漆耳杯为此世之器，案上之鼎则宗庙之铜降于常食。",
+    },
+  },
+  chest: {
+    title: { en: "Chest", zh: "箱" },
+    what: {
+      en: "A lacquered wooden chest with bronze fittings, holding the household's silk and valuables.",
+      zh: "漆木箱，铜饰角，藏丝帛与财货。",
+    },
+    history: {
+      en: "A household's wealth was cloth, and the chest that held it was itself lacquered and patterned like the finest thing in the room. The Baoshan and Zeng tombs kept chests of clothes and of documents, and a burglary case among the Fengzhenshi forms begins with what was in one.",
+      zh: "家之财在布帛，藏之之箱髹漆施纹，与室中至美之物相类。包山、曾侯乙墓皆有衣箱、书箱；封诊式之盗案，自箱中之物起。",
+    },
+  },
+  loom: {
+    title: { en: "Loom", zh: "机" },
+    what: {
+      en: "A treadle loom with a length of undyed cloth half woven on it.",
+      zh: "踏机一具，素布半织。",
+    },
+    history: {
+      en: "The women of a house wove, and the women of a great house wove silk. The Mencius counts a wife's weaving as half a family's living, and the loom in the east rooms is the household's own cloth being made rather than bought: the tax, the clothing, and the gifts a house gave all came off it.",
+      zh: "妇织，大家之妇织丝。孟子以妇织为一家之半业；东房之机，家自为衣而不市：赋、衣、赠皆出于此。",
+    },
+  },
+  desk: {
+    title: { en: "Writing desk", zh: "书案" },
+    what: {
+      en: "The steward's desk, with bamboo slips, a brush, and an ink stone.",
+      zh: "家宰之案，简牍、笔、砚具。",
+    },
+    history: {
+      en: "A great house was administered in writing: its stores, its rents, its servants' rations, and its dealings with the state all went onto bamboo slips tied with cord. The Baoshan and Liye finds are the same forms kept by offices; a steward kept them for a house, and the Zhouli's officers of the royal household are what a private steward copied.",
+      zh: "大家以文书治家：仓廪、租入、仆隶之廪、与官之往来，皆书于简而编以绳。包山、里耶之简即官府之式；家宰为家守之，周礼之宰夫诸官，私家之宰所仿也。",
+    },
+  },
+  mat: {
+    title: { en: "Sleeping mat", zh: "卧席" },
+    what: {
+      en: "A servant's sleeping place: a reed mat, a hemp blanket, a wooden headrest, and a bundle.",
+      zh: "仆人卧处：苇席、麻被、木枕、行囊。",
+    },
+    history: {
+      en: "A servant slept where the work was, on a mat in the range or the outbuilding, and owned what fitted in a bundle. The Shuihudi statutes ration a bond servant's grain by the month and their clothing by the season; a house that kept servants fed and clothed them by the same reckoning.",
+      zh: "仆人卧于其役之所，席于厢庑，所有尽在一囊。睡虎地律以月廪隶臣之粟、以季给其衣；养仆之家，计亦同此。",
+    },
+  },
+  hearth: {
+    title: { en: "Hearth", zh: "灶" },
+    what: {
+      en: "The kitchen stove: a clay hearth with a cauldron and a pot set in its openings and a fire in its mouth.",
+      zh: "庖厨之灶：土灶设釜甑，灶口有火。",
+    },
+    history: {
+      en: "The stove was the god of the kitchen and the centre of the household's day; the Liji's household rules begin at dawn with the fire. A clay stove with two openings, a cauldron for the grain and a steamer over it, is the form the pottery models in tombs of this age keep, and the cook's smoke over the roof is the sign a house is fed.",
+      zh: "灶为庖之神，一家一日之中；礼记内则自晨兴举火始。土灶双眼，釜炊粟而甑蒸之，此世墓中陶灶之形。厨烟出屋，家有食也。",
+    },
+  },
+  bins: {
+    title: { en: "Grain bins", zh: "囷" },
+    what: {
+      en: "Round bins of coiled straw plastered with clay inside the granary, holding the household's millet.",
+      zh: "仓内草编泥涂之囷，藏家之粟。",
+    },
+    history: {
+      en: "Grain was kept off the ground and away from damp in round bins, sealed and opened by the steward's count. The Shuihudi granary statutes seal a store with the officials' names and tally what comes out; a house measured its own the same way, and the Mencius reckons a family's security by how many years its bins would hold.",
+      zh: "粟离地避湿，藏于圆囷，启闭皆由家宰计数。睡虎地仓律以吏名封仓、出入有计；家仓计法亦然。孟子以囷可支几年，度一家之安危。",
+    },
+  },
+  manger: {
+    title: { en: "Manger", zh: "槽" },
+    what: {
+      en: "The stable's feed trough, full of hay, with straw heaped beside it and a halter on the post.",
+      zh: "厩中饲槽，盛刍，旁堆藁，柱挂络头。",
+    },
+    history: {
+      en: "A horse ate what the state counted: fodder and straw were among the thirteen things the Shangjunshu has a state number, and a chariot house kept four horses to a team and a groom to feed them. The Zhouli's stable officers ration hay by the season; the manger is where that reckoning was eaten.",
+      zh: "马食国所计之物：刍藁在商君书十三数之中，车家一乘四马，圉人饲之。周礼圉师以时颁刍；槽者，此计之所食也。",
+    },
+  },
+  trough: {
+    title: { en: "Water trough", zh: "水槽" },
+    what: {
+      en: "A stone trough in the stable yard, filled from the well, with a bucket beside it.",
+      zh: "厩庭石槽，汲井以注，旁置桶。",
+    },
+    history: {
+      en: "Horses drank from a trough filled by hand from the compound's well, and watering them was the groom's first task of the day. A stone trough outlasts everything else in a yard, and troughs of this age survive where the timber round them has not.",
+      zh: "马饮于槽，圉人汲井注之，晨起首务。石槽历久，此世之槽至今存者，其周之木已尽。",
+    },
+  },
+  armrack: {
+    title: { en: "Weapon rack", zh: "兵架" },
+    what: {
+      en: "A rack in the gatehouse holding dagger-axes on their shafts and a lacquered shield.",
+      zh: "门舍兵架，插戈数柄，倚漆盾一。",
+    },
+    history: {
+      en: "A gatehouse was a guardroom, and a great house kept arms for its own retainers: the bronze dagger-axe on a long shaft was the weapon of the age, and a lacquered leather shield went with it. The Zhouli sets guards at the gates of the palace with their weapons racked beside them; a house copied the palace at its own scale.",
+      zh: "门舍即卫舍，大家为家臣备兵：长柄铜戈为此世之器，漆革盾配之。周礼设宫门之卫，兵架于侧；家仿宫制而小之。",
     },
   },
 };

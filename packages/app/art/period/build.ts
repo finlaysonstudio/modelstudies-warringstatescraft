@@ -4,6 +4,13 @@ import { fileURLToPath } from "node:url";
 
 import { BadRequestError } from "@jaypie/errors";
 
+import {
+  KIT_CELL,
+  KIT_COLUMNS,
+  KIT_FRAME,
+  KIT_PIECES,
+  KIT_SOURCE,
+} from "../../src/stage/kit";
 import type { StageSource } from "../../src/stage/manifest";
 import { blocksOf, GROUNDS, tilesetIdOf, type Ground } from "../map/map";
 import type {
@@ -11,10 +18,13 @@ import type {
   AssetRecord,
   VendorManifest,
 } from "../vendor/manifest";
+import { BLOB_COLUMNS, BLOB_MASKS, BLOB_ROWS } from "../vendor/blob";
 import {
   blankImage,
   copyRect,
+  cropImage,
   readPng,
+  resampleImage,
   writePng,
   type Image,
 } from "../vendor/png";
@@ -132,7 +142,33 @@ export interface PeriodTilesetItem extends PeriodRecord {
   adjust?: ColourAdjustment;
 }
 
-export type PeriodItem = PeriodImageItem | PeriodSpriteItem | PeriodTilesetItem;
+export interface PeriodKitItem extends PeriodRecord {
+  id: string;
+  kind: "kit";
+  /** directory holding the kit's pieces, `<n>.png` for 0..79 */
+  dir: string;
+}
+
+/**
+ * A floor laid as a ground: one kit's floor piece, cut to its cell and
+ * stretched square, repeated over a flat blob sheet so the map builder lays
+ * it the way it lays any terrain. A floor has no boundary of its own (the
+ * wall stands on its edge), so every tile of the sheet is the same tile.
+ */
+export interface PeriodFloorItem extends PeriodRecord {
+  id: string;
+  kind: "floor";
+  /** the kit's floor piece, relative to the source root */
+  file: string;
+  variantTone?: number;
+}
+
+export type PeriodItem =
+  | PeriodImageItem
+  | PeriodSpriteItem
+  | PeriodTilesetItem
+  | PeriodKitItem
+  | PeriodFloorItem;
 
 /**
  * One art set's spec: the layer it writes, the tile its ground sheets are
@@ -213,6 +249,17 @@ const groundOfId = (id: string): Ground | null =>
  * sheet keyed two ways is two different biomes on the map.
  */
 const finishOf = (item: PeriodItem): Record<string, unknown> | undefined => {
+  if (item.kind === "kit") {
+    return { stretch: KIT_FRAME.height / KIT_SOURCE.height };
+  }
+  if (item.kind === "floor") {
+    const ground = groundOfId(item.id);
+    return {
+      stretch: KIT_SOURCE.cell.width / KIT_SOURCE.cell.height,
+      ...(ground && blocksOf(ground) > 1 ? { variants: blocksOf(ground) } : {}),
+      ...(item.variantTone ? { variantTone: item.variantTone } : {}),
+    };
+  }
   if (item.kind !== "tileset") return undefined;
   const finish: Record<string, unknown> = {};
   if (item.against) finish.against = item.against;
@@ -430,6 +477,91 @@ export const buildPeriod = async ({
           tone: item.variantTone,
           tile,
         });
+      }
+      await writePng(path.join(outDir, file), image);
+      assets[item.id] = {
+        file,
+        kind: "blob",
+        width: image.width,
+        height: image.height,
+        pack: "pixellab",
+        record: recordOf(item),
+      };
+      log(`${item.id}  ${image.width}x${image.height}  ← ${item.file}`);
+      continue;
+    }
+    if (item.kind === "kit") {
+      // the generator draws a foreshortened 32 × 24 footprint, and the map
+      // is square, so every row of every piece is stretched by the same
+      // ratio; nearest-neighbour, so the art keeps its outlines
+      const rows = Math.ceil(KIT_PIECES / KIT_COLUMNS);
+      const image = blankImage(
+        KIT_COLUMNS * KIT_FRAME.width,
+        rows * KIT_FRAME.height,
+      );
+      for (let piece = 0; piece < KIT_PIECES; piece += 1) {
+        const raw = await readPng(path.join(root, item.dir, `${piece}.png`));
+        if (
+          raw.width !== KIT_SOURCE.width ||
+          raw.height !== KIT_SOURCE.height
+        ) {
+          throw new BadRequestError(
+            `${item.id} piece ${piece} is ${raw.width}x${raw.height}, not ${KIT_SOURCE.width}x${KIT_SOURCE.height}`,
+          );
+        }
+        const stretched = resampleImage(raw, KIT_FRAME);
+        copyRect({
+          source: stretched,
+          sx: 0,
+          sy: 0,
+          width: KIT_FRAME.width,
+          height: KIT_FRAME.height,
+          target: image,
+          tx: (piece % KIT_COLUMNS) * KIT_FRAME.width,
+          ty: Math.floor(piece / KIT_COLUMNS) * KIT_FRAME.height,
+        });
+      }
+      await writePng(path.join(outDir, file), image);
+      assets[item.id] = {
+        file,
+        kind: "kit",
+        width: image.width,
+        height: image.height,
+        frames: KIT_PIECES,
+        frame: { width: KIT_FRAME.width, height: KIT_FRAME.height },
+        kit: { cell: { ...KIT_CELL } },
+        pack: "pixellab",
+        record: recordOf(item),
+      };
+      log(
+        `${item.id}  ${image.width}x${image.height}  ${KIT_PIECES} pieces  ← ${item.dir}`,
+      );
+      continue;
+    }
+    if (item.kind === "floor") {
+      const tile = spec.tile;
+      const raw = await readPng(path.join(root, item.file));
+      const cell = resampleImage(cropImage(raw, { ...KIT_SOURCE.cell }), {
+        width: tile,
+        height: tile,
+      });
+      let image = blankImage(BLOB_COLUMNS * tile, BLOB_ROWS * tile);
+      BLOB_MASKS.forEach((_, position) => {
+        copyRect({
+          source: cell,
+          sx: 0,
+          sy: 0,
+          width: tile,
+          height: tile,
+          target: image,
+          tx: (position % BLOB_COLUMNS) * tile,
+          ty: Math.floor(position / BLOB_COLUMNS) * tile,
+        });
+      });
+      const ground = groundOfId(item.id);
+      const variants = ground ? blocksOf(ground) : 1;
+      if (variants > 1) {
+        image = variantSheet(image, variants, { tone: item.variantTone, tile });
       }
       await writePng(path.join(outDir, file), image);
       assets[item.id] = {

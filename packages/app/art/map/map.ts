@@ -13,6 +13,15 @@ import {
   maskOf,
 } from "../vendor/blob";
 import { blobTileset, type TiledTileset } from "../vendor/tileset";
+import {
+  KIT_PASSABLE,
+  roofOf,
+  wallLineOf,
+  wallsOf,
+  type DoorSpec,
+  type KitPlacement,
+  type WallGap,
+} from "../../src/stage/kit";
 
 export type Ground = Terrain | Water;
 
@@ -40,6 +49,11 @@ export interface PlaceSpec {
   /** A catalog marker; absent for a region that carries a label only. */
   marker?: string;
   state?: string;
+  /**
+   * The place is the room of the same id: its walls are its image, so the
+   * scene draws no stamp for it and a click anywhere on the room reads it.
+   */
+  room?: boolean;
 }
 
 export interface DecorSpec {
@@ -47,6 +61,36 @@ export interface DecorSpec {
   id: string;
   x: number;
   y: number;
+}
+
+/**
+ * A building drawn from a kit rather than stamped: a rectangle of floor with
+ * a wall one cell thick round its edge, doors cut where the spec says, and
+ * a roof the scene lifts when someone is inside. The rect is the whole
+ * footprint, walls included, so a 12 × 8 room has 10 × 6 of floor to walk.
+ */
+export interface RoomSpec {
+  id: string;
+  /** the kit asset (`kit.hall`, `kit.outbuilding`, `kit.wall`) */
+  kit: string;
+  /** [x, y, width, height] in tiles, walls included */
+  rect: [number, number, number, number];
+  doors?: DoorSpec[];
+  /** the ground the floor is laid in (`plank` by default; `null` lays none) */
+  floor?: Ground | null;
+  /** whether a roof covers it (true by default for a room with a floor) */
+  roof?: boolean;
+  /** A named feature, for a ring that is a wall rather than a building. */
+  feature?: string;
+}
+
+/** A freestanding wall along one row or one column, from a kit. */
+export interface WallSpec {
+  kit: string;
+  from: [number, number];
+  to: [number, number];
+  gaps?: WallGap[];
+  feature?: string;
 }
 
 export interface Geography {
@@ -57,7 +101,88 @@ export interface Geography {
   places: Record<string, PlaceSpec>;
   /** Set dressing: unlabeled images the scene scatters for visual interest. */
   decor?: DecorSpec[];
+  /** Buildings composed from a kit, walkable inside. */
+  rooms?: RoomSpec[];
+  /** Freestanding walls composed from a kit. */
+  walls?: WallSpec[];
 }
+
+/** the ground a room's floor is laid in unless the room says otherwise */
+export const ROOM_FLOOR: Ground = "plank";
+
+/** The fills as painted: the geography's own, then every room's floor over them. */
+export const fillsOf = (geo: Geography): Fill[] => [
+  ...geo.fills,
+  ...(geo.rooms ?? []).flatMap((room): Fill[] =>
+    room.floor === null
+      ? []
+      : [{ terrain: room.floor ?? ROOM_FLOOR, rect: room.rect }],
+  ),
+];
+
+/** The wall pieces a room's ring and every freestanding wall place, by kit. */
+export const wallPlacementsOf = (
+  geo: Geography,
+): { kit: string; room?: string; placement: KitPlacement }[] => {
+  const out: { kit: string; room?: string; placement: KitPlacement }[] = [];
+  for (const room of geo.rooms ?? []) {
+    const [x, y, width, height] = room.rect;
+    for (const placement of wallsOf({
+      x,
+      y,
+      width,
+      height,
+      doors: room.doors,
+    })) {
+      out.push({ kit: room.kit, room: room.id, placement });
+    }
+  }
+  for (const wall of geo.walls ?? []) {
+    if (wall.from[0] !== wall.to[0] && wall.from[1] !== wall.to[1]) {
+      throw new BadRequestError(
+        `a wall from ${wall.from.join(",")} to ${wall.to.join(",")} is not along a row or a column`,
+      );
+    }
+    for (const placement of wallLineOf(wall)) {
+      out.push({ kit: wall.kit, placement });
+    }
+  }
+  return out;
+};
+
+/** The roof pieces over every roofed room, by kit and room. */
+export const roofPlacementsOf = (
+  geo: Geography,
+): { kit: string; room: string; placement: KitPlacement }[] =>
+  (geo.rooms ?? []).flatMap((room) => {
+    if (room.roof === false || room.floor === null) return [];
+    const [x, y, width, height] = room.rect;
+    return roofOf({ x, y, width, height }).map((placement) => ({
+      kit: room.kit,
+      room: room.id,
+      placement,
+    }));
+  });
+
+/**
+ * The cells a figure cannot cross: every wall piece that is not a doorway,
+ * and every cell of water. Furniture is the scene's business, since only
+ * it knows a marker's drawn footprint.
+ */
+export const blockedOf = (
+  geo: Geography,
+  grid = rasterize(geo),
+): boolean[][] => {
+  const blocked = grid.map((row) => row.map((ground) => isWater(ground)));
+  for (const { placement } of wallPlacementsOf(geo)) {
+    if (KIT_PASSABLE.has(placement.piece)) continue;
+    const row = blocked[placement.y];
+    if (row && placement.x >= 0 && placement.x < row.length) {
+      row[placement.x] = true;
+    }
+  }
+  return blocked;
+};
 
 export const GROUNDS: readonly Ground[] = [...TERRAINS, ...WATERS];
 
@@ -105,6 +230,8 @@ export const DRAW_ORDER: readonly Ground[] = [
   "platform",
   "cobble",
   "road",
+  // the floor of a building, over the yard its walls stand in
+  "plank",
   "wall",
   "river",
   "sea",
@@ -133,6 +260,7 @@ export const LETTERS: Record<Ground, string> = {
   platform: "=",
   mulberry: "m",
   garden: "g",
+  plank: "p",
   river: "~",
   sea: "=",
 };
@@ -176,7 +304,7 @@ export const rasterMapOf = (geo: Geography): RasterMap => {
     grid[y][x] = ground;
     features[y][x] = feature;
   };
-  for (const fill of geo.fills) {
+  for (const fill of fillsOf(geo)) {
     const ground = assertGround(fill.terrain);
     feature = fill.feature ?? null;
     if (fill.rect) {
@@ -226,6 +354,29 @@ export const rasterMapOf = (geo: Geography): RasterMap => {
       );
     }
   }
+  // a kit wall stands on whatever ground it was built over, so a named wall
+  // claims its cells' feature and leaves their ground alone
+  const claim = (x: number, y: number, id: string): void => {
+    if (x < 0 || y < 0 || x >= geo.width || y >= geo.height) return;
+    features[y][x] = id;
+  };
+  for (const room of geo.rooms ?? []) {
+    if (!room.feature) continue;
+    const [x, y, width, height] = room.rect;
+    for (const { x: i, y: j } of wallsOf({
+      x,
+      y,
+      width,
+      height,
+      doors: room.doors,
+    })) {
+      claim(i, j, room.feature);
+    }
+  }
+  for (const wall of geo.walls ?? []) {
+    if (!wall.feature) continue;
+    for (const { x, y } of wallLineOf(wall)) claim(x, y, wall.feature);
+  }
   return { grid, features };
 };
 
@@ -270,6 +421,12 @@ export interface TiledLayer {
   draworder?: "topdown";
 }
 
+export interface TiledProperty {
+  name: string;
+  type: "string" | "int" | "bool";
+  value: string | number | boolean;
+}
+
 export interface TiledObject {
   id: number;
   name: string;
@@ -280,8 +437,9 @@ export interface TiledObject {
   height: number;
   rotation: number;
   visible: boolean;
-  point: true;
-  properties?: { name: string; type: "string"; value: string }[];
+  /** a point object; a rectangle (a room) carries a width and a height instead */
+  point?: true;
+  properties?: TiledProperty[];
 }
 
 export interface TiledMap {
@@ -341,6 +499,15 @@ const rankOf = (ground: Ground): number => DRAW_ORDER.indexOf(ground) + 1;
  * against both. Only a ground drawn beneath this one is a candidate, because
  * a ground drawn above covers this boundary itself.
  */
+/**
+ * The floors: a ground that is flat by construction and laid over whatever
+ * a building stands on. It has no boundary of its own (the wall stands on
+ * its edge), so it is drawn against every lower ground whether or not the
+ * set carries a pair for it, which is what lets the ground beneath run
+ * whole under it rather than draw its grass-collared edge round the room.
+ */
+export const FLOOR_GROUNDS: ReadonlySet<Ground> = new Set<Ground>(["plank"]);
+
 export const againstOf = (
   grid: Ground[][],
   pairs: ReadonlySet<string>,
@@ -386,6 +553,7 @@ export const againstOf = (
         }
       }
       if (!best || best === "grass") return null;
+      if (FLOOR_GROUNDS.has(ground)) return best;
       return pairs.has(pairIdOf(ground, best)) ? best : null;
     }),
   );
@@ -602,11 +770,108 @@ export const buildTiledMap = ({
     });
     layerId += 1;
   }
+  const objectLayer = (name: string, objects: TiledObject[]): void => {
+    if (!objects.length) return;
+    layers.push({
+      id: layerId,
+      name,
+      type: "objectgroup",
+      draworder: "topdown",
+      x: 0,
+      y: 0,
+      opacity: 1,
+      visible: true,
+      objects,
+    });
+    layerId += 1;
+  };
+  // the kit pieces: one object per cell, at the cell's top-left, naming the
+  // kit and the piece; a roof piece also names its room so the scene can
+  // lift the whole roof at once
+  const pieceObject = ({
+    kit,
+    room,
+    placement,
+    prefix,
+  }: {
+    kit: string;
+    room?: string;
+    placement: KitPlacement;
+    prefix: string;
+  }): TiledObject => {
+    const properties: TiledProperty[] = [
+      { name: "piece", type: "int", value: placement.piece },
+    ];
+    if (room) properties.push({ name: "room", type: "string", value: room });
+    const object: TiledObject = {
+      id: objectId,
+      name: `${prefix}-${objectId}`,
+      type: kit,
+      x: placement.x * tile,
+      y: placement.y * tile,
+      width: tile,
+      height: tile,
+      rotation: 0,
+      visible: true,
+      properties,
+    };
+    objectId += 1;
+    return object;
+  };
+  objectLayer(
+    "walls",
+    wallPlacementsOf(geo).map((entry) =>
+      pieceObject({ ...entry, prefix: "wall" }),
+    ),
+  );
+  objectLayer(
+    "roofs",
+    roofPlacementsOf(geo).map((entry) =>
+      pieceObject({ ...entry, prefix: "roof" }),
+    ),
+  );
+  objectLayer(
+    "rooms",
+    (geo.rooms ?? []).map((room) => {
+      const [x, y, width, height] = room.rect;
+      const properties: TiledProperty[] = [
+        { name: "kit", type: "string", value: room.kit },
+        {
+          name: "roof",
+          type: "bool",
+          value: room.roof !== false && room.floor !== null,
+        },
+      ];
+      const object: TiledObject = {
+        id: objectId,
+        name: room.id,
+        type: "",
+        x: x * tile,
+        y: y * tile,
+        width: width * tile,
+        height: height * tile,
+        rotation: 0,
+        visible: true,
+        properties,
+      };
+      objectId += 1;
+      return object;
+    }),
+  );
+  const rooms = new Set((geo.rooms ?? []).map((room) => room.id));
   const objects: TiledObject[] = Object.entries(geo.places).map(
     ([key, place]) => {
-      const properties: TiledObject["properties"] = [];
+      const properties: TiledProperty[] = [];
       if (place.state)
         properties.push({ name: "state", type: "string", value: place.state });
+      if (place.room) {
+        if (!rooms.has(key)) {
+          throw new BadRequestError(
+            `place ${key} is a room, and no room is called ${key}`,
+          );
+        }
+        properties.push({ name: "room", type: "bool", value: true });
+      }
       const object: TiledObject = {
         id: objectId,
         name: key,

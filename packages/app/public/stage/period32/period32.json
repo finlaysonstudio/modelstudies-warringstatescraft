@@ -6222,6 +6222,465 @@
         "generations": 6,
         "note": "the groom who keeps the chariot horses of a great house; the stable is his ground; four frames per cardinal facing, one generation per facing"
       }
+    },
+    "kit.hall": {
+      "file": "kit.hall.png",
+      "kind": "kit",
+      "width": 520,
+      "height": 928,
+      "frames": 80,
+      "frame": {
+        "width": 52,
+        "height": 116
+      },
+      "kit": {
+        "cell": {
+          "x": 10,
+          "y": 74,
+          "size": 32
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_building_kit",
+        "prompt": "Warring States Chinese hall walls: rammed earth plastered pale ochre between dark red lacquered timber posts, a dark grey clay tile course along the top, low top-down pixel art",
+        "settings": {
+          "tile_type": "square_topdown",
+          "tile_size": 32,
+          "wall_tiles": 2,
+          "seed": 7,
+          "floor_description": "polished dark brown wooden plank floor"
+        },
+        "jobId": "edccdcdf-59d2-4074-840f-266c625d1cdd",
+        "date": "2026-09-06",
+        "generations": 30,
+        "note": "The hall kit: the walls of the audience hall, the chamber, the ranges, and the gatehouse. Twenty of the eighty pieces are painted and the rest derived by the generator; the build stretches every piece's rows by 4/3 so the 32 × 24 footprint the generator draws becomes the map's square cell.",
+        "finish": {
+          "stretch": 1.3333333333333333
+        }
+      }
+    },
+    "kit.outbuilding": {
+      "file": "kit.outbuilding.png",
+      "kind": "kit",
+      "width": 520,
+      "height": 928,
+      "frames": 80,
+      "frame": {
+        "width": 52,
+        "height": 116
+      },
+      "kit": {
+        "cell": {
+          "x": 10,
+          "y": 74,
+          "size": 32
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_building_kit",
+        "prompt": "Warring States Chinese outbuilding walls: whitewashed rammed earth between rough unpainted timber posts, a straw thatch eave along the top, low top-down pixel art",
+        "settings": {
+          "tile_type": "square_topdown",
+          "tile_size": 32,
+          "wall_tiles": 2,
+          "seed": 7,
+          "floor_description": "beaten earth floor swept smooth, pale grey-brown"
+        },
+        "jobId": "ba08aea2-39c0-4aea-a3b3-eb4450bf439c",
+        "date": "2026-09-06",
+        "generations": 30,
+        "note": "The outbuilding kit: the kitchen, the granary, the stable, and the chariot shed, with a thatch eave in place of the tile course. The same eighty-piece layout as the hall kit.",
+        "finish": {
+          "stretch": 1.3333333333333333
+        }
+      }
+    },
+    "kit.wall": {
+      "file": "kit.wall.png",
+      "kind": "kit",
+      "width": 520,
+      "height": 928,
+      "frames": 80,
+      "frame": {
+        "width": 52,
+        "height": 116
+      },
+      "kit": {
+        "cell": {
+          "x": 10,
+          "y": 74,
+          "size": 32
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_building_kit",
+        "prompt": "Warring States Chinese compound wall: grey rammed earth in visible tamped courses with a grey clay tile coping along the top, low top-down pixel art",
+        "settings": {
+          "tile_type": "square_topdown",
+          "tile_size": 32,
+          "wall_tiles": 2,
+          "seed": 7,
+          "floor_description": "grey flagstone paving"
+        },
+        "jobId": "9f755dff-f0de-463e-8dc3-9c04486857fb",
+        "date": "2026-09-06",
+        "generations": 30,
+        "note": "The compound wall kit: the ring wall and the court walls, in grey tamped courses under a tile coping. Only its wall pieces are laid; the flagstone floor it was generated with is unused.",
+        "finish": {
+          "stretch": 1.3333333333333333
+        }
+      }
+    },
+    "terrain.plank": {
+      "file": "terrain.plank.png",
+      "kind": "blob",
+      "width": 256,
+      "height": 768,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_building_kit",
+        "prompt": "polished dark brown wooden plank floor",
+        "settings": {
+          "tile_type": "square_topdown",
+          "tile_size": 32,
+          "wall_tiles": 2,
+          "seed": 7
+        },
+        "jobId": "edccdcdf-59d2-4074-840f-266c625d1cdd",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "The hall kit's floor piece, cut to its cell, stretched square, and laid as a ground so a room's floor is walked like a yard. Costs no generation of its own: it is piece 0 of the hall kit.",
+        "finish": {
+          "stretch": 1.3333333333333333,
+          "variants": 4,
+          "variantTone": 0.04
+        }
+      }
+    },
+    "image.dais": {
+      "file": "image.dais.png",
+      "kind": "image",
+      "width": 96,
+      "height": 64,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese host's dais inside a hall seen from above: a low rectangular wooden platform lacquered dark red, a woven reed mat on top, a small black lacquer armrest and a low table with a bronze cup, no people",
+        "settings": {
+          "width": 96,
+          "height": 64,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "df30ec5e-666f-46d6-9735-9a60ea920f24",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The host's seat at the head of the hall; the master's home."
+      }
+    },
+    "image.tablets": {
+      "file": "image.tablets.png",
+      "kind": "image",
+      "width": 48,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese ancestral tablet stand seen from above: a small dark red lacquered wooden table with three upright wooden tablets on it, a small bronze incense burner with a thin thread of smoke and two bronze cups in front of them, no people",
+        "settings": {
+          "width": 48,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "bfa58778-a0cc-4087-ae06-10c15ef816f8",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The ancestors' tablets at the west of the hall."
+      }
+    },
+    "image.lamp": {
+      "file": "image.lamp.png",
+      "kind": "image",
+      "width": 32,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese bronze lamp stand seen from above: a tall slender dark bronze lampstand on a round base with a small shallow oil dish at the top holding a small yellow flame, no people",
+        "settings": {
+          "width": 32,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "023d4870-e9fc-4192-be35-f23fb1966160",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "A bronze lamp in the hall. Drawn a second time at 32 wide after a 24 wide request was refused; the earlier lantern is the yard's, this is the hall's."
+      }
+    },
+    "image.bed": {
+      "file": "image.bed.png",
+      "kind": "image",
+      "width": 96,
+      "height": 72,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese bed seen from above: a low rectangular wooden bed platform lacquered black with a red border, a folded padded quilt of deep red silk at one end and a woven reed mat, a thin dark red curtain gathered at the head on two slender posts, no people",
+        "settings": {
+          "width": 96,
+          "height": 72,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "b402188b-1de5-4a4d-af14-744735b4a1b6",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The bed of the inner chamber."
+      }
+    },
+    "image.table": {
+      "file": "image.table.png",
+      "kind": "image",
+      "width": 64,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese low dining table seen from above: a small rectangular black lacquered table with a red rim, on it a bronze tripod bowl, two lacquer cups with ear handles and a dish of millet, two woven reed cushions on the floor at its sides, no people",
+        "settings": {
+          "width": 64,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "35c2531a-db8b-479a-837d-15c0786e9cc7",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "A low table set for a meal, in the chamber and in the west range."
+      }
+    },
+    "image.chest": {
+      "file": "image.chest.png",
+      "kind": "image",
+      "width": 48,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese lacquered storage chest seen from above: a rectangular wooden chest lacquered black with red cloud-scroll patterns on the lid, bronze corner fittings and a bronze clasp, a folded bolt of undyed silk resting on top, no people",
+        "settings": {
+          "width": 48,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "9676c251-7092-4b55-b8f8-fbc96aaeb37e",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The chest of silk in the chamber."
+      }
+    },
+    "image.loom": {
+      "file": "image.loom.png",
+      "kind": "image",
+      "width": 64,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese weaving loom seen from above: a low wooden treadle loom frame of pale timber with a half-woven length of undyed cream cloth stretched across it and a wooden shuttle resting on the cloth, no people",
+        "settings": {
+          "width": 64,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "233bd2d5-342f-4d21-a44a-c112c5590832",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The loom in the east rooms; the maid's home."
+      }
+    },
+    "image.desk": {
+      "file": "image.desk.png",
+      "kind": "image",
+      "width": 64,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese steward's writing desk seen from above: a low black lacquered wooden desk with a bundle of bamboo writing slips tied with cord, an open roll of slips with columns of tiny black characters, a writing brush on a stand and a small ink stone, a woven cushion beside the desk, no people",
+        "settings": {
+          "width": 64,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "72c0d556-8b33-4276-951e-0d4c1b1597c3",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The steward's desk in the east range; the steward's home."
+      }
+    },
+    "image.mat": {
+      "file": "image.mat.png",
+      "kind": "image",
+      "width": 64,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a servant's sleeping place seen from above: a woven reed sleeping mat rolled half open on a beaten earth floor, a folded coarse hemp blanket of dull brown, a small wooden headrest and a cloth bundle tied with cord beside it, no people",
+        "settings": {
+          "width": 64,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "51e076e4-afbe-42d3-8c70-39800de713f1",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "A servant's sleeping mat in the west range; the retainer's home."
+      }
+    },
+    "image.hearth": {
+      "file": "image.hearth.png",
+      "kind": "image",
+      "width": 64,
+      "height": 64,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese kitchen hearth seen from above: a squat rectangular clay stove of grey-brown earth with two round openings on top, a large dark bronze cauldron set in one and a steaming clay pot in the other, a small fire glowing orange in the stove mouth at the front, no people",
+        "settings": {
+          "width": 64,
+          "height": 64,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "c882c846-e079-4c58-ae51-29fbfa4fa9b7",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The kitchen stove; the cook's home, and what smokes."
+      }
+    },
+    "image.bins": {
+      "file": "image.bins.png",
+      "kind": "image",
+      "width": 80,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "grain storage bins inside a granary seen from above: three round bins of woven straw rope coiled in courses and plastered with pale clay, wooden lids, one open showing golden millet grain, a wooden scoop leaning against one, no people",
+        "settings": {
+          "width": 80,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "3fd0a926-aa98-4352-853c-64038acdf724",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The grain bins inside the granary; the carrier's home."
+      }
+    },
+    "image.manger": {
+      "file": "image.manger.png",
+      "kind": "image",
+      "width": 64,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a stable manger seen from above: a long low wooden trough of rough grey timber filled with yellow hay and a heap of loose straw on the earth beside it, a coiled rope halter hanging on a post at one end, no animals, no people",
+        "settings": {
+          "width": 64,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "d9718517-addd-43d4-93c8-24d0d767e6f2",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The stable's feed trough; the groom's home."
+      }
+    },
+    "image.trough": {
+      "file": "image.trough.png",
+      "kind": "image",
+      "width": 64,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a stone water trough in a stable yard seen from above: a long rectangular trough carved from grey stone, filled with still dark water reflecting a little light, a wooden bucket and a dipper on the ground beside it, no animals, no people",
+        "settings": {
+          "width": 64,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "8c2533f3-970f-417e-b063-80720e4d48ce",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The stone trough in the stable yard."
+      }
+    },
+    "image.armrack": {
+      "file": "image.armrack.png",
+      "kind": "image",
+      "width": 48,
+      "height": 56,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese weapon rack in a gatehouse seen from above: a wooden stand of dark timber holding four upright spears with bronze dagger-axe heads and a round leather shield lacquered red leaning against it, no people",
+        "settings": {
+          "width": 48,
+          "height": 56,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "28582b56-51dd-4411-a5b6-6d1b255766fc",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "The rack of dagger-axes in the gatehouse; the guard's home."
+      }
     }
   }
 }

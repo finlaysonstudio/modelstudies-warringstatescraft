@@ -161,6 +161,32 @@ export const blit = ({
   }
 };
 
+/**
+ * Resamples an image to a new size by nearest neighbour, which is the one
+ * resampling pixel art survives: every output pixel is one input pixel, so
+ * no colour is invented and an outline stays a hard line.
+ */
+export const resampleImage = (
+  image: Image,
+  { width, height }: { width: number; height: number },
+): Image => {
+  const out = blankImage(width, height);
+  for (let y = 0; y < height; y += 1) {
+    const sy = Math.min(
+      image.height - 1,
+      Math.floor((y * image.height) / height),
+    );
+    for (let x = 0; x < width; x += 1) {
+      const sx = Math.min(
+        image.width - 1,
+        Math.floor((x * image.width) / width),
+      );
+      setPixel(out, x, y, pixelAt(image, sx, sy));
+    }
+  }
+  return out;
+};
+
 export const cropImage = (image: Image, rect: Rect): Image => {
   const out = blankImage(rect.width, rect.height);
   copyRect({

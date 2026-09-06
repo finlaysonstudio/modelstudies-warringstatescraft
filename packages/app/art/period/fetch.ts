@@ -14,8 +14,9 @@ import { BadRequestError } from "@jaypie/errors";
  *
  * `--kind` is what the id names: `tileset` (the Wang sheet and its corner
  * metadata, the default), `object` (one PNG, or one frame per facing when the
- * object was generated in eight directions), or `character` (the animation
- * frames). Anything with facings is unpacked to `<name>/walk/<facing>-<n>.png`,
+ * object was generated in eight directions), `character` (the animation
+ * frames), or `kit` (a building kit's eighty pieces, `<name>/<n>.png`).
+ * Anything with facings is unpacked to `<name>/walk/<facing>-<n>.png`,
  * so a still and a walk cycle read the same way. `--dir` names the
  * subdirectory of the raw tree the files land in, so a second art set's
  * downloads sit beside the first set's rather than over them.
@@ -23,13 +24,14 @@ import { BadRequestError } from "@jaypie/errors";
 
 const ENDPOINT = "https://api.pixellab.ai/mcp";
 
-export type FetchKind = "tileset" | "object" | "character";
+export type FetchKind = "tileset" | "object" | "character" | "kit";
 
 /** where each kind lands when `--dir` is absent */
 const DEFAULT_DIR: Record<FetchKind, string> = {
   tileset: "tilesets",
   object: "objects",
   character: "",
+  kit: "kits",
 };
 
 /** the stage's facings, in the names PixelLab gives its rotations */
@@ -208,10 +210,40 @@ export const fetchCharacter = async ({
   log(`${name}  ${written} frames  ← ${id}`);
 };
 
+/**
+ * A building kit: the archive holds one PNG per piece, named `<slug>_<n>.png`
+ * in the generator's own order, and lands as `<name>/<n>.png` so the period
+ * build reads a piece by the index the kit table names.
+ */
+export const fetchKit = async ({
+  id,
+  name,
+  dir,
+  log = () => {},
+}: FetchOptions): Promise<void> => {
+  const entries = readZip(
+    await download(`${ENDPOINT}/tiles-pro/${id}/download`),
+  );
+  const out = path.join(dir, name);
+  await mkdir(out, { recursive: true });
+  let written = 0;
+  for (const [entry, data] of entries) {
+    const match = /_(\d+)\.png$/.exec(entry);
+    if (!match) continue;
+    await writeFile(path.join(out, `${Number(match[1])}.png`), data);
+    written += 1;
+  }
+  if (!written) {
+    throw new BadRequestError(`kit ${id} held no numbered pieces`);
+  }
+  log(`${name}  ${written} pieces  ← ${id}`);
+};
+
 const FETCH: Record<FetchKind, (options: FetchOptions) => Promise<void>> = {
   tileset: fetchTileset,
   object: fetchObject,
   character: fetchCharacter,
+  kit: fetchKit,
 };
 
 const isMain =

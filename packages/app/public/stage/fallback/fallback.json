@@ -178,6 +178,14 @@
       "kind": "blob",
       "tileset": "terrain.garden.tsj"
     },
+    "terrain.plank": {
+      "file": "terrain.plank.png",
+      "width": 128,
+      "height": 384,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.plank.tsj"
+    },
     "water.river": {
       "file": "water.river.png",
       "width": 128,
@@ -2880,6 +2888,104 @@
     },
     "image.screen": {
       "file": "image.screen.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.dais": {
+      "file": "image.dais.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.tablets": {
+      "file": "image.tablets.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.lamp": {
+      "file": "image.lamp.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.bed": {
+      "file": "image.bed.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.table": {
+      "file": "image.table.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.chest": {
+      "file": "image.chest.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.loom": {
+      "file": "image.loom.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.desk": {
+      "file": "image.desk.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.mat": {
+      "file": "image.mat.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.hearth": {
+      "file": "image.hearth.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.bins": {
+      "file": "image.bins.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.manger": {
+      "file": "image.manger.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.trough": {
+      "file": "image.trough.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.armrack": {
+      "file": "image.armrack.png",
       "width": 16,
       "height": 16,
       "pack": "fallback",

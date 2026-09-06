@@ -1,20 +1,22 @@
 /**
- * The house: an elite compound inside a city, at about four metres a tile,
+ * The house: an elite compound inside a city, at about a metre a tile,
  * drawn from `art/sites/house/geography.json` by `npm run stage:sites`. It
  * is the plan the ritual texts assume and the Zhongshan king's bronze plan
  * confirms in outline: a gate on the street with its keeper's room and a
  * screen inside it, a forecourt of sheds, stable, kitchen, and granary, a
  * second gate into the court of the audience hall with its two side ranges,
  * and a third wall behind the hall closing the inner chambers, the garden,
- * the pond, and the women's rooms. No chapter is set here; the people are
- * the family, its retainers, and its servants.
+ * the pond, and the women's rooms. At this scale a building is not a stamp
+ * but a room: its walls and roof are composed from a kit, its floor is a
+ * ground, its furniture is a place, and the household walks in by the door.
+ * No chapter is set here; the people are the family, its retainers, and its
+ * servants.
  */
 import type { FeatureNote, Localized } from "../legend";
 import type { Site, Townsperson } from "../site";
 
 export const HOUSE_NAMES: Record<string, Localized> = {
-  gate: { en: "the gate", zh: "门" },
-  screen: { en: "the screen wall", zh: "塞门" },
+  gate: { en: "the gatehouse", zh: "门" },
   shed: { en: "the chariot shed", zh: "车库" },
   stable: { en: "the stable", zh: "厩" },
   kitchen: { en: "the kitchen", zh: "庖" },
@@ -36,6 +38,22 @@ export const HOUSE_NAMES: Record<string, Localized> = {
   "house-west": { en: "the neighbour's house", zh: "西邻" },
   "house-east": { en: "the house beyond", zh: "北邻" },
   neighbour: { en: "the minister's compound", zh: "东邻卿第" },
+  // the furniture: what stands inside each room, and where its people sit
+  dais: { en: "the master's dais", zh: "主席" },
+  tablets: { en: "the ancestral tablets", zh: "神主" },
+  lamp: { en: "the hall lamp", zh: "堂灯" },
+  bed: { en: "the bed", zh: "床" },
+  "chamber-table": { en: "the chamber table", zh: "寝案" },
+  chest: { en: "the silk chest", zh: "衣箱" },
+  loom: { en: "the loom", zh: "机" },
+  desk: { en: "the steward's desk", zh: "宰案" },
+  mat: { en: "the servants' mats", zh: "仆席" },
+  "west-table": { en: "the retainers' table", zh: "客案" },
+  hearth: { en: "the hearth", zh: "灶" },
+  bins: { en: "the grain bins", zh: "囷" },
+  manger: { en: "the manger", zh: "槽" },
+  trough: { en: "the water trough", zh: "水槽" },
+  armrack: { en: "the weapon rack", zh: "兵架" },
 };
 
 export const HOUSE_FEATURES: Record<string, FeatureNote> = {
@@ -48,6 +66,17 @@ export const HOUSE_FEATURES: Record<string, FeatureNote> = {
     history: {
       en: "A great house was a walled ward of its own inside the city's wards, and the Qin case form that describes a burgled house measures the wall's height and the marks on it before anything else. The wall kept the household in as much as strangers out: the statutes held a master liable for what his people did beyond it.",
       zh: "大家为城中里内之里，自有其垣。封诊式先度垣高、验垣迹。垣所以闭家人亦所以拒外人：秦律主人坐其家人垣外之事。",
+    },
+  },
+  screen: {
+    title: { en: "The screen wall", zh: "塞门" },
+    what: {
+      en: "A short free-standing wall inside the gate that blocks the view of the court.",
+      zh: "门内独立短墙，蔽庭中之视。",
+    },
+    history: {
+      en: "A screen inside the gate was the mark of a ruler's house, and the Analects fault Guan Zhong for setting one up as a minister. A great house of this age set one anyway: a caller stepping through the gate saw a wall and not the master, and turned to be received.",
+      zh: "树塞门为国君之制，论语讥管仲以大夫树之。此世大家仍设之：客入门见墙不见主，折而后见。",
     },
   },
   courtwall: {
@@ -112,13 +141,13 @@ export const HOUSEHOLD: readonly Townsperson[] = [
     archetype: "master",
     order: "family",
     label: { en: "master of the house", zh: "主人" },
-    home: "hall",
+    home: "dais",
   },
   {
     archetype: "lady",
     order: "family",
     label: { en: "lady of the house", zh: "主妇" },
-    home: "chamber",
+    home: "bed",
   },
   {
     archetype: "child",
@@ -129,13 +158,13 @@ export const HOUSEHOLD: readonly Townsperson[] = [
     archetype: "steward",
     order: "retainer",
     label: { en: "steward", zh: "家宰" },
-    home: "wing-east",
+    home: "desk",
   },
   {
     archetype: "retainer",
     order: "retainer",
     label: { en: "retainer", zh: "门客" },
-    home: "wing-west",
+    home: "west-table",
   },
   {
     archetype: "scholar",
@@ -153,7 +182,7 @@ export const HOUSEHOLD: readonly Townsperson[] = [
     archetype: "guard",
     order: "retainer",
     label: { en: "gatekeeper", zh: "阍者" },
-    home: "gate",
+    home: "armrack",
   },
   {
     archetype: "physician",
@@ -164,25 +193,25 @@ export const HOUSEHOLD: readonly Townsperson[] = [
     archetype: "maid",
     order: "servant",
     label: { en: "maid", zh: "婢" },
-    home: "east-rooms",
+    home: "loom",
   },
   {
     archetype: "cook",
     order: "servant",
     label: { en: "cook", zh: "庖人" },
-    home: "kitchen",
+    home: "hearth",
   },
   {
     archetype: "groom",
     order: "servant",
     label: { en: "groom", zh: "圉人" },
-    home: "stable",
+    home: "manger",
   },
   {
     archetype: "carrier",
     order: "servant",
     label: { en: "porter", zh: "仆" },
-    home: "granary",
+    home: "bins",
   },
 ];
 
@@ -201,12 +230,12 @@ export const HOUSE: Site = {
   title: { en: "A Model House", zh: "模范之第" },
   seat: "house",
   intro:
-    "The compound of a great officer inside a capital, at a scale where a hall is four tiles wide. It is the plan the ritual texts assume and the Zhongshan king's bronze plan confirms in outline: a gate on the ward's street with a keeper's room beside it and a screen wall inside, a forecourt of chariot shed, stable, well, kitchen, and granary, a second gate into the court of the audience hall on its terrace with a range of rooms down each side, and a third wall behind the hall closing the inner chambers, the women's rooms, the kitchen garden, and the pond with its pavilion. The Qin case form measures such a house wall and room by room; the Yili's rites of visiting are staged across its gates and up its steps. Click any building, wall, or court to read what it is. The figures are the family, its retainers, and its servants.",
+    "The compound of a great officer inside a capital, at about a metre a tile, close enough that the household walks into its buildings rather than past them: every hall, range, and shed is walled and roofed from a building kit, the roof lifts while someone is inside, and the furniture is where its people sit. It is the plan the ritual texts assume and the Zhongshan king's bronze plan confirms in outline: a gate on the ward's street with a keeper's room beside it and a screen wall inside, a forecourt of chariot shed, stable, well, kitchen, and granary, a second gate into the court of the audience hall on its terrace with a range of rooms down each side, and a third wall behind the hall closing the inner chambers, the women's rooms, the kitchen garden, and the pond with its pavilion. The Qin case form measures such a house wall and room by room; the Yili's rites of visiting are staged across its gates and up its steps. Click any building, wall, or court to read what it is. The figures are the family, its retainers, and its servants.",
   names: HOUSE_NAMES,
   features: HOUSE_FEATURES,
   folk: HOUSEHOLD,
   strollPlaces: HOUSE_STROLL_PLACES,
-  smoking: ["kitchen"],
+  smoking: ["hearth"],
   words: {
     awake: "the house is awake · pause",
     wake: "wake the house",

@@ -1,491 +1,786 @@
 {
-  "width": 48,
-  "height": 38,
+  "width": 144,
+  "height": 114,
   "fills": [
     {
       "terrain": "earth",
       "rect": [
         0,
         0,
-        48,
-        38
+        144,
+        114
       ]
     },
     {
       "terrain": "road",
-      "path": [
-        [
-          0,
-          37
-        ],
-        [
-          47,
-          37
-        ]
+      "rect": [
+        0,
+        106,
+        144,
+        8
       ],
-      "width": 2,
       "feature": "street"
     },
     {
       "terrain": "road",
-      "path": [
-        [
-          45,
-          0
-        ],
-        [
-          45,
-          35
-        ]
+      "rect": [
+        134,
+        0,
+        4,
+        106
       ],
-      "width": 1,
       "feature": "street"
     },
     {
       "terrain": "grass",
       "rect": [
+        18,
         8,
-        4,
-        10,
-        8
+        30,
+        20
       ]
     },
     {
       "terrain": "river",
       "ellipse": [
-        12,
-        8,
-        3,
-        2
+        36,
+        19,
+        6,
+        4
       ],
       "feature": "pond"
     },
     {
       "terrain": "garden",
       "rect": [
-        30,
-        5,
+        88,
+        24,
+        40,
+        7
+      ]
+    },
+    {
+      "terrain": "platform",
+      "rect": [
+        56,
+        37,
+        32,
+        19
+      ]
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        71,
+        94,
+        2,
+        3
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        71,
+        94,
         10,
-        3
-      ]
+        2
+      ],
+      "feature": "walk"
     },
     {
-      "terrain": "platform",
+      "terrain": "cobble",
       "rect": [
-        20,
+        79,
+        89,
+        2,
+        7
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        71,
+        89,
+        10,
+        2
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        71,
+        74,
+        2,
+        17
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        71,
+        56,
+        2,
+        10
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        32,
+        50,
+        24,
+        2
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        88,
+        50,
+        24,
+        2
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        71,
+        23,
+        2,
+        9
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        71,
+        26,
+        34,
+        2
+      ],
+      "feature": "walk"
+    },
+    {
+      "terrain": "cobble",
+      "rect": [
+        103,
+        22,
+        2,
+        5
+      ],
+      "feature": "walk"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "compound",
+      "kit": "kit.wall",
+      "rect": [
         14,
-        9,
-        4
-      ]
-    },
-    {
-      "terrain": "platform",
-      "rect": [
-        21,
-        5,
-        7,
-        3
-      ]
-    },
-    {
-      "terrain": "cobble",
-      "path": [
-        [
-          24,
-          32
-        ],
-        [
-          24,
-          27
-        ]
+        6,
+        116,
+        98
       ],
-      "width": 1,
-      "feature": "walk"
-    },
-    {
-      "terrain": "cobble",
-      "path": [
-        [
-          24,
-          24
-        ],
-        [
-          24,
-          19
-        ]
+      "floor": null,
+      "doors": [
+        {
+          "side": "s",
+          "at": 51,
+          "width": 14
+        }
       ],
-      "width": 1,
-      "feature": "walk"
-    },
-    {
-      "terrain": "cobble",
-      "path": [
-        [
-          12,
-          22
-        ],
-        [
-          36,
-          22
-        ]
-      ],
-      "width": 1,
-      "feature": "walk"
-    },
-    {
-      "terrain": "cobble",
-      "path": [
-        [
-          24,
-          11
-        ],
-        [
-          24,
-          9
-        ]
-      ],
-      "width": 1,
-      "feature": "walk"
-    },
-    {
-      "terrain": "wall",
-      "path": [
-        [
-          6,
-          3
-        ],
-        [
-          42,
-          3
-        ],
-        [
-          42,
-          33
-        ],
-        [
-          6,
-          33
-        ],
-        [
-          6,
-          3
-        ]
-      ],
-      "width": 1,
       "feature": "outerwall"
     },
     {
-      "terrain": "wall",
-      "path": [
-        [
-          7,
-          25
-        ],
-        [
-          22,
-          25
-        ]
+      "id": "gate",
+      "kit": "kit.hall",
+      "rect": [
+        66,
+        97,
+        12,
+        8
       ],
-      "width": 1,
+      "doors": [
+        {
+          "side": "n",
+          "at": 5
+        },
+        {
+          "side": "s",
+          "at": 5
+        }
+      ]
+    },
+    {
+      "id": "shed",
+      "kit": "kit.outbuilding",
+      "rect": [
+        18,
+        88,
+        16,
+        12
+      ],
+      "floor": "earth",
+      "doors": [
+        {
+          "side": "e",
+          "at": 5,
+          "width": 2
+        }
+      ]
+    },
+    {
+      "id": "stable",
+      "kit": "kit.outbuilding",
+      "rect": [
+        36,
+        88,
+        16,
+        12
+      ],
+      "floor": "earth",
+      "doors": [
+        {
+          "side": "e",
+          "at": 5,
+          "width": 2
+        }
+      ]
+    },
+    {
+      "id": "kitchen",
+      "kit": "kit.outbuilding",
+      "rect": [
+        92,
+        88,
+        16,
+        12
+      ],
+      "floor": "earth",
+      "doors": [
+        {
+          "side": "w",
+          "at": 5,
+          "width": 2
+        }
+      ]
+    },
+    {
+      "id": "granary",
+      "kit": "kit.outbuilding",
+      "rect": [
+        110,
+        88,
+        16,
+        12
+      ],
+      "floor": "earth",
+      "doors": [
+        {
+          "side": "w",
+          "at": 5,
+          "width": 2
+        }
+      ]
+    },
+    {
+      "id": "inner-gate",
+      "kit": "kit.hall",
+      "rect": [
+        66,
+        66,
+        12,
+        8
+      ],
+      "doors": [
+        {
+          "side": "n",
+          "at": 5
+        },
+        {
+          "side": "s",
+          "at": 5
+        }
+      ]
+    },
+    {
+      "id": "hall",
+      "kit": "kit.hall",
+      "rect": [
+        60,
+        40,
+        24,
+        12
+      ],
+      "doors": [
+        {
+          "side": "s",
+          "at": 4
+        },
+        {
+          "side": "s",
+          "at": 18
+        }
+      ]
+    },
+    {
+      "id": "wing-west",
+      "kit": "kit.hall",
+      "rect": [
+        20,
+        36,
+        12,
+        31
+      ],
+      "doors": [
+        {
+          "side": "e",
+          "at": 14,
+          "width": 2
+        }
+      ]
+    },
+    {
+      "id": "wing-east",
+      "kit": "kit.hall",
+      "rect": [
+        112,
+        36,
+        12,
+        31
+      ],
+      "doors": [
+        {
+          "side": "w",
+          "at": 14,
+          "width": 2
+        }
+      ]
+    },
+    {
+      "id": "chamber",
+      "kit": "kit.hall",
+      "rect": [
+        60,
+        10,
+        24,
+        12
+      ],
+      "doors": [
+        {
+          "side": "s",
+          "at": 11
+        }
+      ]
+    },
+    {
+      "id": "east-rooms",
+      "kit": "kit.hall",
+      "rect": [
+        92,
+        9,
+        24,
+        12
+      ],
+      "doors": [
+        {
+          "side": "s",
+          "at": 11
+        }
+      ]
+    }
+  ],
+  "walls": [
+    {
+      "kit": "kit.wall",
+      "from": [
+        66,
+        92
+      ],
+      "to": [
+        77,
+        92
+      ],
+      "feature": "screen"
+    },
+    {
+      "kit": "kit.wall",
+      "from": [
+        15,
+        70
+      ],
+      "to": [
+        65,
+        70
+      ],
       "feature": "courtwall"
     },
     {
-      "terrain": "wall",
-      "path": [
-        [
-          26,
-          25
-        ],
-        [
-          41,
-          25
-        ]
+      "kit": "kit.wall",
+      "from": [
+        78,
+        70
       ],
-      "width": 1,
+      "to": [
+        128,
+        70
+      ],
       "feature": "courtwall"
     },
     {
-      "terrain": "wall",
-      "path": [
-        [
-          7,
-          12
-        ],
-        [
-          22,
-          12
-        ]
+      "kit": "kit.wall",
+      "from": [
+        15,
+        32
       ],
-      "width": 1,
-      "feature": "innerwall"
-    },
-    {
-      "terrain": "wall",
-      "path": [
-        [
-          26,
-          12
-        ],
-        [
-          41,
-          12
-        ]
+      "to": [
+        128,
+        32
       ],
-      "width": 1,
+      "gaps": [
+        {
+          "at": 56,
+          "width": 2
+        }
+      ],
       "feature": "innerwall"
     }
   ],
   "places": {
     "gate": {
-      "x": 24,
-      "y": 33,
-      "marker": "gatehouse"
-    },
-    "screen": {
-      "x": 24,
-      "y": 30,
-      "marker": "screen"
+      "x": 71,
+      "y": 100,
+      "marker": "gatehouse",
+      "room": true
     },
     "shed": {
-      "x": 11,
-      "y": 31,
-      "marker": "shed"
+      "x": 25,
+      "y": 93,
+      "marker": "shed",
+      "room": true
     },
     "stable": {
-      "x": 16,
-      "y": 31,
-      "marker": "stable"
+      "x": 43,
+      "y": 93,
+      "marker": "stable",
+      "room": true
     },
     "kitchen": {
-      "x": 33,
-      "y": 31,
-      "marker": "kitchen"
+      "x": 99,
+      "y": 93,
+      "marker": "kitchen",
+      "room": true
     },
     "granary": {
-      "x": 38,
-      "y": 31,
-      "marker": "granary"
+      "x": 117,
+      "y": 93,
+      "marker": "granary",
+      "room": true
     },
     "well": {
-      "x": 30,
-      "y": 29,
+      "x": 100,
+      "y": 80,
       "marker": "well"
     },
     "forecourt": {
-      "x": 24,
-      "y": 28
+      "x": 50,
+      "y": 78
     },
     "inner-gate": {
-      "x": 24,
-      "y": 25,
-      "marker": "gatehouse"
+      "x": 71,
+      "y": 69,
+      "marker": "gatehouse",
+      "room": true
     },
     "hall": {
-      "x": 24,
-      "y": 16,
-      "marker": "audience-hall"
+      "x": 71,
+      "y": 45,
+      "marker": "audience-hall",
+      "room": true
     },
     "wing-west": {
-      "x": 13,
-      "y": 19,
-      "marker": "wing"
+      "x": 25,
+      "y": 51,
+      "marker": "wing",
+      "room": true
     },
     "wing-east": {
-      "x": 35,
-      "y": 19,
-      "marker": "wing"
+      "x": 117,
+      "y": 51,
+      "marker": "wing",
+      "room": true
     },
     "court": {
-      "x": 24,
-      "y": 22
+      "x": 71,
+      "y": 60
     },
     "inner-door": {
-      "x": 24,
-      "y": 12
+      "x": 71,
+      "y": 33
     },
     "chamber": {
-      "x": 24,
-      "y": 7,
-      "marker": "chamber"
+      "x": 71,
+      "y": 15,
+      "marker": "chamber",
+      "room": true
     },
     "east-rooms": {
-      "x": 35,
-      "y": 10,
-      "marker": "wing"
+      "x": 103,
+      "y": 14,
+      "marker": "wing",
+      "room": true
     },
     "pavilion": {
-      "x": 16,
-      "y": 6,
+      "x": 24,
+      "y": 12,
       "marker": "pavilion"
     },
     "pond": {
-      "x": 12,
-      "y": 8
+      "x": 36,
+      "y": 19
     },
     "garden": {
-      "x": 35,
-      "y": 6
+      "x": 108,
+      "y": 27
     },
     "street": {
-      "x": 24,
-      "y": 36
+      "x": 71,
+      "y": 110
     },
     "house-west": {
-      "x": 2,
-      "y": 22,
+      "x": 6,
+      "y": 60,
       "marker": "house"
     },
     "house-east": {
-      "x": 2,
-      "y": 10,
+      "x": 6,
+      "y": 20,
       "marker": "house"
     },
     "neighbour": {
-      "x": 46,
-      "y": 18,
+      "x": 141,
+      "y": 50,
       "marker": "mansion"
+    },
+    "dais": {
+      "x": 71,
+      "y": 43,
+      "marker": "dais"
+    },
+    "tablets": {
+      "x": 63,
+      "y": 42,
+      "marker": "tablets"
+    },
+    "lamp": {
+      "x": 79,
+      "y": 42,
+      "marker": "lamp"
+    },
+    "bed": {
+      "x": 65,
+      "y": 13,
+      "marker": "bed"
+    },
+    "chamber-table": {
+      "x": 76,
+      "y": 17,
+      "marker": "table"
+    },
+    "chest": {
+      "x": 79,
+      "y": 12,
+      "marker": "chest"
+    },
+    "loom": {
+      "x": 100,
+      "y": 13,
+      "marker": "loom"
+    },
+    "desk": {
+      "x": 117,
+      "y": 44,
+      "marker": "desk"
+    },
+    "mat": {
+      "x": 25,
+      "y": 62,
+      "marker": "mat"
+    },
+    "west-table": {
+      "x": 25,
+      "y": 44,
+      "marker": "table"
+    },
+    "hearth": {
+      "x": 98,
+      "y": 92,
+      "marker": "hearth"
+    },
+    "bins": {
+      "x": 117,
+      "y": 92,
+      "marker": "bins"
+    },
+    "manger": {
+      "x": 44,
+      "y": 92,
+      "marker": "manger"
+    },
+    "trough": {
+      "x": 56,
+      "y": 90,
+      "marker": "trough"
+    },
+    "armrack": {
+      "x": 75,
+      "y": 100,
+      "marker": "armrack"
     }
   },
   "decor": [
     {
       "id": "tripod",
-      "x": 24,
-      "y": 21
+      "x": 71,
+      "y": 58
     },
     {
       "id": "lantern",
-      "x": 22,
-      "y": 24
+      "x": 68,
+      "y": 64
     },
     {
       "id": "lantern",
-      "x": 26,
-      "y": 24
+      "x": 75,
+      "y": 64
     },
     {
       "id": "bells",
-      "x": 29,
-      "y": 17
+      "x": 86,
+      "y": 46
     },
     {
       "id": "brazier",
-      "x": 20,
-      "y": 20
+      "x": 58,
+      "y": 46
     },
     {
       "id": "banner",
-      "x": 22,
-      "y": 33
+      "x": 64,
+      "y": 105
     },
     {
       "id": "banner",
-      "x": 26,
-      "y": 33
+      "x": 79,
+      "y": 105
     },
     {
       "id": "dog",
-      "x": 27,
-      "y": 32
+      "x": 80,
+      "y": 102
     },
     {
       "id": "chariot",
-      "x": 19,
-      "y": 29
+      "x": 25,
+      "y": 93
     },
     {
       "id": "horses",
-      "x": 14,
-      "y": 28
+      "x": 58,
+      "y": 84
     },
     {
       "id": "jars",
-      "x": 36,
-      "y": 32
+      "x": 99,
+      "y": 84
     },
     {
       "id": "pots",
-      "x": 33,
-      "y": 28
+      "x": 104,
+      "y": 80
     },
     {
       "id": "woodpile",
-      "x": 31,
-      "y": 32
+      "x": 94,
+      "y": 85
     },
     {
       "id": "rack",
-      "x": 39,
-      "y": 28
+      "x": 112,
+      "y": 85
     },
     {
       "id": "lotus",
-      "x": 12,
-      "y": 8
+      "x": 36,
+      "y": 19
     },
     {
       "id": "willow",
-      "x": 9,
-      "y": 5
-    },
-    {
-      "id": "plum",
-      "x": 9,
+      "x": 20,
       "y": 10
     },
     {
+      "id": "plum",
+      "x": 22,
+      "y": 24
+    },
+    {
       "id": "bamboo",
-      "x": 17,
+      "x": 44,
       "y": 10
     },
     {
       "id": "rocks",
-      "x": 14,
-      "y": 11
+      "x": 40,
+      "y": 25
     },
     {
       "id": "pine",
-      "x": 39,
-      "y": 9
+      "x": 122,
+      "y": 14
     },
     {
       "id": "plum",
-      "x": 31,
-      "y": 9
+      "x": 90,
+      "y": 23
     },
     {
       "id": "fence",
-      "x": 33,
-      "y": 8
+      "x": 110,
+      "y": 31
     },
     {
       "id": "hemp",
-      "x": 40,
-      "y": 7
-    },
-    {
-      "id": "jars",
-      "x": 29,
-      "y": 5
+      "x": 120,
+      "y": 27
     },
     {
       "id": "pine",
-      "x": 8,
-      "y": 30
+      "x": 16,
+      "y": 100
     },
     {
       "id": "pine",
-      "x": 40,
-      "y": 4
+      "x": 126,
+      "y": 10
     },
     {
       "id": "cart",
-      "x": 44,
-      "y": 36
+      "x": 136,
+      "y": 110
     },
     {
       "id": "stele",
-      "x": 46,
-      "y": 32
+      "x": 140,
+      "y": 100
     }
   ]
 }

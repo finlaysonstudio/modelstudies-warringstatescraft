@@ -17,6 +17,12 @@ export interface StageAction {
   to: StagePoint;
   /** Whether the actors travel from `from` to `to`. */
   travels: boolean;
+  /**
+   * The way round the walls, when the scene found one: `from`, every turn,
+   * and `to`. Absent when nothing blocks the straight line, or the map has
+   * no walls to respect.
+   */
+  path?: StagePoint[];
   count: number;
   effect?: StageEffect;
   /** Walk time in milliseconds (0 when nothing travels). */
@@ -51,6 +57,25 @@ const DEFAULT_COUNT = 1;
 const clamp = (value: number, low: number, high: number): number =>
   Math.max(low, Math.min(high, value));
 
+/** How long a walk of `distance` pixels takes on a map drawn at `unit`. */
+export const walkMsOf = (distance: number, unit = 1): number =>
+  clamp(
+    Math.round((distance / (WALK_SPEED_PX_PER_S * unit)) * 1000),
+    WALK_MIN_MS,
+    WALK_MAX_MS,
+  );
+
+/** The length of a polyline in pixels. */
+export const lengthOf = (points: StagePoint[]): number =>
+  points.reduce(
+    (sum, point, i) =>
+      i === 0
+        ? 0
+        : sum +
+          Math.hypot(point.x - points[i - 1].x, point.y - points[i - 1].y),
+    0,
+  );
+
 /** The place a direction lands on: `to` for a route, `at` when given, else the home. */
 export const landingOf = (
   direction: StageDirection,
@@ -76,13 +101,7 @@ export const planAction = ({
   const travels = origin !== undefined && direction.from !== landing;
   const from = origin ?? to;
   const distance = travels ? Math.hypot(to.x - from.x, to.y - from.y) : 0;
-  const walkMs = travels
-    ? clamp(
-        Math.round((distance / (WALK_SPEED_PX_PER_S * unit)) * 1000),
-        WALK_MIN_MS,
-        WALK_MAX_MS,
-      )
-    : 0;
+  const walkMs = travels ? walkMsOf(distance, unit) : 0;
   const holdMs = travels ? HOLD_MS : AT_MS;
   return {
     direction,
@@ -159,6 +178,40 @@ export const planBeat = ({
     actions,
     focus,
     bounds,
+    durationMs: PAN_MS + (actions.length ? longest : AT_MS / 2) + TAIL_MS,
+  };
+};
+
+/**
+ * Lays each travelling action's walk along the way `route` finds, so its
+ * time follows the way round rather than the straight line, and stretches
+ * the plan to the longest of them. A route of two points or fewer, or none,
+ * leaves the action walking straight.
+ */
+export const routePlan = (
+  plan: StagePlan,
+  route: (from: StagePoint, to: StagePoint) => StagePoint[] | null,
+  unit = 1,
+): StagePlan => {
+  const actions = plan.actions.map((action): StageAction => {
+    if (!action.travels) return action;
+    const path = route(action.from, action.to);
+    if (!path || path.length < 3) return action;
+    const walkMs = walkMsOf(lengthOf(path), unit);
+    return {
+      ...action,
+      path,
+      walkMs,
+      totalMs: walkMs + action.holdMs,
+    };
+  });
+  const longest = actions.reduce(
+    (max, action) => Math.max(max, action.totalMs),
+    0,
+  );
+  return {
+    ...plan,
+    actions,
     durationMs: PAN_MS + (actions.length ? longest : AT_MS / 2) + TAIL_MS,
   };
 };

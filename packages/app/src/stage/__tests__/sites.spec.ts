@@ -19,6 +19,8 @@ const grounds = new Set<string>([...TERRAINS, ...WATERS]);
 
 interface GeographyFile {
   fills: { terrain: string; feature?: string }[];
+  rooms?: { id: string; floor?: string | null; feature?: string }[];
+  walls?: { feature?: string }[];
   places: Record<string, { x: number; y: number; marker?: string }>;
   decor: { id: string }[];
 }
@@ -52,10 +54,13 @@ describe("sites", () => {
       });
 
       it("notes every feature the geography names, and nothing else", () => {
+        // a feature is drawn by a fill, by a room's ring, or by a wall line
         const drawn = new Set(
-          geography.fills.flatMap((fill) =>
-            fill.feature ? [fill.feature] : [],
-          ),
+          [
+            ...geography.fills,
+            ...(geography.rooms ?? []),
+            ...(geography.walls ?? []),
+          ].flatMap((drawn) => (drawn.feature ? [drawn.feature] : [])),
         );
         expect(Object.keys(site.features).sort()).toEqual([...drawn].sort());
         for (const [key, note] of Object.entries(site.features)) {
@@ -76,6 +81,9 @@ describe("sites", () => {
       it("draws only grounds, markers, and decor the catalog knows", () => {
         for (const fill of geography.fills) {
           expect(grounds.has(fill.terrain), fill.terrain).toBe(true);
+        }
+        for (const room of geography.rooms ?? []) {
+          if (room.floor) expect(grounds.has(room.floor), room.id).toBe(true);
         }
         for (const [key, place] of Object.entries(geography.places)) {
           if (place.marker) {
