@@ -19,6 +19,7 @@ import {
   DECOR,
   EFFECTS,
   MARKER_VARIANTS,
+  hashOf,
   MARKERS,
   TERRAINS,
   WATERS,
@@ -106,15 +107,6 @@ interface Pickable {
 
 const clamp = (value: number, low: number, high: number): number =>
   Math.max(low, Math.min(high, value));
-
-/** stable per-place hash, used to vary repeated marker buildings */
-const hashOf = (key: string): number => {
-  let hash = 0;
-  for (let i = 0; i < key.length; i += 1) {
-    hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
-  }
-  return hash;
-};
 
 /**
  * Label tiers by zoom, so the zoomed-out map stays legible: majors (the

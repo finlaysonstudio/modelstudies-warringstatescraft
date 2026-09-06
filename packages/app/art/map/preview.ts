@@ -17,6 +17,14 @@ import {
   writePng,
   type Image,
 } from "../vendor/png";
+import {
+  MARKER_VARIANTS,
+  decorId,
+  hashOf,
+  markerId,
+  type Decor,
+  type Marker,
+} from "../../src/stage/catalog";
 import { KIT_CELL, KIT_COLUMNS, KIT_FRAME } from "../../src/stage/kit";
 import {
   againstOf,
@@ -67,6 +75,33 @@ const kitsOf = (geo: Geography, layers: string[]): Map<string, Image> => {
     }
   }
   return kits;
+};
+
+/**
+ * The furniture: every decor and marker image the geography places, highest
+ * layer winning. An image is drawn at its own size, the way the scene draws
+ * the set's own layer, so a lower layer's art standing in at another tile
+ * lands at the wrong scale and says so.
+ */
+const furnitureOf = (geo: Geography, layers: string[]): Map<string, Image> => {
+  const images = new Map<string, Image>();
+  const ids = new Set<string>();
+  for (const decor of geo.decor ?? []) ids.add(decorId(decor.id as Decor));
+  for (const place of Object.values(geo.places)) {
+    if (!place.marker || place.room) continue;
+    for (const id of MARKER_VARIANTS[place.marker as Marker] ?? [
+      markerId(place.marker as Marker),
+    ]) {
+      ids.add(id);
+    }
+  }
+  for (const dir of layers) {
+    for (const id of ids) {
+      const file = path.join(dir, `${id}.png`);
+      if (existsSync(file)) images.set(id, readPng(file));
+    }
+  }
+  return images;
 };
 
 const sheetsOf = (layers: string[], tile: number): Map<string, Image> => {
@@ -212,6 +247,43 @@ export const previewMap = ({
     );
   for (const { kit, placement } of byRow(wallPlacementsOf(geo))) {
     drawPiece(kit, placement.x, placement.y, placement.piece);
+  }
+  // the furniture between the walls and the roofs, in the scene's draw
+  // order (nearer the front of the map on top) and at its anchor (the image
+  // centred on the cell with its feet near the cell's bottom edge)
+  const furniture = furnitureOf(geo, layers);
+  const standing: { id: string; x: number; y: number }[] = [];
+  for (const decor of geo.decor ?? []) {
+    standing.push({ id: decorId(decor.id as Decor), x: decor.x, y: decor.y });
+  }
+  for (const [key, place] of Object.entries(geo.places)) {
+    if (!place.marker || place.room) continue;
+    const pool = (
+      MARKER_VARIANTS[place.marker as Marker] ?? [
+        markerId(place.marker as Marker),
+      ]
+    ).filter((id) => furniture.has(id));
+    if (!pool.length) continue;
+    standing.push({
+      id: pool[hashOf(key) % pool.length],
+      x: place.x,
+      y: place.y,
+    });
+  }
+  standing.sort((a, b) => a.y - b.y || a.x - b.x);
+  for (const { id, x, y } of standing) {
+    const image = furniture.get(id);
+    if (!image) continue;
+    blit({
+      source: image,
+      sx: 0,
+      sy: 0,
+      width: image.width,
+      height: image.height,
+      target: canvas,
+      tx: Math.round((x + 0.5) * tile - image.width * 0.5),
+      ty: Math.round((y + 0.5) * tile - image.height * 0.85),
+    });
   }
   if (roofs) {
     for (const { kit, placement } of byRow(roofPlacementsOf(geo))) {

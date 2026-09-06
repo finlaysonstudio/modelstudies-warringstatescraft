@@ -5,10 +5,10 @@ description: Retrieve from the document lake (`var/lake/`, `@modelstudies/lake`)
 
 # 📚 Document Lake
 
-208 documents, 15.5M words, 295MB of plain text under `var/lake/` (git ignored). Read side is
+262 documents, 15.7M words, about 310MB under `var/lake/` (git ignored). Read side is
 `@modelstudies/lake`, reached through the CLI. Acquisition is `var/lake/bin/`.
 
-Searching is cheap: a full `--use any` scan of all 208 documents returns in under a second. 🏊
+Searching is cheap: a full `--use any` scan of all 262 documents returns in under a second. 🏊
 Reading is what costs context. Search wide, then read narrow windows.
 
 Search is lexical. When a query fails because it names a shape rather than a vocabulary, that
@@ -128,7 +128,10 @@ redistributed. Cite it, or take the passage from `zuozhuan-zh` instead. Four RAN
 `escalation`.
 
 `--tier` mirrors collection: 1 period, 2 situation, 3 method, 5 house, 6 world. `world` topics:
-`lingshou`, `xue`, `boren`, `fangmatan`, `documents`, `trades`, `building`, `capitals`.
+`lingshou`, `xue`, `boren`, `fangmatan`, `documents`, `trades`, `building`, `capitals`, `interior`
+(the house's rooms: the Zeng Hou Yi tomb, lacquer, screens, furniture, liubo, mirrors, the Chuci and
+the Zhao hun, the Changtaiguan slips). The Chuci (`chuci-zh`, 招魂 from line 396) and the Shijing
+(`shijing-zh`) are in `period`.
 
 `house-simulates-index` is the one document holding every scenario's `simulates` line. It is
 `use: reader`, which is why a scenario export can sit in the prompt pool without carrying its

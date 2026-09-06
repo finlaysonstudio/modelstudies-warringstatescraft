@@ -250,6 +250,10 @@ export const HOUSE: Site = {
   },
   sources: [
     {
+      name: "The Chuci",
+      text: "(the Zhao hun and the Da zhao): the summons walks a soul home through the house it left, hall by hall and thing by thing, the gauze hangings, the lamp stands, the se and the drums, the chilled wine, the liubo board; the fullest inventory of a lord's rooms the period wrote.",
+    },
+    {
       name: "The Shuihudi case forms",
       text: "(Fengzhenshi): the sealing of a house room by room, one hall and two inner rooms each with its door, the wall measured and its marks read, the outbuildings and the mulberries at the gate counted.",
     },

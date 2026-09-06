@@ -213,6 +213,20 @@ export const DECOR = [
   "plum",
   "lotus",
   "bells",
+  // the house within: what a lord's rooms held (the Zhao hun's inventory)
+  "panel",
+  "armrest",
+  "zither",
+  "drum",
+  "canopy",
+  "liubo",
+  "wineset",
+  "slips",
+  "lamptree",
+  "mirror",
+  "garments",
+  "basin",
+  "icechest",
 ] as const;
 export type Decor = (typeof DECOR)[number];
 
@@ -389,6 +403,15 @@ export const ARCHETYPE_SPRITES: Record<StageArchetype, string[]> = {
 
 export const terrainId = (terrain: Terrain): string => `terrain.${terrain}`;
 export const waterId = (water: Water): string => `water.${water}`;
+/** stable per-place hash, used to vary repeated marker buildings */
+export const hashOf = (key: string): number => {
+  let hash = 0;
+  for (let i = 0; i < key.length; i += 1) {
+    hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+};
+
 export const markerId = (marker: Marker): string => `image.${marker}`;
 export const decorId = (decor: Decor): string => `decor.${decor}`;
 export const effectId = (effect: StageEffect): string => `effect.${effect}`;

@@ -3235,6 +3235,97 @@
       "height": 16,
       "pack": "fallback",
       "kind": "image"
+    },
+    "decor.panel": {
+      "file": "decor.panel.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.armrest": {
+      "file": "decor.armrest.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.zither": {
+      "file": "decor.zither.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.drum": {
+      "file": "decor.drum.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.canopy": {
+      "file": "decor.canopy.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.liubo": {
+      "file": "decor.liubo.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.wineset": {
+      "file": "decor.wineset.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.slips": {
+      "file": "decor.slips.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.lamptree": {
+      "file": "decor.lamptree.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.mirror": {
+      "file": "decor.mirror.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.garments": {
+      "file": "decor.garments.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.basin": {
+      "file": "decor.basin.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.icechest": {
+      "file": "decor.icechest.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
     }
   }
 }

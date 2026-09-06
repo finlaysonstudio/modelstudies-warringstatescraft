@@ -666,6 +666,149 @@ export const DECOR_NOTES: Record<Decor, LegendNote> = {
       zh: "编钟为朝廷之乐、爵位之饰：曾侯乙葬钟六十五，中山王亦有其钟，周礼定王、诸侯、大夫悬钟之面。堂有簴，则有燕乐，有乐工。",
     },
   },
+  panel: {
+    title: { en: "Lacquer screen", zh: "座屏" },
+    what: {
+      en: "A low painted screen set on the floor behind a seat.",
+      zh: "置于座后之矮屏，髹漆彩绘。",
+    },
+    history: {
+      en: "A small standing screen of lacquered wood, carved and painted, stood behind the master's seat to close the room round him. The Wangshan tomb at Jiangling kept one carved through with dozens of beasts and birds, and the Zhao hun's palace has kingfisher plumes on polished walls and hangings on jade hooks behind the lord.",
+      zh: "漆木小座屏雕绘，立于主座之后以蔽室。江陵望山楚墓出一座屏，透雕禽兽数十；招魂所陈君室，砥室翠翘，挂曲琼。",
+    },
+  },
+  armrest: {
+    title: { en: "Armrest", zh: "几" },
+    what: {
+      en: "A low lacquered board on legs to lean on while sitting on the mat.",
+      zh: "席上凭依之矮几，髹漆。",
+    },
+    history: {
+      en: "One sat on a mat and leaned on a ji, and the ji told rank: the Liji has a man going to consult an elder carry the elder's armrest and staff behind him, and the Zhouli keeps an officer for the mats and armrests of the court. Chu tombs keep them in black lacquer painted red.",
+      zh: "席地而坐，凭几而安，几以别尊卑：曲礼谋于长者必操几杖以从之，周礼设司几筵。楚墓所出，黑漆朱绘。",
+    },
+  },
+  zither: {
+    title: { en: "Se zither", zh: "瑟" },
+    what: {
+      en: "A long lacquered zither of twenty-five silk strings, laid flat to play.",
+      zh: "二十五弦长瑟，髹漆，平置而鼓。",
+    },
+    history: {
+      en: "The se was the house instrument of the age: the Zhanguoce says the people of Linzi all blow the yu and strike the se, the Zhao hun ends its feast with the bells rocking on their frame and the catalpa-wood se struck, and the Zeng marquis was buried with twelve. It plays in the hall and the women's rooms alike.",
+      zh: "瑟为此世家常之乐：战国策言临淄之民无不吹竽鼓瑟，招魂宴罢铿钟摇簴、揳梓瑟，曾侯乙葬瑟十二。堂上房中皆鼓之。",
+    },
+  },
+  drum: {
+    title: { en: "Jian drum", zh: "建鼓" },
+    what: {
+      en: "A great barrel drum pierced by an upright post on a bronze base.",
+      zh: "大鼓贯以长柱，立于铜座。",
+    },
+    history: {
+      en: "The standing drum kept time for the bells and the dancers: the Zhao hun sets out the bells and beats the drums for a new song, and its dancers move to the yu, the se, and the pounded drum. The Zeng marquis's hall had one on a bronze base of coiling dragons.",
+      zh: "建鼓与钟为节，与舞为节：招魂陈钟按鼓造新歌，竽瑟狂会搷鸣鼓。曾侯乙墓建鼓座为蟠龙铜铸。",
+    },
+  },
+  canopy: {
+    title: { en: "Curtain frame", zh: "帷帐" },
+    what: {
+      en: "A frame hung with gauze curtains to close off a bed or a corner of a room.",
+      zh: "张罗帱之架，以隔床寝或室隅。",
+    },
+    history: {
+      en: "Rooms were divided by cloth as much as by wall: the Zhao hun spreads gauze bed curtains against the fine mats and hangs kingfisher curtains and canopies in the high hall, and the Liji's rules of deportment say one does not hurry past a curtain or a screen. A curtain frame in the chamber is where the lady sleeps and dresses.",
+      zh: "室以帷隔如以墙隔：招魂蒻阿拂壁、罗帱张，翡帷翠帐饰高堂；曲礼帷薄之外不趋。寝中帷帐，主妇所卧所妆。",
+    },
+  },
+  liubo: {
+    title: { en: "Liubo board", zh: "六博" },
+    what: {
+      en: "A lacquered game board with twelve pieces and six throwing sticks.",
+      zh: "漆棋局一，棋十二，箸六。",
+    },
+    history: {
+      en: "Liubo was the board game of the age, played for stakes: the Zhanguoce lists it among what the people of Linzi do with their days, and the Zhao hun's feast has ivory pieces on a bamboo board, the players pressing each other and shouting the throws. Boards of lacquered wood survive from Chu tombs at Jiangling.",
+      zh: "六博为此世之博戏，博以为赌：战国策数临淄之民斗鸡走犬六博，招魂菎蔽象棋有六簙，分曹并进、呼五白。江陵楚墓有漆木博局。",
+    },
+  },
+  wineset: {
+    title: { en: "Wine service", zh: "羽觞" },
+    what: {
+      en: "A tray of lacquer ear cups with a bronze jar and ladle.",
+      zh: "漆盘置耳杯，铜壶与勺。",
+    },
+    history: {
+      en: "Wine was ladled from a jar into shallow lacquer cups with two ears, held in both hands: the Zhao hun fills the feather cups with honeyed jade wine and the guests drink on through the night. Chu tombs keep ear cups by the dozen, red inside and black without.",
+      zh: "酒自壶勺入耳杯，双手执之：招魂瑶浆蜜勺实羽觞，娱酒不废沉日夜。楚墓耳杯数十，内朱外黑。",
+    },
+  },
+  slips: {
+    title: { en: "Bamboo slips", zh: "简册" },
+    what: {
+      en: "Bundles of bamboo writing strips bound with cord.",
+      zh: "竹简编以绳，卷为册。",
+    },
+    history: {
+      en: "A house kept its records on bamboo: the Mozi speaks of what is written on bamboo and silk, the Baoshan tomb of 316 BCE held the legal files of a Chu official bundled beside him, and the Changtaiguan tomb at Xinyang kept the inventory of its own furnishings. The steward's desk keeps the household's accounts the same way.",
+      zh: "家藏文书于竹：墨子言书于竹帛，包山楚墓（前316年）随葬司法简册，信阳长台关楚墓有遣策记其陈设。宰案所记亦如是。",
+    },
+  },
+  lamptree: {
+    title: { en: "Lamp tree", zh: "连盏灯" },
+    what: {
+      en: "A bronze lamp stand branching into many small oil dishes.",
+      zh: "铜灯树，枝分多盏。",
+    },
+    history: {
+      en: "The tomb of King Cuo of Zhongshan at Lingshou yielded a bronze lamp of fifteen dishes on a tree of branches with monkeys and birds among them, the richest lamp of the age, and the Zhao hun lights its feast with orchid-oil candles in ornamented lamp stands. A lamp of many dishes lit the inner chamber after dark.",
+      zh: "灵寿中山王墓出十五连盏铜灯，枝间有猴有鸟，为此世灯具之冠；招魂兰膏明烛，华镫错。寝中夜以此照。",
+    },
+  },
+  mirror: {
+    title: { en: "Bronze mirror", zh: "铜镜" },
+    what: {
+      en: "A polished bronze mirror on a stand beside a cosmetic box.",
+      zh: "铜镜置架，旁有妆奁。",
+    },
+    history: {
+      en: "A mirror was a cast bronze disc polished on its face and patterned on its back. The Zhanguoce has Zou Ji of Qi dress in court robes and look in his mirror before asking his wife whether he was handsomer than Lord Xu of the north wall, and the Chuci's Seven Remonstrances has a man adorn himself and look in the glass. Chu mirrors bear the mountain pattern.",
+      zh: "铜镜面磨背纹。战国策邹忌朝服衣冠窥镜，问妻孰与城北徐公美；楚辞七谏修饰而窥镜。楚镜多山字纹。",
+    },
+  },
+  garments: {
+    title: { en: "Clothes rack", zh: "楎椸" },
+    what: {
+      en: "A rack of posts and a crossbar with robes hung from it.",
+      zh: "衣架，二柱一横，悬衣其上。",
+    },
+    history: {
+      en: "The Liji's rules for the inner quarters say husband and wife do not share a clothes rack, and a wife does not hang her clothes on her husband's rack or keep them in his chest; the rack is named there, and the rule shows the women's rooms kept their own. The Zhao hun's attendants wear figured silks.",
+      zh: "内则曰男女不同椸枷，不敢悬于夫之楎椸，不敢藏于夫之箧笥；架见于礼，而东房自有其架。招魂侍女被文服纤。",
+    },
+  },
+  basin: {
+    title: { en: "Basin and ewer", zh: "盘匜" },
+    what: {
+      en: "A wide bronze basin with a spouted ewer for washing the hands.",
+      zh: "铜盘与匜，以沃盥。",
+    },
+    history: {
+      en: "Every rite of visiting begins with water poured from the ewer over the hands into the basin: the Yili names the washing before the guest is seated and the Zhouli assigns it to an office. Bronze basins and ewers stand in every noble tomb of the age.",
+      zh: "宾至先沃盥，执匜沃水，盘承之：仪礼有沃盥之节，周礼有其职。贵族之墓皆有盘匜。",
+    },
+  },
+  icechest: {
+    title: { en: "Ice chest", zh: "冰鉴" },
+    what: {
+      en: "A bronze chest that holds a wine jar in packed ice.",
+      zh: "铜鉴纳缶，周以冰。",
+    },
+    history: {
+      en: "The Zhouli keeps an ice office to cut ice in winter and store it for the summer, the Zhao hun's feast pours wine strained of its lees and chilled until it is cool and clear, and the Zeng marquis's tomb yielded a pair of bronze ice chests, each holding a wine jar with room for the ice round it.",
+      zh: "周礼凌人掌冰，冬藏夏用；招魂挫糟冻饮，酎清凉；曾侯乙墓出铜鉴缶一对，鉴纳缶，缶外置冰。",
+    },
+  },
 };
 
 /**
