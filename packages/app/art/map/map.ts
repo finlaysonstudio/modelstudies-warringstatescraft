@@ -101,6 +101,7 @@ export const DRAW_ORDER: readonly Ground[] = [
   // the terrace over the yard, and the road and the wall over all of them
   "earth",
   "mulberry",
+  "garden",
   "platform",
   "cobble",
   "road",
@@ -131,6 +132,7 @@ export const LETTERS: Record<Ground, string> = {
   earth: "_",
   platform: "=",
   mulberry: "m",
+  garden: "g",
   river: "~",
   sea: "=",
 };
@@ -363,13 +365,22 @@ export const againstOf = (
       }
       let best: Ground | null = null;
       let most = 0;
+      const drawn = (lower: Ground): boolean =>
+        lower === "grass" || pairs.has(pairIdOf(ground, lower));
       for (const [neighbour, count] of counts) {
-        // ties go to the ground drawn highest, which is the one this cell's
-        // edge is most likely to be read against
-        if (
+        // ties go first to a ground the set can draw this one against (a
+        // wall between the yard and the terrace has a sheet for the yard and
+        // none for the terrace, and the plain sheet it would otherwise fall
+        // back to wears a grass collar), then to the ground drawn highest,
+        // which is the one this cell's edge is most likely to be read against
+        const better =
           count > most ||
-          (count === most && best && rankOf(neighbour) > rankOf(best))
-        ) {
+          (count === most &&
+            best !== null &&
+            (drawn(neighbour) !== drawn(best)
+              ? drawn(neighbour)
+              : rankOf(neighbour) > rankOf(best)));
+        if (better) {
           best = neighbour;
           most = count;
         }

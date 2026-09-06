@@ -78,6 +78,7 @@ const TERRAIN_COLORS: Record<
   earth: { fill: "#c8b48c", rim: "#a8946e", dots: "#bda781" },
   platform: { fill: "#d2b072", rim: "#9c7d48" },
   mulberry: { fill: "#8fb04f", rim: "#5e4a30", dots: "#6f8f3a" },
+  garden: { fill: "#6f9a3c", rim: "#5a4632", dots: "#4f3a2a" },
 };
 
 const WATER_COLORS: Record<Water, string[]> = {
@@ -210,6 +211,18 @@ const SPRITE_COLORS: Record<StageArchetype, { body: string; accent: string }> =
     convict: { body: "#b04a2a", accent: "#d9c9a3" },
     overseer: { body: "#1b1b1b", accent: "#b3261e" },
     musician: { body: "#f3e7c9", accent: "#3b5bdb" },
+    // the village and the house
+    elder: { body: "#8c8c88", accent: "#f2f0e8" },
+    herdsman: { body: "#a08a5a", accent: "#6b4f31" },
+    woodcutter: { body: "#7a5a3a", accent: "#8c8c88" },
+    fisher: { body: "#6b7f8a", accent: "#d9c9a3" },
+    maiden: { body: "#c9a0b0", accent: "#f2f0e8" },
+    master: { body: "#2b2b2b", accent: "#c8102e" },
+    lady: { body: "#8a2b4a", accent: "#e9c46a" },
+    steward: { body: "#3b3b5a", accent: "#d9c9a3" },
+    maid: { body: "#7fa0a8", accent: "#f2f0e8" },
+    cook: { body: "#9a7a5a", accent: "#f2f0e8" },
+    groom: { body: "#6b5a3a", accent: "#5b3a1e" },
   };
 
 const SKIN = rgba("#f1c9a5");

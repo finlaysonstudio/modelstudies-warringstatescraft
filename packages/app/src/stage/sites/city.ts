@@ -1,7 +1,7 @@
 /**
- * The settlement: a model town of the period, drawn on the same stage as the
- * overworld but from its own map (`art/settlement/geography.json`, built by
- * `npm run stage:settlement`). It is a composite rather than a survey of one
+ * The city: a model capital of the period, drawn on the same stage as the
+ * overworld but from its own map (`art/sites/city/geography.json`, built by
+ * `npm run stage:sites`). It is a composite rather than a survey of one
  * site: the twin-city plan is Lingshou's (the Zhongshan capital at Sanji:
  * palace terraces along the north of the east city, offices and wards south
  * of them, the royal tombs in the north of the west city and the market,
@@ -15,20 +15,8 @@
  * Browser-safe: the node build imports it to check the map's places against
  * the names, and the page imports it to label them.
  */
-import type { FeatureNote, Localized } from "./legend";
-import type { StageArchetype } from "../lib/types";
-import type { StageSet } from "./sets";
-
-/** the built maps per set, beside the overworld's */
-export const settlementMapOf = (
-  set: StageSet,
-): { url: string; features: string } => ({
-  url: set.tile === 32 ? "/stage/settlement32.tmj" : "/stage/settlement.tmj",
-  features: "/stage/settlement.features.json",
-});
-
-/** the one seat the town's directions act for; it never flies a flag */
-export const TOWN_SEAT = "town";
+import type { FeatureNote, Localized } from "../legend";
+import type { Site, Townsperson } from "../site";
 
 /** every place the settlement map carries, named in both languages */
 export const SETTLEMENT_NAMES: Record<string, Localized> = {
@@ -166,20 +154,7 @@ export const SETTLEMENT_FEATURES: Record<string, FeatureNote> = {
   },
 };
 
-/**
- * The townsfolk: who walks the town in the ambient loop, and where each is
- * found at work. `home` is where a labour beat stands the figure; a figure
- * with no home only strolls.
- */
-export interface Townsperson {
-  archetype: StageArchetype;
-  /** class, then craft: the order the registers and the Guanzi sort people by */
-  order:
-    "official" | "artisan" | "merchant" | "farmer" | "household" | "convict";
-  label: Localized;
-  home?: string;
-}
-
+/** the townsfolk, by order and then by craft */
 export const TOWNSFOLK: readonly Townsperson[] = [
   {
     archetype: "overseer",
@@ -326,11 +301,51 @@ export const STROLL_PLACES: readonly string[] = Object.keys(
     ].includes(key),
 );
 
-export const ORDER_LABELS: Record<Townsperson["order"], Localized> = {
-  official: { en: "Officials", zh: "官" },
-  artisan: { en: "Artisans", zh: "工" },
-  merchant: { en: "Merchants", zh: "商" },
-  farmer: { en: "Farmers", zh: "农" },
-  household: { en: "Households", zh: "户" },
-  convict: { en: "Convict labour", zh: "徒" },
+export const CITY: Site = {
+  id: "city",
+  path: "/craft/city",
+  crumb: "City",
+  title: { en: "A Model City", zh: "模范之城" },
+  seat: "town",
+  intro:
+    "A capital of the period drawn to one plan and walked by its own people. It is a composite rather than a survey: the twin city is the Zhongshan capital at Lingshou as the excavators found it, the palace terraces along the north of the east city, the offices and wards below them, the royal tombs in the north of the west city and the market, the orchard, and the workshops beneath. The three gates a side, the temple on the left and the altar of soil on the right, and the court before the palace are the Kaogongji's rule; the market well with each trade in its own row is the Guanzi's; the standing wall and its moat are Xue's. Click any gate, hall, kiln, or ward to read what it is and what the statutes and the site reports say of it. The figures are the townsfolk the registers counted: officials, artisans, merchants, farmers, households, and convict labour.",
+  names: SETTLEMENT_NAMES,
+  features: SETTLEMENT_FEATURES,
+  folk: TOWNSFOLK,
+  strollPlaces: STROLL_PLACES,
+  smoking: ["kiln", "foundry", "smithy"],
+  words: {
+    awake: "the town is awake · pause",
+    wake: "wake the town",
+    firstStep: "the town wakes when the map has loaded",
+    day: { en: "The town's day", zh: "市中一日" },
+    nothing: { en: "Nothing has stirred yet.", zh: "城尚未醒。" },
+    folk: { en: "Who lives here", zh: "四民" },
+    folkNote: {
+      en: "The Guanzi keeps the four orders each to its own quarter so a trade passes from father to son unspoken; the Book of Lord Shang counts granaries, adults, the old and the weak, officials, horses and oxen, fodder and straw. The town's people are sorted the same way, by order and then by craft.",
+      zh: "管子分四民各居其所：士就闲燕，农就田野，工就官府，商就市井。商君书十三数并计仓、丁、老弱、官、马牛、刍稿。此城之人依此而分。",
+    },
+  },
+  sources: [
+    {
+      name: "Lingshou, the Zhongshan capital",
+      text: "(Sanji, Pingshan, Hebei; excavated 1974–1993, site report 2005): two walled cities side by side, seven rammed-earth platforms along the north of the east city, offices and workshops south of them, the royal necropolis in the west city and King Cuo's mausoleum outside it with its bronze plan, the earliest scaled plan from China.",
+    },
+    {
+      name: "Xue",
+      text: "(Tengzhou, Shandong): a Warring States circuit still standing four to eight metres high, twelve gates, three iron workshops inside the wall.",
+    },
+    {
+      name: "Boren",
+      text: "(Longyao, Hebei): a Zhao county town of about four square kilometres, its 2025 season tracing the wall, the road, the water, and an intact kiln.",
+    },
+    {
+      name: "The Kaogongji",
+      text: ": the ideal capital nine li square with three gates a side and nine avenues, temple left, altar right, court in front, market behind; some thirty trades in six divisions.",
+    },
+    {
+      name: "The Zhouli, the Guanzi, and the Shuihudi statutes",
+      text: ": the market's staff and its three sessions, the four orders in their quarters, the price tags and the sealed cash box, the granary seals, the stable inspection, the workshop quotas, and the case form that describes one house.",
+    },
+  ],
 };

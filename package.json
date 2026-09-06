@@ -22,7 +22,7 @@
     "stage:period": "tsx packages/app/art/period/build.ts",
     "stage:period32": "tsx packages/app/art/period/build.ts items32.json",
     "stage:preview": "tsx packages/app/art/map/preview.ts",
-    "stage:settlement": "tsx packages/app/art/settlement/build.ts",
+    "stage:sites": "tsx packages/app/art/sites/build.ts",
     "stage:vendor": "tsx packages/app/art/vendor/run.ts",
     "submission": "tsx packages/chinatalk-submission-2026/scripts/build.ts",
     "submission:publish": "tsx packages/chinatalk-submission-2026/scripts/publish.ts",

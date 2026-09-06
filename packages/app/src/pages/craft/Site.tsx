@@ -11,30 +11,28 @@ import type {
 import { STAGE_SETS, stageSetOf } from "../../stage/sets";
 import {
   ORDER_LABELS,
-  SETTLEMENT_FEATURES,
-  SETTLEMENT_NAMES,
-  STROLL_PLACES,
-  TOWNSFOLK,
-  settlementMapOf,
+  siteMapOf,
+  type Order,
+  type Site as SiteRecord,
   type Townsperson,
-} from "../../stage/settlement";
+} from "../../stage/sites";
 import { Stage } from "../../stage/Stage";
 
-// A model town of the period on the same stage as the overworld, walked by
-// its own people. Nothing here is a game: no seat marches to the town and no
-// chapter is set in it. The page keeps the stage's beat queue fed with
-// strolls and labours drawn at random from the townsfolk, so the town reads
+// A site of the period on the same stage as the overworld, walked by its own
+// people: the city, the village, or the house, each a record in
+// `stage/sites/`. Nothing here is a game: no seat marches to a site and no
+// chapter is set in one. The page keeps the stage's beat queue fed with
+// strolls and labours drawn at random from the site's people, so it reads
 // as inhabited rather than as a plan.
 
 const VIEW = { width: 960, height: 640 };
 /** beats kept in flight; the scene plays one at a time and the page tops up on idle */
 const AHEAD = 3;
-/** the trades whose labour smokes: a kiln, a furnace, a foundry */
-const SMOKING = new Set(["kiln", "foundry", "smithy"]);
-/** how many lines of the town's day the page keeps */
+/** how many lines of the site's day the page keeps */
 const LOG = 8;
 
-const seatOf = (person: Townsperson): string => `town:${person.archetype}`;
+const seatOf = (site: SiteRecord, person: Townsperson): string =>
+  `${site.seat}:${person.archetype}`;
 
 const pick = <T,>(list: readonly T[]): T =>
   list[Math.floor(Math.random() * list.length)];
@@ -58,9 +56,12 @@ const pluralOf = (label: string): string => {
   return `${label}s`;
 };
 
-const nextBeat = (n: number): { beat: StageBeat; line: Line } => {
-  const person = pick(TOWNSFOLK);
-  const seat = seatOf(person);
+const nextBeat = (
+  site: SiteRecord,
+  n: number,
+): { beat: StageBeat; line: Line } => {
+  const person = pick(site.folk);
+  const seat = seatOf(site, person);
   const home = person.home;
   const atWork = home !== undefined && Math.random() < 0.4;
   const direction: StageDirection = atWork
@@ -68,12 +69,12 @@ const nextBeat = (n: number): { beat: StageBeat; line: Line } => {
         kind: "labour",
         actor: { seat, archetype: person.archetype },
         at: home,
-        ...(SMOKING.has(home) ? { effect: "smoke" } : {}),
+        ...(site.smoking.includes(home) ? { effect: "smoke" } : {}),
       }
     : (() => {
-        const from = home ?? pick(STROLL_PLACES);
-        let to = pick(STROLL_PLACES);
-        while (to === from) to = pick(STROLL_PLACES);
+        const from = home ?? pick(site.strollPlaces);
+        let to = pick(site.strollPlaces);
+        while (to === from) to = pick(site.strollPlaces);
         const count =
           person.order === "household" || person.order === "farmer"
             ? 1 + Math.floor(Math.random() * 3)
@@ -92,7 +93,7 @@ const nextBeat = (n: number): { beat: StageBeat; line: Line } => {
     direction.effect = undefined;
   }
   const name = (key: string, language: Language) => {
-    const label = SETTLEMENT_NAMES[key]?.[language] ?? key;
+    const label = site.names[key]?.[language] ?? key;
     // the English names carry their own article unevenly ("The Great Hall",
     // "the river fields", "Market Well"), so the line supplies one
     return language === "en" ? label.replace(/^the /i, "") : label;
@@ -116,7 +117,7 @@ const nextBeat = (n: number): { beat: StageBeat; line: Line } => {
         };
   return {
     beat: {
-      id: `town.${n}`,
+      id: `${site.id}.${n}`,
       kind: "scene",
       turn: n,
       seat,
@@ -127,7 +128,7 @@ const nextBeat = (n: number): { beat: StageBeat; line: Line } => {
   };
 };
 
-export function Settlement() {
+export function Site({ site }: { site: SiteRecord }) {
   const [params, setParams] = useSearchParams();
   const set = stageSetOf(params.get("set"));
   const [language, setLanguage] = useState<Language>("en");
@@ -141,55 +142,62 @@ export function Settlement() {
   const names = useMemo(
     () =>
       Object.fromEntries(
-        Object.entries(SETTLEMENT_NAMES).map(([key, label]) => [
+        Object.entries(site.names).map(([key, label]) => [
           key,
           label[language],
         ]),
       ),
-    [language],
+    [site, language],
   );
   const seatNames = useMemo(
     () =>
       Object.fromEntries(
-        TOWNSFOLK.map((person) => [seatOf(person), person.label[language]]),
+        site.folk.map((person) => [
+          seatOf(site, person),
+          person.label[language],
+        ]),
       ),
-    [language],
+    [site, language],
   );
   const colors = useMemo(
-    () => Object.fromEntries(TOWNSFOLK.map((person) => [seatOf(person), 0])),
-    [],
+    () =>
+      Object.fromEntries(site.folk.map((person) => [seatOf(site, person), 0])),
+    [site],
   );
   const script = useMemo<StageSequence>(
     () => ({
-      id: `settlement.${language}`,
+      id: `${site.id}.${language}`,
       model: "authored",
       language,
       naming: "chronicle",
       createdAt: "2026-09-06",
       seats: Object.fromEntries(
-        TOWNSFOLK.map((person) => [
-          seatOf(person),
-          { home: person.home ?? "market", model: "authored" },
+        site.folk.map((person) => [
+          seatOf(site, person),
+          { home: person.home ?? site.strollPlaces[0], model: "authored" },
         ]),
       ),
-      places: Object.keys(SETTLEMENT_NAMES),
+      places: Object.keys(site.names),
       beats: [],
     }),
-    [language],
+    [site, language],
   );
 
-  const feed = useCallback((count: number) => {
-    const next: StageBeat[] = [];
-    const said: Line[] = [];
-    for (let i = 0; i < count; i += 1) {
-      counter.current += 1;
-      const { beat, line } = nextBeat(counter.current);
-      next.push(beat);
-      said.push(line);
-    }
-    setBeats((list) => [...list, ...next]);
-    setLines((list) => [...said.reverse(), ...list].slice(0, LOG));
-  }, []);
+  const feed = useCallback(
+    (count: number) => {
+      const next: StageBeat[] = [];
+      const said: Line[] = [];
+      for (let i = 0; i < count; i += 1) {
+        counter.current += 1;
+        const { beat, line } = nextBeat(site, counter.current);
+        next.push(beat);
+        said.push(line);
+      }
+      setBeats((list) => [...list, ...next]);
+      setLines((list) => [...said.reverse(), ...list].slice(0, LOG));
+    },
+    [site],
+  );
 
   // the scene reports idle when its queue runs dry; the town keeps walking
   // as long as the switch is on, one beat ahead of the reader's patience
@@ -210,14 +218,14 @@ export function Settlement() {
   };
 
   const byOrder = useMemo(() => {
-    const groups = new Map<Townsperson["order"], Townsperson[]>();
-    for (const person of TOWNSFOLK) {
+    const groups = new Map<Order, Townsperson[]>();
+    for (const person of site.folk) {
       const list = groups.get(person.order) ?? [];
       list.push(person);
       groups.set(person.order, list);
     }
     return [...groups.entries()];
-  }, []);
+  }, [site]);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
@@ -226,26 +234,13 @@ export function Settlement() {
           <Link to="/craft" className="hover:text-white">
             Warring States Craft
           </Link>
-          {" › "}City
+          {" › "}
+          {site.crumb}
         </p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
-          {language === "zh" ? "模范之城" : "A Model City"}
+          {site.title[language]}
         </h1>
-        <p className="mt-3 max-w-2xl text-pretty text-zinc-400">
-          A capital of the period drawn to one plan and walked by its own
-          people. The twin city is the Zhongshan capital at Lingshou as the
-          excavators found it: the palace terraces along the north of the east
-          city, the offices and wards below them, the royal tombs in the north
-          of the west city and the market, the orchard, and the workshops
-          beneath. The three gates a side, the temple on the left and the altar
-          of soil on the right, and the court before the palace are the
-          Kaogongji's rule; the market well with each trade in its own row is
-          the Guanzi's; the standing wall and its moat are Xue's. Click any
-          gate, hall, kiln, or ward to read what it is and what the statutes and
-          the site reports say of it. The figures are the townsfolk the
-          registers counted: officials, artisans, merchants, farmers,
-          households, and convict labour.
-        </p>
+        <p className="mt-3 max-w-2xl text-pretty text-zinc-400">{site.intro}</p>
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           <ToggleGroup
             options={[
@@ -283,7 +278,7 @@ export function Settlement() {
               walking ? "text-white" : "text-zinc-400",
             )}
           >
-            {walking ? "the town is awake · pause" : "wake the town"}
+            {walking ? site.words.awake : site.words.wake}
           </button>
           <label className="flex cursor-pointer items-center gap-x-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
             <input
@@ -292,12 +287,12 @@ export function Settlement() {
               onChange={(event) => setFollow(event.target.checked)}
               className="cursor-pointer accent-brand-terminal"
             />
-            follow the townsfolk
+            follow the people
           </label>
         </div>
       </header>
 
-      <section aria-label="Settlement map" className="mt-8">
+      <section aria-label={`${site.crumb} map`} className="mt-8">
         <Stage
           script={script}
           beats={beats}
@@ -311,25 +306,27 @@ export function Settlement() {
           flags={false}
           set={set.id}
           eyebrow={false}
-          map={settlementMapOf(set)}
-          featureNotes={SETTLEMENT_FEATURES}
+          map={siteMapOf(site, set)}
+          featureNotes={site.features}
           onIdle={onIdle}
           onReady={onReady}
         />
-        {beats.length === 0 && <FirstStep onStart={start} />}
+        {beats.length === 0 && (
+          <FirstStep note={site.words.firstStep} onStart={start} />
+        )}
       </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[2fr_3fr]">
         <section
-          aria-label="The town's day"
+          aria-label={site.words.day.en}
           className="rounded-sm border border-white/10 bg-black/20 p-5"
         >
           <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-            {language === "zh" ? "市中一日" : "The town's day"}
+            {site.words.day[language]}
           </h2>
           {lines.length === 0 ? (
             <p className="mt-3 text-sm text-zinc-500">
-              {language === "zh" ? "城尚未醒。" : "Nothing has stirred yet."}
+              {site.words.nothing[language]}
             </p>
           ) : (
             <ol className="mt-3 space-y-1.5">
@@ -353,12 +350,10 @@ export function Settlement() {
           className="rounded-sm border border-white/10 bg-black/20 p-5"
         >
           <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-            {language === "zh" ? "四民" : "Who lives here"}
+            {site.words.folk[language]}
           </h2>
           <p className="mt-2 text-sm text-zinc-400">
-            {language === "zh"
-              ? "管子分四民各居其所：士就闲燕，农就田野，工就官府，商就市井。商君书十三数并计仓、丁、老弱、官、马牛、刍稿。此城之人依此而分。"
-              : "The Guanzi keeps the four orders each to its own quarter so a trade passes from father to son unspoken; the Book of Lord Shang counts granaries, adults, the old and the weak, officials, horses and oxen, fodder and straw. The town's people are sorted the same way, by order and then by craft."}
+            {site.words.folkNote[language]}
           </p>
           <dl className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
             {byOrder.map(([order, people]) => (
@@ -385,51 +380,23 @@ export function Settlement() {
           What the plan is drawn from
         </h2>
         <ul className="mt-3 space-y-2 text-sm text-zinc-400">
-          <li>
-            <span className="text-zinc-200">
-              Lingshou, the Zhongshan capital
-            </span>{" "}
-            (Sanji, Pingshan, Hebei; excavated 1974–1993, site report 2005): two
-            walled cities side by side, seven rammed-earth platforms along the
-            north of the east city, offices and workshops south of them, the
-            royal necropolis in the west city and King Cuo's mausoleum outside
-            it with its bronze plan, the earliest scaled plan from China.
-          </li>
-          <li>
-            <span className="text-zinc-200">Xue</span> (Tengzhou, Shandong): a
-            Warring States circuit still standing four to eight metres high,
-            twelve gates, three iron workshops inside the wall.
-          </li>
-          <li>
-            <span className="text-zinc-200">Boren</span> (Longyao, Hebei): a
-            Zhao county town of about four square kilometres, its 2025 season
-            tracing the wall, the road, the water, and an intact kiln.
-          </li>
-          <li>
-            <span className="text-zinc-200">The Kaogongji</span>: the ideal
-            capital nine li square with three gates a side and nine avenues,
-            temple left, altar right, court in front, market behind; some thirty
-            trades in six divisions.
-          </li>
-          <li>
-            <span className="text-zinc-200">
-              The Zhouli, the Guanzi, and the Shuihudi statutes
-            </span>
-            : the market's staff and its three sessions, the four orders in
-            their quarters, the price tags and the sealed cash box, the granary
-            seals, the stable inspection, the workshop quotas, and the case form
-            that describes one house.
-          </li>
+          {site.sources.map((source) => (
+            <li key={source.name}>
+              <span className="text-zinc-200">{source.name}</span>
+              {source.text.startsWith(":") ? "" : " "}
+              {source.text}
+            </li>
+          ))}
         </ul>
       </section>
     </div>
   );
 }
 
-function FirstStep({ onStart }: { onStart: () => void }) {
+function FirstStep({ note, onStart }: { note: string; onStart: () => void }) {
   return (
     <p className="mt-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
-      the town wakes when the map has loaded ·{" "}
+      {note} ·{" "}
       <button
         type="button"
         onClick={onStart}

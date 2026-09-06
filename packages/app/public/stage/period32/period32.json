@@ -4124,19 +4124,19 @@
       "pack": "pixellab",
       "record": {
         "tool": "create_topdown_tileset",
-        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → a rammed earth cart road seen from above, pale packed tan earth worn smooth, two darker wheel ruts running along it, loose dust and small stones scattered at the verges, no paving, no cobbles, no bricks; transition: the road's rutted surface fading into the smoother beaten yard beside it, a few scattered stones at the verge",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → a dirt track seen from directly above, plain packed brown earth a shade darker than the yard, worn smooth, two faint pale wheel ruts, loose dust, nothing but earth, no stones laid, no paving, no cobbles, no bricks, no blocks, no tiles, no grid, no lines; transition: the darker packed earth of the track fading softly into the paler beaten yard beside it, dust only, no edge",
         "settings": {
           "transition_size": 0,
           "detail": "highly detailed",
           "shading": "detailed shading",
           "tile_size": 32,
           "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
-          "upper_base_tile_id": "dd477bb7-e56a-4086-94cd-6dfa8af9977e"
+          "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
         },
-        "jobId": "cf3ebec1-3540-46a5-b058-c04e9674048b",
+        "jobId": "6dcc204c-2fe2-4f0d-93a0-48d3c35ac4ee",
         "date": "2026-09-06",
-        "generations": 1,
-        "note": "the avenues and lanes run between wards of the same earth; transition 0 because two flat grounds meet. The generator drew the road half as paving blocks despite the prompt, and the palette match puts it in the road's own colours; a second generation is the fix if the blocks still show",
+        "generations": 3,
+        "note": "the avenues and lanes run between wards of the same earth; transition 0 because two flat grounds meet. The first two generations drew the road as paving blocks whatever the prompt said, because the upper base tile they were chained to was itself the first generation's blocks; the third is chained to the overworld road's own base tile, which is what the pair must reproduce anyway, and names the track as nothing but earth",
         "finish": {
           "against": "earth"
         }
@@ -4819,11 +4819,11 @@
     "sprite.convict": {
       "file": "sprite.convict.png",
       "kind": "sprite",
-      "width": 272,
-      "height": 272,
+      "width": 192,
+      "height": 192,
       "sprite": {
-        "frameWidth": 68,
-        "frameHeight": 68,
+        "frameWidth": 48,
+        "frameHeight": 48,
         "columns": 4,
         "walk": {
           "down": [
@@ -4855,27 +4855,29 @@
       "pack": "pixellab",
       "record": {
         "tool": "create_character + animate_character",
-        "prompt": "a Warring States Chinese convict labourer, shaven-headed man in a coarse ochre-red hemp tunic, a heavy wooden cangue board around his neck, an iron ring on one ankle, carrying a basket of earth on his back, bare feet",
+        "prompt": "Warring States Chinese convict labourer, a shaven-headed man in a coarse ochre-red tunic, a flat square wooden cangue board locked around his neck, an iron ring on one ankle, carrying a woven basket of earth in both hands, low top-down view",
         "settings": {
-          "mode": "standard",
+          "mode": "v3",
           "size": 48,
           "view": "low top-down",
-          "walk": "walking-4-frames"
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
         },
-        "characterId": "b27e1811-8583-4006-a7fb-3b9f256ae9fe",
+        "characterId": "b94f28a5-bd0e-40a8-b388-dfd1aed24743",
         "date": "2026-09-06",
-        "generations": 5,
-        "note": "standard mode came back on a 68 px canvas rather than 48, so the frame is declared at 68; the convict labourers of the Liye rosters and the Shuihudi statutes, quarried to the tombs; four frames per cardinal facing, one generation per facing"
+        "generations": 11,
+        "note": "the convict labourers of the Liye rosters and the Shuihudi statutes, quarried to the tombs; first drawn in standard mode, which returned a 68 px canvas for a 48 px request (five generations), then redrawn in v3 at 48 px like every other figure (six more); four frames per cardinal facing, one generation per facing"
       }
     },
     "sprite.overseer": {
       "file": "sprite.overseer.png",
       "kind": "sprite",
-      "width": 272,
-      "height": 272,
+      "width": 192,
+      "height": 192,
       "sprite": {
-        "frameWidth": 68,
-        "frameHeight": 68,
+        "frameWidth": 48,
+        "frameHeight": 48,
         "columns": 4,
         "walk": {
           "down": [
@@ -4907,27 +4909,29 @@
       "pack": "pixellab",
       "record": {
         "tool": "create_character + animate_character",
-        "prompt": "a Warring States Chinese overseer official, middle-aged man in a long black robe with wide sleeves, a flat black cap, a bronze seal hanging on a red cord at his belt, holding a wooden tally board and a brush",
+        "prompt": "Warring States Chinese market superintendent, a man in a long black official robe with wide sleeves and a flat black cloth cap, a small bronze seal on a red cord hanging at the belt, holding a flat wooden tally board and a writing brush, low top-down view",
         "settings": {
-          "mode": "standard",
+          "mode": "v3",
           "size": 48,
           "view": "low top-down",
-          "walk": "walking-4-frames"
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
         },
-        "characterId": "9735fc1d-ed9c-4600-8293-8d64e02a7b21",
+        "characterId": "7b51ca6f-44ce-4c8c-9b95-c9898313e821",
         "date": "2026-09-06",
-        "generations": 5,
-        "note": "standard mode came back on a 68 px canvas rather than 48, so the frame is declared at 68; the Zhouli's sishi superintendent of the market; four frames per cardinal facing, one generation per facing"
+        "generations": 11,
+        "note": "the Zhouli's sishi, who opens the market's three sessions and seals its cash box; first drawn in standard mode, which returned a 68 px canvas for a 48 px request (five generations), then redrawn in v3 at 48 px like every other figure (six more); four frames per cardinal facing, one generation per facing"
       }
     },
     "sprite.musician": {
       "file": "sprite.musician.png",
       "kind": "sprite",
-      "width": 272,
-      "height": 272,
+      "width": 192,
+      "height": 192,
       "sprite": {
-        "frameWidth": 68,
-        "frameHeight": 68,
+        "frameWidth": 48,
+        "frameHeight": 48,
         "columns": 4,
         "walk": {
           "down": [
@@ -4959,17 +4963,1264 @@
       "pack": "pixellab",
       "record": {
         "tool": "create_character + animate_character",
-        "prompt": "a Warring States Chinese court musician, young man in a long pale cream silk robe with a blue sash, hair in a topknot, carrying a long flat wooden se zither with many strings under one arm",
+        "prompt": "Warring States Chinese musician, a young man in a long pale cream robe with a blue sash, dark hair in a bun with a thin cloth band, carrying a long flat wooden se zither with many strings under one arm, low top-down view",
         "settings": {
-          "mode": "standard",
+          "mode": "v3",
           "size": 48,
           "view": "low top-down",
-          "walk": "walking-4-frames"
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
         },
-        "characterId": "61da5c9d-0c98-4ab3-823a-7b563856a1a6",
+        "characterId": "91a18f67-e206-4eef-a034-6b1ad30b1cd7",
         "date": "2026-09-06",
-        "generations": 5,
-        "note": "standard mode came back on a 68 px canvas rather than 48, so the frame is declared at 68; the Zhanguoce's Linzi plays the se; walks between the palace and the court; four frames per cardinal facing, one generation per facing"
+        "generations": 11,
+        "note": "the se player of the Zhanguoce's Linzi, and the house's hall; first drawn in standard mode, which returned a 68 px canvas for a 48 px request (five generations), then redrawn in v3 at 48 px like every other figure (six more); four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "terrain.garden": {
+      "file": "terrain.garden.png",
+      "kind": "blob",
+      "width": 256,
+      "height": 768,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "vegetable garden plots seen from directly above, neat straight rows of small round green leafy plants on beds of dark brown turned earth, narrow paths of pale trodden earth between the beds, no flowers, no people; transition: the last bed's low border of dark earth and a few stray plants against the grass",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "8c7f9bc5-e9a0-4a64-91b2-7102a59ca155",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the vegetable plots of a farmhouse yard and of the walled garden behind an elite compound's inner chambers; the Odes' pu, built in the ninth month beside the threshing floor",
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "saturation": 0.8,
+            "value": 0.95
+          }
+        }
+      }
+    },
+    "terrain.garden@earth": {
+      "file": "terrain.garden@earth.png",
+      "kind": "blob",
+      "width": 256,
+      "height": 192,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → vegetable garden plots seen from directly above, neat straight rows of small round green leafy plants on beds of dark brown turned earth, narrow paths of pale trodden earth between the beds, no flowers, no people; transition: the last bed's low border of dark turned earth and a few stray plants against the packed tan yard",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
+          "upper_base_tile_id": "544e8fe0-c1e6-4110-8d02-356d8324a57d"
+        },
+        "jobId": "cf520926-b733-4e50-bc28-c0f64864e736",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "garden beds stand on the beaten yard in both the village and the house",
+        "finish": {
+          "against": "earth"
+        }
+      }
+    },
+    "terrain.cobble@earth": {
+      "file": "terrain.cobble@earth.png",
+      "kind": "blob",
+      "width": 256,
+      "height": 192,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → a stone pavement seen from above, irregular grey flagstones of varied size laid tight together with dark joints between them, worn smooth in the middle and chipped at the corners, strictly grey stone, no moss, no green; transition: the last flagstones set straight into the packed tan earth of the yard, a little dust over their edges",
+        "settings": {
+          "transition_size": 0,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
+          "upper_base_tile_id": "6c217f9b-7d9d-4397-b429-89a7db1df058"
+        },
+        "jobId": "45c26fbc-f185-4fdb-8e29-e45d2cb674f3",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the paved paths of an elite compound cross its earth courts; transition 0 because two flat grounds meet",
+        "finish": {
+          "against": "earth"
+        }
+      }
+    },
+    "water.river@earth": {
+      "file": "water.river@earth.png",
+      "kind": "blob",
+      "width": 256,
+      "height": 192,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle; transition: a narrow bank of wet dark earth and a few grey stones where the still water meets the packed tan yard",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "0171514a-01ae-43be-9b4c-d14d7f193aed",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the pond in a compound's garden court and the village pond both lie in beaten earth",
+        "finish": {
+          "against": "earth"
+        }
+      }
+    },
+    "image.farmhouse": {
+      "file": "image.farmhouse.png",
+      "kind": "image",
+      "width": 64,
+      "height": 64,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a small farmhouse of the Warring States period in north China: low tan rammed-earth walls, a steep thatched roof of pale grey straw, a single dark doorway, a small wattle-fenced yard of beaten earth in front with a clay jar and a bundle of millet stalks by the wall, no people",
+        "settings": {
+          "width": 64,
+          "height": 64,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "be218813-8bce-4802-a5b9-ab2411ebc1b6",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the Fengzhenshi's one hall and two rooms, thatched; one of two variants a hamlet's houses are picked from by place key"
+      }
+    },
+    "image.farmhouse-b": {
+      "file": "image.farmhouse-b.png",
+      "kind": "image",
+      "width": 64,
+      "height": 64,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a small pit-house of the Warring States period in north China: a very low rammed-earth wall, a broad thatched roof of grey straw reaching almost to the ground, a wooden door under a small porch, a woodpile against the wall, beaten earth around it, no people",
+        "settings": {
+          "width": 64,
+          "height": 64,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "1fb74b32-0a79-4a56-bcd1-f01c090016d1",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the second farmhouse variant"
+      }
+    },
+    "image.threshing": {
+      "file": "image.threshing.png",
+      "kind": "image",
+      "width": 80,
+      "height": 56,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a round threshing floor of hard packed pale tan earth, completely empty of people, only a heap of golden millet stalks at one edge, a wooden flail and a flat woven winnowing basket lying on the ground, no figures, no animals",
+        "settings": {
+          "width": 80,
+          "height": 56,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "dc9b87fd-7f69-4001-bded-fcf03cdc7e97",
+        "date": "2026-09-06",
+        "generations": 2,
+        "note": "the Odes' chang, built in the ninth month; the first generation put a figure on it despite 'no people', the second says 'completely empty' and names what is there instead"
+      }
+    },
+    "image.byre": {
+      "file": "image.byre.png",
+      "kind": "image",
+      "width": 64,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a cattle byre of the Warring States period: a low open-fronted shed of dark timber posts with a thatched roof of grey straw, a wattle fence on one side, hay in a wooden manger, no animals, no people",
+        "settings": {
+          "width": 64,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "151d179e-222e-457e-b444-fb9b91f08ed1",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the village oxen's shed, the beasts the stable statutes inspect four times a year"
+      }
+    },
+    "image.shrine": {
+      "file": "image.shrine.png",
+      "kind": "image",
+      "width": 56,
+      "height": 56,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a village altar of the soil god of the Warring States period: a low square mound of tan rammed earth with a flat grey stone slab on top and a small clay offering bowl, a single old gnarled tree with a dark trunk and a round green crown standing beside it, no people",
+        "settings": {
+          "width": 56,
+          "height": 56,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "86c08f6a-5392-4309-bf15-5497408b77e5",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the she of a hamlet: a mound and a tree, drawn for the village where the overworld borrowed the fallback's"
+      }
+    },
+    "image.audience-hall": {
+      "file": "image.audience-hall.png",
+      "kind": "image",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "the main audience hall of a Warring States noble compound: a wide timber hall with a row of dark red pillars along an open front, a broad grey tiled hip roof with a straight ridge, standing on a tall tan rammed-earth terrace with horizontal layer lines, a flight of stone steps up the middle of the front, empty, no people",
+        "settings": {
+          "width": 128,
+          "height": 96,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "a708ee3d-8456-497c-bbec-4d7427cf0a4d",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the tang of the compound, four tiles wide at the house's scale"
+      }
+    },
+    "image.chamber": {
+      "file": "image.chamber.png",
+      "kind": "image",
+      "width": 96,
+      "height": 72,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "the inner chambers of a Warring States noble compound: a smaller timber hall with dark red pillars and a grey tiled hip roof on a low tan rammed-earth terrace, a lattice wooden screen door at the front, a small covered porch, empty, no people",
+        "settings": {
+          "width": 96,
+          "height": 72,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "644f1b72-a918-4d6a-a563-833e3f2ebbbb",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the qin behind the hall"
+      }
+    },
+    "image.wing": {
+      "file": "image.wing.png",
+      "kind": "image",
+      "width": 112,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a long low side range of rooms in a Warring States noble compound, running left to right: a low timber building with a long grey tiled roof, a row of four small wooden doors along the front opening onto a covered walkway with dark red pillars, tan rammed-earth end walls, empty, no people",
+        "settings": {
+          "width": 112,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "f5ae9261-4074-4202-873a-7ae563273fde",
+        "date": "2026-09-06",
+        "generations": 2,
+        "note": "the east and west ranges; the first generation ran top to bottom and read as a tower in low top-down, so the second runs along the court"
+      }
+    },
+    "image.gatehouse": {
+      "file": "image.gatehouse.png",
+      "kind": "image",
+      "width": 80,
+      "height": 56,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "the gatehouse of a Warring States noble compound: a two-leaf dark wooden gate set in a tan rammed-earth wall under its own small grey tiled roof, a small gate-keeper's room to one side with a tiny window, a stone threshold, empty, no people",
+        "settings": {
+          "width": 80,
+          "height": 56,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "b6424eef-38c0-47a8-bac5-532a36fcd11f",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the gate and its shu"
+      }
+    },
+    "image.kitchen": {
+      "file": "image.kitchen.png",
+      "kind": "image",
+      "width": 64,
+      "height": 56,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "the kitchen of a Warring States noble compound: a low tan rammed-earth building with a grey tiled roof and a short clay chimney with a wisp of smoke, an open front showing a clay stove with a bronze cauldron, stacked firewood and clay jars against the wall, empty, no people",
+        "settings": {
+          "width": 64,
+          "height": 56,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "f523cf19-e190-407f-a626-c74c70cefd53",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the pao, kept apart from the halls"
+      }
+    },
+    "image.shed": {
+      "file": "image.shed.png",
+      "kind": "image",
+      "width": 72,
+      "height": 56,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a chariot shed of a Warring States noble compound: an open-fronted timber shed with dark posts and a grey tiled roof, a single wooden two-wheeled chariot with a curved draught pole and a lacquered red box standing inside, a coil of rope on the wall, no horses, no people",
+        "settings": {
+          "width": 72,
+          "height": 56,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "0fd2980f-5396-4905-aa73-4e5fb0871d2b",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the chariot shed by the gate"
+      }
+    },
+    "image.pavilion": {
+      "file": "image.pavilion.png",
+      "kind": "image",
+      "width": 56,
+      "height": 64,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a small open garden pavilion of the Warring States period: four dark red wooden pillars holding a square grey tiled roof with a pointed peak, a low wooden railing between the pillars, a stone base, standing on grass, empty, no people",
+        "settings": {
+          "width": 56,
+          "height": 64,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "b4a3d968-daa2-4876-b549-84b1b5693b44",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the xie in the garden court"
+      }
+    },
+    "image.screen": {
+      "file": "image.screen.png",
+      "kind": "image",
+      "width": 64,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a free-standing screen wall of a Warring States noble compound, seen from the front: a short straight wall of tan rammed earth with a narrow grey tiled coping along its top and a plain stone footing, standing alone on beaten earth, no people",
+        "settings": {
+          "width": 64,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "79074bf8-8f44-4f0a-81c9-765687717931",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the screen inside the gate the Analects fault Guan Zhong for"
+      }
+    },
+    "decor.sheep": {
+      "file": "decor.sheep.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "three small woolly sheep with cream fleece and dark faces grazing close together on short grass, seen from above and slightly in front, no people",
+        "settings": {
+          "width": 40,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "7447e6e0-4a30-4b1f-8e82-bf307a925665",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.ducks": {
+      "file": "decor.ducks.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "four small brown and white ducks standing and waddling on a patch of muddy bank beside a little water, seen from above and slightly in front, no people",
+        "settings": {
+          "width": 32,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "4a5c8b31-97c5-46fe-a468-468271b3f821",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.plough": {
+      "file": "decor.plough.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "an ancient Chinese wooden plough with a single curved beam, a small iron share, and a wooden yoke, lying idle on beaten earth, no ox, no people",
+        "settings": {
+          "width": 40,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "7f620fe7-053a-42ab-acbb-32e66bf95c71",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.hemp": {
+      "file": "decor.hemp.png",
+      "kind": "image",
+      "width": 32,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "bundles of tall cut hemp stalks stood upright in a cone to dry, pale green and straw yellow, tied with cord, standing on beaten earth, no people",
+        "settings": {
+          "width": 32,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "780ca65d-5a83-4a94-b90d-53c33926f38d",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.graves": {
+      "file": "decor.graves.png",
+      "kind": "image",
+      "width": 48,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a small family burial ground of the Warring States period: three low rounded grave mounds of bare tan earth in a row on short grass, a single small upright grey stone in front of the largest, no people",
+        "settings": {
+          "width": 48,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "0f1951f2-f29e-49ca-bb79-24412a0f2c72",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.tripod": {
+      "file": "decor.tripod.png",
+      "kind": "image",
+      "width": 32,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a large bronze ding tripod cauldron of the Warring States period: a round dark green bronze vessel with two upright loop handles and three short legs, decorated with a band of interlocking pattern, standing on stone paving, no people",
+        "settings": {
+          "width": 32,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "cabb166b-9736-4a5e-8925-5e4d850b953c",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.chariot": {
+      "file": "decor.chariot.png",
+      "kind": "image",
+      "width": 48,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States war chariot standing idle in a yard: a light wooden two-wheeled chariot with large many-spoked wheels, a square red lacquered box with a rail, a long curved draught pole and a wooden yoke resting on the ground, no horses, no people",
+        "settings": {
+          "width": 48,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "19f11755-288d-404b-a77b-10d9ec8562c9",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.lantern": {
+      "file": "decor.lantern.png",
+      "kind": "image",
+      "width": 32,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a tall bronze lamp stand of the Warring States period: a slender dark green bronze column on a round base with a small shallow oil dish and a tiny yellow flame at the top, standing on stone paving, no people",
+        "settings": {
+          "width": 32,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "8fb55e3f-b388-40ad-8cd7-ea08b2274c4b",
+        "date": "2026-09-06",
+        "generations": 1,
+        "note": "the object canvas is 32 px at the least, so the lamp is drawn narrow inside it"
+      }
+    },
+    "sprite.elder": {
+      "file": "sprite.elder.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese village elder, an old man with a long thin white beard and white hair in a bun under a plain dark cloth cap, a long coarse brown hemp robe, leaning on a tall wooden staff with a small carved dove on top, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "1ab099a8-3338-404c-b301-ce2dfc214b19",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the village elder (三老, 里正) the Qin statutes hold answerable for the ward's registers and the Liye slips name at the head of each household list; the dove staff is the one the Han later gave the aged; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.herdsman": {
+      "file": "sprite.herdsman.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese herdsman, a weathered man in a short undyed hemp tunic and a wide conical straw hat, a sheepskin over one shoulder, bare legs and straw sandals, carrying a long crooked wooden herding stick, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "b6ed5597-a741-431b-ac72-9a95627c21b9",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the herdsman of the village meadow; the Shangjunshu's count of horses and oxen and the Zhouli's pasturage officers assume him; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.woodcutter": {
+      "file": "sprite.woodcutter.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese woodcutter, a broad man in a short dark brown hemp tunic with the sleeves torn off, a cloth headband, straw sandals, a bundle of cut firewood roped on his back and a small iron axe in one hand, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "4b281de8-2d72-492e-84b9-c00761c2993f",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the woodcutter of the village woods; the Mencius on the Ox Mountain and the Qin field statutes on the closed season for felling both assume him; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.fisher": {
+      "file": "sprite.fisher.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese fisherman, a thin man in a short grey-blue hemp tunic rolled to the knee, a wide flat woven reed hat, bare feet, carrying a long bamboo fishing pole over one shoulder and a small woven fish creel at his hip, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "85e3af94-92dd-4de2-af96-0897d3725a27",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the fisher of the village pond and brook; the Odes' weirs and the Qin statutes' closed season on poisoning fish assume him; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.maiden": {
+      "file": "sprite.maiden.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese village girl picking mulberry leaves, a young woman in a plain pale green hemp dress with a short apron, dark hair in two loops with a cloth band, straw sandals, carrying a tall woven basket of green mulberry leaves on one hip, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "06309b7b-aa00-4e2f-8249-c14459a81e1f",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the mulberry-picking girl of the Odes (十畝之間, 桑中); the village orchard is her ground; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.master": {
+      "file": "sprite.master.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese nobleman, master of a great house, a dignified middle-aged man in a long deep crimson silk robe with wide sleeves and a black border, a tall black lacquered gauze cap tied under the chin, a jade pendant on a cord at the waist, hands folded in his sleeves, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "070ecc27-125b-40b3-8d86-d6e4d2367032",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the master of an elite compound, the host of the Yili's rites; the hall is his ground; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.lady": {
+      "file": "sprite.lady.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese lady of an elite house, a woman in a long flowing deep red silk robe with wide sleeves and a pale green sash, dark hair piled high with two long jade hairpins, hands folded in her sleeves, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "37d57495-d4da-467e-b354-ec1eb4af56bc",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the lady of the house, whose ground is the inner chamber behind the inner door the Liji keeps; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.steward": {
+      "file": "sprite.steward.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese household steward, a lean older man in a long grey-blue robe with a black sash and a small black cap, a bundle of bamboo tally slips under one arm and a ring of bronze keys at his belt, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "9282f630-2551-4954-8cd9-544606bf8598",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the steward (家宰, 家臣) who keeps a great house's tallies and stores, the office Confucius's disciples held for the Ji clan; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.maid": {
+      "file": "sprite.maid.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese serving maid of a great house, a young woman in a plain dark blue hemp dress with a white apron, dark hair in a low knot with a cloth band, carrying a red lacquer tray with two small cups in both hands, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "bd9bc8a8-a166-441c-9b48-400dbfaadb83",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the serving woman of the household; the east rooms behind the hall are her ground; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "sprite.cook": {
+      "file": "sprite.cook.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese household cook, a stout man in a short brown hemp tunic with the sleeves rolled up, a cloth headband, a long cleaver in one hand and a bunch of green onions in the other, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "95900475-1b3f-4cf3-8f3c-c25b2947f337",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the cook of a great house's kitchen, the trade Yi Yin and Pao Ding made proverbial; the kitchen is his ground; four frames per cardinal facing, one generation per facing"
+      }
+    },
+    "decor.plum": {
+      "file": "decor.plum.png",
+      "kind": "image",
+      "width": 40,
+      "height": 48,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a single plum tree of the Warring States period in full white blossom seen from above: a short gnarled dark trunk, spreading crooked branches covered in small white and pale pink five-petalled flowers, no leaves, standing on bare earth, no people",
+        "settings": {
+          "width": 40,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "e337a1d5-0fd2-4921-b7e2-5497c3f44fb9",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.lotus": {
+      "file": "decor.lotus.png",
+      "kind": "image",
+      "width": 40,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a clump of lotus plants floating on still water seen from above: several round flat green lotus leaves of different sizes and one pink lotus flower open among them, one closed pink bud, on calm blue-green pond water, no people",
+        "settings": {
+          "width": 40,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "82a78e15-09a1-48b6-881c-5ca8be94bae0",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "decor.bells": {
+      "file": "decor.bells.png",
+      "kind": "image",
+      "width": 56,
+      "height": 40,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a Warring States Chinese bronze bell set (bianzhong): a wooden frame of two dark red lacquered posts and a horizontal beam with a row of five dark green bronze bells of graded sizes hanging from it, the largest at one end, on a low wooden stand, standing on stone paving, no people",
+        "settings": {
+          "width": 56,
+          "height": 40,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "49c571e0-fa92-489c-9cbf-03ebc9086b29",
+        "date": "2026-09-06",
+        "generations": 1
+      }
+    },
+    "sprite.groom": {
+      "file": "sprite.groom.png",
+      "kind": "sprite",
+      "width": 192,
+      "height": 192,
+      "sprite": {
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "columns": 4,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "left": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "right": [
+            8,
+            9,
+            10,
+            11
+          ],
+          "up": [
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      },
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_character + animate_character",
+        "prompt": "Warring States Chinese stable groom, a young man in a short undyed hemp tunic with a leather apron, bare arms, straw sandals, carrying a coiled rope halter over one shoulder and a wooden bucket in one hand, low top-down view",
+        "settings": {
+          "mode": "v3",
+          "size": 48,
+          "view": "low top-down",
+          "walk": "walking-4-frames",
+          "detail": "medium detail",
+          "outline": "single color black outline"
+        },
+        "characterId": "5ac9ed1a-b1b3-4142-9110-ca974488c799",
+        "date": "2026-09-06",
+        "generations": 6,
+        "note": "the groom who keeps the chariot horses of a great house; the stable is his ground; four frames per cardinal facing, one generation per facing"
       }
     }
   }

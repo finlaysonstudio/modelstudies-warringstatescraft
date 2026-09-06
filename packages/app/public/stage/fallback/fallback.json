@@ -170,6 +170,14 @@
       "kind": "blob",
       "tileset": "terrain.mulberry.tsj"
     },
+    "terrain.garden": {
+      "file": "terrain.garden.png",
+      "width": 128,
+      "height": 384,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.garden.tsj"
+    },
     "water.river": {
       "file": "water.river.png",
       "width": 128,
@@ -1854,6 +1862,380 @@
         }
       }
     },
+    "sprite.elder": {
+      "file": "sprite.elder.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.herdsman": {
+      "file": "sprite.herdsman.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.woodcutter": {
+      "file": "sprite.woodcutter.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.fisher": {
+      "file": "sprite.fisher.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.maiden": {
+      "file": "sprite.maiden.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.master": {
+      "file": "sprite.master.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.lady": {
+      "file": "sprite.lady.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.steward": {
+      "file": "sprite.steward.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.maid": {
+      "file": "sprite.maid.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.cook": {
+      "file": "sprite.cook.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.groom": {
+      "file": "sprite.groom.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
     "effect.scroll": {
       "file": "effect.scroll.png",
       "width": 96,
@@ -2426,6 +2808,83 @@
       "pack": "fallback",
       "kind": "image"
     },
+    "image.farmhouse": {
+      "file": "image.farmhouse.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.threshing": {
+      "file": "image.threshing.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.byre": {
+      "file": "image.byre.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.audience-hall": {
+      "file": "image.audience-hall.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.chamber": {
+      "file": "image.chamber.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.wing": {
+      "file": "image.wing.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.gatehouse": {
+      "file": "image.gatehouse.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.kitchen": {
+      "file": "image.kitchen.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.shed": {
+      "file": "image.shed.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.pavilion": {
+      "file": "image.pavilion.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.screen": {
+      "file": "image.screen.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
     "decor.pine": {
       "file": "decor.pine.png",
       "width": 32,
@@ -2589,6 +3048,83 @@
     },
     "decor.dog": {
       "file": "decor.dog.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.sheep": {
+      "file": "decor.sheep.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.ducks": {
+      "file": "decor.ducks.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.plough": {
+      "file": "decor.plough.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.hemp": {
+      "file": "decor.hemp.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.graves": {
+      "file": "decor.graves.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.lantern": {
+      "file": "decor.lantern.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.tripod": {
+      "file": "decor.tripod.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.chariot": {
+      "file": "decor.chariot.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.plum": {
+      "file": "decor.plum.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.lotus": {
+      "file": "decor.lotus.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.bells": {
+      "file": "decor.bells.png",
       "width": 16,
       "height": 16,
       "pack": "fallback",

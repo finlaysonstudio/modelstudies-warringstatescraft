@@ -49,6 +49,8 @@ export const TERRAINS = [
   "earth",
   "platform",
   "mulberry",
+  // the garden: vegetable beds inside a compound wall or beside a farmhouse
+  "garden",
 ] as const;
 export type Terrain = (typeof TERRAINS)[number];
 
@@ -95,6 +97,19 @@ export const SETTLEMENT_MARKERS = [
   "barracks",
   "stable",
   "office",
+  // the village: what a hamlet has that a town has not
+  "farmhouse",
+  "threshing",
+  "byre",
+  // the house: the buildings of an elite compound inside a city
+  "audience-hall",
+  "chamber",
+  "wing",
+  "gatehouse",
+  "kitchen",
+  "shed",
+  "pavilion",
+  "screen",
 ] as const;
 
 export const MARKERS = [
@@ -166,6 +181,19 @@ export const DECOR = [
   "jars",
   "willow",
   "dog",
+  // the village
+  "sheep",
+  "ducks",
+  "plough",
+  "hemp",
+  "graves",
+  // the house
+  "lantern",
+  "tripod",
+  "chariot",
+  "plum",
+  "lotus",
+  "bells",
 ] as const;
 export type Decor = (typeof DECOR)[number];
 
@@ -176,6 +204,7 @@ export type Decor = (typeof DECOR)[number];
  */
 export const MARKER_VARIANTS: Partial<Record<Marker, string[]>> = {
   town: ["image.town", "image.town-b", "image.town-c"],
+  farmhouse: ["image.farmhouse", "image.farmhouse-b"],
 };
 
 export const EFFECTS: readonly StageEffect[] = [
@@ -254,6 +283,18 @@ export const ARCHETYPES: readonly StageArchetype[] = [
   "convict",
   "overseer",
   "musician",
+  // the village and the house
+  "elder",
+  "herdsman",
+  "woodcutter",
+  "fisher",
+  "maiden",
+  "master",
+  "lady",
+  "steward",
+  "maid",
+  "cook",
+  "groom",
 ];
 
 /**
@@ -313,6 +354,18 @@ export const ARCHETYPE_SPRITES: Record<StageArchetype, string[]> = {
   convict: ["sprite.convict", "sprite.hostage"],
   overseer: ["sprite.overseer", "sprite.clerk"],
   musician: ["sprite.musician", "sprite.scholar"],
+  // the village and the house
+  elder: ["sprite.elder", "sprite.scholar"],
+  herdsman: ["sprite.herdsman", "sprite.peasant"],
+  woodcutter: ["sprite.woodcutter", "sprite.labourer"],
+  fisher: ["sprite.fisher", "sprite.peasant"],
+  maiden: ["sprite.maiden", "sprite.matron"],
+  master: ["sprite.master", "sprite.minister"],
+  lady: ["sprite.lady", "sprite.dowager"],
+  steward: ["sprite.steward", "sprite.clerk"],
+  maid: ["sprite.maid", "sprite.matron"],
+  cook: ["sprite.cook", "sprite.labourer"],
+  groom: ["sprite.groom", "sprite.peasant"],
 };
 
 export const terrainId = (terrain: Terrain): string => `terrain.${terrain}`;

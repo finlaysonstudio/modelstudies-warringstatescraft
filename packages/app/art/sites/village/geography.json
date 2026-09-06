@@ -1,0 +1,589 @@
+{
+  "width": 64,
+  "height": 48,
+  "fills": [
+    {
+      "terrain": "hills",
+      "ellipse": [
+        7,
+        5,
+        9,
+        5
+      ]
+    },
+    {
+      "terrain": "hills",
+      "ellipse": [
+        15,
+        3,
+        6,
+        3
+      ]
+    },
+    {
+      "terrain": "hills",
+      "ellipse": [
+        4,
+        12,
+        4,
+        3
+      ]
+    },
+    {
+      "terrain": "forest",
+      "ellipse": [
+        30,
+        3,
+        13,
+        5
+      ]
+    },
+    {
+      "terrain": "forest",
+      "ellipse": [
+        44,
+        2,
+        6,
+        3
+      ]
+    },
+    {
+      "terrain": "forest",
+      "ellipse": [
+        59,
+        33,
+        6,
+        9
+      ]
+    },
+    {
+      "terrain": "forest",
+      "ellipse": [
+        56,
+        44,
+        5,
+        3
+      ]
+    },
+    {
+      "terrain": "tallgrass",
+      "ellipse": [
+        53,
+        19,
+        7,
+        4
+      ]
+    },
+    {
+      "terrain": "tallgrass",
+      "ellipse": [
+        40,
+        36,
+        5,
+        3
+      ]
+    },
+    {
+      "terrain": "scrub",
+      "rect": [
+        0,
+        30,
+        3,
+        14
+      ]
+    },
+    {
+      "terrain": "scrub",
+      "ellipse": [
+        60,
+        12,
+        4,
+        4
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        2,
+        18,
+        13,
+        11
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        3,
+        33,
+        12,
+        9
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        14,
+        40,
+        20,
+        6
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        50,
+        36,
+        10,
+        10
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        52,
+        6,
+        8,
+        6
+      ]
+    },
+    {
+      "terrain": "marsh",
+      "ellipse": [
+        33,
+        45,
+        5,
+        3
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        20,
+        14,
+        24,
+        17
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        28,
+        9,
+        5,
+        5
+      ]
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        16,
+        11,
+        7,
+        4
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        24,
+        12,
+        3,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        33,
+        26,
+        3,
+        3
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        42,
+        15,
+        3,
+        3
+      ]
+    },
+    {
+      "terrain": "road",
+      "path": [
+        [
+          0,
+          24
+        ],
+        [
+          20,
+          24
+        ],
+        [
+          46,
+          24
+        ],
+        [
+          63,
+          24
+        ]
+      ],
+      "width": 1,
+      "feature": "lane"
+    },
+    {
+      "terrain": "road",
+      "path": [
+        [
+          30,
+          24
+        ],
+        [
+          30,
+          8
+        ]
+      ],
+      "width": 1,
+      "feature": "lane"
+    },
+    {
+      "terrain": "river",
+      "path": [
+        [
+          63,
+          7
+        ],
+        [
+          54,
+          13
+        ],
+        [
+          48,
+          20
+        ],
+        [
+          46,
+          24
+        ],
+        [
+          44,
+          30
+        ],
+        [
+          38,
+          36
+        ],
+        [
+          36,
+          42
+        ],
+        [
+          35,
+          47
+        ]
+      ],
+      "width": 2,
+      "feature": "brook"
+    },
+    {
+      "terrain": "river",
+      "ellipse": [
+        45,
+        29,
+        3,
+        2
+      ],
+      "feature": "pond"
+    }
+  ],
+  "places": {
+    "shrine": {
+      "x": 30,
+      "y": 7,
+      "marker": "shrine"
+    },
+    "well": {
+      "x": 30,
+      "y": 21,
+      "marker": "well"
+    },
+    "granary": {
+      "x": 33,
+      "y": 17,
+      "marker": "granary"
+    },
+    "house-1": {
+      "x": 23,
+      "y": 17,
+      "marker": "farmhouse"
+    },
+    "house-2": {
+      "x": 27,
+      "y": 17,
+      "marker": "farmhouse"
+    },
+    "house-3": {
+      "x": 37,
+      "y": 17,
+      "marker": "farmhouse"
+    },
+    "house-4": {
+      "x": 41,
+      "y": 17,
+      "marker": "farmhouse"
+    },
+    "house-5": {
+      "x": 30,
+      "y": 28,
+      "marker": "farmhouse"
+    },
+    "house-6": {
+      "x": 40,
+      "y": 28,
+      "marker": "farmhouse"
+    },
+    "threshing": {
+      "x": 24,
+      "y": 29,
+      "marker": "threshing"
+    },
+    "byre": {
+      "x": 35,
+      "y": 29,
+      "marker": "byre"
+    },
+    "ford": {
+      "x": 47,
+      "y": 24,
+      "marker": "ford"
+    },
+    "station": {
+      "x": 54,
+      "y": 23,
+      "marker": "waystation"
+    },
+    "elder": {
+      "x": 22,
+      "y": 22,
+      "marker": "house"
+    },
+    "orchard": {
+      "x": 19,
+      "y": 12
+    },
+    "graves": {
+      "x": 12,
+      "y": 10
+    },
+    "hills": {
+      "x": 7,
+      "y": 4
+    },
+    "woods": {
+      "x": 30,
+      "y": 2
+    },
+    "fields-west": {
+      "x": 8,
+      "y": 23
+    },
+    "fields-south": {
+      "x": 20,
+      "y": 43
+    },
+    "fields-east": {
+      "x": 55,
+      "y": 41
+    },
+    "pond": {
+      "x": 45,
+      "y": 32
+    },
+    "marsh": {
+      "x": 33,
+      "y": 46
+    },
+    "meadow": {
+      "x": 53,
+      "y": 18
+    }
+  },
+  "decor": [
+    {
+      "id": "graves",
+      "x": 12,
+      "y": 10
+    },
+    {
+      "id": "pine",
+      "x": 5,
+      "y": 7
+    },
+    {
+      "id": "pine",
+      "x": 12,
+      "y": 4
+    },
+    {
+      "id": "pine",
+      "x": 16,
+      "y": 2
+    },
+    {
+      "id": "rocks",
+      "x": 3,
+      "y": 13
+    },
+    {
+      "id": "haystack",
+      "x": 25,
+      "y": 31
+    },
+    {
+      "id": "haystack",
+      "x": 21,
+      "y": 19
+    },
+    {
+      "id": "haystack",
+      "x": 38,
+      "y": 31
+    },
+    {
+      "id": "chickens",
+      "x": 25,
+      "y": 19
+    },
+    {
+      "id": "chickens",
+      "x": 39,
+      "y": 19
+    },
+    {
+      "id": "pigs",
+      "x": 42,
+      "y": 30
+    },
+    {
+      "id": "pigs",
+      "x": 24,
+      "y": 20
+    },
+    {
+      "id": "millstone",
+      "x": 28,
+      "y": 22
+    },
+    {
+      "id": "woodpile",
+      "x": 21,
+      "y": 16
+    },
+    {
+      "id": "woodpile",
+      "x": 36,
+      "y": 30
+    },
+    {
+      "id": "cart",
+      "x": 33,
+      "y": 23
+    },
+    {
+      "id": "plough",
+      "x": 19,
+      "y": 26
+    },
+    {
+      "id": "fence",
+      "x": 23,
+      "y": 14
+    },
+    {
+      "id": "fence",
+      "x": 36,
+      "y": 14
+    },
+    {
+      "id": "fence",
+      "x": 43,
+      "y": 20
+    },
+    {
+      "id": "fence",
+      "x": 22,
+      "y": 30
+    },
+    {
+      "id": "hemp",
+      "x": 37,
+      "y": 20
+    },
+    {
+      "id": "hemp",
+      "x": 42,
+      "y": 26
+    },
+    {
+      "id": "jars",
+      "x": 31,
+      "y": 18
+    },
+    {
+      "id": "pots",
+      "x": 29,
+      "y": 30
+    },
+    {
+      "id": "rack",
+      "x": 26,
+      "y": 26
+    },
+    {
+      "id": "dog",
+      "x": 31,
+      "y": 25
+    },
+    {
+      "id": "willow",
+      "x": 44,
+      "y": 26
+    },
+    {
+      "id": "willow",
+      "x": 49,
+      "y": 18
+    },
+    {
+      "id": "willow",
+      "x": 37,
+      "y": 41
+    },
+    {
+      "id": "willow",
+      "x": 56,
+      "y": 10
+    },
+    {
+      "id": "sheep",
+      "x": 50,
+      "y": 30
+    },
+    {
+      "id": "sheep",
+      "x": 12,
+      "y": 31
+    },
+    {
+      "id": "ducks",
+      "x": 47,
+      "y": 31
+    },
+    {
+      "id": "horses",
+      "x": 56,
+      "y": 22
+    }
+  ]
+}

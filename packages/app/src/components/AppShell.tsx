@@ -1,9 +1,10 @@
 import clsx from "clsx";
 import { Radar } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { CAMPAIGNS } from "../campaigns";
 import { SNAPSHOT, SNAPSHOT_DATE, SNAPSHOT_LABEL } from "../lib/snapshot";
+import { SITES } from "../stage/sites";
 
 // Site chrome: three-row grid, main is the only scroll container. The top
 // bar carries the campaign-level destinations; the Craft sub site adds its
@@ -60,12 +61,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                 active={pathname.startsWith("/craft/map")}
               />
               <Dot />
-              <SectionLink
-                to="/craft/city"
-                label="City"
-                active={pathname.startsWith("/craft/city")}
-              />
-              <Dot />
+              {SITES.map((site) => (
+                <Fragment key={site.id}>
+                  <SectionLink
+                    to={site.path}
+                    label={site.crumb}
+                    active={pathname.startsWith(site.path)}
+                  />
+                  <Dot />
+                </Fragment>
+              ))}
               <SectionLink
                 to="/craft/tiles"
                 label="Tiles"

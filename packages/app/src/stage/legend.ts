@@ -261,6 +261,17 @@ export const TERRAIN_NOTES: Partial<Record<Terrain, LegendNote>> = {
       zh: "丝为一家之第二作，亦为一国之第二币：布帛与钱并行，赋亦取之。五亩之宅，树之以桑，则老者可以衣帛。桑园多在城郭内外之侧，便于里中妇人采之。",
     },
   },
+  garden: {
+    title: { en: "Garden", zh: "圃" },
+    what: {
+      en: "Beds of vegetables in rows, inside a wall or beside a house.",
+      zh: "菜畦成行，在墙内或屋侧。",
+    },
+    history: {
+      en: "The Odes have the household build its threshing floor and its garden in the ninth month, and the classic five-mu homestead kept its greens at the door beside its mulberry. Inside an elite compound the garden was a walled plot behind the inner chambers, tended by the household's own hands; the Zhouli lists a garden-keeper among the officers of the domain.",
+      zh: "诗七月：九月筑场圃。五亩之宅，桑在其墙，蔬在其门。卿第之圃在寝之后，垣以围之，家人自治；周礼有场人、圃人之职。",
+    },
+  },
 };
 
 export const WATER_NOTES: Record<Water, LegendNote> = {
@@ -521,6 +532,127 @@ export const DECOR_NOTES: Record<Decor, LegendNote> = {
     history: {
       en: "The watch of a house and, in the Zhanguoce's picture of Linzi, a sport: dog-racing was one of the pastimes the persuader listed to flatter a rich city.",
       zh: "守门之犬，亦战国策临淄之乐：走犬为说客所举以夸富城之一。",
+    },
+  },
+  sheep: {
+    title: { en: "Sheep", zh: "羊" },
+    what: {
+      en: "A few sheep grazing the fallow.",
+      zh: "数羊食于休田。",
+    },
+    history: {
+      en: "The sheep is one of the six domestic animals the Zhouli counts, and the northern states drove flocks on the steppe margin. A hamlet kept a handful for wool, felt, and the altar: a sheep is what a village sacrifice could afford where a court gave an ox.",
+      zh: "羊为周礼六畜之一，北方诸国牧于塞上。一村畜数头，取毛取毡，亦以祭：村社用羊，朝廷用牛。",
+    },
+  },
+  ducks: {
+    title: { en: "Ducks", zh: "鹜" },
+    what: {
+      en: "Ducks on the muddy bank of the stream.",
+      zh: "鹜在溪畔泥岸。",
+    },
+    history: {
+      en: "A tame duck is a cheap bird for a house on water, and the Chu slips and the Qin kitchen accounts list fowl by the head among what a household or a post station kept. Where a hamlet had a pond or a ford, it had ducks.",
+      zh: "临水之家养鹜甚易，楚简、秦厨簿以只计禽。村有陂有津，则有鹜。",
+    },
+  },
+  plough: {
+    title: { en: "Plough", zh: "耒耜" },
+    what: {
+      en: "A wooden plough with an iron share, left at the field's edge.",
+      zh: "木耒铁刃，置于田畔。",
+    },
+    history: {
+      en: "Iron shares cast in state foundries turned the ox-drawn plough from a lord's tool into a household's within this age, and the statutes of Qin issued iron tools from the county store and fined a farmer who wore one out. The plough at rest is the village's own wealth, counted with its oxen.",
+      zh: "官冶铸铁刃，牛耕由公室之器渐为编户之具。秦律铁器出县库，敝之有罚。闲置之耒，一村之资，与牛并计。",
+    },
+  },
+  hemp: {
+    title: { en: "Hemp", zh: "麻" },
+    what: {
+      en: "Cut hemp stalks stood in a cone to dry.",
+      zh: "麻秆束立成锥以晒。",
+    },
+    history: {
+      en: "Hemp was the cloth of everyone who did not wear silk: the Odes have it sown in the spring and retted in the autumn, and the tax on cloth fell on the coarse weave as much as on the fine. The stalks in the yard are the household's clothing for the year.",
+      zh: "麻为不衣帛者之衣：诗有种麻沤麻之事，布赋取粗布如取细绢。院中之麻，一家一岁之衣。",
+    },
+  },
+  graves: {
+    title: { en: "Family graves", zh: "族墓" },
+    what: {
+      en: "Low earth mounds in a row, the household's dead.",
+      zh: "土冢成列，一家之先。",
+    },
+    history: {
+      en: "The dead were buried by lineage on ground set apart at the village's edge, the Zhouli's grave officer keeping the rows in order of kin. A hamlet's graves are the register that outlasts the register: who was here and for how long, on a hill above the fields they cleared.",
+      zh: "族葬于村外之地，周礼墓大夫掌其昭穆。村之族墓，籍之外之籍：何人在此，几世在此，冢在所垦之田上。",
+    },
+  },
+  lantern: {
+    title: { en: "Bronze lamp", zh: "铜灯" },
+    what: {
+      en: "A tall bronze lamp stand with its oil dish.",
+      zh: "高铜灯台，上承油盏。",
+    },
+    history: {
+      en: "The tomb of the Zhongshan king yielded a bronze lamp of fifteen branches, and every lit hall of the period was lit by stands like it, oil in a shallow dish and a wick of rush. A lamp at the door of a compound says the master receives at night.",
+      zh: "中山王墓出十五连盏铜灯，是时堂上之明皆此类：浅盘盛油，灯芯用蔺。门前设灯，主人夜有所接。",
+    },
+  },
+  tripod: {
+    title: { en: "Ding cauldron", zh: "鼎" },
+    what: {
+      en: "A bronze tripod cauldron standing in the court.",
+      zh: "铜鼎立于庭。",
+    },
+    history: {
+      en: "The ding is a cooking vessel and a rank: a king set nine, a lord seven, a great officer five, and the Zhongshan king's nine were inscribed with his warning to his heir about the ministers who eat the state. One in the court of a house says what its master is entitled to.",
+      zh: "鼎为食器亦为等：天子九，诸侯七，大夫五。中山王九鼎有铭，戒嗣子以食国之臣。庭中一鼎，见主人之位。",
+    },
+  },
+  chariot: {
+    title: { en: "Chariot", zh: "车" },
+    what: {
+      en: "A two-wheeled chariot standing idle, its pole on the ground.",
+      zh: "两轮之车闲置，辕搁于地。",
+    },
+    history: {
+      en: "A state was measured in chariots, a great house in the chariots it could field, and the royal tombs of Zhongshan and Zeng buried them by the pit. The Book of Lord Shang counts horses among the thirteen numbers; the chariot in the yard is the reason the count is kept.",
+      zh: "国以乘计，大家以所出之乘计，中山、曾侯之墓以坑葬车。商君书十三数计马；院中之车，其所以计也。",
+    },
+  },
+  plum: {
+    title: { en: "Plum tree", zh: "梅" },
+    what: {
+      en: "A single plum tree, in blossom or in fruit.",
+      zh: "梅树一株，或花或实。",
+    },
+    history: {
+      en: "The plum flowers before the leaf and before the frost is gone, and the Odes sing of its falling fruit as the season for a match. One tree in a compound's garden is the calendar its household reads.",
+      zh: "梅先叶而花，霜未尽而发；诗摽有梅，以落实为求偶之时。圃中一树，一家之历。",
+    },
+  },
+  lotus: {
+    title: { en: "Lotus pond", zh: "荷" },
+    what: {
+      en: "Lotus leaves and flowers on the still water of the compound's pond.",
+      zh: "荷叶荷花覆于池上。",
+    },
+    history: {
+      en: "The Odes put the lotus on the marsh beside the bank tree, and a house that could spare ground for water planted it: the root and seed were food, the flower the one ornament a garden had that a field did not.",
+      zh: "诗云隰有荷华。宅有余地以蓄水者植之：藕与莲子可食，其花为圃中田所无之饰。",
+    },
+  },
+  bells: {
+    title: { en: "Bell chime", zh: "编钟" },
+    what: {
+      en: "A set of bronze bells hung by size on a wooden frame.",
+      zh: "铜钟按大小悬于木簴。",
+    },
+    history: {
+      en: "A chime of bells was the music of a court and the privilege of rank: Zeng's marquis was buried with sixty-five, the Zhongshan king with his own set, and the Zhouli fixes how many faces of bells a king, a lord, and an officer may hang. A frame in a hall means feasts with music and the musicians to play it.",
+      zh: "编钟为朝廷之乐、爵位之饰：曾侯乙葬钟六十五，中山王亦有其钟，周礼定王、诸侯、大夫悬钟之面。堂有簴，则有燕乐，有乐工。",
     },
   },
 };
@@ -1023,6 +1155,127 @@ export const MARKER_NOTES: Record<Marker | "region", LegendNote> = {
     history: {
       en: "South of the palace terraces at the Zhongshan capital lay the offices, and a Zhao town gave up the clay sealing of its own assistant magistrate. Here the ward registers, the granary accounts, and the artisan and convict rosters were written and copied, the archive a county seat on the Qin frontier left tens of thousands of slips of.",
       zh: "中山灵寿城宫殿台基之南为官署区，赵柏人城出丞印封泥。里籍、仓簿、工徒之名皆书于此、录于此，秦边一县之署所遗简牍以万计。",
+    },
+  },
+  farmhouse: {
+    title: { en: "Farmhouse", zh: "农舍" },
+    what: {
+      en: "A thatched house of rammed earth with its yard fenced in wattle.",
+      zh: "夯土草顶之屋，篱围其院。",
+    },
+    history: {
+      en: "The Qin case form that describes a burgled house counts one hall and two inner rooms, each with its door, the roofs tiled, and ten mulberries at the gate; a hamlet's houses were that or less, thatched rather than tiled. Mencius' homestead of five mu is the ideal: mulberry at the wall, chickens and pigs in the yard, and a hundred mu of field beyond.",
+      zh: "封诊式封守：一宇二内，各有户，内室皆瓦盖，门桑十木。村舍如此或不及，草顶而非瓦。孟子五亩之宅为其式：墙下树桑，院有鸡豚，外有百亩之田。",
+    },
+  },
+  threshing: {
+    title: { en: "Threshing floor", zh: "场" },
+    what: {
+      en: "A round of beaten earth where the harvest is flailed and winnowed.",
+      zh: "圆形夯地，打谷扬糠之处。",
+    },
+    history: {
+      en: "The Odes have the household build its floor in the ninth month and bring the grain in by the tenth; the floor was the garden in spring and the floor in autumn, the same ground beaten hard twice a year. What was measured here was what the granary took a share of.",
+      zh: "诗七月：九月筑场圃，十月纳禾稼。春为圃，秋为场，一地岁再筑。于此所量者，仓所取其分者也。",
+    },
+  },
+  byre: {
+    title: { en: "Byre", zh: "牛牢" },
+    what: {
+      en: "An open shed with a manger, for the village oxen.",
+      zh: "有槽之敞棚，村牛所居。",
+    },
+    history: {
+      en: "An ox was worth more than a man on the register, and the Qin stable statutes inspected the oxen four times a year and fined the keeper whose beast had lost girth. A hamlet's oxen were pooled and lent: the byre is where the plough team stands.",
+      zh: "籍上一牛贵于一夫，秦厩苑律岁四校牛，牛瘦则罚其主。村牛共畜互假：牛牢即耕队所在。",
+    },
+  },
+  "audience-hall": {
+    title: { en: "Hall", zh: "堂" },
+    what: {
+      en: "The main hall on its terrace, open at the front, where the master receives.",
+      zh: "台上正堂，前面敞开，主人受客之所。",
+    },
+    history: {
+      en: "The hall stands on a rammed terrace with the host's steps on the east and the guest's on the west, and the Yili's rites of visiting are choreography for climbing them. The Kaogongji fixes the terrace height by rank. What happened here was reception, judgment, feast, and the reading of a lord's letter aloud.",
+      zh: "堂立于夯台，阼阶在东，宾阶在西，仪礼相见诸礼皆升降之仪。考工记以等定堂崇。堂上之事：受客、听讼、燕飨、读君命。",
+    },
+  },
+  chamber: {
+    title: { en: "Inner chambers", zh: "寝" },
+    what: {
+      en: "The private hall behind the audience hall, where the family lives.",
+      zh: "正堂之后之私室，家人所居。",
+    },
+    history: {
+      en: "The hall in front and the chambers behind is the rule of every house of rank, and to be admitted from the one to the other was the mark of intimacy the Analects make of it. The lady of the house kept these rooms and the household's stores.",
+      zh: "前堂后寝，凡有位之家皆然；由堂入室，论语以为亲近之征。主妇居此，掌家之藏。",
+    },
+  },
+  wing: {
+    title: { en: "Side range", zh: "厢" },
+    what: {
+      en: "A long low range of rooms along one side of the court.",
+      zh: "庭侧长屋，一列小室。",
+    },
+    history: {
+      en: "The eastern and western ranges flanked the court of a great house and held its retainers, its clerks, and its guests; the Erya says a hall with side ranges is a temple and one without is a dwelling. The retainers a chancellor fed by the hundred slept in rooms like these.",
+      zh: "东西厢夹庭，居门客、书吏、宾客。尔雅：室有东西厢曰庙，无东西厢有室曰寝。相国养客数百，皆宿于此类。",
+    },
+  },
+  gatehouse: {
+    title: { en: "Gatehouse", zh: "门塾" },
+    what: {
+      en: "The compound's gate with a keeper's room beside it.",
+      zh: "第门，旁有门房。",
+    },
+    history: {
+      en: "The room beside the gate is the shu of the ritual texts, where a caller waited and a gatekeeper sat; the Erya calls the hall at the gate's side by that name. A gate was the house's face and its account: who came, who was turned away, and who was announced.",
+      zh: "门侧之室即礼书之塾，客待于此，阍者坐于此；尔雅：门侧之堂谓之塾。门为一家之面亦为其簿：谁至，谁却，谁通。",
+    },
+  },
+  kitchen: {
+    title: { en: "Kitchen", zh: "庖" },
+    what: {
+      en: "A low building with a stove and cauldron, set apart from the halls.",
+      zh: "低屋有灶有釜，与堂寝相隔。",
+    },
+    history: {
+      en: "Mencius has the gentleman keep his distance from the kitchen, and a great house did so in plan: the cooking was done in an outbuilding by its own staff, the Zhouli's cooks and butchers scaled down to a household. The stove was also the house's fire, kept lit and watched.",
+      zh: "孟子：君子远庖厨。大家之制亦然：庖在别屋，自有其人，周礼膳夫、庖人之职缩于一家。灶亦一家之火，长燃而守之。",
+    },
+  },
+  shed: {
+    title: { en: "Chariot shed", zh: "车库" },
+    what: {
+      en: "An open shed where the house's chariot stands.",
+      zh: "敞棚，藏一家之车。",
+    },
+    history: {
+      en: "A chariot needed a roof, a groom, and horses fed on the fodder the state counted; the Zhouli has an officer for the carriages of the court and a great house kept its own. The shed by the gate is the house's readiness to go to court, to war, or to a hunt.",
+      zh: "车须有棚、有圉、有刍以饲马，刍则国所计。周礼有巾车掌王之车，大家自有其库。门侧之库，一家赴朝、赴战、赴猎之备。",
+    },
+  },
+  pavilion: {
+    title: { en: "Pavilion", zh: "榭" },
+    what: {
+      en: "An open pavilion in the garden, on a low base.",
+      zh: "圃中敞榭，立于低台。",
+    },
+    history: {
+      en: "Terraces and pavilions were the pleasure a ruler was warned against building and a great house built anyway: a roof over pillars where the master drank, read, and heard music with the garden round him. The Zuozhuan lists a ruler's terraces among his faults, which is how we know how common they were.",
+      zh: "台榭为君主所戒而大家仍营之：柱上一顶，主人饮酒读书听乐，圃在其周。左传数君之过多及台榭，其常可知。",
+    },
+  },
+  screen: {
+    title: { en: "Screen wall", zh: "塞门" },
+    what: {
+      en: "A short free-standing wall inside the gate that blocks the view of the court.",
+      zh: "门内独立短墙，蔽庭中之视。",
+    },
+    history: {
+      en: "A screen inside the gate was the mark of a ruler's house, and the Analects fault Guan Zhong for setting one up as a minister. A great house of this age set one anyway: a caller stepping through the gate saw a wall and not the master, and turned to be received.",
+      zh: "树塞门为国君之制，论语讥管仲以大夫树之。此世大家仍设之：客入门见墙不见主，折而后见。",
     },
   },
 };

@@ -812,6 +812,18 @@ export const ARCHETYPES: StageArchetype[] = [
   "convict",
   "overseer",
   "musician",
+  // the village and the house
+  "elder",
+  "herdsman",
+  "woodcutter",
+  "fisher",
+  "maiden",
+  "master",
+  "lady",
+  "steward",
+  "maid",
+  "cook",
+  "groom",
 ];
 
 export const EFFECTS: StageEffect[] = [

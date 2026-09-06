@@ -128,7 +128,20 @@ export type StageArchetype =
   | "child"
   | "convict"
   | "overseer"
-  | "musician";
+  | "musician"
+  // the village and the house: the elders and hands of a hamlet, the
+  // master, the lady, and the household of an elite compound
+  | "elder"
+  | "herdsman"
+  | "woodcutter"
+  | "fisher"
+  | "maiden"
+  | "master"
+  | "lady"
+  | "steward"
+  | "maid"
+  | "cook"
+  | "groom";
 
 /** the effect a direction plays at its place or on arrival */
 export type StageEffect =

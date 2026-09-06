@@ -237,6 +237,39 @@ describe("transitions", () => {
     expect(againstOf(grid, new Set())[3][2]).toBeNull();
   });
 
+  it("breaks a tie toward the lower ground the set can draw it against", () => {
+    // a wall between the yard and the terrace: three of each beneath the
+    // wall's row, and the terrace is drawn higher, but only the yard has a
+    // sheet, and the plain wall it would otherwise fall back to is drawn
+    // against grass and wears a collar of it
+    const walled: Geography = {
+      width: 5,
+      height: 3,
+      fills: [
+        { terrain: "earth", rect: [0, 0, 5, 3] },
+        { terrain: "platform", rect: [0, 2, 5, 1] },
+        {
+          terrain: "wall",
+          path: [
+            [0, 1],
+            [4, 1],
+          ],
+          width: 1,
+        },
+      ],
+      places: {},
+    };
+    const walledGrid = rasterize(walled);
+    const earthOnly = new Set([pairIdOf("wall", "earth")]);
+    expect(againstOf(walledGrid, earthOnly)[1][2]).toBe("earth");
+    // with both sheets the tie still goes to the ground drawn highest
+    const both = new Set([
+      pairIdOf("wall", "earth"),
+      pairIdOf("wall", "platform"),
+    ]);
+    expect(againstOf(walledGrid, both)[1][2]).toBe("platform");
+  });
+
   it("runs the lower ground whole beneath a neighbour that draws the boundary", () => {
     const against = againstOf(grid, pairs);
     // the range's tile carries the whole boundary, so the wood beneath it

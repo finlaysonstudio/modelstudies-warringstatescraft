@@ -378,6 +378,52 @@ export function CraftHome() {
         </section>
 
         <section
+          id="village"
+          className="scroll-mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
+          aria-label="Village"
+        >
+          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+            Village
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            A hamlet at ten metres a tile: six farmhouses on a lane with a well,
+            a granary, a threshing floor, and a byre, the altar of the soil god
+            on the rise and the family graves beyond it, millet fields to three
+            sides, a brook with its ford and its pond, and the post station on
+            the road out, walked by one ward of a household register.
+          </p>
+          <Link
+            to="/craft/village"
+            className="mt-4 inline-block cursor-pointer rounded-sm border border-white/10 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-zinc-300 uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+          >
+            walk the village →
+          </Link>
+        </section>
+
+        <section
+          id="house"
+          className="scroll-mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
+          aria-label="House"
+        >
+          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+            House
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            The compound of a great officer inside a capital, at a scale where a
+            hall is four tiles wide: the gate and its screen, the forecourt of
+            shed, stable, kitchen, and granary, the hall on its terrace between
+            two ranges, and the inner wall closing the chambers, the garden, and
+            the pond, walked by the family, its retainers, and its servants.
+          </p>
+          <Link
+            to="/craft/house"
+            className="mt-4 inline-block cursor-pointer rounded-sm border border-white/10 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-zinc-300 uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+          >
+            walk the house →
+          </Link>
+        </section>
+
+        <section
           id="tiles"
           className="scroll-mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
           aria-label="Tiles"
