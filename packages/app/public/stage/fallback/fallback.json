@@ -146,6 +146,30 @@
       "kind": "blob",
       "tileset": "terrain.field.tsj"
     },
+    "terrain.earth": {
+      "file": "terrain.earth.png",
+      "width": 128,
+      "height": 384,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.earth.tsj"
+    },
+    "terrain.platform": {
+      "file": "terrain.platform.png",
+      "width": 128,
+      "height": 384,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.platform.tsj"
+    },
+    "terrain.mulberry": {
+      "file": "terrain.mulberry.png",
+      "width": 128,
+      "height": 384,
+      "pack": "fallback",
+      "kind": "blob",
+      "tileset": "terrain.mulberry.tsj"
+    },
     "water.river": {
       "file": "water.river.png",
       "width": 128,
@@ -1320,6 +1344,516 @@
         }
       }
     },
+    "sprite.potter": {
+      "file": "sprite.potter.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.founder": {
+      "file": "sprite.founder.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.smith": {
+      "file": "sprite.smith.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.carpenter": {
+      "file": "sprite.carpenter.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.tanner": {
+      "file": "sprite.tanner.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.dyer": {
+      "file": "sprite.dyer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.jadeworker": {
+      "file": "sprite.jadeworker.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.weaver": {
+      "file": "sprite.weaver.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.butcher": {
+      "file": "sprite.butcher.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.carrier": {
+      "file": "sprite.carrier.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.matron": {
+      "file": "sprite.matron.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.child": {
+      "file": "sprite.child.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.convict": {
+      "file": "sprite.convict.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.overseer": {
+      "file": "sprite.overseer.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
+    "sprite.musician": {
+      "file": "sprite.musician.png",
+      "width": 48,
+      "height": 128,
+      "pack": "fallback",
+      "kind": "sprite",
+      "sprite": {
+        "frameWidth": 16,
+        "frameHeight": 32,
+        "columns": 3,
+        "walk": {
+          "down": [
+            0,
+            1,
+            2
+          ],
+          "left": [
+            3,
+            4,
+            5
+          ],
+          "right": [
+            6,
+            7,
+            8
+          ],
+          "up": [
+            9,
+            10,
+            11
+          ]
+        }
+      }
+    },
     "effect.scroll": {
       "file": "effect.scroll.png",
       "width": 96,
@@ -1787,6 +2321,111 @@
       "pack": "fallback",
       "kind": "image"
     },
+    "image.gate": {
+      "file": "image.gate.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.tower": {
+      "file": "image.tower.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.temple": {
+      "file": "image.temple.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.granary": {
+      "file": "image.granary.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.well": {
+      "file": "image.well.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.kiln": {
+      "file": "image.kiln.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.smithy": {
+      "file": "image.smithy.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.workshop": {
+      "file": "image.workshop.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.dyeworks": {
+      "file": "image.dyeworks.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.stall": {
+      "file": "image.stall.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.house": {
+      "file": "image.house.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.mansion": {
+      "file": "image.mansion.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.barracks": {
+      "file": "image.barracks.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.stable": {
+      "file": "image.stable.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "image.office": {
+      "file": "image.office.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
     "decor.pine": {
       "file": "decor.pine.png",
       "width": 32,
@@ -1847,6 +2486,111 @@
       "file": "decor.rocks.png",
       "width": 32,
       "height": 32,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.cart": {
+      "file": "decor.cart.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.chickens": {
+      "file": "decor.chickens.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.pigs": {
+      "file": "decor.pigs.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.rack": {
+      "file": "decor.rack.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.pots": {
+      "file": "decor.pots.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.woodpile": {
+      "file": "decor.woodpile.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.banner": {
+      "file": "decor.banner.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.brazier": {
+      "file": "decor.brazier.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.haystack": {
+      "file": "decor.haystack.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.millstone": {
+      "file": "decor.millstone.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.fence": {
+      "file": "decor.fence.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.awning": {
+      "file": "decor.awning.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.jars": {
+      "file": "decor.jars.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.willow": {
+      "file": "decor.willow.png",
+      "width": 16,
+      "height": 16,
+      "pack": "fallback",
+      "kind": "image"
+    },
+    "decor.dog": {
+      "file": "decor.dog.png",
+      "width": 16,
+      "height": 16,
       "pack": "fallback",
       "kind": "image"
     }

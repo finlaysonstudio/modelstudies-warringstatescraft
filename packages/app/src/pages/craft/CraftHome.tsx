@@ -355,6 +355,29 @@ export function CraftHome() {
         </section>
 
         <section
+          id="city"
+          className="scroll-mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
+          aria-label="City"
+        >
+          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+            City
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            A model capital of the period on the same stage: the Zhongshan
+            capital's twin-city plan under the Kaogongji's rule, its palace
+            terraces, temple, altar, market well, kilns, and wards each with a
+            note from the statutes and the site reports, walked by the townsfolk
+            the registers counted.
+          </p>
+          <Link
+            to="/craft/city"
+            className="mt-4 inline-block cursor-pointer rounded-sm border border-white/10 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-zinc-300 uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+          >
+            walk the city →
+          </Link>
+        </section>
+
+        <section
           id="tiles"
           className="scroll-mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
           aria-label="Tiles"

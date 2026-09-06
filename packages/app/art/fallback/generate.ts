@@ -75,6 +75,9 @@ const TERRAIN_COLORS: Record<
   shu: { fill: "#a29a86", rim: "#726b5c", dots: "#8e8674" },
   marsh: { fill: "#4f7a5a", rim: "#3a5c44", dots: "#436a4e" },
   field: { fill: "#9bb04a", rim: "#7a8c34", dots: "#889a3e" },
+  earth: { fill: "#c8b48c", rim: "#a8946e", dots: "#bda781" },
+  platform: { fill: "#d2b072", rim: "#9c7d48" },
+  mulberry: { fill: "#8fb04f", rim: "#5e4a30", dots: "#6f8f3a" },
 };
 
 const WATER_COLORS: Record<Water, string[]> = {
@@ -191,6 +194,22 @@ const SPRITE_COLORS: Record<StageArchetype, { body: string; accent: string }> =
     drummer: { body: "#a04000", accent: "#f3e7c9" },
     "standard-bearer": { body: "#922b21", accent: "#f7dc6f" },
     ox: { body: "#8d6748", accent: "#f2f0e8" },
+    // the town
+    potter: { body: "#9a9a92", accent: "#c8b48c" },
+    founder: { body: "#4a3b2a", accent: "#e9a23b" },
+    smith: { body: "#5a3d24", accent: "#8c8c88" },
+    carpenter: { body: "#d9c9a3", accent: "#8b5a2b" },
+    tanner: { body: "#b8863b", accent: "#6b4f31" },
+    dyer: { body: "#d9c9a3", accent: "#2b4a8a" },
+    jadeworker: { body: "#8c8c88", accent: "#7fd1ae" },
+    weaver: { body: "#7a8f6a", accent: "#f2f0e8" },
+    butcher: { body: "#8b5a2b", accent: "#e0d7c5" },
+    carrier: { body: "#d9c9a3", accent: "#8b5a2b" },
+    matron: { body: "#5a3f2e", accent: "#f2f0e8" },
+    child: { body: "#c8a165", accent: "#f1c9a5" },
+    convict: { body: "#b04a2a", accent: "#d9c9a3" },
+    overseer: { body: "#1b1b1b", accent: "#b3261e" },
+    musician: { body: "#f3e7c9", accent: "#3b5bdb" },
   };
 
 const SKIN = rgba("#f1c9a5");
@@ -968,8 +987,23 @@ const marker = (kind: Marker): Image => {
       rect(out, 6, 0, 4, 16, rgba("#4a6b5e"));
       return out;
     }
-    default:
-      return blankImage(16, 16);
+    default: {
+      // a marker without a drawing of its own reads as a plain gabled house,
+      // so the 16 px set stays honest about a place it cannot yet draw
+      const out = blankImage(16, 16);
+      rect(out, 3, 8, 10, 7, rgba("#d9c39a"));
+      triangle(
+        out,
+        [
+          [1, 8],
+          [15, 8],
+          [8, 3],
+        ],
+        rgba("#8b5a2b"),
+      );
+      rect(out, 7, 11, 2, 4, wood);
+      return out;
+    }
   }
 };
 
@@ -1076,8 +1110,15 @@ const decor = (kind: Decor): Image => {
       disc(out, 20, 14, 4, shade(stone, 1.1));
       return out;
     }
-    default:
-      return blankImage(16, 16);
+    default: {
+      // set dressing without a drawing of its own: a small wooden thing on
+      // the ground, so the 16 px set shows something where the map places it
+      const out = blankImage(16, 16);
+      rect(out, 4, 8, 8, 6, wood);
+      rect(out, 4, 8, 8, 1, shade(wood, 1.3));
+      rect(out, 6, 5, 4, 3, earth);
+      return out;
+    }
   }
 };
 

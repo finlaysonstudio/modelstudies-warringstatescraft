@@ -97,6 +97,11 @@ export const DRAW_ORDER: readonly Ground[] = [
   "taihang",
   "luliang",
   "shu",
+  // the town's grounds: the yard is laid over the country, the orchard and
+  // the terrace over the yard, and the road and the wall over all of them
+  "earth",
+  "mulberry",
+  "platform",
   "cobble",
   "road",
   "wall",
@@ -123,6 +128,9 @@ export const LETTERS: Record<Ground, string> = {
   shu: "K",
   marsh: "%",
   field: '"',
+  earth: "_",
+  platform: "=",
+  mulberry: "m",
   river: "~",
   sea: "=",
 };

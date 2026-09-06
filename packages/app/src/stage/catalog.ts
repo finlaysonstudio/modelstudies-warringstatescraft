@@ -42,6 +42,13 @@ export const TERRAINS = [
   "shu",
   "marsh",
   "field",
+  // the town: the grounds a settlement is built of. `earth` is the beaten
+  // yard every ward and market stands on, `platform` the rammed-earth
+  // terrace a palace or a temple is raised on, `mulberry` the orchard rows
+  // that feed the silk the household weaves.
+  "earth",
+  "platform",
+  "mulberry",
 ] as const;
 export type Terrain = (typeof TERRAINS)[number];
 
@@ -63,6 +70,33 @@ export type Water = (typeof WATERS)[number];
  * the Jixia academy, the altar and tripods of the royal domain, and the
  * weir on the Great Ditch.
  */
+/**
+ * What a settlement map places inside the wall: the Kaogongji's ideal
+ * capital (gates, temple, court, market), the Lingshou excavation (the
+ * terraces, the kilns and foundries, the offices south of the palace), and
+ * the Guanzi's separation of the four orders into wards of their own. They
+ * are catalog markers like any other, so the fallback draws them and the
+ * legend explains them, but no chapter and no episode places one on the
+ * overworld.
+ */
+export const SETTLEMENT_MARKERS = [
+  "gate",
+  "tower",
+  "temple",
+  "granary",
+  "well",
+  "kiln",
+  "smithy",
+  "workshop",
+  "dyeworks",
+  "stall",
+  "house",
+  "mansion",
+  "barracks",
+  "stable",
+  "office",
+] as const;
+
 export const MARKERS = [
   "court",
   "town",
@@ -98,6 +132,7 @@ export const MARKERS = [
   "falls",
   "peak",
   "gorge",
+  ...SETTLEMENT_MARKERS,
 ] as const;
 export type Marker = (typeof MARKERS)[number];
 
@@ -115,6 +150,22 @@ export const DECOR = [
   "horses",
   "grove",
   "rocks",
+  // the town: the set dressing of a ward, a yard, and a market row
+  "cart",
+  "chickens",
+  "pigs",
+  "rack",
+  "pots",
+  "woodpile",
+  "banner",
+  "brazier",
+  "haystack",
+  "millstone",
+  "fence",
+  "awning",
+  "jars",
+  "willow",
+  "dog",
 ] as const;
 export type Decor = (typeof DECOR)[number];
 
@@ -187,6 +238,22 @@ export const ARCHETYPES: readonly StageArchetype[] = [
   "drummer",
   "standard-bearer",
   "ox",
+  // the town: trades, households, and the figures the registers count
+  "potter",
+  "founder",
+  "smith",
+  "carpenter",
+  "tanner",
+  "dyer",
+  "jadeworker",
+  "weaver",
+  "butcher",
+  "carrier",
+  "matron",
+  "child",
+  "convict",
+  "overseer",
+  "musician",
 ];
 
 /**
@@ -229,6 +296,23 @@ export const ARCHETYPE_SPRITES: Record<StageArchetype, string[]> = {
   drummer: ["sprite.drummer"],
   "standard-bearer": ["sprite.standard-bearer"],
   ox: ["sprite.ox"],
+  // the town: each trade's own sprite, then the nearest figure the older
+  // sets already draw
+  potter: ["sprite.potter", "sprite.labourer"],
+  founder: ["sprite.founder", "sprite.labourer"],
+  smith: ["sprite.smith", "sprite.labourer"],
+  carpenter: ["sprite.carpenter", "sprite.labourer"],
+  tanner: ["sprite.tanner", "sprite.labourer"],
+  dyer: ["sprite.dyer", "sprite.labourer"],
+  jadeworker: ["sprite.jadeworker", "sprite.scholar"],
+  weaver: ["sprite.weaver", "sprite.peasant"],
+  butcher: ["sprite.butcher", "sprite.merchant"],
+  carrier: ["sprite.carrier", "sprite.labourer"],
+  matron: ["sprite.matron", "sprite.peasant"],
+  child: ["sprite.child", "sprite.peasant"],
+  convict: ["sprite.convict", "sprite.hostage"],
+  overseer: ["sprite.overseer", "sprite.clerk"],
+  musician: ["sprite.musician", "sprite.scholar"],
 };
 
 export const terrainId = (terrain: Terrain): string => `terrain.${terrain}`;
@@ -252,7 +336,7 @@ export const seatColor = (index: number): number =>
 export type PlaceRule = "route" | "at" | "home";
 
 /** where a kind may be used (a mirror of `DirectionScope`) */
-export type DirectionScope = "game" | "annals";
+export type DirectionScope = "game" | "annals" | "town";
 
 export interface DirectionRule {
   /** 0..7, the ladder band the kind belongs to */
@@ -465,6 +549,14 @@ export const DIRECTION_RULES: Record<StageDirectionKind, DirectionRule> = {
     count: 3,
     effect: "grey",
   },
+  stroll: { band: 0, scope: "town", places: "route", actor: "peasant" },
+  labour: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "labourer",
+    effect: "smoke",
+  },
 };
 
 /** One-line captions per direction (a browser mirror of the vocabulary's glosses). */
@@ -522,4 +614,6 @@ export const DIRECTION_CAPTIONS: Record<
   bury: { en: "buries the army", zh: "坑卒" },
   surrender: { en: "surrenders", zh: "出降" },
   partition: { en: "partitions", zh: "瓜分" },
+  stroll: { en: "crosses the town", zh: "过市" },
+  labour: { en: "works at the trade", zh: "作工" },
 };

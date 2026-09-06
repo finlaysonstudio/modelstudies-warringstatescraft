@@ -22,9 +22,12 @@ export type PlaceRule =
  * is offered them, the fallback reads a decision for them, the random stager
  * draws from them. `annals` kinds belong to the authored episodes of the
  * period and reach none of those, which is what keeps a history out of a
- * staging (`stage.spec.ts` holds it).
+ * staging (`stage.spec.ts` holds it). `town` kinds are the settlement map's
+ * ambient life (a figure crossing a ward, a trade at work), played by the
+ * explorer page from a loop rather than by any script; an authored episode
+ * may use them as it uses the annals kinds.
  */
-export type DirectionScope = "game" | "annals";
+export type DirectionScope = "game" | "annals" | "town";
 
 export interface DirectionRule {
   /** 0..7, the ladder band the kind belongs to */
@@ -721,6 +724,22 @@ export const DIRECTIONS: Record<StageDirectionKind, DirectionRule> = {
     effect: "grey",
     gloss: "a state is divided among the houses that held it",
   },
+  // the town: what the settlement map plays by itself
+  stroll: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    gloss: "a townsperson walks from one place in the settlement to another",
+  },
+  labour: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "labourer",
+    effect: "smoke",
+    gloss: "a trade at work: a figure stands at its shop and the kiln smokes",
+  },
 };
 
 export const DIRECTION_KINDS = Object.keys(DIRECTIONS) as StageDirectionKind[];
@@ -737,7 +756,7 @@ export const scopeOf = (kind: StageDirectionKind): DirectionScope =>
 export const directionsFor = (scope: DirectionScope): StageDirectionKind[] =>
   scope === "annals"
     ? DIRECTION_KINDS
-    : DIRECTION_KINDS.filter((kind) => scopeOf(kind) === "game");
+    : DIRECTION_KINDS.filter((kind) => scopeOf(kind) === scope);
 
 /** the played vocabulary, computed once */
 export const GAME_KINDS: StageDirectionKind[] = directionsFor("game");
@@ -777,6 +796,22 @@ export const ARCHETYPES: StageArchetype[] = [
   "drummer",
   "standard-bearer",
   "ox",
+  // the town: the four orders and the trades of the Kaogongji
+  "potter",
+  "founder",
+  "smith",
+  "carpenter",
+  "tanner",
+  "dyer",
+  "jadeworker",
+  "weaver",
+  "butcher",
+  "carrier",
+  "matron",
+  "child",
+  "convict",
+  "overseer",
+  "musician",
 ];
 
 export const EFFECTS: StageEffect[] = [

@@ -143,6 +143,13 @@ export interface OverworldConfig extends OverworldCallbacks {
   /** seat → colour */
   colors: Record<string, number>;
   mapUrl?: string;
+  /** the named-feature sidecar the map was built with (defaults to the overworld's) */
+  featuresUrl?: string;
+  /**
+   * Whether a seat's colour flies over its home and its actors (default
+   * true). A town has no seats to tell apart, so the settlement turns it off.
+   */
+  flags?: boolean;
   /** the game canvas in logical pixels (defaults to the watch page's view) */
   view?: { width: number; height: number };
   /** scrolling pans, the map is clickable, and the camera opens on the whole of it */
@@ -232,7 +239,8 @@ export class OverworldScene extends Phaser.Scene {
     );
     this.load.tilemapTiledJSON("overworld", this.config.mapUrl ?? MAP_URL);
     // the named country, only where a reader can click it
-    if (this.config.interactive) this.load.json("features", FEATURES_URL);
+    if (this.config.interactive)
+      this.load.json("features", this.config.featuresUrl ?? FEATURES_URL);
     const image = (id: string): void => {
       const asset = manifest.assets[id];
       if (asset) this.load.image(id, asset.url);
@@ -398,7 +406,7 @@ export class OverworldScene extends Phaser.Scene {
       this.homes[seat] = home.home;
       const point = this.places[home.home];
       const color = this.config.colors[seat];
-      if (point && color !== undefined) {
+      if (point && color !== undefined && this.config.flags !== false) {
         const u = this.unit;
         this.add
           .rectangle(point.x - 14 * u, point.y - 18 * u, 6 * u, 4 * u, color)
@@ -998,7 +1006,7 @@ export class OverworldScene extends Phaser.Scene {
         }
       });
       const lead = actors[0];
-      if (lead) {
+      if (lead && this.config.flags !== false) {
         const u = this.unit;
         const flag = this.add
           .rectangle(

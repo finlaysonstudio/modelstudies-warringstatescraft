@@ -181,10 +181,12 @@ if (isMain) {
     const at = args.indexOf(`--${name}`);
     return at === -1 ? undefined : args[at + 1];
   };
+  // `--geo <path>` renders another geography (the settlement's) with the same tiles
+  const geoFile = flag("geo")
+    ? path.resolve(flag("geo")!)
+    : path.join(here, "geography.json");
   const geo = JSON.parse(
-    await (
-      await import("node:fs/promises")
-    ).readFile(path.join(here, "geography.json"), "utf8"),
+    await (await import("node:fs/promises")).readFile(geoFile, "utf8"),
   ) as Geography;
   const stage = path.join(repo, "packages/app/public/stage");
   const { stageSetOf } = await import("../../src/stage/sets");
@@ -203,7 +205,11 @@ if (isMain) {
       : undefined,
   });
   const out =
-    flag("out") ?? path.join(repo, `var/preview/overworld-${set.id}.png`);
+    flag("out") ??
+    path.join(
+      repo,
+      `var/preview/${path.basename(path.dirname(geoFile))}-${set.id}.png`,
+    );
   await (
     await import("node:fs/promises")
   ).mkdir(path.dirname(out), {

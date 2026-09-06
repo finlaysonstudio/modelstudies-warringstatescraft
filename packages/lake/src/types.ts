@@ -41,6 +41,7 @@ export const LAKE_COLLECTIONS = [
   "method",
   "instrument",
   "house",
+  "world",
 ] as const;
 export type LakeCollection = (typeof LAKE_COLLECTIONS)[number];
 
@@ -49,7 +50,7 @@ export interface LakeManifest {
   id: string;
   title: string;
   collection: LakeCollection;
-  /** 1 period, 2 situation, 3 method, 4 instrument, 5 house */
+  /** 1 period, 2 situation, 3 method, 4 instrument, 5 house, 6 world */
   tier: number;
   use: LakeUse;
   rights: LakeRights;

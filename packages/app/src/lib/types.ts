@@ -966,7 +966,10 @@ export type StageDirectionKind =
   | "tomb-burn"
   | "bury"
   | "surrender"
-  | "partition";
+  | "partition"
+  // the town (scope "town"): the settlement map's ambient life, never coded
+  | "stroll"
+  | "labour";
 
 export type StageArchetype =
   | "envoy"
@@ -1003,7 +1006,23 @@ export type StageArchetype =
   | "charioteer"
   | "drummer"
   | "standard-bearer"
-  | "ox";
+  | "ox"
+  // the town: the four orders and the trades of the Kaogongji
+  | "potter"
+  | "founder"
+  | "smith"
+  | "carpenter"
+  | "tanner"
+  | "dyer"
+  | "jadeworker"
+  | "weaver"
+  | "butcher"
+  | "carrier"
+  | "matron"
+  | "child"
+  | "convict"
+  | "overseer"
+  | "musician";
 
 export type StageEffect =
   | "scroll"

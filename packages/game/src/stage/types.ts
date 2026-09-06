@@ -54,6 +54,9 @@ export type StageDirectionKind =
   | "enthrone"
   | "usurp"
   | "partition"
+  // the town (scope "town"): the settlement map's ambient life, never coded
+  | "stroll"
+  | "labour"
   | "abdicate"
   | "audience"
   | "debate"
@@ -109,7 +112,23 @@ export type StageArchetype =
   | "charioteer"
   | "drummer"
   | "standard-bearer"
-  | "ox";
+  | "ox"
+  // the town: the four orders and the trades of the Kaogongji
+  | "potter"
+  | "founder"
+  | "smith"
+  | "carpenter"
+  | "tanner"
+  | "dyer"
+  | "jadeworker"
+  | "weaver"
+  | "butcher"
+  | "carrier"
+  | "matron"
+  | "child"
+  | "convict"
+  | "overseer"
+  | "musician";
 
 /** the effect a direction plays at its place or on arrival */
 export type StageEffect =

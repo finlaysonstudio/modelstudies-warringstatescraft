@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 // the episodes are imported from their own module rather than the package
 // index, which pulls the node graph this package's DOM-lib typecheck refuses
 import { listEpisodes } from "../../../../game/src/annals/episodes";
-import { MARKERS } from "../../stage/catalog";
+import { MARKERS, SETTLEMENT_MARKERS } from "../../stage/catalog";
 
 /**
  * What the Annals put on the country has to be something the map can draw.
@@ -62,8 +62,12 @@ describe("what the Annals leave on the map", () => {
         if ("marker" in change) used.add(change.marker);
       }
     }
+    // the settlement markers are the town's furniture and no episode is
+    // staged inside a town, so they are not a reserve the Annals could draw on
+    const settlement = new Set<string>(SETTLEMENT_MARKERS);
     const spare = MARKERS.filter(
-      (marker) => !used.has(marker) && !PLAYED.has(marker),
+      (marker) =>
+        !used.has(marker) && !PLAYED.has(marker) && !settlement.has(marker),
     );
     expect(spare).toEqual(["foundry", "bridge", "ferry"]);
   });

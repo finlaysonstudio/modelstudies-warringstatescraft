@@ -127,7 +127,8 @@ redistributed. Cite it, or take the passage from `zuozhuan-zh` instead. Four RAN
 `use-of-force`. `method` topics: `llm-wargaming`, `wargame-design`, `crisis-base-rates`,
 `escalation`.
 
-`--tier` mirrors collection: 1 period, 2 situation, 3 method, 5 house.
+`--tier` mirrors collection: 1 period, 2 situation, 3 method, 5 house, 6 world. `world` topics:
+`lingshou`, `xue`, `boren`, `fangmatan`, `documents`, `trades`, `building`, `capitals`.
 
 `house-simulates-index` is the one document holding every scenario's `simulates` line. It is
 `use: reader`, which is why a scenario export can sit in the prompt pool without carrying its
@@ -143,6 +144,13 @@ never by transcribing it.
 **Ground a `simulates` line.** Search `--use reader --collection situation --topic <topic>`.
 CRS documents are short and current; FRUS volumes are long and narrative. The `simulates`
 sentence never reaches a prompt, so the reader side is exactly where it belongs.
+
+**Ground a settlement map or a legend note.** Search `--use reader --collection world`. The
+collection is the archaeology of the city (Lingshou, Xue, Boren, the Fangmatan boards) beside
+the encyclopaedia's account of the excavated slips; it names modern dates, metres, and living
+archaeologists, so it is reader-side and never a prompt. The normative texts it is read against
+(the *Kaogongji* inside `zhouli-zh`, `guanzi-zh`, the Mohist siege chapters in `mozi-zh`) and
+the excavated statutes (`shuihudi-zh`, `baoshan-zh`) are period documents on the prompt side.
 
 **Check a method claim.** `--use internal` or `--use any --collection method`. The two arXiv
 papers behind the replication are here, as are the crisis datasets behind base rates.

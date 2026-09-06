@@ -9,6 +9,7 @@ import { Chapter } from "./pages/craft/Chapter";
 import { Interview } from "./pages/craft/Interview";
 import { CraftHome } from "./pages/craft/CraftHome";
 import { Overworld } from "./pages/craft/Overworld";
+import { Settlement } from "./pages/craft/Settlement";
 import { Play } from "./pages/craft/Play";
 import { Watch } from "./pages/craft/Watch";
 import { Home } from "./pages/Home";
@@ -31,6 +32,7 @@ if (root) {
             <Route path="/craft/chapters/:id" element={<Chapter />} />
             <Route path="/craft/studies/:id" element={<StudyView />} />
             <Route path="/craft/map" element={<Overworld />} />
+            <Route path="/craft/city" element={<Settlement />} />
             <Route path="/craft/tiles" element={<Tiles />} />
             <Route path="/craft/survey" element={<Survey />} />
             <Route path="/craft/survey/:interviewId" element={<Interview />} />

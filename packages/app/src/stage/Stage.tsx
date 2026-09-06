@@ -6,7 +6,7 @@ import type { StageBeat, StageScript, StageSequence } from "../lib/types";
 import { loadStageManifest } from "./assets";
 import type { StagePlan } from "./beats";
 import { DIRECTION_CAPTIONS } from "./catalog";
-import { featureFor, KIND_LABELS, legendFor } from "./legend";
+import { featureFor, KIND_LABELS, legendFor, type FeatureNote } from "./legend";
 import {
   OverworldScene,
   VIEW_HEIGHT,
@@ -47,6 +47,19 @@ export interface StageProps {
   eyebrow?: string | false;
   /** which art set to play on (default `DEFAULT_STAGE_SET`) */
   set?: StageSetId;
+  /**
+   * Another map built for the same set (the settlement): the Tiled file and
+   * the feature sidecar it was rasterized with. Absent, the set's overworld.
+   */
+  map?: { url: string; features?: string };
+  /** whether seat colours fly over homes and actors (default true) */
+  flags?: boolean;
+  /** notes for the named features this map draws, when they are not the overworld's */
+  featureNotes?: Record<string, FeatureNote>;
+  /** called each time the beat queue runs dry, so a page can keep it fed */
+  onIdle?: () => void;
+  /** Called once the scene has loaded its map and is ready to play beats. */
+  onReady?: () => void;
 }
 
 type Status =
@@ -94,6 +107,11 @@ export function Stage({
   follow = true,
   eyebrow,
   set: setId = DEFAULT_STAGE_SET,
+  map,
+  flags = true,
+  featureNotes,
+  onIdle,
+  onReady,
 }: StageProps) {
   const set = stageSet(setId);
   const host = useRef<HTMLDivElement>(null);
@@ -108,6 +126,12 @@ export function Stage({
   const [idle, setIdle] = useState(true);
   const [pick, setPick] = useState<StagePick | null>(null);
   const [zoom, setZoom] = useState<StageZoom | null>(null);
+  // the scene is built once and the page's idle handler may change with its
+  // own state, so the scene calls through a ref rather than a stale closure
+  const onIdleRef = useRef(onIdle);
+  onIdleRef.current = onIdle;
+  const onReadyRef = useRef(onReady);
+  onReadyRef.current = onReady;
 
   useEffect(() => {
     let cancelled = false;
@@ -128,7 +152,9 @@ export function Stage({
           view,
           interactive,
           follow,
-          mapUrl: set.map,
+          mapUrl: map?.url ?? set.map,
+          featuresUrl: map?.features,
+          flags,
           onReady: () => {
             if (cancelled) return;
             sceneRef.current = scene;
@@ -136,6 +162,7 @@ export function Stage({
               phase: "ready",
               sources: manifest.sources.join(" + "),
             });
+            onReadyRef.current?.();
           },
           onBeatStart: (beat, plan) => {
             if (cancelled) return;
@@ -143,7 +170,9 @@ export function Stage({
             setCurrent({ beat, plan });
           },
           onIdle: () => {
-            if (!cancelled) setIdle(true);
+            if (cancelled) return;
+            setIdle(true);
+            onIdleRef.current?.();
           },
           onPick: (picked) => {
             if (!cancelled) setPick(picked);
@@ -186,8 +215,8 @@ export function Stage({
       sceneRef.current = null;
       game?.destroy(true);
     };
-    // the scene is built once per script and set; names and colours travel with it
-  }, [script.id, set.id]);
+    // the scene is built once per script, set, and map; names and colours travel with it
+  }, [script.id, set.id, map?.url]);
 
   useEffect(() => {
     if (status.phase !== "ready" || !sceneRef.current) return;
@@ -241,9 +270,11 @@ export function Stage({
   // a place standing on a named feature is read as both: the marker says what
   // a ford is, and the feature says what this river is (the Jing's crossing
   // carries the Jing's history)
-  const feature = featureFor(
-    pick?.feature ?? (pick?.kind === "place" ? pick.id : undefined),
-  );
+  const featureId =
+    pick?.feature ?? (pick?.kind === "place" ? pick.id : undefined);
+  const feature =
+    (featureId ? featureNotes?.[featureId] : undefined) ??
+    (featureNotes ? null : featureFor(featureId));
   const note = kindNote ?? feature;
   const what = (pick?.feature ? feature?.what : kindNote?.what) ?? note?.what;
   const history = feature?.history ?? note?.history;

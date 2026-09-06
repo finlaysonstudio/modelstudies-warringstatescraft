@@ -228,6 +228,39 @@ export const TERRAIN_NOTES: Partial<Record<Terrain, LegendNote>> = {
       zh: "国之根本。田有顷亩，著于版籍，按亩而税，以军功赐田：功名之酬，尽在于此。",
     },
   },
+  earth: {
+    title: { en: "Beaten earth", zh: "夯地" },
+    what: {
+      en: "The tamped yard a ward, a market, or a workshop floor stands on.",
+      zh: "里巷、市肆、作坊所据之场院，夯土为地。",
+    },
+    history: {
+      en: "Inside the wall nearly everything stood on packed earth: the market ground, the lanes between the wards, the floors of the workshops the excavators found at Lingshou and Boren. A Qin case form describes one house and its yard in this material, room by room, down to the height of the back wall and the lane behind it.",
+      zh: "城中几无不以夯土为地：市场、里巷、灵寿与柏人所发掘之作坊地面皆然。秦简封诊式记一民居，堂、内、小堂、垣、巷，逐一以此为之。",
+    },
+  },
+  platform: {
+    title: { en: "Terrace", zh: "台基" },
+    what: {
+      en: "A raised platform of rammed earth, the base every hall of rank stands on.",
+      zh: "夯土高台，宫室宗庙所基。",
+    },
+    history: {
+      en: "Timber rots on wet ground and height is rank, so a palace, a temple, or an office was raised on a terrace of earth rammed in thin layers between boards. The palace quarter of the Zhongshan capital held seven of them; the one opened in the last few years carries a hall floor over a hundred metres long with brick paving, corridors, and drains. The Kaogongji states hall heights by dynasty, one measure of a ruler's standing.",
+      zh: "木材畏湿，而高即是尊，故宫、庙、官署皆起于版筑夯土之台。中山灵寿城宫殿区有台基七处，近年所掘一处，殿基长逾百米，铺砖、有廊、有水道。考工记以堂崇几尺记三代之制，即是尊卑之度。",
+    },
+  },
+  mulberry: {
+    title: { en: "Mulberry", zh: "桑" },
+    what: {
+      en: "Orchard rows of pollarded mulberry, leaf for the silkworm.",
+      zh: "桑园成行，剪其枝以饲蚕。",
+    },
+    history: {
+      en: "Silk was the household's second crop and the state's second money: cloth passed as currency beside coin, and the tax fell on it. The classic homestead of five mu was to be planted with mulberry at its walls so that the old could wear silk; a town's orchards sat just inside or just outside the wall, where the women of the wards could reach them.",
+      zh: "丝为一家之第二作，亦为一国之第二币：布帛与钱并行，赋亦取之。五亩之宅，树之以桑，则老者可以衣帛。桑园多在城郭内外之侧，便于里中妇人采之。",
+    },
+  },
 };
 
 export const WATER_NOTES: Record<Water, LegendNote> = {
@@ -353,6 +386,141 @@ export const DECOR_NOTES: Record<Decor, LegendNote> = {
     history: {
       en: "Quarried for wall footings, mill stones, and the standard weights a market officer kept. Where no stone was set, an outcrop served as the boundary it marked.",
       zh: "采以为墙基、碾磑、市官之权衡。无立石处，则以自然之岩为界。",
+    },
+  },
+  cart: {
+    title: { en: "Cart", zh: "牛车" },
+    what: {
+      en: "A two-wheeled ox cart standing unhitched.",
+      zh: "两轮牛车，未驾。",
+    },
+    history: {
+      en: "The cart carried grain to the granary and goods to the market, and the state counted them: a Qin law priced the hire of a cart and its driver, and a convoy turned back at a pass is a stage in the ladder of these games.",
+      zh: "牛车输粟于仓，载货于市，而官计其数：秦律有雇车之直，车队返于关，亦是本局阶梯之一级。",
+    },
+  },
+  chickens: {
+    title: { en: "Chickens", zh: "鸡" },
+    what: { en: "Fowl scratching in a yard.", zh: "鸡啄于场院。" },
+    history: {
+      en: "Every household kept them, and cockfighting is one of the pastimes the Zhanguoce lists for the people of Linzi beside dog-racing and the ball game.",
+      zh: "家家畜之。斗鸡与走犬、蹴鞠并列，战国策所记临淄之民之所好也。",
+    },
+  },
+  pigs: {
+    title: { en: "Pigs", zh: "豕" },
+    what: { en: "Pigs in a wallow by a hurdle.", zh: "豕卧泥中，旁有栅。" },
+    history: {
+      en: "The meat animal of the ward, penned in the yard and slaughtered for a feast or the ancestral offering. A pig under a roof is the character for home.",
+      zh: "里中之肉畜，圈于院中，祭祀宴飨则杀之。豕在宀下，即家字。",
+    },
+  },
+  rack: {
+    title: { en: "Drying rack", zh: "晾架" },
+    what: { en: "Cloth drying on bamboo poles.", zh: "竹竿晾布。" },
+    history: {
+      en: "Cloth left the loom in bolts of a fixed length and width, because it was money: a Qin statute sets the size of a bolt that may pass as currency and refuses one that falls short.",
+      zh: "布出于机，长广有定，以其为币也：秦律定布之幅长，不中度者不得行。",
+    },
+  },
+  pots: {
+    title: { en: "Pottery", zh: "陶器" },
+    what: {
+      en: "A stack of earthenware waiting by a kiln or a stall.",
+      zh: "陶器堆于窑侧或肆前。",
+    },
+    history: {
+      en: "Grey ware for the kitchen, the well, and the grave, fired by the thousand in the workshop quarters excavated at the Zhongshan capital. The potter is one of the two trades of the Kaogongji's last division.",
+      zh: "灰陶用于庖厨、汲水、随葬，灵寿作坊区所出以千计。陶人为考工记末一门二工之一。",
+    },
+  },
+  woodpile: {
+    title: { en: "Woodpile", zh: "柴堆" },
+    what: {
+      en: "Split firewood stacked between stakes.",
+      zh: "劈柴叠于桩间。",
+    },
+    history: {
+      en: "Fuel for the kitchen, the kiln, and the furnace. A town's wood came in by cart and by river, and the Fangmatan maps mark the timber stands of a whole district with their distances.",
+      zh: "庖厨、陶窑、冶炉之薪。城中之柴以车以舟而至，放马滩地图标一县之林木及其里数。",
+    },
+  },
+  banner: {
+    title: { en: "Pennant", zh: "旌" },
+    what: { en: "A narrow pennant on a bamboo pole.", zh: "竹竿挂长旌。" },
+    history: {
+      en: "Flown at an office, a gate, or a market to say the place is open and whose it is. The market flag went up for each of the three daily sessions and came down to close it.",
+      zh: "立于官署、城门、市中，示其所属与启闭。市有三时之会，建旗则市，落旗则罢。",
+    },
+  },
+  brazier: {
+    title: { en: "Brazier", zh: "炉" },
+    what: { en: "A bronze tripod of embers.", zh: "青铜三足炉，炭火犹燃。" },
+    history: {
+      en: "Heat and light for a hall in winter and a night watch on the wall. The Mohist siege chapters keep fires and torches at set intervals along the wall so the watch can see.",
+      zh: "冬日堂上取暖，夜间城上照明。墨子备城门诸篇令沿城置火炬，以便守望。",
+    },
+  },
+  haystack: {
+    title: { en: "Haystack", zh: "草垛" },
+    what: { en: "Fodder stacked round a pole.", zh: "刍草绕杆而积。" },
+    history: {
+      en: "Fodder and straw are two of the thirteen counts the Book of Lord Shang demands of a state that means to be strong, beside its horses and oxen.",
+      zh: "刍、稿为商君书十三数之二，与马、牛并计，强国所必知也。",
+    },
+  },
+  millstone: {
+    title: { en: "Quern", zh: "石磨" },
+    what: { en: "A rotary stone mill for grain.", zh: "旋转石磨，碾谷为粉。" },
+    history: {
+      en: "The rotary quern spread through the north in this age and turned millet and wheat into flour at the household's own door rather than in the mortar.",
+      zh: "旋磨于此时行于北方，粟麦得于门前磨为粉，不必杵臼。",
+    },
+  },
+  fence: {
+    title: { en: "Wattle fence", zh: "篱" },
+    what: {
+      en: "Woven bamboo panels between posts.",
+      zh: "竹编篱笆，立于桩间。",
+    },
+    history: {
+      en: "The boundary of a yard, a pen, or a plot, and the line a case form measures a footprint against. A ward's outer wall was earth; inside it, the households divided themselves with wattle.",
+      zh: "院、圈、畦之界，亦封诊式度足迹所依之线。里有垣，垣内诸家以篱相隔。",
+    },
+  },
+  awning: {
+    title: { en: "Awning", zh: "帷" },
+    what: { en: "A cloth shade on four poles.", zh: "四竿张布为荫。" },
+    history: {
+      en: "The market's furniture: shade for a stall, a scribe, or the inspector who sat at the head of a row to settle disputes and collect the rent on the ground.",
+      zh: "市中之具：肆、书吏、坐于列首以断争讼、收廛税之胥皆荫于此。",
+    },
+  },
+  jars: {
+    title: { en: "Storage jars", zh: "瓮" },
+    what: {
+      en: "Tall glazed jars for grain, water, or wine.",
+      zh: "高瓮，贮谷、水、酒。",
+    },
+    history: {
+      en: "A household's store stood in jars at the door, and so did a shop's. A Qin case form lists a burglary by what was in the room and what was taken from it.",
+      zh: "一家之藏在门内之瓮，一肆亦然。封诊式记盗案，以室中所有、所失为目。",
+    },
+  },
+  willow: {
+    title: { en: "Willow", zh: "柳" },
+    what: { en: "A single tree by water or a gate.", zh: "水边或门前一株。" },
+    history: {
+      en: "The tree of a moat's edge and of a parting: a branch broken from it was given to a traveller at the gate.",
+      zh: "城濠之畔、送别之处所植：折柳赠行人于门。",
+    },
+  },
+  dog: {
+    title: { en: "Dog", zh: "犬" },
+    what: { en: "A dog asleep in a yard.", zh: "犬卧院中。" },
+    history: {
+      en: "The watch of a house and, in the Zhanguoce's picture of Linzi, a sport: dog-racing was one of the pastimes the persuader listed to flatter a rich city.",
+      zh: "守门之犬，亦战国策临淄之乐：走犬为说客所举以夸富城之一。",
     },
   },
 };
@@ -690,6 +858,171 @@ export const MARKER_NOTES: Record<Marker | "region", LegendNote> = {
     history: {
       en: "Attributed to Yu, who was said to have cut them to let the flood out. What they are in practice is a gate: a narrows no boat passes at will and no army crosses off a ford, so whoever holds both banks of one holds the river.",
       zh: "相传禹所凿，以泄洪水。其实为门：舟不得任过，兵不得越渡，故据两岸者制河。",
+    },
+  },
+  gate: {
+    title: { en: "City gate", zh: "城门" },
+    what: {
+      en: "A gate through the town wall, with a tower over it.",
+      zh: "城墙之门，上有门楼。",
+    },
+    history: {
+      en: "The ideal capital has three gates a side and the town of Xue still shows twelve. A gate is where the state met the traveller: the permit checked, the goods taxed, the leaves shut at dusk and in a siege. The Mohist chapters on defence begin with the gate, because a wall is only as strong as its openings.",
+      zh: "匠人营国，旁三门；薛城至今存门十二。门者，国之待客处：验符传，税其货，暮则闭，围则塞。墨子守御之篇始于备城门，以城之强弱系于其门也。",
+    },
+  },
+  tower: {
+    title: { en: "Watchtower", zh: "望楼" },
+    what: {
+      en: "A timber platform on the wall or at its corner.",
+      zh: "城上或城隅之木台。",
+    },
+    history: {
+      en: "The Kaogongji sets a city corner at nine zhi, a palace corner at seven, and a gate at five: height by rank. From the platform the watch read the beacons on the hills and counted what came up the road.",
+      zh: "考工记：城隅九雉，宫隅七雉，门阿五雉，以高为等。守者据之望山上烽燧，计道上来者。",
+    },
+  },
+  temple: {
+    title: { en: "Ancestral temple", zh: "宗庙" },
+    what: {
+      en: "The hall of the ruling line's ancestors, on the left of the palace.",
+      zh: "宗室先祖之庙，在宫之左。",
+    },
+    history: {
+      en: "Temple on the left, altar of soil on the right, court in front, market behind: that is the ideal plan. A ruler was installed here, a covenant sworn here, a campaign announced and its spoils reported here. To lose the temple is what the texts mean by a state being extinguished.",
+      zh: "左祖右社，面朝后市，此营国之制。即位于此，盟誓于此，出师告庙、献捷告庙。宗庙不守，即所谓国灭。",
+    },
+  },
+  granary: {
+    title: { en: "Granary", zh: "仓" },
+    what: {
+      en: "Raised bins and a storehouse for the state's grain.",
+      zh: "架空之囷与仓房，贮官粟。",
+    },
+    history: {
+      en: "The Qin granary statute is the most detailed law of the age: grain sealed in by the official who received it, opened by the one who issues it, counted at each, and any shortfall charged to the men whose seals were on the door. Granaries are the first of the thirteen counts the Book of Lord Shang requires.",
+      zh: "秦仓律为一代最详之法：入粟者封之，出粟者启之，出入皆计，亏则责封印之人。商君书十三数，仓为首。",
+    },
+  },
+  well: {
+    title: { en: "Market well", zh: "市井" },
+    what: {
+      en: "A stone-lined well with its frame and bucket.",
+      zh: "砌石之井，有栏有桶。",
+    },
+    history: {
+      en: "The word for market is the market well, because the traders gathered where the water was. The Guanzi puts the merchants at the well and the artisans by the offices, each order in a quarter of its own so that a son learns his father's trade without being told.",
+      zh: "市井之名，以商贾聚于汲水之所也。管子处商就市井，处工就官府，四民各有其居，使子弟不教而能。",
+    },
+  },
+  kiln: {
+    title: { en: "Pottery kiln", zh: "陶窑" },
+    what: {
+      en: "A domed earth kiln with pots stacked to fire.",
+      zh: "穹顶土窑，陶坯待烧。",
+    },
+    history: {
+      en: "The pottery quarter of the Zhongshan capital lay in the western city among the commoners' houses, and the Zhao town of Boren gave up an intact kiln in its last season. Grey ware, roof tile, and the moulds a mint or a foundry cast from all came out of ovens like this one.",
+      zh: "中山灵寿城陶作坊在西城民居之间，赵柏人城近岁掘出完整陶窑一座。灰陶、瓦当、铸钱铸器之范，皆出于此。",
+    },
+  },
+  smithy: {
+    title: { en: "Iron smithy", zh: "铁冶" },
+    what: {
+      en: "An open shed with a furnace, an anvil stone, and bellows.",
+      zh: "敞棚之下，炉、砧、橐俱备。",
+    },
+    history: {
+      en: "The town of Xue held three iron workshops inside its wall. Cast iron for the plough and the hoe was what let a state feed the armies it raised; the six metal trades of the Kaogongji divide bronze by its alloy, and iron is the newcomer beside them.",
+      zh: "薛城内有冶铁作坊三处。铸铁犁锄，所以养所募之兵。考工记攻金六工以齐分铜，铁则其后起者。",
+    },
+  },
+  workshop: {
+    title: { en: "Workshop", zh: "工坊" },
+    what: {
+      en: "An artisan's shed: bench, timber, tools.",
+      zh: "匠人之棚，有案有材有器。",
+    },
+    history: {
+      en: "The Kaogongji counts some thirty trades in six divisions: seven in wood, six in metal, five in leather, five in colour, five in grinding jade, stone, and bone, two in clay. The Qin workshop statutes set each craft's output per worker, allow a year for an apprentice to reach it, and hold the overseer to the count.",
+      zh: "考工记六门三十工：攻木七，攻金六，攻皮五，设色五，刮摩五，抟埴二。秦工律、工人程定每工之程，学徒一岁而成，工师课其数。",
+    },
+  },
+  dyeworks: {
+    title: { en: "Dyeworks", zh: "染坊" },
+    what: {
+      en: "Vats of indigo and madder under an awning, cloth drying beside them.",
+      zh: "帷下蓝茜之缸，旁晾染布。",
+    },
+    history: {
+      en: "Colour was a trade of its own: the Kaogongji gives five trades to it and describes dyeing in rounds, each dip a deeper grade. Dyed silk was a gift between courts and a mark of rank the sumptuary rules policed.",
+      zh: "设色自为一门：考工记列五工，记染之以次，一入为縓，再入为赪。染帛为国际之贽，亦为等级之章，礼有所禁。",
+    },
+  },
+  stall: {
+    title: { en: "Market stall", zh: "市肆" },
+    what: {
+      en: "A trestle under an awning, goods in baskets.",
+      zh: "帷下之案，货陈筐中。",
+    },
+    history: {
+      en: "The Zhouli staffs the market with a superintendent, contract clerks, rent collectors, and a head for each row, and holds three sessions a day. The Qin market statute is what survives of the practice: any good over one cash carries a price tag, the seller drops the coin into a sealed box in the buyer's sight, and a shortfall is the official's to pay.",
+      zh: "周礼市有司市、质人、廛人、肆长，一日三市。秦金布律存其实：物值一钱以上者各署其价，售者当买者面投钱于缿，亏则吏偿。",
+    },
+  },
+  house: {
+    title: { en: "Household", zh: "民居" },
+    what: {
+      en: "A small courtyard house of earth walls and thatch.",
+      zh: "土墙草顶，一院一堂。",
+    },
+    history: {
+      en: "A Qin case form describes one: a hall, an inner room, a side room, a back wall seven feet high with a lane behind it, and the yard the burglar crossed. Each such house was a line in the ward register, its adults, its old, and its children counted, which is the register every chapter of this game is fought over.",
+      zh: "封诊式记其一：有堂，有内，有房，后垣高七尺，垣北即巷，盗所逾之院。每户即里籍一行，丁壮老弱皆书，此籍即诸章所争者。",
+    },
+  },
+  mansion: {
+    title: { en: "Great house", zh: "第宅" },
+    what: {
+      en: "A walled compound of several halls around courtyards.",
+      zh: "垣内数堂，绕院而建。",
+    },
+    history: {
+      en: "The house of a minister or a great family kept its own gate, its own granary, and its retainers: the men fed at a lord's table who wrote, fought, and persuaded for him. The lord of Xue is said to have kept three thousand.",
+      zh: "卿相大家之宅，自有门、有仓、有门客：食于其家而为之书、为之战、为之说者。薛公食客号三千。",
+    },
+  },
+  barracks: {
+    title: { en: "Barracks", zh: "营舍" },
+    what: {
+      en: "Long halls in a fenced yard, a spear rack at the gate.",
+      zh: "栅内长舍，门前戈架。",
+    },
+    history: {
+      en: "The garrison was the conscription roll made flesh: men called by ward in rotation, drilled, and posted to a stretch of wall. The Mohist chapters assign so many men, so many crossbows, and so much stone to each length of rampart, which is the most concrete picture of a town mobilised that the age left.",
+      zh: "戍卒即兵籍所化：按里轮发，教习，分守城段。墨子诸篇于每若干步之城定其人数、弩数、石数，一代所遗城守之图，莫具于此。",
+    },
+  },
+  stable: {
+    title: { en: "Stable", zh: "厩" },
+    what: {
+      en: "An open shed of stalls, hay at the end.",
+      zh: "敞棚分栏，尽处积刍。",
+    },
+    history: {
+      en: "Horses and oxen were state property first: the Qin stable statute inspects them yearly, grades the keeper on how they fed, and fines a beast worked to death. Horses and oxen are two of the thirteen counts.",
+      zh: "马牛先为官物：秦厩苑律岁课之，以肥瘦赏罚其吏，役死者有罚。马、牛在十三数之中。",
+    },
+  },
+  office: {
+    title: { en: "Magistrate's office", zh: "官署" },
+    what: {
+      en: "The hall where the registers are kept and the seals applied.",
+      zh: "藏籍用印之堂。",
+    },
+    history: {
+      en: "South of the palace terraces at the Zhongshan capital lay the offices, and a Zhao town gave up the clay sealing of its own assistant magistrate. Here the ward registers, the granary accounts, and the artisan and convict rosters were written and copied, the archive a county seat on the Qin frontier left tens of thousands of slips of.",
+      zh: "中山灵寿城宫殿台基之南为官署区，赵柏人城出丞印封泥。里籍、仓簿、工徒之名皆书于此、录于此，秦边一县之署所遗简牍以万计。",
     },
   },
 };

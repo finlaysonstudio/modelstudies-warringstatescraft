@@ -1828,9 +1828,12 @@ program
   )
   .argument("<query>", 'terms, or "a quoted phrase" to match literally')
   .requiredOption("--use <use>", "prompt | reader | internal | any")
-  .option("--collection <collection>", "period, situation, method, house")
+  .option(
+    "--collection <collection>",
+    "period, situation, method, house, world",
+  )
   .option("--topic <topic>", "manifest topic")
-  .option("--tier <tier>", "1 period, 2 situation, 3 method, 5 house")
+  .option("--tier <tier>", "1 period, 2 situation, 3 method, 5 house, 6 world")
   .option("--limit <n>", "documents to return", "8")
   .option("--snippets <n>", "snippets per document", "3")
   .option("--context <n>", "lines around each snippet", "1")
