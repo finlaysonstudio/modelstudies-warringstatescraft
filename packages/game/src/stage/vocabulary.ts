@@ -740,6 +740,34 @@ export const DIRECTIONS: Record<StageDirectionKind, DirectionRule> = {
     effect: "smoke",
     gloss: "a trade at work: a figure stands at its shop and the kiln smokes",
   },
+  // the almanac: what the year adds to a settlement's day
+  till: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    count: 2,
+    gloss:
+      "the field is ploughed, sown, weeded, or reaped: a file of farmers crosses it",
+  },
+  rite: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "elder",
+    effect: "banner",
+    gloss:
+      "an observance of the month at the altar, the shrine, the hall, or the gate",
+  },
+  gather: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "peasant",
+    count: 3,
+    gloss:
+      "the ward gathers: at the threshing floor, the elder's house, the market, or the drill ground",
+  },
 };
 
 export const DIRECTION_KINDS = Object.keys(DIRECTIONS) as StageDirectionKind[];

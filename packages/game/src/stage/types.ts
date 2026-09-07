@@ -57,6 +57,9 @@ export type StageDirectionKind =
   // the town (scope "town"): the settlement map's ambient life, never coded
   | "stroll"
   | "labour"
+  | "till"
+  | "rite"
+  | "gather"
   | "abdicate"
   | "audience"
   | "debate"

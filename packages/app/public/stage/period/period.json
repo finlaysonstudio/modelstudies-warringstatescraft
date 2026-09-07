@@ -1828,6 +1828,82 @@
         }
       }
     },
+    "terrain.forest~autumn": {
+      "file": "terrain.forest~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns; transition: scattered saplings and low bushes thinning out at the forest edge",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "cd62aa26-4e90-492e-a31a-67f0979f6c9b",
+        "date": "2026-08-25",
+        "generations": 0,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": -10,
+            "saturation": 0.62,
+            "value": 0.98
+          },
+          "seasonAdjust": {
+            "hue": -48,
+            "saturation": 1,
+            "value": 1
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.forest~winter": {
+      "file": "terrain.forest~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns; transition: scattered saplings and low bushes thinning out at the forest edge",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "cd62aa26-4e90-492e-a31a-67f0979f6c9b",
+        "date": "2026-08-25",
+        "generations": 0,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": -10,
+            "saturation": 0.62,
+            "value": 0.98
+          },
+          "seasonAdjust": {
+            "hue": 6,
+            "saturation": 0.3,
+            "value": 0.78
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.wall": {
       "file": "terrain.wall.png",
       "kind": "blob",
@@ -1858,6 +1934,343 @@
             "value": 0.85
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.marsh~winter": {
+      "file": "terrain.marsh~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds; transition: boggy mud and scattered reeds where the grass gives out",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.5
+        },
+        "jobId": "dae8bac6-8946-4d15-b73b-26a495241891",
+        "date": "2026-08-25",
+        "generations": 0,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": 38,
+            "saturation": 0.75,
+            "value": 1.45
+          },
+          "seasonAdjust": {
+            "hue": -6,
+            "saturation": 0.45,
+            "value": 0.9
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
+    "terrain.field~summer": {
+      "file": "terrain.field~summer.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "cultivated millet fields in high summer seen from above, parallel rows of young green millet plants standing on ridges of ochre tilled earth, dark green leafy rows with brown soil showing in the furrows between them, small plots divided by earth banks, strictly green and ochre brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the planted field",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "2c0e12f0-378f-4a73-9a00-9c7ddec6855f",
+        "date": "2026-09-07",
+        "generations": 1,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          },
+          "file": "tilesets32/field-summer.png",
+          "seasonAdjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          }
+        },
+        "season": "summer",
+        "note": "chained to the same grass base tile as the spring field, so the four seasons of the field meet the meadow on one bank",
+        "derived": "period32"
+      }
+    },
+    "terrain.field~autumn": {
+      "file": "terrain.field~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "ripe millet fields at harvest seen from above, parallel rows of tall golden-yellow millet heavy with seed heads on ridges of tilled earth, warm gold and amber with dark brown shadow lines in the furrows between the rows, small plots divided by earth banks, strictly gold, amber, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "ece8cce2-0451-415f-b3dd-690cc6f99db0",
+        "date": "2026-09-07",
+        "generations": 1,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          },
+          "file": "tilesets32/field-autumn.png",
+          "seasonAdjust": {
+            "saturation": 0.9,
+            "value": 0.96
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.field~winter": {
+      "file": "terrain.field~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "bare harvested millet fields in winter seen from above, parallel furrows of frozen grey-brown earth with pale stubble in rows and a thin dusting of white snow lying in the furrows between the ridges, small plots divided by earth banks, strictly grey-brown, pale tan, and white, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the frozen field",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "c1e82028-ad10-4dfd-a461-c3324cfa453a",
+        "date": "2026-09-07",
+        "generations": 1,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          },
+          "file": "tilesets32/field-winter.png",
+          "seasonAdjust": {
+            "hue": 22,
+            "saturation": 0.28,
+            "value": 1
+          }
+        },
+        "season": "winter",
+        "note": "the stubble rows came back rose-pink for all the prompt's forbidding it; the adjust turns them toward the earth and takes most of the colour out, since the prompt was ignored and a second generation would be too",
+        "derived": "period32"
+      }
+    },
+    "terrain.tallgrass~autumn": {
+      "file": "terrain.tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above; transition: short grass thickening into tall grass",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "869a1023-9539-44b8-ae2b-05b2f6b737a7",
+        "date": "2026-08-25",
+        "generations": 0,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 16,
+          "variants": 4,
+          "adjust": {
+            "hue": 10,
+            "saturation": 0.7,
+            "value": 0.92
+          },
+          "seasonAdjust": {
+            "hue": -42,
+            "saturation": 0.85,
+            "value": 1
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.tallgrass~winter": {
+      "file": "terrain.tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above; transition: short grass thickening into tall grass",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "869a1023-9539-44b8-ae2b-05b2f6b737a7",
+        "date": "2026-08-25",
+        "generations": 0,
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 16,
+          "variants": 4,
+          "adjust": {
+            "hue": 10,
+            "saturation": 0.7,
+            "value": 0.92
+          },
+          "seasonAdjust": {
+            "hue": 18,
+            "saturation": 0.4,
+            "value": 0.92
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
+    "terrain.scrub~autumn": {
+      "file": "terrain.scrub~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers; transition: the meadow simply becoming heath, flat ground throughout, no bank, no ridge, no wall, no hedge, no dark line, no pale highlight, no outline, no edge",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0
+        },
+        "jobId": "deccf78f-d7dd-4cf6-9c3f-67d48bd8c3c6",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "the first heath was the same tone as the meadow it stands in, so the region read as a drawn outline around nothing. The second gave the ground its own dry sage tone but drew the boundary as a dark berm with a highlight, which put a wall around the heath: a Wang transition tile is an edge, and a flat ground meeting a flat ground has no relief to spend on one, so the third asks for no transition at all (transition 0), as scrub-on-tallgrass already does",
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 16,
+          "variants": 4,
+          "seasonAdjust": {
+            "hue": -35,
+            "saturation": 0.9,
+            "value": 0.98
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.scrub~winter": {
+      "file": "terrain.scrub~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers; transition: the meadow simply becoming heath, flat ground throughout, no bank, no ridge, no wall, no hedge, no dark line, no pale highlight, no outline, no edge",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0
+        },
+        "jobId": "deccf78f-d7dd-4cf6-9c3f-67d48bd8c3c6",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "the first heath was the same tone as the meadow it stands in, so the region read as a drawn outline around nothing. The second gave the ground its own dry sage tone but drew the boundary as a dark berm with a highlight, which put a wall around the heath: a Wang transition tile is an edge, and a flat ground meeting a flat ground has no relief to spend on one, so the third asks for no transition at all (transition 0), as scrub-on-tallgrass already does",
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 16,
+          "variants": 4,
+          "seasonAdjust": {
+            "hue": 12,
+            "saturation": 0.4,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
+    "water.river~winter": {
+      "file": "water.river~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle; transition: a narrow strip of wet pebbles and pale sand at the water's edge",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "f88a1f2d-a8a0-454c-9458-02a4eff03cc5",
+        "date": "2026-08-25",
+        "generations": 0,
+        "finish": {
+          "key": "lower",
+          "keyTolerance": 16,
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          },
+          "seasonAdjust": {
+            "hue": -4,
+            "saturation": 0.55,
+            "value": 1.08
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -1960,6 +2373,74 @@
         "derived": "period32"
       }
     },
+    "water.river@tallgrass~autumn": {
+      "file": "water.river@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the tall blades leaning out over the water's edge and a narrow strip of wet dark mud along the bank",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "94884925-1033-44d0-9a9c-417ebb4c2c35",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "water.river@tallgrass~winter": {
+      "file": "water.river@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the tall blades leaning out over the water's edge and a narrow strip of wet dark mud along the bank",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "94884925-1033-44d0-9a9c-417ebb4c2c35",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.river@field": {
       "file": "water.river@field.png",
       "kind": "blob",
@@ -1993,6 +2474,108 @@
         "derived": "period32"
       }
     },
+    "water.river@field~summer": {
+      "file": "water.river@field~summer.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · a low earth bank between the furrows and the water, damp dark soil crumbling at the edge of the plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "fd7f45b8-681e-41b5-a2ee-9a56643453a3",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "field",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "summer",
+        "derived": "period32"
+      }
+    },
+    "water.river@field~autumn": {
+      "file": "water.river@field~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · a low earth bank between the furrows and the water, damp dark soil crumbling at the edge of the plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "fd7f45b8-681e-41b5-a2ee-9a56643453a3",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "field",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "water.river@field~winter": {
+      "file": "water.river@field~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · a low earth bank between the furrows and the water, damp dark soil crumbling at the edge of the plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "fd7f45b8-681e-41b5-a2ee-9a56643453a3",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "field",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.road@field": {
       "file": "terrain.road@field.png",
       "kind": "blob",
@@ -2022,6 +2605,105 @@
             "value": 0.7
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.road@field~summer": {
+      "file": "terrain.road@field~summer.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the cart track cutting through the furrows, loose pale dust spilling onto the tilled earth at the edge of the plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+          "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+        },
+        "jobId": "05dfc6f7-9b7b-4475-a7ae-d219e4a8848a",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "road as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "field",
+          "adjust": {
+            "hue": 14,
+            "saturation": 0.62,
+            "value": 0.7
+          }
+        },
+        "season": "summer",
+        "derived": "period32"
+      }
+    },
+    "terrain.road@field~autumn": {
+      "file": "terrain.road@field~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the cart track cutting through the furrows, loose pale dust spilling onto the tilled earth at the edge of the plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+          "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+        },
+        "jobId": "05dfc6f7-9b7b-4475-a7ae-d219e4a8848a",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "road as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "field",
+          "adjust": {
+            "hue": 14,
+            "saturation": 0.62,
+            "value": 0.7
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.road@field~winter": {
+      "file": "terrain.road@field~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the cart track cutting through the furrows, loose pale dust spilling onto the tilled earth at the edge of the plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+          "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+        },
+        "jobId": "05dfc6f7-9b7b-4475-a7ae-d219e4a8848a",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "road as it meets field: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "field",
+          "adjust": {
+            "hue": 14,
+            "saturation": 0.62,
+            "value": 0.7
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2058,6 +2740,40 @@
         "derived": "period32"
       }
     },
+    "water.river@loess~winter": {
+      "file": "water.river@loess~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a dissected loess upland seen from directly above, deep narrow ravines branching in a tree pattern through pale yellow-buff silt, steep vertical walls, rounded knolls and flat ridges of dry ochre earth between them, hard shadow down one side of every ravine, no terraces, no steps, no green, no plants, no rock, no sand ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the rim of a deep gorge, sheer pale silt and rock walls dropping straight to the water with a hard shadow down the shaded side, a narrow shelf of wet tan mud and fallen blocks at the foot, gully mouths notching the rim",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "f73722ce-11cb-405a-9468-879ff607f97c",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "15827aa6-6cad-40af-ab8b-aaf036106ca8",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "regenerated 2026-08-26 against the pro loess: a pair reproduces the plain sheet it was chained to, so a new plain sheet is a new pair",
+        "finish": {
+          "against": "loess",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.river@scrub": {
       "file": "water.river@scrub.png",
       "kind": "blob",
@@ -2091,6 +2807,74 @@
         "derived": "period32"
       }
     },
+    "water.river@scrub~autumn": {
+      "file": "water.river@scrub~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · low shrubs thinning at the water's edge, a narrow band of pale dry gravel along the bank",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "3a9811eb-bfba-4191-8cfb-f023c0ef5c88",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "scrub",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "water.river@scrub~winter": {
+      "file": "water.river@scrub~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · low shrubs thinning at the water's edge, a narrow band of pale dry gravel along the bank",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "3a9811eb-bfba-4191-8cfb-f023c0ef5c88",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "scrub",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.road@tallgrass": {
       "file": "terrain.road@tallgrass.png",
       "kind": "blob",
@@ -2120,6 +2904,72 @@
             "value": 0.7
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.road@tallgrass~autumn": {
+      "file": "terrain.road@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the track worn through the grass, dust spilling into the blades and thin grass closing over the ruts at the edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+        },
+        "jobId": "503d7ac5-621a-43d6-a410-5ca649e53d3b",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "road as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 14,
+            "saturation": 0.62,
+            "value": 0.7
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.road@tallgrass~winter": {
+      "file": "terrain.road@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the track worn through the grass, dust spilling into the blades and thin grass closing over the ruts at the edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+        },
+        "jobId": "503d7ac5-621a-43d6-a410-5ca649e53d3b",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "road as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 14,
+            "saturation": 0.62,
+            "value": 0.7
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2156,6 +3006,40 @@
         "derived": "period32"
       }
     },
+    "water.river@road~winter": {
+      "file": "water.river@road~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the track running down to a shallow gravel ford, loose stones and wet dust at the water's edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "21c918ae-de7b-4a1d-9cc2-10f6d8f24eda",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets road: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "road",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.river@marsh": {
       "file": "water.river@marsh.png",
       "kind": "blob",
@@ -2186,6 +3070,40 @@
             "value": 0.88
           }
         },
+        "derived": "period32"
+      }
+    },
+    "water.river@marsh~winter": {
+      "file": "water.river@marsh~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · reed beds thinning where the open channel begins, dark wet mud and standing sedge along the edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "e2465fa3-764a-4613-b4eb-15c0a219bf34",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "river as it meets marsh: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "marsh",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2222,6 +3140,40 @@
         "derived": "period32"
       }
     },
+    "water.sea@river~winter": {
+      "file": "water.sea@river~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle ↗ deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey · the green-blue channel widening and darkening into open ocean, a band of mixed jade and azure water",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9",
+          "upper_base_tile_id": "c61dc6e6-158b-4b77-892c-f144d55a24fa"
+        },
+        "jobId": "0ef85133-78cf-4e86-9a56-a3cfc90bc3a3",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "sea as it meets river: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "river",
+          "frames": 3,
+          "adjust": {
+            "hue": -5,
+            "saturation": 0.6,
+            "value": 0.8
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.taihang@scrub": {
       "file": "terrain.taihang@scrub.png",
       "kind": "blob",
@@ -2251,6 +3203,72 @@
             "value": 1.55
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.taihang@scrub~autumn": {
+      "file": "terrain.taihang@scrub~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a wall of dark slate mountains seen from directly above, ridge after parallel ridge of grey-blue slate packed edge to edge across the whole area with a deep black cleft between every ridge, hard angular broken rock everywhere, no flat ground, no plateau, no open crest, no bare earth, no grass, no purple, no snow · low thorny bushes at the foot of the wall, broken dark slate scree scattered among the shrubs",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "8b3ac2e0-cca2-4c2f-9776-2f128cb51934"
+        },
+        "jobId": "65be85e1-5d14-43c6-a61e-1ccb42891a57",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": -6,
+            "saturation": 1.35,
+            "value": 1.55
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.taihang@scrub~winter": {
+      "file": "terrain.taihang@scrub~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a wall of dark slate mountains seen from directly above, ridge after parallel ridge of grey-blue slate packed edge to edge across the whole area with a deep black cleft between every ridge, hard angular broken rock everywhere, no flat ground, no plateau, no open crest, no bare earth, no grass, no purple, no snow · low thorny bushes at the foot of the wall, broken dark slate scree scattered among the shrubs",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "8b3ac2e0-cca2-4c2f-9776-2f128cb51934"
+        },
+        "jobId": "65be85e1-5d14-43c6-a61e-1ccb42891a57",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": -6,
+            "saturation": 1.35,
+            "value": 1.55
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2287,6 +3305,74 @@
         "derived": "period32"
       }
     },
+    "terrain.hills@tallgrass~autumn": {
+      "file": "terrain.hills@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ high rolling downland seen from directly above, broad domes of fresh mid green turf with fine grass texture, only the very top of a dome catching a slightly lighter green and the lower side a soft grey-green shadow, the hollows between them a light sage green, no pale rim, no bright edge, no yellow outline, no cream, no ivory, no white, no dark green, no black, no grey stone, no rock, no bare earth · the tall grass climbing the lower shoulders and thinning as it rises, giving way to turf of the same mid green as the downland above, an even boundary with no lightening along it, no pale band at the edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
+          "outline": "lineless"
+        },
+        "jobId": "abc48a3e-144e-4d42-91fb-84be82dd6e2e",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 lineless: the transition was drawn as a bright lit shoulder in the downland's crown colour, which the palette match kept bright, so a pale ribbon traced every hills boundary. The upper description now names the downland by its body green and demotes the crown, the transition says the turf between the thinning canopy is that same green, and `outline: lineless` drops the yellow line the generator traced along the contact",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": -8,
+            "saturation": 0.6,
+            "value": 0.9
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.hills@tallgrass~winter": {
+      "file": "terrain.hills@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ high rolling downland seen from directly above, broad domes of fresh mid green turf with fine grass texture, only the very top of a dome catching a slightly lighter green and the lower side a soft grey-green shadow, the hollows between them a light sage green, no pale rim, no bright edge, no yellow outline, no cream, no ivory, no white, no dark green, no black, no grey stone, no rock, no bare earth · the tall grass climbing the lower shoulders and thinning as it rises, giving way to turf of the same mid green as the downland above, an even boundary with no lightening along it, no pale band at the edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
+          "outline": "lineless"
+        },
+        "jobId": "abc48a3e-144e-4d42-91fb-84be82dd6e2e",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 lineless: the transition was drawn as a bright lit shoulder in the downland's crown colour, which the palette match kept bright, so a pale ribbon traced every hills boundary. The upper description now names the downland by its body green and demotes the crown, the transition says the turf between the thinning canopy is that same green, and `outline: lineless` drops the yellow line the generator traced along the contact",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": -8,
+            "saturation": 0.6,
+            "value": 0.9
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.river@mountain": {
       "file": "water.river@mountain.png",
       "kind": "blob",
@@ -2317,6 +3403,40 @@
             "value": 0.88
           }
         },
+        "derived": "period32"
+      }
+    },
+    "water.river@mountain~winter": {
+      "file": "water.river@mountain~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a worn grey stone mountain range seen from directly above, a spine of rounded rock ridges running across it with narrow shadowed clefts between them, bare weathered stone in grey and slate grey, thin dry grass caught in the hollows, no purple, no violet, no blue, no snow ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the water running between grey boulders, wet dark stone and a narrow gravel shelf at the edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "fc5202d7-e31e-4814-b74f-33ec2808da03",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "9db50153-9cb5-4dc2-bd73-4094de17134f",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet · unlaid since 2026-08-26: the He ran against a generic range only on the west bank of the gorge, and that bank is loess now",
+        "finish": {
+          "against": "mountain",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2352,6 +3472,72 @@
         "derived": "period32"
       }
     },
+    "terrain.loess@scrub~autumn": {
+      "file": "terrain.loess@scrub~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a dissected loess upland seen from directly above, deep narrow ravines branching in a tree pattern through pale yellow-buff silt, steep vertical walls, rounded knolls and flat ridges of dry ochre earth between them, hard shadow down one side of every ravine, no terraces, no steps, no green, no plants, no rock, no sand · shrubs thinning on the dry buff silt, the first shallow ravines opening between the last low bushes",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "f73722ce-11cb-405a-9468-879ff607f97c"
+        },
+        "jobId": "6d9d89ef-7368-4728-b13d-c5c00b39e264",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "regenerated 2026-08-26 against the pro loess: a pair reproduces the plain sheet it was chained to, so a new plain sheet is a new pair",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": 12,
+            "saturation": 0.85,
+            "value": 0.8
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.loess@scrub~winter": {
+      "file": "terrain.loess@scrub~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a dissected loess upland seen from directly above, deep narrow ravines branching in a tree pattern through pale yellow-buff silt, steep vertical walls, rounded knolls and flat ridges of dry ochre earth between them, hard shadow down one side of every ravine, no terraces, no steps, no green, no plants, no rock, no sand · shrubs thinning on the dry buff silt, the first shallow ravines opening between the last low bushes",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "f73722ce-11cb-405a-9468-879ff607f97c"
+        },
+        "jobId": "6d9d89ef-7368-4728-b13d-c5c00b39e264",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "regenerated 2026-08-26 against the pro loess: a pair reproduces the plain sheet it was chained to, so a new plain sheet is a new pair",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": 12,
+            "saturation": 0.85,
+            "value": 0.8
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.shu@tallgrass": {
       "file": "terrain.shu@tallgrass.png",
       "kind": "blob",
@@ -2381,6 +3567,72 @@
             "value": 0.78
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.shu@tallgrass~autumn": {
+      "file": "terrain.shu@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a crowd of steep pale limestone karst towers seen from above, many separate rounded pinnacles of near-white cream stone packed close together with deep dark shadow in the narrow gaps between them, scrubby green clinging to the tops, no purple, no blue, no pink, no snow · tall grass ending abruptly at the pale limestone towers, dark clefts and broken stone at their base",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "f267ecc3-ed00-4fec-abd5-59110469a295"
+        },
+        "jobId": "fd7e3537-37bf-4d44-8ec5-51ebfe862ec5",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": -24,
+            "saturation": 0.9,
+            "value": 0.78
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.shu@tallgrass~winter": {
+      "file": "terrain.shu@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a crowd of steep pale limestone karst towers seen from above, many separate rounded pinnacles of near-white cream stone packed close together with deep dark shadow in the narrow gaps between them, scrubby green clinging to the tops, no purple, no blue, no pink, no snow · tall grass ending abruptly at the pale limestone towers, dark clefts and broken stone at their base",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "f267ecc3-ed00-4fec-abd5-59110469a295"
+        },
+        "jobId": "fd7e3537-37bf-4d44-8ec5-51ebfe862ec5",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": -24,
+            "saturation": 0.9,
+            "value": 0.78
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2417,6 +3669,74 @@
         "derived": "period32"
       }
     },
+    "water.sea@forest~autumn": {
+      "file": "water.sea@forest~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey · the last treetops at the shore, a narrow band of dark wet rock and pale surf below the canopy",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "c61dc6e6-158b-4b77-892c-f144d55a24fa"
+        },
+        "jobId": "78442646-2c3d-444d-a243-cab149056202",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "sea as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "forest",
+          "frames": 3,
+          "adjust": {
+            "hue": -5,
+            "saturation": 0.6,
+            "value": 0.8
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "water.sea@forest~winter": {
+      "file": "water.sea@forest~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey · the last treetops at the shore, a narrow band of dark wet rock and pale surf below the canopy",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "c61dc6e6-158b-4b77-892c-f144d55a24fa"
+        },
+        "jobId": "78442646-2c3d-444d-a243-cab149056202",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "sea as it meets forest: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "forest",
+          "frames": 3,
+          "adjust": {
+            "hue": -5,
+            "saturation": 0.6,
+            "value": 0.8
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.river@steppe": {
       "file": "water.river@steppe.png",
       "kind": "blob",
@@ -2447,6 +3767,40 @@
             "value": 0.88
           }
         },
+        "derived": "period32"
+      }
+    },
+    "water.river@steppe~winter": {
+      "file": "water.river@steppe~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grassland seen from directly above, continuous cover of fine grass in gold, straw yellow, and olive green, laid over in long wind-combed streaks that run across the tile, tones shifting between yellow and green across the field, grass touching grass everywhere with no gaps, no bare ground, no soil, no rows, no separate plants, no flowers ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · a narrow band of pale dry gravel along the bank with the gold grass thinning at the water's edge, no outline, no cream rim, no dark line",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "1ac22b57-225c-4938-bbe4-b6b68810635b",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "faa0305c-d01b-4bb2-9b87-8329849f1a51",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "regenerated 2026-08-26: chained to the new base tile, since a pair reproduces the plain sheet it was chained to and the old one is gone",
+        "finish": {
+          "against": "steppe",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2482,6 +3836,72 @@
         "derived": "period32"
       }
     },
+    "terrain.qinling@scrub~autumn": {
+      "file": "terrain.qinling@scrub~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow · low shrubs giving way to loose grey stone and the first pines at the foot of the ridge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "5b2dc3e6-257e-4387-9ce2-7a84e7103cb1"
+        },
+        "jobId": "d1d95f27-a124-4eae-966d-3051a4375881",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": 30,
+            "saturation": 1.3,
+            "value": 0.78
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.qinling@scrub~winter": {
+      "file": "terrain.qinling@scrub~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow · low shrubs giving way to loose grey stone and the first pines at the foot of the ridge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "5b2dc3e6-257e-4387-9ce2-7a84e7103cb1"
+        },
+        "jobId": "d1d95f27-a124-4eae-966d-3051a4375881",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": 30,
+            "saturation": 1.3,
+            "value": 0.78
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.field@scrub": {
       "file": "terrain.field@scrub.png",
       "kind": "blob",
@@ -2511,6 +3931,105 @@
             "value": 0.9
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.field@scrub~summer": {
+      "file": "terrain.field@scrub~summer.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the shrubs cleared back to the plot edge, a low earth bank between the heath and the furrows",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+        },
+        "jobId": "403fb53f-b564-47b8-8ae2-b038e9c87ce1",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "field as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          }
+        },
+        "season": "summer",
+        "derived": "period32"
+      }
+    },
+    "terrain.field@scrub~autumn": {
+      "file": "terrain.field@scrub~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the shrubs cleared back to the plot edge, a low earth bank between the heath and the furrows",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+        },
+        "jobId": "403fb53f-b564-47b8-8ae2-b038e9c87ce1",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "field as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.field@scrub~winter": {
+      "file": "terrain.field@scrub~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the shrubs cleared back to the plot edge, a low earth bank between the heath and the furrows",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13",
+          "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+        },
+        "jobId": "403fb53f-b564-47b8-8ae2-b038e9c87ce1",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "field as it meets scrub: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "scrub",
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2546,6 +4065,72 @@
         "derived": "period32"
       }
     },
+    "terrain.qinling@forest~autumn": {
+      "file": "terrain.qinling@forest~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow · the broadleaf crowns breaking against the grey rock at the foot of the ridge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "5b2dc3e6-257e-4387-9ce2-7a84e7103cb1"
+        },
+        "jobId": "d316df2b-0d5f-4868-84a9-bcb91c20a681",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": 30,
+            "saturation": 1.3,
+            "value": 0.78
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.qinling@forest~winter": {
+      "file": "terrain.qinling@forest~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a forested mountain range seen from directly above, ridge upon ridge of bare grey rock running across the whole area with deep shadowed clefts between them, the stone crests plainly showing, dark pine crowded only into the clefts and along the lower shoulders, more rock than tree, no flat ground, no plain forest canopy, no purple, no violet, no blue, no snow · the broadleaf crowns breaking against the grey rock at the foot of the ridge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "5b2dc3e6-257e-4387-9ce2-7a84e7103cb1"
+        },
+        "jobId": "d316df2b-0d5f-4868-84a9-bcb91c20a681",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": 30,
+            "saturation": 1.3,
+            "value": 0.78
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.river@bamboo": {
       "file": "water.river@bamboo.png",
       "kind": "blob",
@@ -2576,6 +4161,40 @@
             "value": 0.88
           }
         },
+        "derived": "period32"
+      }
+    },
+    "water.river@bamboo~winter": {
+      "file": "water.river@bamboo~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · bamboo canes leaning over the water, a narrow strip of dark wet mud between the clumps and the current",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "f4102f48-9e9d-4d11-8624-7fce988ed2eb",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "50e2ddcc-d123-4734-89ec-3a8ab70d8252",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+        "finish": {
+          "against": "bamboo",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2641,6 +4260,74 @@
             "value": 0.9
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.hills@forest~autumn": {
+      "file": "terrain.hills@forest~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ high rolling downland seen from directly above, broad domes of fresh mid green turf with fine grass texture, only the very top of a dome catching a slightly lighter green and the lower side a soft grey-green shadow, the hollows between them a light sage green, no pale rim, no bright edge, no yellow outline, no cream, no ivory, no white, no dark green, no black, no grey stone, no rock, no bare earth · the canopy thinning to scattered crowns on the rising ground, the turf showing between them in the same mid green as the downland above, an even boundary with no lightening along it, no pale band at the edge of the wood",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
+          "outline": "lineless"
+        },
+        "jobId": "c036e2a0-ea82-45ac-85a1-ce405d0b874f",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 lineless: the transition was drawn as a bright lit shoulder in the downland's crown colour, which the palette match kept bright, so a pale ribbon traced every hills boundary. The upper description now names the downland by its body green and demotes the crown, the transition says the turf between the thinning canopy is that same green, and `outline: lineless` drops the yellow line the generator traced along the contact",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": -8,
+            "saturation": 0.6,
+            "value": 0.9
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.hills@forest~winter": {
+      "file": "terrain.hills@forest~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ high rolling downland seen from directly above, broad domes of fresh mid green turf with fine grass texture, only the very top of a dome catching a slightly lighter green and the lower side a soft grey-green shadow, the hollows between them a light sage green, no pale rim, no bright edge, no yellow outline, no cream, no ivory, no white, no dark green, no black, no grey stone, no rock, no bare earth · the canopy thinning to scattered crowns on the rising ground, the turf showing between them in the same mid green as the downland above, an even boundary with no lightening along it, no pale band at the edge of the wood",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "ca448bb6-5bb8-43f8-9825-9f276f60f765",
+          "outline": "lineless"
+        },
+        "jobId": "c036e2a0-ea82-45ac-85a1-ce405d0b874f",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 lineless: the transition was drawn as a bright lit shoulder in the downland's crown colour, which the palette match kept bright, so a pale ribbon traced every hills boundary. The upper description now names the downland by its body green and demotes the crown, the transition says the turf between the thinning canopy is that same green, and `outline: lineless` drops the yellow line the generator traced along the contact",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": -8,
+            "saturation": 0.6,
+            "value": 0.9
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2730,6 +4417,72 @@
         "derived": "period32"
       }
     },
+    "terrain.scrub@tallgrass~autumn": {
+      "file": "terrain.scrub@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers · the tall blades simply becoming heath, flat level ground throughout, no bank, no cliff, no step, no wall, no dark line, no pale outline",
+        "settings": {
+          "transition_size": 0,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13"
+        },
+        "jobId": "012b64aa-9c49-440f-84d7-06abeb34cc52",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "scrub as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 4,
+            "saturation": 0.5,
+            "value": 1.08
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.scrub@tallgrass~winter": {
+      "file": "terrain.scrub@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ dry grey-green heath seen from directly above, pale dusty sage ground much drier and greyer than green grass, covered all over in small round grey-green shrubs and low thorny bushes each casting its own small shadow, sparse and stony between the bushes, no bright green, no yellow, no flowers · the tall blades simply becoming heath, flat level ground throughout, no bank, no cliff, no step, no wall, no dark line, no pale outline",
+        "settings": {
+          "transition_size": 0,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "a0c29bab-20b6-4500-969d-57b144888e13"
+        },
+        "jobId": "012b64aa-9c49-440f-84d7-06abeb34cc52",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "scrub as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 4,
+            "saturation": 0.5,
+            "value": 1.08
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.forest@tallgrass": {
       "file": "terrain.forest@tallgrass.png",
       "kind": "blob",
@@ -2762,6 +4515,72 @@
         "derived": "period32"
       }
     },
+    "terrain.forest@tallgrass~autumn": {
+      "file": "terrain.forest@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns · scattered saplings and low bushes standing in the tall grass at the forest edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324"
+        },
+        "jobId": "ea5b3703-a404-4d15-817d-a41ff5cb8e9e",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "forest as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": -10,
+            "saturation": 0.62,
+            "value": 0.98
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.forest@tallgrass~winter": {
+      "file": "terrain.forest@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns · scattered saplings and low bushes standing in the tall grass at the forest edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324"
+        },
+        "jobId": "ea5b3703-a404-4d15-817d-a41ff5cb8e9e",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "forest as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": -10,
+            "saturation": 0.62,
+            "value": 0.98
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.field@tallgrass": {
       "file": "terrain.field@tallgrass.png",
       "kind": "blob",
@@ -2791,6 +4610,105 @@
             "value": 0.9
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.field@tallgrass~summer": {
+      "file": "terrain.field@tallgrass~summer.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the grass cut back to a low earth bank at the edge of the tilled plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+        },
+        "jobId": "4f18a88e-e057-466c-bfbc-6faf299bd945",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "field as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          }
+        },
+        "season": "summer",
+        "derived": "period32"
+      }
+    },
+    "terrain.field@tallgrass~autumn": {
+      "file": "terrain.field@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the grass cut back to a low earth bank at the edge of the tilled plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+        },
+        "jobId": "4f18a88e-e057-466c-bfbc-6faf299bd945",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "field as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.field@tallgrass~winter": {
+      "file": "terrain.field@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink · the grass cut back to a low earth bank at the edge of the tilled plots",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b"
+        },
+        "jobId": "4f18a88e-e057-466c-bfbc-6faf299bd945",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "field as it meets tallgrass: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 8,
+            "saturation": 0.62,
+            "value": 0.9
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2858,6 +4776,72 @@
         "derived": "period32"
       }
     },
+    "terrain.bamboo@forest~autumn": {
+      "file": "terrain.bamboo@forest~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream · broadleaf crowns giving way to tight clumps of slender bamboo canes",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "f4102f48-9e9d-4d11-8624-7fce988ed2eb"
+        },
+        "jobId": "dffcc084-4574-46f9-baf3-c3b88ed707c1",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": 12,
+            "saturation": 0.45,
+            "value": 1.05
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.bamboo@forest~winter": {
+      "file": "terrain.bamboo@forest~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream · broadleaf crowns giving way to tight clumps of slender bamboo canes",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "f4102f48-9e9d-4d11-8624-7fce988ed2eb"
+        },
+        "jobId": "dffcc084-4574-46f9-baf3-c3b88ed707c1",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": 12,
+            "saturation": 0.45,
+            "value": 1.05
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.sea@marsh": {
       "file": "water.sea@marsh.png",
       "kind": "blob",
@@ -2891,6 +4875,40 @@
         "derived": "period32"
       }
     },
+    "water.sea@marsh~winter": {
+      "file": "water.sea@marsh~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds ↗ deep saturated blue ocean water seen from above, rich azure and navy, long pale blue-white crests rolling across the surface, clearly water, no sand, no grey · reed beds and muddy shallows opening into deep blue water, a band of brackish grey-blue",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+          "upper_base_tile_id": "c61dc6e6-158b-4b77-892c-f144d55a24fa"
+        },
+        "jobId": "139541b2-f5eb-4780-a089-a950ec13be88",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "sea as it meets marsh: chained to both terrains' own base tiles, so the map's boundary between them is drawn rather than cut",
+        "finish": {
+          "against": "marsh",
+          "frames": 3,
+          "adjust": {
+            "hue": -5,
+            "saturation": 0.6,
+            "value": 0.8
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "water.river@shu": {
       "file": "water.river@shu.png",
       "kind": "blob",
@@ -2921,6 +4939,40 @@
             "value": 0.88
           }
         },
+        "derived": "period32"
+      }
+    },
+    "water.river@shu~winter": {
+      "file": "water.river@shu~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a crowd of steep pale limestone karst towers seen from above, many separate rounded pinnacles of near-white cream stone packed close together with deep dark shadow in the narrow gaps between them, scrubby green clinging to the tops, no purple, no blue, no pink, no snow ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the water running in a narrow gorge between pale limestone towers, wet grey stone at its edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "f267ecc3-ed00-4fec-abd5-59110469a295",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "1fdae977-0d54-4694-9e7e-a787b6588d1a",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+        "finish": {
+          "against": "shu",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -2988,6 +5040,72 @@
         "derived": "period32"
       }
     },
+    "terrain.shu@forest~autumn": {
+      "file": "terrain.shu@forest~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a crowd of steep pale limestone karst towers seen from above, many separate rounded pinnacles of near-white cream stone packed close together with deep dark shadow in the narrow gaps between them, scrubby green clinging to the tops, no purple, no blue, no pink, no snow · the canopy breaking against pale limestone towers, dark vegetation crowding their base",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "f267ecc3-ed00-4fec-abd5-59110469a295"
+        },
+        "jobId": "7f66db0e-b2a1-4209-98e4-5a58a8829157",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": -24,
+            "saturation": 0.9,
+            "value": 0.78
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.shu@forest~winter": {
+      "file": "terrain.shu@forest~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a crowd of steep pale limestone karst towers seen from above, many separate rounded pinnacles of near-white cream stone packed close together with deep dark shadow in the narrow gaps between them, scrubby green clinging to the tops, no purple, no blue, no pink, no snow · the canopy breaking against pale limestone towers, dark vegetation crowding their base",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "f267ecc3-ed00-4fec-abd5-59110469a295"
+        },
+        "jobId": "7f66db0e-b2a1-4209-98e4-5a58a8829157",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "forest",
+          "adjust": {
+            "hue": -24,
+            "saturation": 0.9,
+            "value": 0.78
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.steppe@loess": {
       "file": "terrain.steppe@loess.png",
       "kind": "blob",
@@ -3052,6 +5170,72 @@
         "derived": "period32"
       }
     },
+    "terrain.bamboo@tallgrass~autumn": {
+      "file": "terrain.bamboo@tallgrass~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream · the tall blades giving way to tight clumps of slender bamboo canes",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "f4102f48-9e9d-4d11-8624-7fce988ed2eb"
+        },
+        "jobId": "ad5ea028-aa7d-4407-889b-59c1b1c38fa1",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 12,
+            "saturation": 0.45,
+            "value": 1.05
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.bamboo@tallgrass~winter": {
+      "file": "terrain.bamboo@tallgrass~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "tall wild grass, deeper green, dense waving blades seen from above ↗ a dense bamboo grove seen from above, tight clumps of slender canes with narrow leaves, deep green with cool dark shadow between the clumps, strictly green, no yellow, no gold, no cream · the tall blades giving way to tight clumps of slender bamboo canes",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939",
+          "upper_base_tile_id": "f4102f48-9e9d-4d11-8624-7fce988ed2eb"
+        },
+        "jobId": "ad5ea028-aa7d-4407-889b-59c1b1c38fa1",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 against the new upper sheet: the six ranges and the bamboo grove were redrawn at transition 0.25, so every pair carrying the old art of one of them would have shown a seam beside the plain sheet",
+        "finish": {
+          "against": "tallgrass",
+          "adjust": {
+            "hue": 12,
+            "saturation": 0.45,
+            "value": 1.05
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.hills@bamboo": {
       "file": "terrain.hills@bamboo.png",
       "kind": "blob",
@@ -3112,6 +5296,62 @@
         "derived": "period32"
       }
     },
+    "terrain.mountain@forest~autumn": {
+      "file": "terrain.mountain@forest~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a worn grey stone mountain range seen from directly above, a spine of rounded rock ridges running across it with narrow shadowed clefts between them, bare weathered stone in grey and slate grey, thin dry grass caught in the hollows, no purple, no violet, no blue, no snow · the outermost treetops breaking against grey boulders and scree at the foot of the ridge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "fc5202d7-e31e-4814-b74f-33ec2808da03"
+        },
+        "jobId": "4edb2da5-9781-49bf-bdcd-82ba5bc0ddcf",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "forest"
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.mountain@forest~winter": {
+      "file": "terrain.mountain@forest~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns ↗ a worn grey stone mountain range seen from directly above, a spine of rounded rock ridges running across it with narrow shadowed clefts between them, bare weathered stone in grey and slate grey, thin dry grass caught in the hollows, no purple, no violet, no blue, no snow · the outermost treetops breaking against grey boulders and scree at the foot of the ridge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "medium shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324",
+          "upper_base_tile_id": "fc5202d7-e31e-4814-b74f-33ec2808da03"
+        },
+        "jobId": "4edb2da5-9781-49bf-bdcd-82ba5bc0ddcf",
+        "date": "2026-08-25",
+        "generations": 0,
+        "note": "regenerated 2026-08-25 at transition 0.25: at 0.5 the transition band ran past the tile corner the blob composition samples, so the sheet carried none of the lower ground and the map cut it off square",
+        "finish": {
+          "against": "forest"
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.tallgrass@marsh": {
       "file": "terrain.tallgrass@marsh.png",
       "kind": "blob",
@@ -3144,6 +5384,72 @@
         "derived": "period32"
       }
     },
+    "terrain.tallgrass@marsh~autumn": {
+      "file": "terrain.tallgrass@marsh~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds ↗ tall wild grass, deeper green, dense waving blades seen from above · the tall blades standing in shallow water at the swamp's edge, thinning into reed and dark wet ground",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+          "upper_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939"
+        },
+        "jobId": "503460b5-ff31-4782-acc4-4b347a3f2a8b",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "the fen is the low ground, so the grass draws the boundary down into it. This replaces terrain.marsh@tallgrass, which had the marsh standing over the grass on a lifted dark edge and read as a plateau of mud",
+        "finish": {
+          "against": "marsh",
+          "adjust": {
+            "hue": 10,
+            "saturation": 0.7,
+            "value": 0.92
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.tallgrass@marsh~winter": {
+      "file": "terrain.tallgrass@marsh~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds ↗ tall wild grass, deeper green, dense waving blades seen from above · the tall blades standing in shallow water at the swamp's edge, thinning into reed and dark wet ground",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+          "upper_base_tile_id": "ea76105f-743a-4ced-8773-e53e6c6b7939"
+        },
+        "jobId": "503460b5-ff31-4782-acc4-4b347a3f2a8b",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "the fen is the low ground, so the grass draws the boundary down into it. This replaces terrain.marsh@tallgrass, which had the marsh standing over the grass on a lifted dark edge and read as a plateau of mud",
+        "finish": {
+          "against": "marsh",
+          "adjust": {
+            "hue": 10,
+            "saturation": 0.7,
+            "value": 0.92
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.forest@marsh": {
       "file": "terrain.forest@marsh.png",
       "kind": "blob",
@@ -3173,6 +5479,72 @@
             "value": 0.98
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.forest@marsh~autumn": {
+      "file": "terrain.forest@marsh~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds ↗ dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns · the last trees standing in shallow water at the swamp's edge, dark trunks and reed between the crowns",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+          "upper_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324"
+        },
+        "jobId": "32e18d4f-e5a0-40d9-acd0-6cd18ff93348",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "the fen is the low ground: the wood stands in it and draws the boundary. Replaces terrain.marsh@forest",
+        "finish": {
+          "against": "marsh",
+          "adjust": {
+            "hue": -10,
+            "saturation": 0.62,
+            "value": 0.98
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.forest@marsh~winter": {
+      "file": "terrain.forest@marsh~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a swamp seen from above, wide sheets of shallow muddy water in dull grey-brown, broken by small islands of dark reed and clumps of sedge, plainly wet, standing water covering most of the ground, open water reflecting the sky between the reed beds ↗ dense broadleaf forest canopy seen from directly above, many overlapping rounded treetops in several greens, each crown lit on one side and shadowed on the other, dark gaps between the crowns · the last trees standing in shallow water at the swamp's edge, dark trunks and reed between the crowns",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "02934586-c1f2-4561-8e62-4bb0384c38e4",
+          "upper_base_tile_id": "3acf8eb3-2de3-4696-bd00-bacfb234a324"
+        },
+        "jobId": "32e18d4f-e5a0-40d9-acd0-6cd18ff93348",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "the fen is the low ground: the wood stands in it and draws the boundary. Replaces terrain.marsh@forest",
+        "finish": {
+          "against": "marsh",
+          "adjust": {
+            "hue": -10,
+            "saturation": 0.62,
+            "value": 0.98
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -3302,6 +5674,40 @@
             "value": 0.88
           }
         },
+        "derived": "period32"
+      }
+    },
+    "water.river@luliang~winter": {
+      "file": "water.river@luliang~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 288,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a range of bare brown rock mountains seen from directly above, rounded whaleback ridges of grey-brown stone packed edge to edge across the whole area with a deep shadowed ravine between every ridge, loose scree and pale buff dust on the ravine floors, hard broken rock everywhere, no flat ground, no plateau, no open crest, no grass, no plants, no leaves, no grain, no feathers, no snow, no purple, no blue ↗ a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle · the river running in a deep cleft at the foot of the ridges, sheer rock walls dropping to the water with a hard shadow down the shaded side, fallen blocks and a narrow gravel shelf at the waterline",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "eb03e540-eafe-4a68-8904-5668e9bbb906",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "4bcdfe40-b6ea-442d-b531-16571a90f9ba",
+        "date": "2026-08-26",
+        "generations": 0,
+        "note": "the He against its own east wall: the gorge is the whole point of this pair, so the transition is a cleft with a shadowed wall rather than a bank. Regenerated with the range, since a pair reproduces the plain sheet it was chained to",
+        "finish": {
+          "against": "luliang",
+          "frames": 3,
+          "adjust": {
+            "hue": 11,
+            "saturation": 0.8,
+            "value": 0.88
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -3472,6 +5878,84 @@
             "value": 0.95
           }
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.mulberry~autumn": {
+      "file": "terrain.mulberry~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a dense canopy of small mulberry trees seen from directly above, many round bushy yellow-green leafy crowns packed close together like broccoli, each crown lit on top and darker underneath, small gaps of dark brown earth between the crowns, no furrows, no rows of soil, no fruit, no people; transition: the last few small tree crowns standing apart on the grass at the orchard's edge",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "6181c0b8-318c-46c5-96ae-39243de2ad12",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "the orchard the silk trade begins at. The first generation read 'neat rows' as furrows and drew a ploughed field with a yellow fringe; the second names crowns packed like broccoli and refuses rows of soil.",
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": -6,
+            "saturation": 0.7,
+            "value": 0.95
+          },
+          "seasonAdjust": {
+            "hue": -40,
+            "saturation": 0.9,
+            "value": 1.02
+          }
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.mulberry~winter": {
+      "file": "terrain.mulberry~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "a dense canopy of small mulberry trees seen from directly above, many round bushy yellow-green leafy crowns packed close together like broccoli, each crown lit on top and darker underneath, small gaps of dark brown earth between the crowns, no furrows, no rows of soil, no fruit, no people; transition: the last few small tree crowns standing apart on the grass at the orchard's edge",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "6181c0b8-318c-46c5-96ae-39243de2ad12",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "the orchard the silk trade begins at. The first generation read 'neat rows' as furrows and drew a ploughed field with a yellow fringe; the second names crowns packed like broccoli and refuses rows of soil.",
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "hue": -6,
+            "saturation": 0.7,
+            "value": 0.95
+          },
+          "seasonAdjust": {
+            "hue": 10,
+            "saturation": 0.35,
+            "value": 0.8
+          }
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -4142,6 +6626,64 @@
         "derived": "period32"
       }
     },
+    "decor.willow~autumn": {
+      "file": "decor.willow~autumn.png",
+      "kind": "image",
+      "width": 24,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a single old willow tree with a thick dark trunk and long drooping pale green branches, a grey stone at its foot, no people",
+        "settings": {
+          "width": 48,
+          "height": 64,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "23359653-7baf-4b1b-a4c9-d4689b4b27c1",
+        "date": "2026-09-06",
+        "generations": 0,
+        "season": "autumn",
+        "finish": {
+          "seasonAdjust": {
+            "hue": -45,
+            "saturation": 0.85,
+            "value": 1
+          }
+        },
+        "derived": "period32"
+      }
+    },
+    "decor.willow~winter": {
+      "file": "decor.willow~winter.png",
+      "kind": "image",
+      "width": 24,
+      "height": 32,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a single old bare willow tree in winter with a thick dark trunk and long drooping leafless grey-brown branches hanging like thin ropes, a grey stone at its foot with a little snow on it, no leaves, no people",
+        "settings": {
+          "width": 48,
+          "height": 64,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "6ad46621-f744-4b9b-9bdc-357d4ba4e3af",
+        "date": "2026-09-07",
+        "generations": 1,
+        "season": "winter",
+        "finish": {
+          "file": "objects32/willow-winter.png"
+        },
+        "derived": "period32"
+      }
+    },
     "decor.dog": {
       "file": "decor.dog.png",
       "kind": "image",
@@ -4275,6 +6817,62 @@
         "finish": {
           "against": "earth"
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.mulberry@earth~autumn": {
+      "file": "terrain.mulberry@earth~autumn.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → a dense canopy of small mulberry trees seen from directly above, many round bushy yellow-green leafy crowns packed close together like broccoli, each crown lit on top and darker underneath, small gaps of dark brown earth between the crowns, no furrows, no rows of soil, no fruit, no people; transition: the last few small tree crowns standing apart on the beaten earth at the orchard's edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
+          "upper_base_tile_id": "2f8abf36-f910-493f-b246-d8f1f0631bf0"
+        },
+        "jobId": "a1e2d895-fce8-4903-a132-f2e900c353c7",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "the mulberry plots inside the west city stand on beaten earth, not grass; chained to the v2 mulberry base so the orchard's own crowns run to its edge",
+        "finish": {
+          "against": "earth"
+        },
+        "season": "autumn",
+        "derived": "period32"
+      }
+    },
+    "terrain.mulberry@earth~winter": {
+      "file": "terrain.mulberry@earth~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → a dense canopy of small mulberry trees seen from directly above, many round bushy yellow-green leafy crowns packed close together like broccoli, each crown lit on top and darker underneath, small gaps of dark brown earth between the crowns, no furrows, no rows of soil, no fruit, no people; transition: the last few small tree crowns standing apart on the beaten earth at the orchard's edge",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
+          "upper_base_tile_id": "2f8abf36-f910-493f-b246-d8f1f0631bf0"
+        },
+        "jobId": "a1e2d895-fce8-4903-a132-f2e900c353c7",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "the mulberry plots inside the west city stand on beaten earth, not grass; chained to the v2 mulberry base so the orchard's own crowns run to its edge",
+        "finish": {
+          "against": "earth"
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -5135,6 +7733,43 @@
         "derived": "period32"
       }
     },
+    "terrain.garden~winter": {
+      "file": "terrain.garden~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 384,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "vegetable garden plots seen from directly above, neat straight rows of small round green leafy plants on beds of dark brown turned earth, narrow paths of pale trodden earth between the beds, no flowers, no people; transition: the last bed's low border of dark earth and a few stray plants against the grass",
+        "settings": {
+          "tile": 32,
+          "view": "high top-down",
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "transition": 0.25
+        },
+        "jobId": "8c7f9bc5-e9a0-4a64-91b2-7102a59ca155",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "the vegetable plots of a farmhouse yard and of the walled garden behind an elite compound's inner chambers; the Odes' pu, built in the ninth month beside the threshing floor",
+        "finish": {
+          "against": "grass",
+          "keyTolerance": 20,
+          "variants": 4,
+          "adjust": {
+            "saturation": 0.8,
+            "value": 0.95
+          },
+          "seasonAdjust": {
+            "saturation": 0.4,
+            "value": 0.85
+          }
+        },
+        "season": "winter",
+        "derived": "period32"
+      }
+    },
     "terrain.garden@earth": {
       "file": "terrain.garden@earth.png",
       "kind": "blob",
@@ -5159,6 +7794,34 @@
         "finish": {
           "against": "earth"
         },
+        "derived": "period32"
+      }
+    },
+    "terrain.garden@earth~winter": {
+      "file": "terrain.garden@earth~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → vegetable garden plots seen from directly above, neat straight rows of small round green leafy plants on beds of dark brown turned earth, narrow paths of pale trodden earth between the beds, no flowers, no people; transition: the last bed's low border of dark turned earth and a few stray plants against the packed tan yard",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
+          "upper_base_tile_id": "544e8fe0-c1e6-4110-8d02-356d8324a57d"
+        },
+        "jobId": "cf520926-b733-4e50-bc28-c0f64864e736",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "garden beds stand on the beaten yard in both the village and the house",
+        "finish": {
+          "against": "earth"
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -5213,6 +7876,34 @@
         "finish": {
           "against": "earth"
         },
+        "derived": "period32"
+      }
+    },
+    "water.river@earth~winter": {
+      "file": "water.river@earth~winter.png",
+      "kind": "blob",
+      "width": 128,
+      "height": 96,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_topdown_tileset",
+        "prompt": "beaten tamped earth of a town yard seen from directly above, pale dusty tan packed hard and worn smooth by feet, faint darker patches, a few small pebbles and straw wisps, no grass → a clear green-blue river seen from above, cool jade water with pale highlights curling along the current and a darker deep channel down the middle; transition: a narrow bank of wet dark earth and a few grey stones where the still water meets the packed tan yard",
+        "settings": {
+          "transition_size": 0.25,
+          "detail": "highly detailed",
+          "shading": "detailed shading",
+          "tile_size": 32,
+          "lower_base_tile_id": "704a18ae-7bf4-4606-8ca8-fd4c5cda877e",
+          "upper_base_tile_id": "aba034db-569c-49c1-a0e2-6a75925394a9"
+        },
+        "jobId": "0171514a-01ae-43be-9b4c-d14d7f193aed",
+        "date": "2026-09-06",
+        "generations": 0,
+        "note": "the pond in a compound's garden court and the village pond both lie in beaten earth",
+        "finish": {
+          "against": "earth"
+        },
+        "season": "winter",
         "derived": "period32"
       }
     },
@@ -6286,6 +8977,60 @@
         "derived": "period32"
       }
     },
+    "decor.plum~summer": {
+      "file": "decor.plum~summer.png",
+      "kind": "image",
+      "width": 20,
+      "height": 24,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a single plum tree of the Warring States period in full summer leaf seen from above: a short gnarled dark trunk, spreading crooked branches thick with small dark green oval leaves, a few small green plums among the leaves, standing on bare earth, no flowers, no people",
+        "settings": {
+          "width": 40,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "eebd40fb-7bf4-4eb4-8855-9acdf82fcf49",
+        "date": "2026-09-07",
+        "generations": 1,
+        "season": "summer",
+        "finish": {
+          "file": "objects32/plum-summer.png"
+        },
+        "derived": "period32"
+      }
+    },
+    "decor.plum~winter": {
+      "file": "decor.plum~winter.png",
+      "kind": "image",
+      "width": 20,
+      "height": 24,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a single bare plum tree in winter seen from above: a short gnarled dark trunk, spreading crooked leafless dark branches and fine twigs, a light dusting of white snow along the top of the branches, standing on bare earth, no leaves, no flowers, no people",
+        "settings": {
+          "width": 40,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "300d7f85-a00c-4640-8ea2-a6cdb10b97d4",
+        "date": "2026-09-07",
+        "generations": 1,
+        "season": "winter",
+        "finish": {
+          "file": "objects32/plum-winter.png"
+        },
+        "derived": "period32"
+      }
+    },
     "decor.lotus": {
       "file": "decor.lotus.png",
       "kind": "image",
@@ -6306,6 +9051,87 @@
         "jobId": "82a78e15-09a1-48b6-881c-5ca8be94bae0",
         "date": "2026-09-06",
         "generations": 1,
+        "derived": "period32"
+      }
+    },
+    "decor.lotus~summer": {
+      "file": "decor.lotus~summer.png",
+      "kind": "image",
+      "width": 20,
+      "height": 16,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a clump of lotus plants floating on still water seen from above: several round flat green lotus leaves of different sizes and one pink lotus flower open among them, one closed pink bud, on calm blue-green pond water, no people",
+        "settings": {
+          "width": 40,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "82a78e15-09a1-48b6-881c-5ca8be94bae0",
+        "date": "2026-09-06",
+        "generations": 0,
+        "season": "summer",
+        "finish": {
+          "seasonAdjust": {
+            "saturation": 1.1,
+            "value": 0.96
+          }
+        },
+        "derived": "period32"
+      }
+    },
+    "decor.lotus~autumn": {
+      "file": "decor.lotus~autumn.png",
+      "kind": "image",
+      "width": 20,
+      "height": 16,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a clump of withered autumn lotus plants on still water seen from above: several round lotus leaves gone brown and yellow with curled torn edges, two dry brown lotus seed pods on bent stalks, no flowers, on calm dull blue-green pond water, no people",
+        "settings": {
+          "width": 40,
+          "height": 32,
+          "detail": "medium detail",
+          "shading": "medium shading",
+          "outline": "single color outline",
+          "view": "low top-down"
+        },
+        "jobId": "91efdb43-9405-4dac-828e-5cc8cf0d2b4a",
+        "date": "2026-09-07",
+        "generations": 1,
+        "season": "autumn",
+        "finish": {
+          "file": "objects32/lotus-autumn.png"
+        },
+        "derived": "period32"
+      }
+    },
+    "decor.geese": {
+      "file": "decor.geese.png",
+      "kind": "image",
+      "width": 48,
+      "height": 24,
+      "pack": "pixellab",
+      "record": {
+        "tool": "create_map_object",
+        "prompt": "a skein of seven wild geese flying in a V formation seen from directly above, small grey-brown birds with dark wingtips and outstretched wings, spread across the width of the canvas, transparent background, no ground, no water, no people",
+        "settings": {
+          "width": 96,
+          "height": 48,
+          "detail": "medium detail",
+          "shading": "basic shading",
+          "outline": "single color outline",
+          "view": "high top-down"
+        },
+        "jobId": "f71ad893-634e-4a68-b0ef-44de9291e0db",
+        "date": "2026-09-07",
+        "generations": 1,
+        "note": "not placed by any geography: the scene flies it across the map in the months the almanac says the geese pass (the second and eighth months' pentads), so it is the one image the almanac owns rather than a place or a decor",
         "derived": "period32"
       }
     },

@@ -969,7 +969,10 @@ export type StageDirectionKind =
   | "partition"
   // the town (scope "town"): the settlement map's ambient life, never coded
   | "stroll"
-  | "labour";
+  | "labour"
+  | "till"
+  | "rite"
+  | "gather";
 
 export type StageArchetype =
   | "envoy"

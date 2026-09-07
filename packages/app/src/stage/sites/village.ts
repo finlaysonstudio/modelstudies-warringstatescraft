@@ -11,6 +11,7 @@
  */
 import type { FeatureNote, Localized } from "../legend";
 import type { Site, Townsperson } from "../site";
+import { VILLAGE_YEAR } from "./years/village";
 
 export const VILLAGE_NAMES: Record<string, Localized> = {
   shrine: { en: "Altar of the Soil", zh: "里社" },
@@ -171,6 +172,7 @@ export const VILLAGE: Site = {
   folk: VILLAGERS,
   strollPlaces: VILLAGE_STROLL_PLACES,
   smoking: [],
+  year: VILLAGE_YEAR,
   words: {
     awake: "the village is awake · pause",
     wake: "wake the village",

@@ -14,6 +14,7 @@
  */
 import type { FeatureNote, Localized } from "../legend";
 import type { Site, Townsperson } from "../site";
+import { HOUSE_YEAR } from "./years/house";
 
 export const HOUSE_NAMES: Record<string, Localized> = {
   gate: { en: "the gatehouse", zh: "门" },
@@ -236,6 +237,7 @@ export const HOUSE: Site = {
   folk: HOUSEHOLD,
   strollPlaces: HOUSE_STROLL_PLACES,
   smoking: ["hearth"],
+  year: HOUSE_YEAR,
   words: {
     awake: "the house is awake · pause",
     wake: "wake the house",

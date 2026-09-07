@@ -102,6 +102,11 @@ export interface AssetRecord {
    * there, so a layer's own count leaves a derived asset out.
    */
   derived?: ManifestSource;
+  /**
+   * The season this sheet is a ground or a decor in (`terrain.field~autumn`):
+   * a sibling of the plain id, bound in its place while the month is shown.
+   */
+  season?: string;
 }
 
 export interface AssetEntry {

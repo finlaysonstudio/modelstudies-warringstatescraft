@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { BadRequestError } from "@jaypie/errors";
+
 import {
   blobIndexOf,
   BLOB_COLUMNS,
@@ -42,6 +44,13 @@ import {
   type Geography,
   type Ground,
 } from "./map";
+import {
+  isShownInMonth,
+  seasonOf,
+  seasonalDecorId,
+  type Month,
+  type Season,
+} from "../../src/stage/almanac";
 
 /**
  * Renders the geography to a flat PNG with the same tiles the stage loads, so
@@ -60,6 +69,12 @@ export interface PreviewOptions {
   window?: [number, number, number, number];
   /** draw the roofs over the rooms (off to look at the interiors) */
   roofs?: boolean;
+  /**
+   * A month of the almanac: the season's `~` sheets replace the plain ones
+   * where the layer has them, a decor shows only in the months it stands,
+   * and a seasonal decor wears its season's image, the way the scene does.
+   */
+  month?: Month;
 }
 
 /** a kit sheet with the frame and cell geometry its layer's manifest names */
@@ -106,10 +121,16 @@ const kitsOf = (geo: Geography, layers: string[]): Map<string, KitSheet> => {
  * the set's own layer, so a lower layer's art standing in at another tile
  * lands at the wrong scale and says so.
  */
-const furnitureOf = (geo: Geography, layers: string[]): Map<string, Image> => {
+const furnitureOf = (
+  geo: Geography,
+  layers: string[],
+  season?: Season,
+): Map<string, Image> => {
   const images = new Map<string, Image>();
   const ids = new Set<string>();
-  for (const decor of geo.decor ?? []) ids.add(decorId(decor.id as Decor));
+  for (const decor of geo.decor ?? []) {
+    ids.add(furnitureIdOf(decor.id as Decor, season));
+  }
   for (const place of Object.values(geo.places)) {
     if (!place.marker || place.room) continue;
     for (const id of MARKER_VARIANTS[place.marker as Marker] ?? [
@@ -127,7 +148,20 @@ const furnitureOf = (geo: Geography, layers: string[]): Map<string, Image> => {
   return images;
 };
 
-const sheetsOf = (layers: string[], tile: number): Map<string, Image> => {
+/** the decor's image in the season, or its plain image outside one */
+const furnitureIdOf = (decor: Decor, season?: Season): string =>
+  season ? seasonalDecorId(decor, season) : decorId(decor);
+
+/**
+ * Every ground and pair sheet the layers carry, highest layer winning. In a
+ * season a `~` sibling replaces the plain sheet of the same id, the way the
+ * scene rebinds a tileset to its seasonal image.
+ */
+const sheetsOf = (
+  layers: string[],
+  tile: number,
+  season?: Season,
+): Map<string, Image> => {
   const sheets = new Map<string, Image>();
   const grounds = DRAW_ORDER.concat("grass");
   const ids = grounds
@@ -139,13 +173,16 @@ const sheetsOf = (layers: string[], tile: number): Map<string, Image> => {
     );
   for (const dir of layers) {
     for (const id of ids) {
-      const file = path.join(dir, `${id}.png`);
-      if (!existsSync(file)) continue;
-      const sheet = readPng(file);
-      // a sheet of another set's tile belongs to another map; the map build's
-      // coverage check is what reports a ground this set leaves unanswered
-      if (sheet.width !== BLOB_COLUMNS * tile) continue;
-      sheets.set(id, sheet);
+      const files = [path.join(dir, `${id}.png`)];
+      if (season) files.push(path.join(dir, `${id}~${season}.png`));
+      for (const file of files) {
+        if (!existsSync(file)) continue;
+        const sheet = readPng(file);
+        // a sheet of another set's tile belongs to another map; the map build's
+        // coverage check is what reports a ground this set leaves unanswered
+        if (sheet.width !== BLOB_COLUMNS * tile) continue;
+        sheets.set(id, sheet);
+      }
     }
   }
   return sheets;
@@ -173,9 +210,11 @@ export const previewMap = ({
   zoom = 1,
   window,
   roofs = true,
+  month,
 }: PreviewOptions): Image => {
+  const season = month ? seasonOf(month) : undefined;
   const grid = rasterize(geo);
-  const sheets = sheetsOf(layers, tile);
+  const sheets = sheetsOf(layers, tile, season);
   const pairs = new Set(
     [...sheets.keys()].filter((id) => id.includes("@")),
   ) as ReadonlySet<string>;
@@ -273,10 +312,17 @@ export const previewMap = ({
   // the furniture between the walls and the roofs, in the scene's draw
   // order (nearer the front of the map on top) and at its anchor (the image
   // centred on the cell with its feet near the cell's bottom edge)
-  const furniture = furnitureOf(geo, layers);
+  const furniture = furnitureOf(geo, layers, season);
   const standing: { id: string; x: number; y: number }[] = [];
   for (const decor of geo.decor ?? []) {
-    standing.push({ id: decorId(decor.id as Decor), x: decor.x, y: decor.y });
+    // a haystack stands after the harvest and the ducks are on the pond in
+    // the warm months; outside a month everything the geography places shows
+    if (month && !isShownInMonth(decor.id as Decor, month)) continue;
+    standing.push({
+      id: furnitureIdOf(decor.id as Decor, season),
+      x: decor.x,
+      y: decor.y,
+    });
   }
   for (const [key, place] of Object.entries(geo.places)) {
     if (!place.marker || place.room) continue;
@@ -349,6 +395,12 @@ if (isMain) {
     .map((name) => path.join(stage, name))
     .filter((dir) => existsSync(dir));
   const windowArg = flag("window");
+  const { parseMonth } = await import("../../src/stage/almanac");
+  const monthArg = flag("month");
+  const month = parseMonth(monthArg ?? null) ?? undefined;
+  if (monthArg && !month) {
+    throw new BadRequestError(`--month ${monthArg}: not a month of 1 to 12`);
+  }
   const image = previewMap({
     geo,
     layers,
@@ -359,12 +411,16 @@ if (isMain) {
       : undefined,
     // `--no-roofs` looks inside the rooms
     roofs: !args.includes("--no-roofs"),
+    // `--month <1..12>` renders the map in a month of the almanac
+    month,
   });
   const out =
     flag("out") ??
     path.join(
       repo,
-      `var/preview/${path.basename(path.dirname(geoFile))}-${set.id}.png`,
+      `var/preview/${path.basename(path.dirname(geoFile))}-${set.id}${
+        month ? `-m${month}` : ""
+      }.png`,
     );
   await (
     await import("node:fs/promises")

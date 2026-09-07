@@ -652,6 +652,15 @@ export const DIRECTION_RULES: Record<StageDirectionKind, DirectionRule> = {
     actor: "labourer",
     effect: "smoke",
   },
+  till: { band: 0, scope: "town", places: "route", actor: "peasant", count: 2 },
+  rite: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "elder",
+    effect: "banner",
+  },
+  gather: { band: 0, scope: "town", places: "at", actor: "peasant", count: 3 },
 };
 
 /** One-line captions per direction (a browser mirror of the vocabulary's glosses). */
@@ -711,4 +720,7 @@ export const DIRECTION_CAPTIONS: Record<
   partition: { en: "partitions", zh: "瓜分" },
   stroll: { en: "crosses the town", zh: "过市" },
   labour: { en: "works at the trade", zh: "作工" },
+  till: { en: "works the field", zh: "耕" },
+  rite: { en: "keeps the rite", zh: "行礼" },
+  gather: { en: "gathers", zh: "会" },
 };

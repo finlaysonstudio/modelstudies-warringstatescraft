@@ -20,6 +20,8 @@ import {
   EFFECTS,
   seatColor,
 } from "../../stage/catalog";
+import { parseMonth, type Month } from "../../stage/almanac";
+import { MonthStrip } from "../../stage/MonthStrip";
 import { STAGE_SETS, stageSetOf } from "../../stage/sets";
 import { Stage } from "../../stage/Stage";
 
@@ -61,6 +63,17 @@ type EffectChoice = "default" | "none" | StageEffect;
 export function Overworld() {
   const [params, setParams] = useSearchParams();
   const set = stageSetOf(params.get("set"));
+  // the explorer has no month unless asked: the plain art is the record
+  const month = parseMonth(params.get("month"));
+  const setMonth = (next: Month | null) =>
+    setParams(
+      (params) => {
+        if (next === null) params.delete("month");
+        else params.set("month", String(next));
+        return params;
+      },
+      { replace: true },
+    );
   const [state, setState] = useState<LoadState>({ phase: "loading" });
   const [naming, setNaming] = useState<Naming>("chronicle");
   const [language, setLanguage] = useState<Language>("en");
@@ -404,6 +417,12 @@ export function Overworld() {
               )
             }
           />
+          <MonthStrip
+            month={month}
+            language={language}
+            onPick={setMonth}
+            allowNone
+          />
         </div>
       </header>
 
@@ -418,6 +437,7 @@ export function Overworld() {
           view={VIEW}
           interactive
           follow={follow}
+          month={month ?? undefined}
           set={set.id}
           eyebrow={false}
         />

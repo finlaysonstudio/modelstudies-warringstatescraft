@@ -44,6 +44,8 @@ export interface StageAssetRecord {
   finish?: Record<string, unknown>;
   /** the layer this asset was downsampled from; its generations were spent there */
   derived?: StageSource;
+  /** the season this is the plain id's sibling in (`terrain.field~autumn`) */
+  season?: string;
 }
 
 export interface StageAssetEntry {

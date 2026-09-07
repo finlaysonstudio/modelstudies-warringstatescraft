@@ -17,6 +17,7 @@
  */
 import type { FeatureNote, Localized } from "../legend";
 import type { Site, Townsperson } from "../site";
+import { CITY_YEAR } from "./years/city";
 
 /** every place the settlement map carries, named in both languages */
 export const SETTLEMENT_NAMES: Record<string, Localized> = {
@@ -314,6 +315,7 @@ export const CITY: Site = {
   folk: TOWNSFOLK,
   strollPlaces: STROLL_PLACES,
   smoking: ["kiln", "foundry", "smithy"],
+  year: CITY_YEAR,
   words: {
     awake: "the town is awake · pause",
     wake: "wake the town",

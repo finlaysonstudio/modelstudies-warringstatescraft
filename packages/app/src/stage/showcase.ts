@@ -24,13 +24,22 @@ import { stageSet, type StageSet } from "./sets";
  * their licence keeps them out of anything that travels.
  */
 
-export type ShowcaseGroup = "ground" | "pair" | "place" | "decor" | "figure";
+export type ShowcaseGroup =
+  "ground" | "pair" | "season" | "place" | "decor" | "figure";
+
+/** The plain id a seasonal sheet is a sibling of, or the id itself. */
+export const plainOf = (id: string): string =>
+  id.includes("~") ? id.slice(0, id.indexOf("~")) : id;
+
+const SEASON_ORDER = ["spring", "summer", "autumn", "winter"];
 
 /** The lower ground a transition sheet is drawn against, or null for a plain one. */
 export const lowerOf = (id: string): string | null =>
   id.includes("@") ? (id.split("@")[1] ?? null) : null;
 
 export const groupOf = (id: string): ShowcaseGroup | null => {
+  // a season's sibling of a ground, a pair, or a decor shows with its season
+  if (id.includes("~")) return "season";
   // a transition is named for the ground it draws and the one it is laid over
   if (id.includes("@")) return "pair";
   if (id.startsWith("terrain.") || id.startsWith("water.")) return "ground";
@@ -46,6 +55,8 @@ export const CATALOG_ORDER: Record<ShowcaseGroup, string[]> = {
   // a transition answers an adjacency the geography happens to draw, not a
   // catalog entry, so the set's own ids are the order and they sort by name
   pair: [],
+  // the seasons sort by the plain id and then by the year's order
+  season: [],
   place: MARKERS.flatMap(
     (marker) => MARKER_VARIANTS[marker] ?? [markerId(marker)],
   ),
@@ -110,6 +121,12 @@ const SECTIONS: { group: ShowcaseGroup; title: string; blurb: string }[] = [
       "Where two terrains meet and neither is grass, a sheet of its own draws the boundary. Each was generated against both neighbours' base tiles, so it reproduces them exactly and the map can lay it in place of the plain sheet. Each patch below stands on the ground it is laid over rather than on grass.",
   },
   {
+    group: "season",
+    title: "Seasons",
+    blurb:
+      "What the year does to a ground, a transition, or a tree: a sibling sheet per season the almanac changes it in, bound in place of the plain one while a month of that season is shown on a site. A recolour rides on the plain sheet's own finish and costs no generation; a sheet drawn for the season is its own generation. A transition is rebuilt for a season either of its grounds has, each half matched onto what its ground wears then.",
+  },
+  {
     group: "place",
     title: "Places",
     blurb:
@@ -142,6 +159,15 @@ export const showcaseOf = (manifest: StageManifest): Showcase => {
     const assets = own
       .filter((asset) => groupOf(asset.id) === group)
       .sort((a, b) => {
+        if (group === "season") {
+          // by the plain id, then in the year's order
+          const byPlain = plainOf(a.id).localeCompare(plainOf(b.id));
+          if (byPlain !== 0) return byPlain;
+          return (
+            SEASON_ORDER.indexOf(a.id.slice(a.id.indexOf("~") + 1)) -
+            SEASON_ORDER.indexOf(b.id.slice(b.id.indexOf("~") + 1))
+          );
+        }
         // an id the catalog does not list still shows, after the ones it does
         const rankA = order.indexOf(a.id);
         const rankB = order.indexOf(b.id);

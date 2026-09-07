@@ -30,6 +30,14 @@ import {
   waterId,
   type Marker,
 } from "./catalog";
+import {
+  isShownInMonth,
+  monthRecord,
+  seasonOf,
+  seasonalDecorId,
+  type Light,
+  type Month,
+} from "./almanac";
 import { KIT_PASSABLE } from "./kit";
 import { BARE_GROUND, type LegendKind } from "./legend";
 import type { StageAsset, StageManifest } from "./manifest";
@@ -155,6 +163,8 @@ export interface OverworldConfig extends OverworldCallbacks {
   follow?: boolean;
   /** whether the roofs are drawn over the rooms (the house page can hide them) */
   roofs?: boolean;
+  /** the month of the almanac the site is shown in (none: the plain art, no weather) */
+  month?: Month;
 }
 
 interface TiledPoint {
@@ -178,8 +188,30 @@ interface Roof {
 }
 
 /** how far a roof fades when it lifts, and how fast it gets there */
+/**
+ * The season's light: a grade laid over the whole map below the labels.
+ * Cold screens a pale blue over the ground, amber multiplies a harvest
+ * tone into it, and warm is the slightest cream so a summer reads as one.
+ */
+const GRADES: Record<Light, { color: number; blend: number; alpha: number }> = {
+  cold: { color: 0x9fb8d8, blend: Phaser.BlendModes.SCREEN, alpha: 0.16 },
+  amber: { color: 0xf2cf98, blend: Phaser.BlendModes.MULTIPLY, alpha: 0.3 },
+  warm: { color: 0xfff3dc, blend: Phaser.BlendModes.MULTIPLY, alpha: 0.1 },
+};
+const GRADE_DEPTH = 4500;
+const WEATHER_DEPTH = 4600;
+const GEESE_DEPTH = 4400;
+/** how long one roll of the month's weather chance holds, in ms */
+const WEATHER_SPELL_MS = 15000;
+/** the skein of geese the autumn and spring months fly across the sky */
+const GEESE_ID = "decor.geese";
+const GEESE_CROSSING_MS = 36000;
+const GEESE_REST_MS = 18000;
+const FLAKE_TEXTURE = "stage.flake";
 const ROOF_LIFTED_ALPHA = 0.12;
 const ROOF_FADE_RATE = 0.08;
+/** what a hidden decor answers a click with */
+const EMPTY_BOUNDS = new Phaser.Geom.Rectangle(0, 0, 0, 0);
 
 const propertiesOf = (object: TiledPoint): Record<string, unknown> =>
   Array.isArray(object.properties)
@@ -228,6 +260,19 @@ export class OverworldScene extends Phaser.Scene {
   /** the rooms a kit composed, by id, in pixels */
   private rooms = new Map<string, Phaser.Geom.Rectangle>();
   private roofs: Roof[] = [];
+  /** the map's tilesets by the name the map binds them under, for the season swap */
+  private tilesets: Phaser.Tilemaps.Tileset[] = [];
+  /** every decor image and the decor it draws, for the month's showing and hiding */
+  private decorImages: { decor: string; image: Phaser.GameObjects.Image }[] =
+    [];
+  private weather?: Phaser.GameObjects.Particles.ParticleEmitter;
+  private weatherZone = new Phaser.Geom.Rectangle(0, 0, 1, 1);
+  private weatherTimer?: Phaser.Time.TimerEvent;
+  private grade?: Phaser.GameObjects.Rectangle;
+  private geese?: Phaser.GameObjects.Image;
+  private geeseTween?: Phaser.Tweens.Tween;
+  /** the month shown, once `create` has applied it */
+  month?: Month;
   /** the cells a figure cannot cross; absent on a map with no walls to respect */
   private grid?: Grid;
   private reportedZoom = 0;
@@ -252,6 +297,7 @@ export class OverworldScene extends Phaser.Scene {
     this.view = config.view ?? { width: VIEW_WIDTH, height: VIEW_HEIGHT };
     this.follow = config.follow ?? true;
     this.showRoofs = config.roofs ?? true;
+    this.month = config.month;
   }
 
   preload(): void {
@@ -278,6 +324,12 @@ export class OverworldScene extends Phaser.Scene {
     Object.keys(manifest.assets)
       .filter((id) => id.includes("@"))
       .forEach((id) => image(id));
+    // the seasons: a sibling sheet per ground or decor the year changes
+    // (`terrain.field~autumn`), bound in place of the plain one by `setMonth`
+    Object.keys(manifest.assets)
+      .filter((id) => id.includes("~"))
+      .forEach((id) => image(id));
+    image(GEESE_ID);
     MARKERS.forEach((marker) => image(markerId(marker)));
     Object.values(MARKER_VARIANTS)
       .flat()
@@ -333,6 +385,7 @@ export class OverworldScene extends Phaser.Scene {
       .filter(
         (tileset): tileset is Phaser.Tilemaps.Tileset => tileset !== null,
       );
+    this.tilesets = tilesets;
     // what moves is the map's own business: a water tileset declares its frames
     // as a Tiled animation, which Phaser plays, and no other ground declares one
     map.layers.forEach((layerData) => {
@@ -358,9 +411,13 @@ export class OverworldScene extends Phaser.Scene {
         .setOrigin(0.5, 0.85)
         .setScale(this.scaleOf(asset))
         .setDepth(object.y);
+      const decor = id.replace(/^decor\./, "");
+      this.decorImages.push({ decor, image });
+      // a decor the month has taken away is not there to be clicked
+      const bounds = image.getBounds();
       this.addPickable(
-        { kind: "decor", id: id.replace(/^decor\./, "") },
-        image.getBounds(),
+        { kind: "decor", id: decor },
+        () => (image.visible ? bounds : EMPTY_BOUNDS),
         object.y,
       );
     }
@@ -504,6 +561,7 @@ export class OverworldScene extends Phaser.Scene {
       );
     }
     this.updateLabels();
+    this.applyMonth();
     this.config.onReady?.();
     this.pump();
   }
@@ -512,6 +570,176 @@ export class OverworldScene extends Phaser.Scene {
     this.updateLabels();
     this.reportZoom();
     this.liftRoofs();
+    this.driftWeather();
+  }
+
+  /** Shows the site in a month of its year; `undefined` is the plain art. */
+  setMonth(month: Month | undefined): void {
+    if (month === this.month) return;
+    this.month = month;
+    if (this.map) this.applyMonth();
+  }
+
+  /**
+   * The month on the map: every ground and pair the set carries a seasonal
+   * sheet for is rebound to it (`tileset.setImage`, so the laid tiles need no
+   * touch), the decor the month has taken away is hidden and the decor the
+   * season redraws swaps its texture, the light is graded, the weather set
+   * running, and the geese sent across the sky. Without a month all of it is
+   * undone, so a replay and the explorer draw what they always drew.
+   */
+  private applyMonth(): void {
+    const map = this.map;
+    if (!map) return;
+    const month = this.month;
+    const season = month ? seasonOf(month) : undefined;
+    const record = month ? monthRecord(month) : undefined;
+    for (const tileset of this.tilesets) {
+      const wanted =
+        season && this.textures.exists(`${tileset.name}~${season}`)
+          ? `${tileset.name}~${season}`
+          : tileset.name;
+      if (tileset.image?.key !== wanted)
+        tileset.setImage(this.textures.get(wanted));
+    }
+    for (const { decor, image } of this.decorImages) {
+      image.setVisible(month === undefined || isShownInMonth(decor, month));
+      const wanted = season ? seasonalDecorId(decor, season) : `decor.${decor}`;
+      const id = this.textures.exists(wanted) ? wanted : `decor.${decor}`;
+      if (image.texture.key !== id) image.setTexture(id);
+    }
+    this.gradeLight(map, record?.light);
+    this.setWeather(record?.weather);
+    this.flyGeese(map, record?.geese === true);
+  }
+
+  private gradeLight(
+    map: Phaser.Tilemaps.Tilemap,
+    light: Light | undefined,
+  ): void {
+    if (!light) {
+      this.grade?.destroy();
+      this.grade = undefined;
+      return;
+    }
+    const grade = GRADES[light];
+    if (!this.grade) {
+      this.grade = this.add
+        .rectangle(0, 0, map.widthInPixels, map.heightInPixels)
+        .setOrigin(0, 0)
+        .setDepth(GRADE_DEPTH);
+    }
+    this.grade.setFillStyle(grade.color, grade.alpha).setBlendMode(grade.blend);
+  }
+
+  /**
+   * The month's weather: a chance that any quarter-minute is snowing or
+   * raining, rolled afresh each spell. Flakes fall over the camera's own view
+   * (`weatherZone` follows it in `driftWeather`), sized against the zoom so
+   * a flake is a flake at any distance.
+   */
+  private setWeather(
+    weather: { kind: "snow" | "rain"; chance: number } | undefined,
+  ): void {
+    this.weatherTimer?.remove();
+    this.weatherTimer = undefined;
+    this.weather?.destroy();
+    this.weather = undefined;
+    if (!weather) return;
+    if (!this.textures.exists(FLAKE_TEXTURE)) {
+      const canvas = this.textures.createCanvas(FLAKE_TEXTURE, 2, 2);
+      if (!canvas) return;
+      const context = canvas.getContext();
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, 2, 2);
+      canvas.refresh();
+    }
+    const zoomOf = () => Math.max(this.cameras.main.zoom, 0.05);
+    const snow = weather.kind === "snow";
+    const u = this.unit;
+    const emitter = this.add.particles(0, 0, FLAKE_TEXTURE, {
+      emitZone: {
+        type: "random",
+        source: {
+          getRandomPoint: (point: { x: number; y: number }) => {
+            const zone = this.weatherZone;
+            point.x = zone.x + Math.random() * zone.width;
+            point.y = zone.y + Math.random() * zone.height;
+          },
+        },
+      },
+      frequency: snow ? 24 : 6,
+      quantity: 1,
+      lifespan: snow ? { min: 3200, max: 5200 } : { min: 900, max: 1400 },
+      speedX: {
+        onEmit: () => ((snow ? 6 + Math.random() * 10 : 8) * u) / zoomOf(),
+      },
+      speedY: {
+        onEmit: () =>
+          ((snow ? 14 + Math.random() * 12 : 160 + Math.random() * 40) * u) /
+          zoomOf(),
+      },
+      scaleX: { onEmit: () => (snow ? 1 : 0.5) / zoomOf() },
+      scaleY: { onEmit: () => (snow ? 1 : 6) / zoomOf() },
+      alpha: snow ? { start: 0.85, end: 0.2 } : { start: 0.45, end: 0.1 },
+      tint: snow ? 0xffffff : 0xbfd4ec,
+    });
+    emitter.setDepth(WEATHER_DEPTH);
+    this.weather = emitter;
+    const roll = () => {
+      const falling = Math.random() < weather.chance;
+      if (falling) emitter.start();
+      else emitter.stop();
+    };
+    roll();
+    this.weatherTimer = this.time.addEvent({
+      delay: WEATHER_SPELL_MS,
+      loop: true,
+      callback: roll,
+    });
+  }
+
+  /** Keeps the weather falling over the camera's view rather than a fixed field. */
+  private driftWeather(): void {
+    if (!this.weather) return;
+    const view = this.cameras.main.worldView;
+    // flakes are born above the view so the top of it is never bare
+    this.weatherZone.setTo(
+      view.x - view.width * 0.1,
+      view.y - view.height * 0.4,
+      view.width * 1.2,
+      view.height * 1.3,
+    );
+  }
+
+  /** A skein of geese across the sky, once a crossing and a rest, while the month says so. */
+  private flyGeese(map: Phaser.Tilemaps.Tilemap, flying: boolean): void {
+    if (!flying || !this.textures.exists(GEESE_ID)) {
+      this.geeseTween?.remove();
+      this.geeseTween = undefined;
+      this.geese?.destroy();
+      this.geese = undefined;
+      return;
+    }
+    if (this.geese) return;
+    const asset = this.config.manifest.assets[GEESE_ID];
+    const width = map.widthInPixels;
+    const y = map.heightInPixels * 0.18;
+    const span = (asset ? this.scaleOf(asset) : 1) * 64 * this.unit;
+    this.geese = this.add
+      .image(-span, y, GEESE_ID)
+      .setScale(asset ? this.scaleOf(asset) : 1)
+      .setAlpha(0.9)
+      .setDepth(GEESE_DEPTH);
+    this.geeseTween = this.tweens.add({
+      targets: this.geese,
+      x: width + span,
+      y: y + map.heightInPixels * 0.08,
+      duration: GEESE_CROSSING_MS,
+      repeat: -1,
+      repeatDelay: GEESE_REST_MS,
+      ease: "Linear",
+    });
   }
 
   /**

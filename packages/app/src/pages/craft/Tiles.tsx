@@ -11,6 +11,7 @@ import {
   PATCH,
   islandShape,
   lowerOf,
+  plainOf,
   patchIndexes,
   showcaseOf,
   type Showcase,
@@ -201,11 +202,20 @@ export function Tiles() {
               // ground it is laid over, everything else on the field the map
               // lays every other terrain over
               const lower = lowerOf(asset.id);
-              const under = lower ? (beds[lower] ?? grass) : grass;
+              // a seasonal pair stands on its lower ground in that season
+              // where the set carries it, and on the plain lower otherwise
+              const under = lower
+                ? (beds[lower] ?? beds[plainOf(lower)] ?? grass)
+                : grass;
               const bed = asset.id.endsWith(".boat") ? river : grass;
+              const plain = plainOf(asset.id);
+              const patch =
+                section.group === "ground" ||
+                section.group === "pair" ||
+                (section.group === "season" && !plain.startsWith("decor."));
               return (
                 <Card key={asset.id} asset={asset}>
-                  {section.group === "ground" || section.group === "pair" ? (
+                  {patch ? (
                     <GroundPatch asset={asset} bed={under} tile={tile} />
                   ) : section.group === "figure" ? (
                     <FigureStrip asset={asset} bed={bed} tile={tile} />

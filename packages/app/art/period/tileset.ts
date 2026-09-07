@@ -518,12 +518,18 @@ export interface SheetFinish {
   desaturate?: number;
   /** turn the hue and scale saturation and value */
   adjust?: ColourAdjustment;
+  /**
+   * A second finish applied after this one: how a season's recolour rides
+   * on the ground's own correction rather than replacing it.
+   */
+  then?: SheetFinish;
 }
 
 export const applyFinish = (image: Image, finish: SheetFinish = {}): Image => {
   let out = image;
   if (finish.desaturate) out = greyBlue(out, finish.desaturate);
   if (finish.adjust) out = adjustColour(out, finish.adjust);
+  if (finish.then) out = applyFinish(out, finish.then);
   return out;
 };
 

@@ -7,6 +7,7 @@ import {
   groupOf,
   islandShape,
   lowerOf,
+  plainOf,
   patchIndexes,
   showcaseOf,
 } from "../showcase";
@@ -53,6 +54,16 @@ describe("groupOf", () => {
     expect(groupOf("water.river@tallgrass")).toBe("pair");
     expect(lowerOf("terrain.mountain@forest")).toBe("forest");
     expect(lowerOf("terrain.mountain")).toBeNull();
+  });
+
+  it("reads a season's sibling as its own group, whatever it is a sibling of", () => {
+    expect(groupOf("terrain.field~autumn")).toBe("season");
+    expect(groupOf("terrain.field@scrub~autumn")).toBe("season");
+    expect(groupOf("decor.plum~winter")).toBe("season");
+    expect(plainOf("terrain.field~autumn")).toBe("terrain.field");
+    expect(plainOf("terrain.field@scrub~autumn")).toBe("terrain.field@scrub");
+    expect(plainOf("terrain.field")).toBe("terrain.field");
+    expect(lowerOf("terrain.field@scrub~autumn")).toBe("scrub~autumn");
   });
 });
 

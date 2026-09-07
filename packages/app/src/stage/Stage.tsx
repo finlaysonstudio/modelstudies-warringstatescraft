@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
 import type { StageBeat, StageScript, StageSequence } from "../lib/types";
+import type { Month } from "./almanac";
 import { loadStageManifest } from "./assets";
 import type { StagePlan } from "./beats";
 import { DIRECTION_CAPTIONS } from "./catalog";
@@ -41,6 +42,8 @@ export interface StageProps {
   follow?: boolean;
   /** whether the roofs are drawn over the rooms (default true; the house page hides them) */
   roofs?: boolean;
+  /** the month of the almanac to show the map in (none: the plain art) */
+  month?: Month;
   /**
    * Replaces the "Stage · source" part of the eyebrow; `false` hides the strip
    * altogether, for a page that is the map itself rather than a replay playing
@@ -108,6 +111,7 @@ export function Stage({
   interactive = false,
   follow = true,
   roofs = true,
+  month,
   eyebrow,
   set: setId = DEFAULT_STAGE_SET,
   map,
@@ -156,6 +160,7 @@ export function Stage({
           interactive,
           follow,
           roofs,
+          month,
           mapUrl: map?.url ?? set.map,
           featuresUrl: map?.features,
           flags,
@@ -238,6 +243,9 @@ export function Stage({
   useEffect(() => {
     if (sceneRef.current) sceneRef.current.showRoofs = roofs;
   }, [roofs, status]);
+  useEffect(() => {
+    sceneRef.current?.setMonth(month);
+  }, [month, status]);
 
   const close = (): void => {
     sceneRef.current?.clearPick();

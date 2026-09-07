@@ -78,6 +78,11 @@ export interface PeriodImageItem extends PeriodRecord {
   desaturate?: number;
   /** turn the hue and scale saturation and value, as a sheet's finish does */
   adjust?: ColourAdjustment;
+  /**
+   * The seasons this object changes in (`decor.plum~winter`): a drawing of
+   * its own (`file`) or a recolour of the plain one, as a tileset's are.
+   */
+  seasons?: Partial<Record<Season, SeasonVariant>>;
 }
 
 export interface PeriodSpriteItem extends PeriodRecord {
@@ -141,6 +146,38 @@ export interface PeriodTilesetItem extends PeriodRecord {
   variantTone?: number;
   /** turn the hue and scale saturation and value (the defaults leave them) */
   adjust?: ColourAdjustment;
+  /**
+   * The seasons this ground changes in, each a sibling sheet
+   * (`<id>~<season>`) the scene binds in place of the plain one while a month
+   * of that season is shown. A variant is either a recolour of the plain
+   * sheet (`adjust` / `desaturate` laid over the ground's own finish) or its
+   * own generation (`file` and `metadata`, finished on its own terms). A pair
+   * whose upper or lower ground has a season is built for it too, each half
+   * matched onto the colours its ground wears in that season, so the field
+   * in autumn meets the scrub with no spring collar along the boundary.
+   */
+  seasons?: Partial<Record<Season, SeasonVariant>>;
+}
+
+export type Season = "spring" | "summer" | "autumn" | "winter";
+export const SEASONS: readonly Season[] = [
+  "spring",
+  "summer",
+  "autumn",
+  "winter",
+];
+
+export interface SeasonVariant extends SheetFinish {
+  /** a sheet of its own for the season, relative to the source root */
+  file?: string;
+  metadata?: string;
+  /** the generation, when the variant is one */
+  prompt?: string;
+  settings?: Record<string, unknown>;
+  jobId?: string;
+  date?: string;
+  generations?: number;
+  note?: string;
 }
 
 export interface PeriodKitItem extends PeriodRecord {
@@ -261,6 +298,47 @@ export const assembleSprite = (
 const groundOfId = (id: string): Ground | null =>
   GROUNDS.find((ground) => tilesetIdOf(ground) === id) ?? null;
 
+/** `terrain.field~autumn` for a season, the plain id for none. */
+const seasonalIdOf = (id: string, season?: Season): string =>
+  season ? `${id}~${season}` : id;
+
+/**
+ * The finish a sheet's own ground wears in a season: a generated variant is
+ * finished on its own terms, a recolour rides on the plain sheet's finish,
+ * and a ground with no variant in that season wears its plain finish.
+ */
+const ownFinishOf = (item: PeriodTilesetItem, season?: Season): SheetFinish => {
+  const own: SheetFinish = { desaturate: item.desaturate, adjust: item.adjust };
+  const variant = season ? item.seasons?.[season] : undefined;
+  if (!variant) return own;
+  const seasonal: SheetFinish = {
+    desaturate: variant.desaturate,
+    adjust: variant.adjust,
+  };
+  return variant.file ? seasonal : { ...own, then: seasonal };
+};
+
+/**
+ * The seasons a sheet is built for: its own, and for a pair the seasons of
+ * either ground it joins, since a boundary drawn in spring on one side and
+ * autumn on the other is the collar the seasonal build exists to remove.
+ */
+export const seasonsOf = (
+  spec: PeriodSpec,
+  item: PeriodTilesetItem,
+): Season[] => {
+  const seasons = new Set<Season>(Object.keys(item.seasons ?? {}) as Season[]);
+  const upper = upperGroundOf(item.id);
+  for (const ground of [upper, item.against]) {
+    if (!ground) continue;
+    const drawing = itemDrawing(spec, ground);
+    for (const season of Object.keys(drawing.seasons ?? {}) as Season[]) {
+      seasons.add(season);
+    }
+  }
+  return SEASONS.filter((season) => seasons.has(season));
+};
+
 /**
  * What the build did to the download. `items.json` carries these beside the
  * prompt, and they are as much of the art as the generation is: the same
@@ -339,10 +417,8 @@ const itemDrawing = (spec: PeriodSpec, ground: string): PeriodTilesetItem => {
 export const finishAgainst = (
   spec: PeriodSpec,
   against: string,
-): SheetFinish => {
-  const item = itemDrawing(spec, against);
-  return { desaturate: item.desaturate, adjust: item.adjust };
-};
+  season?: Season,
+): SheetFinish => ownFinishOf(itemDrawing(spec, against), season);
 
 /**
  * One tileset item's sheet as the build finishes it, before it is expanded to
@@ -359,8 +435,10 @@ const finishedSheet = async (
   item: PeriodTilesetItem,
   cache: Map<string, Promise<{ sheet: Image; meta: WangMetadata }>>,
   drawing: string[] = [],
+  season?: Season,
 ): Promise<{ sheet: Image; meta: WangMetadata }> => {
-  const cached = cache.get(item.id);
+  const key = seasonalIdOf(item.id, season);
+  const cached = cache.get(key);
   if (cached) return cached;
   if (drawing.includes(item.id)) {
     throw new BadRequestError(
@@ -369,41 +447,61 @@ const finishedSheet = async (
   }
   const work = (async () => {
     const tile = spec.tile;
-    const raw = await readPng(path.join(root, item.file));
+    // a season with a sheet of its own is read from it; a recolour and a
+    // ground the season leaves alone are read from the plain sheet
+    const variant = season ? item.seasons?.[season] : undefined;
+    const source =
+      variant?.file && variant.metadata
+        ? { file: variant.file, metadata: variant.metadata }
+        : { file: item.file, metadata: item.metadata };
+    const raw = await readPng(path.join(root, source.file));
     const meta = JSON.parse(
-      await readFile(path.join(root, item.metadata), "utf8"),
+      await readFile(path.join(root, source.metadata), "utf8"),
     ) as WangMetadata;
-    const own: SheetFinish = {
-      desaturate: item.desaturate,
-      adjust: item.adjust,
-    };
+    const own = ownFinishOf(item, season);
     if (!item.against) return { sheet: applyFinish(raw, own), meta };
     const drawn = upperGroundOf(item.id);
     const next = [...drawing, item.id];
     const index = wangIndex(meta);
+    // a pair's own half wears the upper ground's seasonal recolour on top of
+    // the pair's own finish, and is then matched onto the colours the upper
+    // ground's own sheet wears in that season (a generated variant included)
+    const upperSeasonal =
+      drawn && season ? itemDrawing(spec, drawn).seasons?.[season] : undefined;
+    const upper: SheetFinish =
+      upperSeasonal && !upperSeasonal.file
+        ? {
+            ...own,
+            then: {
+              desaturate: upperSeasonal.desaturate,
+              adjust: upperSeasonal.adjust,
+            },
+          }
+        : own;
     return {
       sheet: splitFinish(raw, {
         lowerPalette: lowerSwatches(raw, meta, tile),
         upperPalette: cornerSwatches(raw, meta, "upper", tile),
         lowerBox: index.get("0000"),
         upperBox: index.get("1111"),
-        lower: finishAgainst(spec, item.against),
-        upper: own,
+        lower: finishAgainst(spec, item.against, season),
+        upper,
         lowerTarget: await paletteAgainst(
           spec,
           root,
           item.against,
           cache,
           next,
+          season,
         ),
         upperTarget: drawn
-          ? await paletteAgainst(spec, root, drawn, cache, next)
+          ? await paletteAgainst(spec, root, drawn, cache, next, season)
           : undefined,
       }),
       meta,
     };
   })();
-  cache.set(item.id, work);
+  cache.set(key, work);
   return work;
 };
 
@@ -420,9 +518,17 @@ export const paletteAgainst = async (
   against: string,
   cache: Map<string, Promise<{ sheet: Image; meta: WangMetadata }>> = new Map(),
   drawing: string[] = [],
+  season?: Season,
 ): Promise<Swatch[]> => {
   const item = itemDrawing(spec, against);
-  const { sheet, meta } = await finishedSheet(spec, root, item, cache, drawing);
+  const { sheet, meta } = await finishedSheet(
+    spec,
+    root,
+    item,
+    cache,
+    drawing,
+    season,
+  );
   return cornerSwatches(sheet, meta, "upper", spec.tile);
 };
 
@@ -509,11 +615,27 @@ export const buildPeriod = async ({
     string,
     Promise<{ sheet: Image; meta: WangMetadata }>
   >();
-  for (const item of spec.items) {
-    const file = `${item.id}.png`;
-    if (item.kind === "tileset") {
+  /**
+   * One ground sheet, plain or in a season: finished, expanded to blob tiles,
+   * keyed, framed, and stacked. The seasonal sheet takes every step the
+   * plain one does, since the scene binds it in the plain one's place.
+   */
+  const buildTileset = async (
+    item: PeriodTilesetItem,
+    season?: Season,
+  ): Promise<void> => {
+    const id = seasonalIdOf(item.id, season);
+    const file = `${id}.png`;
+    {
       const tile = spec.tile;
-      const { sheet, meta } = await finishedSheet(spec, root, item, sheets);
+      const { sheet, meta } = await finishedSheet(
+        spec,
+        root,
+        item,
+        sheets,
+        [],
+        season,
+      );
       let image = item.fill
         ? wangFillSheet({ sheet, meta, tile, fill: item.fill })
         : wangBlobSheet({ sheet, meta, tile });
@@ -549,15 +671,48 @@ export const buildPeriod = async ({
         });
       }
       await writePng(path.join(outDir, file), image);
-      assets[item.id] = {
+      const variant = season ? item.seasons?.[season] : undefined;
+      const record: AssetRecord = season
+        ? {
+            ...recordOf(item),
+            season,
+            ...(variant?.prompt ? { prompt: variant.prompt } : {}),
+            ...(variant?.settings ? { settings: variant.settings } : {}),
+            ...(variant?.jobId ? { jobId: variant.jobId } : {}),
+            ...(variant?.date ? { date: variant.date } : {}),
+            ...(variant?.note ? { note: variant.note } : {}),
+            // a recolour spends no generation; a sheet of its own spends its own
+            generations: variant?.file ? (variant.generations ?? 1) : 0,
+            finish: {
+              ...(recordOf(item).finish ?? {}),
+              ...(variant?.file ? { file: variant.file } : {}),
+              ...(variant?.adjust ? { seasonAdjust: variant.adjust } : {}),
+              ...(variant?.desaturate
+                ? { seasonDesaturate: variant.desaturate }
+                : {}),
+            },
+          }
+        : recordOf(item);
+      assets[id] = {
         file,
         kind: "blob",
         width: image.width,
         height: image.height,
         pack: "pixellab",
-        record: recordOf(item),
+        record,
       };
-      log(`${item.id}  ${image.width}x${image.height}  ← ${item.file}`);
+      log(
+        `${id}  ${image.width}x${image.height}  ← ${variant?.file ?? item.file}`,
+      );
+    }
+  };
+  for (const item of spec.items) {
+    const file = `${item.id}.png`;
+    if (item.kind === "tileset") {
+      await buildTileset(item);
+      for (const season of seasonsOf(spec, item)) {
+        await buildTileset(item, season);
+      }
       continue;
     }
     if (item.kind === "kit") {
@@ -663,6 +818,47 @@ export const buildPeriod = async ({
         record: recordOf(item),
       };
       log(`${item.id}  ${image.width}x${image.height}  ← ${item.file}`);
+      for (const season of SEASONS) {
+        const variant = item.seasons?.[season];
+        if (!variant) continue;
+        const id = seasonalIdOf(item.id, season);
+        const seasonal: SheetFinish = {
+          desaturate: variant.desaturate,
+          adjust: variant.adjust,
+        };
+        const drawn = variant.file
+          ? applyFinish(await readPng(path.join(root, variant.file)), seasonal)
+          : applyFinish(image, seasonal);
+        const seasonalFile = `${id}.png`;
+        await writePng(path.join(outDir, seasonalFile), drawn);
+        assets[id] = {
+          file: seasonalFile,
+          kind: "image",
+          width: drawn.width,
+          height: drawn.height,
+          pack: "pixellab",
+          record: {
+            ...recordOf(item),
+            season,
+            ...(variant.prompt ? { prompt: variant.prompt } : {}),
+            ...(variant.settings ? { settings: variant.settings } : {}),
+            ...(variant.jobId ? { jobId: variant.jobId } : {}),
+            ...(variant.date ? { date: variant.date } : {}),
+            ...(variant.note ? { note: variant.note } : {}),
+            generations: variant.file ? (variant.generations ?? 1) : 0,
+            finish: {
+              ...(variant.file ? { file: variant.file } : {}),
+              ...(variant.adjust ? { seasonAdjust: variant.adjust } : {}),
+              ...(variant.desaturate
+                ? { seasonDesaturate: variant.desaturate }
+                : {}),
+            },
+          },
+        };
+        log(
+          `${id}  ${drawn.width}x${drawn.height}  ← ${variant.file ?? item.file}`,
+        );
+      }
       continue;
     }
     const frames: Record<string, Image[]> = {};

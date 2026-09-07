@@ -7,6 +7,7 @@
  * Browser-safe: the node build imports it to check a map's places against
  * the names, and the page imports it to label them.
  */
+import type { SiteYear } from "./almanac";
 import type { FeatureNote, Localized } from "./legend";
 import type { StageArchetype } from "../lib/types";
 import type { StageSet } from "./sets";
@@ -66,6 +67,8 @@ export interface Site {
   strollPlaces: readonly string[];
   /** the homes whose labour smokes */
   smoking: readonly string[];
+  /** what the site does in each month of the year (`sites/years/`) */
+  year: SiteYear;
   words: {
     awake: string;
     wake: string;

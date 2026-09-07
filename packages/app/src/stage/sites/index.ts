@@ -11,6 +11,9 @@ import { VILLAGE } from "./village";
 import type { Site, SiteId } from "../site";
 
 export { CITY, HOUSE, VILLAGE };
+export { CITY_YEAR } from "./years/city";
+export { HOUSE_YEAR } from "./years/house";
+export { VILLAGE_YEAR } from "./years/village";
 export * from "../site";
 
 export const SITES: readonly Site[] = [CITY, VILLAGE, HOUSE];

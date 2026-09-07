@@ -5,10 +5,10 @@ description: Retrieve from the document lake (`var/lake/`, `@modelstudies/lake`)
 
 # 📚 Document Lake
 
-262 documents, 15.7M words, about 310MB under `var/lake/` (git ignored). Read side is
+298 documents, 17.6M words, about 335MB under `var/lake/` (git ignored). Read side is
 `@modelstudies/lake`, reached through the CLI. Acquisition is `var/lake/bin/`.
 
-Searching is cheap: a full `--use any` scan of all 262 documents returns in under a second. 🏊
+Searching is cheap: a full `--use any` scan of all 298 documents returns in under a second. 🏊
 Reading is what costs context. Search wide, then read narrow windows.
 
 Search is lexical. When a query fails because it names a shape rather than a vocabulary, that
@@ -56,13 +56,15 @@ characters. Snippet `--context <n>` adds n lines on each side. `--json` on any r
 
 ## 🇨🇳 The period corpus is Chinese-first
 
-The single most useful fact about this lake: 47 of the 52 period documents are Chinese
-originals from Wikisource. English is five documents only.
+The single most useful fact about this lake: 58 of the 68 period documents are Chinese
+originals from Wikisource. English is ten documents only.
 
 - `chinese-classics-legge-en` (Analects, Mencius, Great Learning, Doctrine of the Mean)
 - `lordshang-duyvendak-en`
 - `sunzi-giles-en`, `military-classics-calthrop-en` (Sunzi and Wuzi)
 - `zuozhuan-legge-en` (**`redistribute: false`**, OCR of a 1960 reprint)
+- `liki-1-legge-en`, `liki-2-legge-en` (the Liji), `sheking-legge-en` (the Shijing), `yili-1-steele-en`,
+  `yili-2-steele-en` (the Yili): `topic: life`, 2026-09-07, the year and the household in English
 
 Narrative and anecdote (Zhan Guo Ce, Shiji, Guoyu, Shuoyuan, Xinxu, Yanzi Chunqiu, Zizhi
 Tongjian) exist in Chinese only. An English query for an episode returns near nothing:
@@ -116,9 +118,10 @@ redistributed. Cite it, or take the passage from `zuozhuan-zh` instead. Four RAN
 
 | Collection | Docs | Use | Contents |
 |---|---:|---|---|
-| `period` | 52 | `prompt` | Chinese originals and five public-domain English translations |
+| `period` | 68 | `prompt` | Chinese originals, ten public-domain English translations, and under `--topic life` the year and the household (the Simin Yueling, the Da Dai Liji, the Fan Shengzhi Shu, the Lienü Zhuan, the Yuefu Shiji, the Yutai Xinyong, the Erya, Legge's Li Ki and She King, Steele's I-li) |
 | `situation` | 124 | `reader` | 18 FRUS crisis volumes, 103 CRS reports, 6 treaty texts |
 | `method` | 11 | `internal` | Wargame handbooks, RAND and CSIS studies, the two arXiv papers, three crisis datasets |
+| `world` | 74 | `reader` | The archaeology of the city (`lingshou`, `xue`, `boren`, `fangmatan`, `documents`, `trades`, `building`, `capitals`), the rooms (`interior`), the year (`season`), and the period's novel (`fiction`) |
 | `house` | 21 | split | 12 scenario exports `prompt`, the 8 Lamparth cells `internal`, `house-simulates-index` `reader` |
 
 `situation` carries `--topic`: `taiwan`, `china-military`, `escalation-nuclear`,
@@ -130,7 +133,11 @@ redistributed. Cite it, or take the passage from `zuozhuan-zh` instead. Four RAN
 `--tier` mirrors collection: 1 period, 2 situation, 3 method, 5 house, 6 world. `world` topics:
 `lingshou`, `xue`, `boren`, `fangmatan`, `documents`, `trades`, `building`, `capitals`, `interior`
 (the house's rooms: the Zeng Hou Yi tomb, lacquer, screens, furniture, liubo, mirrors, the Chuci and
-the Zhao hun, the Changtaiguan slips). The Chuci (`chuci-zh`, 招魂 from line 396) and the Shijing
+the Zhao hun, the Changtaiguan slips), `season` (the year: the solar terms, the pentads, the Yueling, the
+Xia Xiaozheng, the Simin Yueling, the Chu Silk Manuscript, the altar days, Shangsi, Laba, the well-field,
+millet, sericulture, the pictorial stones, the Qimin Yaoshu), `fiction` (the Dongzhou Lieguo Zhi and the
+Lienü Zhuan page; a novel is reader-side on purpose). `period` carries `--topic life` for the year and
+the household (the Yueling itself is `liji-zh` 月令 from line 1575; 七月 is `shijing-zh` 3823). The Chuci (`chuci-zh`, 招魂 from line 396) and the Shijing
 (`shijing-zh`) are in `period`.
 
 `house-simulates-index` is the one document holding every scenario's `simulates` line. It is
