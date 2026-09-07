@@ -153,6 +153,8 @@ export interface OverworldConfig extends OverworldCallbacks {
   interactive?: boolean;
   /** whether the camera flies to each beat (the explorer can switch it off) */
   follow?: boolean;
+  /** whether the roofs are drawn over the rooms (the house page can hide them) */
+  roofs?: boolean;
 }
 
 interface TiledPoint {
@@ -238,12 +240,18 @@ export class OverworldScene extends Phaser.Scene {
   private unit = 1;
   /** whether the camera flies to each beat; the explorer toggles it live */
   follow: boolean;
+  /**
+   * whether the roofs are drawn at all; the house page toggles it live, and
+   * `liftRoofs` fades every roof out while it is off
+   */
+  showRoofs: boolean;
 
   constructor(config: OverworldConfig) {
     super("overworld");
     this.config = config;
     this.view = config.view ?? { width: VIEW_WIDTH, height: VIEW_HEIGHT };
     this.follow = config.follow ?? true;
+    this.showRoofs = config.roofs ?? true;
   }
 
   preload(): void {
@@ -617,7 +625,8 @@ export class OverworldScene extends Phaser.Scene {
 
   /**
    * Fades a roof while a figure is inside its room, or while the reader has
-   * the room open, and brings it back when the room empties.
+   * the room open, and brings it back when the room empties. With the roofs
+   * switched off every roof fades out and stays out.
    */
   private liftRoofs(): void {
     if (!this.roofs.length) return;
@@ -630,7 +639,7 @@ export class OverworldScene extends Phaser.Scene {
       const lifted =
         roof.room === open ||
         feet.some((sprite) => roof.rect.contains(sprite.x, sprite.y));
-      const target = lifted ? ROOF_LIFTED_ALPHA : 1;
+      const target = !this.showRoofs ? 0 : lifted ? ROOF_LIFTED_ALPHA : 1;
       if (roof.alpha === target) continue;
       roof.alpha =
         Math.abs(target - roof.alpha) < 0.01

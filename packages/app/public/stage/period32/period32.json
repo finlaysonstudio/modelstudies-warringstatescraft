@@ -6319,18 +6319,19 @@
       "pack": "pixellab",
       "record": {
         "tool": "create_building_kit",
-        "prompt": "Warring States Chinese compound wall: grey rammed earth in visible tamped courses with a grey clay tile coping along the top, low top-down pixel art",
+        "prompt": "Warring States Chinese compound wall: warm tan rammed earth in clearly visible horizontal tamped courses with thin dark seams, weathered and streaked, capped by a projecting coping of dark grey semicylindrical clay tiles, low top-down pixel art",
         "settings": {
           "tile_type": "square_topdown",
           "tile_size": 32,
           "wall_tiles": 2,
           "seed": 7,
-          "floor_description": "grey flagstone paving"
+          "floor_description": "grey flagstone paving",
+          "floor2_description": "a coping of dark grey semicylindrical clay roof tiles in close rows, a uniform even texture with no eave and no edge, seen from above"
         },
-        "jobId": "9f755dff-f0de-463e-8dc3-9c04486857fb",
+        "jobId": "3e958497-7303-4c0b-b6a5-f1c9201fbe66",
         "date": "2026-09-06",
-        "generations": 30,
-        "note": "The compound wall kit: the ring wall and the court walls, in grey tamped courses under a tile coping. Only its wall pieces are laid; the flagstone floor it was generated with is unused.",
+        "generations": 60,
+        "note": "The compound wall kit: the ring wall and the court walls, in warm tamped courses under a tile coping. Only its wall pieces are laid; the flagstone floor it was generated with is unused. Generated twice: the first kit (9f755dff-f0de-463e-8dc3-9c04486857fb, 'grey rammed earth') came back a flat grey band with a lighter strip for the coping, indistinguishable from the flagstones beside it, and the second names the courses, the seams, and the weathering, so the wall reads as earth against the paving.",
         "finish": {
           "stretch": 1.3333333333333333
         }
@@ -6853,7 +6854,7 @@
       "pack": "pixellab",
       "record": {
         "tool": "create_map_object",
-        "prompt": "bundles of Warring States Chinese bamboo writing slips seen from above: three rolled bundles of pale bamboo strips bound with dark silk cords and one bundle unrolled showing columns of black brush script, on a low wooden shelf, on a dark brown wooden plank floor, no people",
+        "prompt": "bundles of Warring States Chinese bamboo writing slips seen from above: three tightly rolled bundles of pale yellow bamboo strips bound with thick dark red silk cords, and one bundle unrolled flat showing clear columns of black brush script, stacked on a low dark walnut wooden shelf with a strong dark outline, high contrast, no people",
         "settings": {
           "width": 48,
           "height": 32,
@@ -6862,10 +6863,10 @@
           "outline": "single color outline",
           "view": "low top-down"
         },
-        "jobId": "2307b460-e213-4c03-b100-97f02cf833a5",
+        "jobId": "8b916fbf-69b5-42bc-bec6-7ef59c6bfe43",
         "date": "2026-09-06",
-        "generations": 1,
-        "note": "The household's records, beside the steward's desk."
+        "generations": 2,
+        "note": "The household's records, beside the steward's desk. Generated twice: the first (2307b460-e213-4c03-b100-97f02cf833a5) asked for pale strips on a plank floor and came back a pale smudge with no edge against the floor it stands on; the second asks for the cords and the shelf in dark colours and reads as a bound bundle at map scale."
       }
     },
     "decor.lamptree": {

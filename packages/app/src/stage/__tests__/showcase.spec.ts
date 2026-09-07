@@ -104,6 +104,17 @@ describe("showcaseOf", () => {
     expect(showcaseOf(manifest).generations).toBe(11);
   });
 
+  it("leaves a derived asset's generations to the layer it came from", () => {
+    const derived = asset("image.well", "period", 3);
+    derived.record = { ...derived.record!, derived: "period32" };
+    const showcase = showcaseOf(
+      manifestOf([asset("image.court", "period", 2), derived]),
+    );
+    expect(showcase.generations).toBe(2);
+    expect(showcase.derived).toBe(1);
+    expect(showcase.count).toBe(2);
+  });
+
   it("names what the set still borrows, and the layer standing in", () => {
     const { borrowed } = showcaseOf(manifest);
     const ids = borrowed.map((entry) => entry.id);

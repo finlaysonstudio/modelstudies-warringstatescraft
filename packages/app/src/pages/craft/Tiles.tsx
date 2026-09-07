@@ -153,6 +153,13 @@ export function Tiles() {
             <span className="text-zinc-200">{showcase.count}</span> ids ·{" "}
             <span className="text-zinc-200">{showcase.generations}</span>{" "}
             generations, failed attempts included · pixellab
+            {showcase.derived > 0 && (
+              <>
+                {" "}
+                · <span className="text-zinc-200">{showcase.derived}</span>{" "}
+                derived from another layer
+              </>
+            )}
           </p>
         )}
       </header>
@@ -255,9 +262,11 @@ function Card({ asset, children }: { asset: StageAsset; children: ReactNode }) {
           <h3 className="font-plex-mono text-xs text-zinc-200">{asset.id}</h3>
           <span className="font-plex-mono text-[10px] text-zinc-600">
             {asset.width}×{asset.height}
-            {record?.generations === undefined
-              ? ""
-              : ` · ${generationsLabel(record.generations)}`}
+            {record?.derived
+              ? ` · from ${record.derived}`
+              : record?.generations === undefined
+                ? ""
+                : ` · ${generationsLabel(record.generations)}`}
           </span>
         </div>
         {record?.prompt && (

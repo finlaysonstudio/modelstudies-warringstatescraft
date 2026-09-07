@@ -240,6 +240,7 @@ export const HOUSE: Site = {
     awake: "the house is awake · pause",
     wake: "wake the house",
     firstStep: "the house wakes when the map has loaded",
+    roofs: "hide the roofs",
     day: { en: "The house's day", zh: "第中一日" },
     nothing: { en: "Nothing has stirred yet.", zh: "第尚未醒。" },
     folk: { en: "Who lives here", zh: "一家之人" },

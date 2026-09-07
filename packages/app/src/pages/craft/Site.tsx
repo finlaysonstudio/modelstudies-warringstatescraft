@@ -134,6 +134,7 @@ export function Site({ site }: { site: SiteRecord }) {
   const [language, setLanguage] = useState<Language>("en");
   const [walking, setWalking] = useState(true);
   const [follow, setFollow] = useState(false);
+  const [roofs, setRoofs] = useState(true);
   const [beats, setBeats] = useState<StageBeat[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const counter = useRef(0);
@@ -289,6 +290,17 @@ export function Site({ site }: { site: SiteRecord }) {
             />
             follow the people
           </label>
+          {site.words.roofs && (
+            <label className="flex cursor-pointer items-center gap-x-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+              <input
+                type="checkbox"
+                checked={!roofs}
+                onChange={(event) => setRoofs(!event.target.checked)}
+                className="cursor-pointer accent-brand-terminal"
+              />
+              {site.words.roofs}
+            </label>
+          )}
         </div>
       </header>
 
@@ -303,6 +315,7 @@ export function Site({ site }: { site: SiteRecord }) {
           view={VIEW}
           interactive
           follow={follow}
+          roofs={roofs}
           flags={false}
           set={set.id}
           eyebrow={false}

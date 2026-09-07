@@ -1,4 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
+
+import { BadRequestError } from "@jaypie/errors";
 import { PNG } from "pngjs";
 
 /** An RGBA raster, four bytes per pixel, row major. */
@@ -215,4 +217,64 @@ export const isBlank = (image: Image): boolean => {
     if (image.data[i] !== 0) return false;
   }
   return true;
+};
+
+/**
+ * Shrinks an image by a whole factor, each output pixel the alpha-weighted
+ * mean of the block it covers. Box averaging rather than nearest neighbour,
+ * because a one-pixel outline sampled every other pixel comes back as a
+ * dotted line, while averaged into its neighbour it comes back as a darker
+ * edge, which is what an outline is at half the size. The width and height
+ * must divide by the factor, since a sheet's tiles have to land on tiles.
+ */
+export const downsampleImage = (image: Image, factor: number): Image => {
+  if (
+    !Number.isInteger(factor) ||
+    factor < 1 ||
+    image.width % factor !== 0 ||
+    image.height % factor !== 0
+  ) {
+    throw new BadRequestError(
+      `cannot downsample ${image.width}x${image.height} by ${factor}`,
+    );
+  }
+  const width = image.width / factor;
+  const height = image.height / factor;
+  const out = blankImage(width, height);
+  const area = factor * factor;
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let a = 0;
+      for (let dy = 0; dy < factor; dy += 1) {
+        for (let dx = 0; dx < factor; dx += 1) {
+          const [pr, pg, pb, pa] = pixelAt(
+            image,
+            x * factor + dx,
+            y * factor + dy,
+          );
+          r += pr * pa;
+          g += pg * pa;
+          b += pb * pa;
+          a += pa;
+        }
+      }
+      setPixel(
+        out,
+        x,
+        y,
+        a === 0
+          ? [0, 0, 0, 0]
+          : [
+              Math.round(r / a),
+              Math.round(g / a),
+              Math.round(b / a),
+              Math.round(a / area),
+            ],
+      );
+    }
+  }
+  return out;
 };

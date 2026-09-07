@@ -96,6 +96,12 @@ export interface AssetRecord {
   note?: string;
   /** what the build did to the download (keying, colour, stacking) */
   finish?: Record<string, unknown>;
+  /**
+   * The layer this asset was downsampled from rather than generated for: the
+   * record above is that layer's, and the generations it names were spent
+   * there, so a layer's own count leaves a derived asset out.
+   */
+  derived?: ManifestSource;
 }
 
 export interface AssetEntry {

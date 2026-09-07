@@ -42,6 +42,8 @@ export interface StageAssetRecord {
   generations?: number;
   note?: string;
   finish?: Record<string, unknown>;
+  /** the layer this asset was downsampled from; its generations were spent there */
+  derived?: StageSource;
 }
 
 export interface StageAssetEntry {

@@ -86,6 +86,8 @@ export interface Showcase {
   count: number;
   /** every generation they cost, failed attempts included */
   generations: number;
+  /** how many of the layer's ids were downsampled from another layer */
+  derived: number;
   /** catalog ids the map asks for that this set does not draw itself */
   borrowed: BorrowedId[];
 }
@@ -155,10 +157,13 @@ export const showcaseOf = (manifest: StageManifest): Showcase => {
     own: source,
     sections,
     count: own.length,
+    // a derived asset's generations were spent on the layer it came from
     generations: own.reduce(
-      (sum, asset) => sum + (asset.record?.generations ?? 0),
+      (sum, asset) =>
+        sum + (asset.record?.derived ? 0 : (asset.record?.generations ?? 0)),
       0,
     ),
+    derived: own.filter((asset) => asset.record?.derived).length,
     borrowed: WANTED_IDS.filter((id) => !ids.has(id)).map((id) => ({
       id,
       from: manifest.assets[id]?.source ?? null,

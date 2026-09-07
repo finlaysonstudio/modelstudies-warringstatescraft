@@ -39,6 +39,8 @@ export interface StageProps {
   interactive?: boolean;
   /** whether the camera flies to each beat (default true) */
   follow?: boolean;
+  /** whether the roofs are drawn over the rooms (default true; the house page hides them) */
+  roofs?: boolean;
   /**
    * Replaces the "Stage · source" part of the eyebrow; `false` hides the strip
    * altogether, for a page that is the map itself rather than a replay playing
@@ -105,6 +107,7 @@ export function Stage({
   view = { width: VIEW_WIDTH, height: VIEW_HEIGHT },
   interactive = false,
   follow = true,
+  roofs = true,
   eyebrow,
   set: setId = DEFAULT_STAGE_SET,
   map,
@@ -152,6 +155,7 @@ export function Stage({
           view,
           interactive,
           follow,
+          roofs,
           mapUrl: map?.url ?? set.map,
           featuresUrl: map?.features,
           flags,
@@ -230,6 +234,10 @@ export function Stage({
   useEffect(() => {
     if (sceneRef.current) sceneRef.current.follow = follow;
   }, [follow, status]);
+
+  useEffect(() => {
+    if (sceneRef.current) sceneRef.current.showRoofs = roofs;
+  }, [roofs, status]);
 
   const close = (): void => {
     sceneRef.current?.clearPick();

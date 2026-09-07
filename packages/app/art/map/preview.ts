@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -25,7 +25,8 @@ import {
   type Decor,
   type Marker,
 } from "../../src/stage/catalog";
-import { KIT_CELL, KIT_COLUMNS, KIT_FRAME } from "../../src/stage/kit";
+import { KIT_COLUMNS } from "../../src/stage/kit";
+import type { VendorManifest } from "../vendor/manifest";
 import {
   againstOf,
   groundMask,
@@ -61,17 +62,39 @@ export interface PreviewOptions {
   roofs?: boolean;
 }
 
-/** the kit sheets the geography's rooms and walls name, highest layer winning */
-const kitsOf = (geo: Geography, layers: string[]): Map<string, Image> => {
-  const kits = new Map<string, Image>();
+/** a kit sheet with the frame and cell geometry its layer's manifest names */
+interface KitSheet {
+  image: Image;
+  frame: { width: number; height: number };
+  cell: { x: number; y: number; size: number };
+}
+
+/**
+ * The kit sheets the geography's rooms and walls name, highest layer winning.
+ * The geometry comes from the layer's manifest rather than the 32 px
+ * constants, because a derived layer carries the same kit at another tile
+ * and the scene reads the manifest the same way.
+ */
+const kitsOf = (geo: Geography, layers: string[]): Map<string, KitSheet> => {
+  const kits = new Map<string, KitSheet>();
   const ids = new Set([
     ...(geo.rooms ?? []).map((room) => room.kit),
     ...(geo.walls ?? []).map((wall) => wall.kit),
   ]);
   for (const dir of layers) {
+    const manifestFile = path.join(dir, `${path.basename(dir)}.json`);
+    const manifest = existsSync(manifestFile)
+      ? (JSON.parse(readFileSync(manifestFile, "utf8")) as VendorManifest)
+      : null;
     for (const id of ids) {
       const file = path.join(dir, `${id}.png`);
-      if (existsSync(file)) kits.set(id, readPng(file));
+      const entry = manifest?.assets[id];
+      if (!existsSync(file) || !entry?.frame || !entry.kit) continue;
+      kits.set(id, {
+        image: readPng(file),
+        frame: entry.frame,
+        cell: entry.kit.cell,
+      });
     }
   }
   return kits;
@@ -217,9 +240,8 @@ export const previewMap = ({
   }
   // the kit pieces, north to south so a southern piece's face overdraws the
   // top of the piece behind it, walls first and the roofs over them; a kit
-  // frame is drawn at 32 px a cell and scaled to this set's tile
+  // whose cell is not this set's tile is left undrawn rather than scaled
   const kits = kitsOf(geo, layers);
-  const kitScale = tile / KIT_CELL.size;
   const drawPiece = (
     kit: string,
     x: number,
@@ -227,16 +249,16 @@ export const previewMap = ({
     piece: number,
   ): void => {
     const sheet = kits.get(kit);
-    if (!sheet || kitScale !== 1) return;
+    if (!sheet || sheet.cell.size !== tile) return;
     blit({
-      source: sheet,
-      sx: (piece % KIT_COLUMNS) * KIT_FRAME.width,
-      sy: Math.floor(piece / KIT_COLUMNS) * KIT_FRAME.height,
-      width: KIT_FRAME.width,
-      height: KIT_FRAME.height,
+      source: sheet.image,
+      sx: (piece % KIT_COLUMNS) * sheet.frame.width,
+      sy: Math.floor(piece / KIT_COLUMNS) * sheet.frame.height,
+      width: sheet.frame.width,
+      height: sheet.frame.height,
       target: canvas,
-      tx: x * tile - KIT_CELL.x,
-      ty: y * tile - KIT_CELL.y,
+      tx: x * tile - sheet.cell.x,
+      ty: y * tile - sheet.cell.y,
     });
   };
   const byRow = <T extends { placement: { y: number; x: number } }>(

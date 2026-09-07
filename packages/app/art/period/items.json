@@ -4,6 +4,7 @@
   "tile": 16,
   "root": "var/assets/pixellab",
   "out": "packages/app/public/stage/period",
+  "derive": "items32.json",
   "items": [
     {
       "id": "image.court",

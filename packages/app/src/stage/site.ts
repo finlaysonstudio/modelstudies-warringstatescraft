@@ -70,6 +70,8 @@ export interface Site {
     awake: string;
     wake: string;
     firstStep: string;
+    /** the label of the roofs checkbox; only a site with interiors carries one */
+    roofs?: string;
     day: Localized;
     nothing: Localized;
     folk: Localized;

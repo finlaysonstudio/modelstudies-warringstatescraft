@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { BadRequestError } from "@jaypie/errors";
+import { BadRequestError, NotFoundError } from "@jaypie/errors";
 
 import {
   KIT_CELL,
@@ -23,6 +23,7 @@ import {
   blankImage,
   copyRect,
   cropImage,
+  downsampleImage,
   readPng,
   resampleImage,
   writePng,
@@ -186,7 +187,24 @@ export interface PeriodSpec {
   root: string;
   /** the built layer, relative to the repository */
   out: string;
+  /**
+   * Another spec file beside this one whose built layer supplies every id
+   * this spec does not draw itself, downsampled to this spec's tile. The
+   * 16 px spec names the 32 px one, so the settlement art generated once at
+   * 32 px (the kits, the furniture, the townsfolk, the yards and the pairs
+   * they meet on) draws in both sets rather than in one.
+   */
+  derive?: string;
   items: PeriodItem[];
+}
+
+/** the layer a spec derives from, resolved by the caller */
+export interface DeriveSource {
+  source: StageSource;
+  tile: number;
+  /** where that layer's built files sit */
+  dir: string;
+  manifest: VendorManifest;
 }
 
 /** PixelLab facings → the stage's facings (rows down, left, right, up) */
@@ -424,13 +442,65 @@ export interface BuildPeriodOptions {
   spec: PeriodSpec;
   root: string;
   outDir: string;
+  /** the built layer to fill this spec's gaps from (`spec.derive`, resolved) */
+  derive?: DeriveSource;
   log?: (line: string) => void;
 }
+
+/** Halves (or thirds) every dimension an entry carries, at a whole factor. */
+const scaleEntry = (
+  entry: AssetEntry,
+  factor: number,
+  id: string,
+): AssetEntry => {
+  const down = (value: number, what: string): number => {
+    if (value % factor !== 0) {
+      throw new BadRequestError(
+        `${id}: ${what} ${value} does not divide by ${factor}`,
+      );
+    }
+    return value / factor;
+  };
+  return {
+    ...entry,
+    width: down(entry.width, "width"),
+    height: down(entry.height, "height"),
+    ...(entry.frame
+      ? {
+          frame: {
+            width: down(entry.frame.width, "frame width"),
+            height: down(entry.frame.height, "frame height"),
+          },
+        }
+      : {}),
+    ...(entry.sprite
+      ? {
+          sprite: {
+            ...entry.sprite,
+            frameWidth: down(entry.sprite.frameWidth, "frame width"),
+            frameHeight: down(entry.sprite.frameHeight, "frame height"),
+          },
+        }
+      : {}),
+    ...(entry.kit
+      ? {
+          kit: {
+            cell: {
+              x: down(entry.kit.cell.x, "cell x"),
+              y: down(entry.kit.cell.y, "cell y"),
+              size: down(entry.kit.cell.size, "cell size"),
+            },
+          },
+        }
+      : {}),
+  };
+};
 
 export const buildPeriod = async ({
   spec,
   root,
   outDir,
+  derive,
   log = () => {},
 }: BuildPeriodOptions): Promise<VendorManifest> => {
   await mkdir(outDir, { recursive: true });
@@ -624,6 +694,39 @@ export const buildPeriod = async ({
       `${item.id}  ${image.width}x${image.height}  ${item.frames} frames  ← ${item.dir}`,
     );
   }
+  if (derive) {
+    // whatever this spec does not draw itself is borrowed from the layer it
+    // derives from, shrunk to this tile: a generation is spent once and both
+    // sets draw it, and an id this spec does draw keeps its own drawing
+    const factor = derive.tile / spec.tile;
+    if (!Number.isInteger(factor) || factor < 1) {
+      throw new BadRequestError(
+        `${spec.source} at ${spec.tile} px cannot derive from ${derive.source} at ${derive.tile} px`,
+      );
+    }
+    let derived = 0;
+    for (const [id, entry] of Object.entries(derive.manifest.assets)) {
+      if (assets[id]) continue;
+      const image = downsampleImage(
+        await readPng(path.join(derive.dir, entry.file)),
+        factor,
+      );
+      const file = `${id}.png`;
+      await writePng(path.join(outDir, file), image);
+      assets[id] = {
+        ...scaleEntry(entry, factor, id),
+        file,
+        record: entry.record
+          ? { ...entry.record, derived: derive.source }
+          : { tool: "derived", prompt: "", derived: derive.source },
+      };
+      derived += 1;
+      log(
+        `${id}  ${image.width}x${image.height}  ↓ ${derive.source} / ${factor}`,
+      );
+    }
+    log(`${derived} derived from ${derive.source} at ${derive.tile} px`);
+  }
   const manifest: VendorManifest = {
     version: 1,
     source: spec.source,
@@ -635,6 +738,32 @@ export const buildPeriod = async ({
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
   return manifest;
+};
+
+/**
+ * The layer a spec derives from, read from the sibling spec file and its
+ * built manifest. The built layer is committed, so its absence is a fault
+ * rather than a gap to skip: the derived ids would silently vanish from the
+ * set and the site pages would fall back to the procedural stand-ins.
+ */
+export const deriveSourceOf = async (
+  specPath: string,
+  repo: string,
+): Promise<DeriveSource> => {
+  const other = JSON.parse(await readFile(specPath, "utf8")) as PeriodSpec;
+  const dir = path.join(repo, other.out);
+  const manifestPath = path.join(dir, `${other.source}.json`);
+  let manifest: VendorManifest;
+  try {
+    manifest = JSON.parse(
+      await readFile(manifestPath, "utf8"),
+    ) as VendorManifest;
+  } catch {
+    throw new NotFoundError(
+      `${path.relative(repo, manifestPath)} is not built; run the ${other.source} build first`,
+    );
+  }
+  return { source: other.source, tile: other.tile, dir, manifest };
 };
 
 const isMain =
@@ -650,10 +779,14 @@ if (isMain) {
   ) as PeriodSpec;
   const root = process.env.STAGE_PIXELLAB_DIR ?? path.join(repo, spec.root);
   const outDir = path.join(repo, spec.out);
+  const derive = spec.derive
+    ? await deriveSourceOf(path.resolve(here, spec.derive), repo)
+    : undefined;
   const manifest = await buildPeriod({
     spec,
     root,
     outDir,
+    derive,
     log: (line) => console.log(line),
   });
   console.log(
