@@ -1,589 +1,4046 @@
 {
-  "width": 64,
-  "height": 48,
+  "width": 144,
+  "height": 96,
   "fills": [
     {
       "terrain": "hills",
       "ellipse": [
-        7,
-        5,
-        9,
-        5
-      ]
-    },
-    {
-      "terrain": "hills",
-      "ellipse": [
-        15,
-        3,
-        6,
-        3
-      ]
-    },
-    {
-      "terrain": "hills",
-      "ellipse": [
-        4,
         12,
-        4,
-        3
-      ]
-    },
-    {
-      "terrain": "forest",
-      "ellipse": [
-        30,
-        3,
-        13,
-        5
-      ]
-    },
-    {
-      "terrain": "forest",
-      "ellipse": [
-        44,
-        2,
-        6,
-        3
-      ]
-    },
-    {
-      "terrain": "forest",
-      "ellipse": [
-        59,
-        33,
-        6,
-        9
-      ]
-    },
-    {
-      "terrain": "forest",
-      "ellipse": [
-        56,
-        44,
-        5,
-        3
-      ]
-    },
-    {
-      "terrain": "tallgrass",
-      "ellipse": [
-        53,
-        19,
         7,
-        4
+        13,
+        6
       ]
     },
     {
-      "terrain": "tallgrass",
+      "terrain": "hills",
       "ellipse": [
-        40,
         36,
-        5,
+        17,
+        6,
         3
       ]
     },
     {
-      "terrain": "scrub",
-      "rect": [
-        0,
-        30,
-        3,
-        14
-      ]
-    },
-    {
-      "terrain": "scrub",
+      "terrain": "forest",
       "ellipse": [
-        60,
-        12,
-        4,
-        4
-      ]
-    },
-    {
-      "terrain": "field",
-      "rect": [
-        2,
-        18,
-        13,
-        11
-      ]
-    },
-    {
-      "terrain": "field",
-      "rect": [
-        3,
-        33,
-        12,
-        9
-      ]
-    },
-    {
-      "terrain": "field",
-      "rect": [
-        14,
-        40,
+        46,
+        7,
         20,
         6
       ]
     },
     {
-      "terrain": "field",
-      "rect": [
-        50,
-        36,
+      "terrain": "forest",
+      "ellipse": [
+        104,
         10,
-        10
+        16,
+        7
       ]
     },
     {
-      "terrain": "field",
+      "terrain": "forest",
+      "ellipse": [
+        136,
+        90,
+        9,
+        6
+      ]
+    },
+    {
+      "terrain": "scrub",
       "rect": [
-        52,
+        140,
+        0,
+        4,
+        20
+      ]
+    },
+    {
+      "terrain": "scrub",
+      "ellipse": [
+        4,
+        90,
         6,
-        8,
+        4
+      ]
+    },
+    {
+      "terrain": "tallgrass",
+      "ellipse": [
+        130,
+        30,
+        11,
+        7
+      ]
+    },
+    {
+      "terrain": "marsh",
+      "ellipse": [
+        101,
+        81,
+        9,
         6
       ]
     },
     {
       "terrain": "marsh",
       "ellipse": [
-        33,
-        45,
-        5,
-        3
+        108,
+        92,
+        7,
+        4
       ]
     },
     {
-      "terrain": "earth",
+      "terrain": "field",
       "rect": [
-        20,
-        14,
-        24,
+        0,
+        12,
+        17,
         17
       ]
     },
     {
-      "terrain": "earth",
+      "terrain": "field",
       "rect": [
-        28,
-        9,
-        5,
-        5
+        0,
+        30,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        0,
+        50,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        0,
+        68,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        0,
+        86,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        18,
+        12,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        18,
+        60,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "field",
+      "rect": [
+        18,
+        78,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "millet",
+      "rect": [
+        78,
+        20,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "wheat",
+      "rect": [
+        29,
+        84,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "wheat",
+      "rect": [
+        47,
+        84,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "wheat",
+      "rect": [
+        65,
+        84,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "bean",
+      "rect": [
+        120,
+        52,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "bean",
+      "rect": [
+        120,
+        70,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "bean",
+      "rect": [
+        120,
+        88,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "bean",
+      "rect": [
+        138,
+        52,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "bean",
+      "rect": [
+        138,
+        70,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "bean",
+      "rect": [
+        138,
+        88,
+        17,
+        17
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          5,
+          11
+        ],
+        [
+          5,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          11,
+          11
+        ],
+        [
+          11,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          11
+        ],
+        [
+          17,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          11
+        ],
+        [
+          17,
+          11
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          17
+        ],
+        [
+          17,
+          17
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          23
+        ],
+        [
+          17,
+          23
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          29
+        ],
+        [
+          17,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          5,
+          29
+        ],
+        [
+          5,
+          47
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          11,
+          29
+        ],
+        [
+          11,
+          47
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          29
+        ],
+        [
+          17,
+          47
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          29
+        ],
+        [
+          17,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          35
+        ],
+        [
+          17,
+          35
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          41
+        ],
+        [
+          17,
+          41
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          47
+        ],
+        [
+          17,
+          47
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          5,
+          49
+        ],
+        [
+          5,
+          67
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          11,
+          49
+        ],
+        [
+          11,
+          67
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          49
+        ],
+        [
+          17,
+          67
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          49
+        ],
+        [
+          17,
+          49
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          55
+        ],
+        [
+          17,
+          55
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          61
+        ],
+        [
+          17,
+          61
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          67
+        ],
+        [
+          17,
+          67
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          5,
+          67
+        ],
+        [
+          5,
+          85
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          11,
+          67
+        ],
+        [
+          11,
+          85
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          67
+        ],
+        [
+          17,
+          85
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          67
+        ],
+        [
+          17,
+          67
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          73
+        ],
+        [
+          17,
+          73
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          79
+        ],
+        [
+          17,
+          79
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          85
+        ],
+        [
+          17,
+          85
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          5,
+          85
+        ],
+        [
+          5,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          11,
+          85
+        ],
+        [
+          11,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          85
+        ],
+        [
+          17,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          85
+        ],
+        [
+          17,
+          85
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          0,
+          91
+        ],
+        [
+          17,
+          91
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          11
+        ],
+        [
+          17,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          23,
+          11
+        ],
+        [
+          23,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          29,
+          11
+        ],
+        [
+          29,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          35,
+          11
+        ],
+        [
+          35,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          11
+        ],
+        [
+          35,
+          11
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          17
+        ],
+        [
+          35,
+          17
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          23
+        ],
+        [
+          35,
+          23
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          29
+        ],
+        [
+          35,
+          29
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          59
+        ],
+        [
+          17,
+          77
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          23,
+          59
+        ],
+        [
+          23,
+          77
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          29,
+          59
+        ],
+        [
+          29,
+          77
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          35,
+          59
+        ],
+        [
+          35,
+          77
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          59
+        ],
+        [
+          35,
+          59
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          65
+        ],
+        [
+          35,
+          65
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          71
+        ],
+        [
+          35,
+          71
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          77
+        ],
+        [
+          35,
+          77
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          77
+        ],
+        [
+          17,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          23,
+          77
+        ],
+        [
+          23,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          29,
+          77
+        ],
+        [
+          29,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          35,
+          77
+        ],
+        [
+          35,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          77
+        ],
+        [
+          35,
+          77
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          83
+        ],
+        [
+          35,
+          83
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          89
+        ],
+        [
+          35,
+          89
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          17,
+          95
+        ],
+        [
+          35,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          77,
+          19
+        ],
+        [
+          77,
+          37
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          83,
+          19
+        ],
+        [
+          83,
+          37
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          89,
+          19
+        ],
+        [
+          89,
+          37
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          95,
+          19
+        ],
+        [
+          95,
+          37
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          77,
+          19
+        ],
+        [
+          95,
+          19
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          77,
+          25
+        ],
+        [
+          95,
+          25
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          77,
+          31
+        ],
+        [
+          95,
+          31
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          77,
+          37
+        ],
+        [
+          95,
+          37
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          28,
+          83
+        ],
+        [
+          28,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          34,
+          83
+        ],
+        [
+          34,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          40,
+          83
+        ],
+        [
+          40,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          46,
+          83
+        ],
+        [
+          46,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          28,
+          83
+        ],
+        [
+          46,
+          83
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          28,
+          89
+        ],
+        [
+          46,
+          89
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          28,
+          95
+        ],
+        [
+          46,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          46,
+          83
+        ],
+        [
+          46,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          52,
+          83
+        ],
+        [
+          52,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          58,
+          83
+        ],
+        [
+          58,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          64,
+          83
+        ],
+        [
+          64,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          46,
+          83
+        ],
+        [
+          64,
+          83
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          46,
+          89
+        ],
+        [
+          64,
+          89
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          46,
+          95
+        ],
+        [
+          64,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          64,
+          83
+        ],
+        [
+          64,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          70,
+          83
+        ],
+        [
+          70,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          76,
+          83
+        ],
+        [
+          76,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          82,
+          83
+        ],
+        [
+          82,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          64,
+          83
+        ],
+        [
+          82,
+          83
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          64,
+          89
+        ],
+        [
+          82,
+          89
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          64,
+          95
+        ],
+        [
+          82,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          51
+        ],
+        [
+          119,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          125,
+          51
+        ],
+        [
+          125,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          131,
+          51
+        ],
+        [
+          131,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          51
+        ],
+        [
+          137,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          51
+        ],
+        [
+          137,
+          51
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          57
+        ],
+        [
+          137,
+          57
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          63
+        ],
+        [
+          137,
+          63
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          69
+        ],
+        [
+          137,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          69
+        ],
+        [
+          119,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          125,
+          69
+        ],
+        [
+          125,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          131,
+          69
+        ],
+        [
+          131,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          69
+        ],
+        [
+          137,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          69
+        ],
+        [
+          137,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          75
+        ],
+        [
+          137,
+          75
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          81
+        ],
+        [
+          137,
+          81
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          87
+        ],
+        [
+          137,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          87
+        ],
+        [
+          119,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          125,
+          87
+        ],
+        [
+          125,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          131,
+          87
+        ],
+        [
+          131,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          87
+        ],
+        [
+          137,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          87
+        ],
+        [
+          137,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          119,
+          93
+        ],
+        [
+          137,
+          93
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          51
+        ],
+        [
+          137,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          143,
+          51
+        ],
+        [
+          143,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          51
+        ],
+        [
+          143,
+          51
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          57
+        ],
+        [
+          143,
+          57
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          63
+        ],
+        [
+          143,
+          63
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          69
+        ],
+        [
+          143,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          69
+        ],
+        [
+          137,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          143,
+          69
+        ],
+        [
+          143,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          69
+        ],
+        [
+          143,
+          69
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          75
+        ],
+        [
+          143,
+          75
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          81
+        ],
+        [
+          143,
+          81
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          87
+        ],
+        [
+          143,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          87
+        ],
+        [
+          137,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          143,
+          87
+        ],
+        [
+          143,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          87
+        ],
+        [
+          143,
+          87
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "feature": "banks",
+      "width": 1,
+      "path": [
+        [
+          137,
+          93
+        ],
+        [
+          143,
+          93
+        ]
+      ]
+    },
+    {
+      "terrain": "hemp",
+      "rect": [
+        98,
+        60,
+        12,
+        6
+      ]
+    },
+    {
+      "terrain": "paddy",
+      "rect": [
+        96,
+        76,
+        10,
+        8
       ]
     },
     {
       "terrain": "mulberry",
       "rect": [
-        16,
+        44,
+        28,
+        10,
+        8
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        55,
+        41,
+        7,
+        7
+      ],
+      "feature": "wu-1"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        55,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        60,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        48,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-1"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        48,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        53,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        55,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-1"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        55,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        60,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        67,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-1"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        67,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        72,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        74,
+        41,
+        7,
+        7
+      ],
+      "feature": "wu-1"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        74,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        79,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        56,
+        60,
+        8,
+        6
+      ],
+      "feature": "wu-2"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        62,
+        60,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        56,
+        64,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        65,
+        62,
+        8,
+        6
+      ],
+      "feature": "wu-2"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        65,
+        62,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        71,
+        66,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        56,
+        68,
+        8,
+        6
+      ],
+      "feature": "wu-2"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        62,
+        68,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        56,
+        72,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        65,
+        70,
+        8,
+        6
+      ],
+      "feature": "wu-2"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        65,
+        70,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        71,
+        74,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        56,
+        76,
+        8,
+        6
+      ],
+      "feature": "wu-2"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        62,
+        76,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        56,
+        80,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        21,
+        41,
+        7,
+        7
+      ],
+      "feature": "wu-3"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        21,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        26,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        27,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-3"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        27,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        32,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        33,
+        41,
+        7,
+        7
+      ],
+      "feature": "wu-3"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        33,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        38,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        39,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-3"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        39,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        44,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        45,
+        41,
+        7,
+        7
+      ],
+      "feature": "wu-3"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        45,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        50,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        81,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-4"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        81,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        86,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        87,
+        41,
+        7,
+        7
+      ],
+      "feature": "wu-4"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        87,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        92,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        93,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-4"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        93,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        98,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        99,
+        41,
+        7,
+        7
+      ],
+      "feature": "wu-4"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        99,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        104,
+        45,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        105,
+        49,
+        7,
+        8
+      ],
+      "feature": "wu-4"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        105,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        110,
+        49,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        65,
+        35,
+        8,
+        6
+      ],
+      "feature": "wu-5"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        65,
+        35,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        71,
+        39,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        56,
+        30,
+        8,
+        6
+      ],
+      "feature": "wu-5"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        62,
+        30,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        56,
+        34,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        65,
+        26,
+        8,
+        6
+      ],
+      "feature": "wu-5"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        65,
+        26,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        71,
+        30,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        56,
+        22,
+        8,
+        6
+      ],
+      "feature": "wu-5"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        62,
+        22,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        56,
+        26,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        65,
+        18,
+        8,
+        6
+      ],
+      "feature": "wu-5"
+    },
+    {
+      "terrain": "mulberry",
+      "rect": [
+        65,
+        18,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "garden",
+      "rect": [
+        71,
+        22,
+        2,
+        2
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        66,
+        41,
+        8,
+        7
+      ],
+      "feature": "wu-1"
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        121,
+        43,
+        7,
+        4
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        34,
+        58,
+        18,
+        12
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        44,
+        71,
+        10,
+        6
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        46,
+        24,
+        7,
+        4
+      ]
+    },
+    {
+      "terrain": "earth",
+      "rect": [
+        61,
         11,
         7,
         4
       ]
     },
     {
-      "terrain": "garden",
-      "rect": [
-        24,
-        12,
-        3,
-        2
-      ]
-    },
-    {
-      "terrain": "garden",
-      "rect": [
-        33,
-        26,
-        3,
-        3
-      ]
-    },
-    {
-      "terrain": "garden",
-      "rect": [
-        42,
-        15,
-        3,
-        3
-      ]
-    },
-    {
       "terrain": "road",
+      "width": 1,
+      "feature": "lane",
       "path": [
         [
           0,
-          24
+          48
         ],
         [
-          20,
-          24
-        ],
-        [
-          46,
-          24
-        ],
-        [
-          63,
-          24
+          114,
+          48
         ]
-      ],
-      "width": 1,
-      "feature": "lane"
+      ]
     },
     {
       "terrain": "road",
+      "width": 1,
+      "feature": "lane",
       "path": [
         [
-          30,
-          24
+          116,
+          48
         ],
         [
-          30,
-          8
+          143,
+          48
         ]
-      ],
+      ]
+    },
+    {
+      "terrain": "road",
       "width": 1,
-      "feature": "lane"
+      "feature": "lane",
+      "path": [
+        [
+          64,
+          48
+        ],
+        [
+          64,
+          95
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "width": 1,
+      "feature": "lane",
+      "path": [
+        [
+          64,
+          48
+        ],
+        [
+          64,
+          15
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "width": 1,
+      "feature": "wu-3",
+      "path": [
+        [
+          20,
+          48
+        ],
+        [
+          51,
+          48
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "width": 1,
+      "feature": "wu-1",
+      "path": [
+        [
+          52,
+          48
+        ],
+        [
+          80,
+          48
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "width": 1,
+      "feature": "wu-1",
+      "path": [
+        [
+          64,
+          40
+        ],
+        [
+          64,
+          57
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "width": 1,
+      "feature": "wu-4",
+      "path": [
+        [
+          81,
+          48
+        ],
+        [
+          110,
+          48
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "width": 1,
+      "feature": "wu-2",
+      "path": [
+        [
+          64,
+          58
+        ],
+        [
+          64,
+          82
+        ]
+      ]
+    },
+    {
+      "terrain": "road",
+      "width": 1,
+      "feature": "wu-5",
+      "path": [
+        [
+          64,
+          16
+        ],
+        [
+          64,
+          39
+        ]
+      ]
     },
     {
       "terrain": "river",
+      "width": 2,
+      "feature": "brook",
       "path": [
         [
-          63,
-          7
+          130,
+          0
         ],
         [
-          54,
-          13
-        ],
-        [
-          48,
+          124,
           20
         ],
         [
-          46,
-          24
-        ],
-        [
-          44,
-          30
-        ],
-        [
-          38,
+          118,
           36
         ],
         [
-          36,
-          42
+          115,
+          48
         ],
         [
-          35,
-          47
+          113,
+          58
+        ],
+        [
+          109,
+          68
+        ],
+        [
+          107,
+          80
+        ],
+        [
+          105,
+          95
         ]
-      ],
-      "width": 2,
-      "feature": "brook"
+      ]
     },
     {
       "terrain": "river",
       "ellipse": [
-        45,
-        29,
-        3,
-        2
+        109,
+        71,
+        5,
+        3
       ],
       "feature": "pond"
     }
   ],
   "places": {
-    "shrine": {
+    "house-01": {
+      "x": 58,
+      "y": 44,
+      "marker": "farmhouse"
+    },
+    "house-02": {
+      "x": 51,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-03": {
+      "x": 58,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-04": {
+      "x": 70,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-05": {
+      "x": 77,
+      "y": 44,
+      "marker": "farmhouse"
+    },
+    "house-06": {
+      "x": 59,
+      "y": 62,
+      "marker": "farmhouse"
+    },
+    "house-07": {
+      "x": 69,
+      "y": 64,
+      "marker": "farmhouse"
+    },
+    "house-08": {
+      "x": 59,
+      "y": 70,
+      "marker": "farmhouse"
+    },
+    "house-09": {
+      "x": 69,
+      "y": 72,
+      "marker": "farmhouse"
+    },
+    "house-10": {
+      "x": 59,
+      "y": 78,
+      "marker": "farmhouse"
+    },
+    "house-11": {
+      "x": 24,
+      "y": 44,
+      "marker": "farmhouse"
+    },
+    "house-12": {
       "x": 30,
-      "y": 7,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-13": {
+      "x": 36,
+      "y": 44,
+      "marker": "farmhouse"
+    },
+    "house-14": {
+      "x": 42,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-15": {
+      "x": 48,
+      "y": 44,
+      "marker": "farmhouse"
+    },
+    "house-16": {
+      "x": 84,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-17": {
+      "x": 90,
+      "y": 44,
+      "marker": "farmhouse"
+    },
+    "house-18": {
+      "x": 96,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-19": {
+      "x": 102,
+      "y": 44,
+      "marker": "farmhouse"
+    },
+    "house-20": {
+      "x": 108,
+      "y": 54,
+      "marker": "farmhouse"
+    },
+    "house-21": {
+      "x": 69,
+      "y": 37,
+      "marker": "farmhouse"
+    },
+    "house-22": {
+      "x": 59,
+      "y": 32,
+      "marker": "farmhouse"
+    },
+    "house-23": {
+      "x": 69,
+      "y": 28,
+      "marker": "farmhouse"
+    },
+    "house-24": {
+      "x": 59,
+      "y": 24,
+      "marker": "farmhouse"
+    },
+    "house-25": {
+      "x": 69,
+      "y": 20,
+      "marker": "farmhouse"
+    },
+    "shrine": {
+      "x": 64,
+      "y": 13,
       "marker": "shrine"
     },
+    "hall": {
+      "x": 69,
+      "y": 44,
+      "marker": "wardhall"
+    },
     "well": {
-      "x": 30,
-      "y": 21,
+      "x": 66,
+      "y": 50,
+      "marker": "well"
+    },
+    "well-south": {
+      "x": 66,
+      "y": 68,
       "marker": "well"
     },
     "granary": {
-      "x": 33,
-      "y": 17,
+      "x": 37,
+      "y": 61,
       "marker": "granary"
     },
-    "house-1": {
-      "x": 23,
-      "y": 17,
-      "marker": "farmhouse"
-    },
-    "house-2": {
-      "x": 27,
-      "y": 17,
-      "marker": "farmhouse"
-    },
-    "house-3": {
-      "x": 37,
-      "y": 17,
-      "marker": "farmhouse"
-    },
-    "house-4": {
-      "x": 41,
-      "y": 17,
-      "marker": "farmhouse"
-    },
-    "house-5": {
-      "x": 30,
-      "y": 28,
-      "marker": "farmhouse"
-    },
-    "house-6": {
-      "x": 40,
-      "y": 28,
-      "marker": "farmhouse"
-    },
     "threshing": {
-      "x": 24,
-      "y": 29,
+      "x": 45,
+      "y": 64,
       "marker": "threshing"
     },
+    "archery": {
+      "x": 45,
+      "y": 68
+    },
     "byre": {
-      "x": 35,
-      "y": 29,
+      "x": 48,
+      "y": 74,
       "marker": "byre"
     },
-    "ford": {
-      "x": 47,
-      "y": 24,
-      "marker": "ford"
+    "silkshed": {
+      "x": 49,
+      "y": 25,
+      "marker": "silkshed"
     },
-    "station": {
-      "x": 54,
-      "y": 23,
-      "marker": "waystation"
-    },
-    "elder": {
-      "x": 22,
-      "y": 22,
-      "marker": "house"
+    "icehouse": {
+      "x": 36,
+      "y": 18,
+      "marker": "icehouse"
     },
     "orchard": {
+      "x": 49,
+      "y": 31
+    },
+    "ford": {
+      "x": 115,
+      "y": 48,
+      "marker": "ford"
+    },
+    "washing": {
+      "x": 110,
+      "y": 58
+    },
+    "station": {
+      "x": 124,
+      "y": 45,
+      "marker": "waystation"
+    },
+    "edge": {
+      "x": 143,
+      "y": 48
+    },
+    "crossroads": {
+      "x": 64,
+      "y": 48
+    },
+    "gate-west": {
       "x": 19,
-      "y": 12
+      "y": 48,
+      "marker": "wardgate"
+    },
+    "gate-east": {
+      "x": 111,
+      "y": 48,
+      "marker": "wardgate"
+    },
+    "gate-south": {
+      "x": 64,
+      "y": 83,
+      "marker": "wardgate"
     },
     "graves": {
       "x": 12,
-      "y": 10
+      "y": 8
     },
     "hills": {
-      "x": 7,
+      "x": 6,
       "y": 4
     },
     "woods": {
-      "x": 30,
-      "y": 2
-    },
-    "fields-west": {
-      "x": 8,
-      "y": 23
-    },
-    "fields-south": {
-      "x": 20,
-      "y": 43
-    },
-    "fields-east": {
-      "x": 55,
-      "y": 41
+      "x": 46,
+      "y": 6
     },
     "pond": {
-      "x": 45,
-      "y": 32
+      "x": 102,
+      "y": 69
     },
     "marsh": {
-      "x": 33,
-      "y": 46
+      "x": 110,
+      "y": 92
     },
     "meadow": {
-      "x": 53,
-      "y": 18
+      "x": 130,
+      "y": 30
+    },
+    "field-west": {
+      "x": 8,
+      "y": 58
+    },
+    "field-north": {
+      "x": 86,
+      "y": 28
+    },
+    "field-south": {
+      "x": 56,
+      "y": 90
+    },
+    "field-east": {
+      "x": 128,
+      "y": 60
+    },
+    "field-hemp": {
+      "x": 103,
+      "y": 62
+    },
+    "field-paddy": {
+      "x": 100,
+      "y": 79
     }
   },
   "decor": [
     {
-      "id": "graves",
-      "x": 12,
-      "y": 10
+      "id": "fence",
+      "x": 55,
+      "y": 47
     },
     {
-      "id": "pine",
-      "x": 5,
-      "y": 7
-    },
-    {
-      "id": "pine",
-      "x": 12,
-      "y": 4
-    },
-    {
-      "id": "pine",
-      "x": 16,
-      "y": 2
-    },
-    {
-      "id": "rocks",
-      "x": 3,
-      "y": 13
-    },
-    {
-      "id": "haystack",
-      "x": 25,
-      "y": 31
-    },
-    {
-      "id": "haystack",
-      "x": 21,
-      "y": 19
-    },
-    {
-      "id": "haystack",
-      "x": 38,
-      "y": 31
+      "id": "fence",
+      "x": 61,
+      "y": 47
     },
     {
       "id": "chickens",
-      "x": 25,
-      "y": 19
+      "x": 59,
+      "y": 47
     },
     {
-      "id": "chickens",
-      "x": 39,
-      "y": 19
+      "id": "jujube",
+      "x": 55,
+      "y": 43
+    },
+    {
+      "id": "melons",
+      "x": 60,
+      "y": 46
+    },
+    {
+      "id": "fence",
+      "x": 48,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 54,
+      "y": 56
     },
     {
       "id": "pigs",
-      "x": 42,
-      "y": 30
+      "x": 52,
+      "y": 55
     },
     {
-      "id": "pigs",
-      "x": 24,
-      "y": 20
+      "id": "gourds",
+      "x": 48,
+      "y": 56
     },
     {
-      "id": "millstone",
-      "x": 28,
-      "y": 22
+      "id": "fence",
+      "x": 55,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 61,
+      "y": 56
     },
     {
       "id": "woodpile",
-      "x": 21,
-      "y": 16
+      "x": 59,
+      "y": 55
     },
     {
-      "id": "woodpile",
-      "x": 36,
-      "y": 30
-    },
-    {
-      "id": "cart",
-      "x": 33,
-      "y": 23
-    },
-    {
-      "id": "plough",
-      "x": 19,
-      "y": 26
+      "id": "chestnut",
+      "x": 55,
+      "y": 53
     },
     {
       "id": "fence",
-      "x": 23,
-      "y": 14
+      "x": 67,
+      "y": 56
     },
     {
       "id": "fence",
-      "x": 36,
-      "y": 14
-    },
-    {
-      "id": "fence",
-      "x": 43,
-      "y": 20
-    },
-    {
-      "id": "fence",
-      "x": 22,
-      "y": 30
-    },
-    {
-      "id": "hemp",
-      "x": 37,
-      "y": 20
-    },
-    {
-      "id": "hemp",
-      "x": 42,
-      "y": 26
+      "x": 73,
+      "y": 56
     },
     {
       "id": "jars",
-      "x": 31,
-      "y": 18
+      "x": 71,
+      "y": 55
+    },
+    {
+      "id": "melons",
+      "x": 72,
+      "y": 50
+    },
+    {
+      "id": "fence",
+      "x": 74,
+      "y": 47
+    },
+    {
+      "id": "fence",
+      "x": 80,
+      "y": 47
     },
     {
       "id": "pots",
-      "x": 29,
-      "y": 30
+      "x": 78,
+      "y": 47
+    },
+    {
+      "id": "peach",
+      "x": 74,
+      "y": 43
+    },
+    {
+      "id": "fence",
+      "x": 56,
+      "y": 60
+    },
+    {
+      "id": "fence",
+      "x": 63,
+      "y": 65
     },
     {
       "id": "rack",
-      "x": 26,
-      "y": 26
+      "x": 61,
+      "y": 64
+    },
+    {
+      "id": "gourds",
+      "x": 56,
+      "y": 60
+    },
+    {
+      "id": "fence",
+      "x": 72,
+      "y": 62
+    },
+    {
+      "id": "fence",
+      "x": 65,
+      "y": 67
+    },
+    {
+      "id": "millstone",
+      "x": 67,
+      "y": 66
+    },
+    {
+      "id": "jujube",
+      "x": 71,
+      "y": 63
+    },
+    {
+      "id": "melons",
+      "x": 71,
+      "y": 67
+    },
+    {
+      "id": "fence",
+      "x": 56,
+      "y": 68
+    },
+    {
+      "id": "fence",
+      "x": 63,
+      "y": 73
+    },
+    {
+      "id": "pestle",
+      "x": 61,
+      "y": 72
+    },
+    {
+      "id": "fence",
+      "x": 72,
+      "y": 70
+    },
+    {
+      "id": "fence",
+      "x": 65,
+      "y": 75
     },
     {
       "id": "dog",
-      "x": 31,
-      "y": 25
+      "x": 67,
+      "y": 74
     },
     {
-      "id": "willow",
-      "x": 44,
-      "y": 26
+      "id": "chestnut",
+      "x": 71,
+      "y": 71
     },
     {
-      "id": "willow",
-      "x": 49,
-      "y": 18
-    },
-    {
-      "id": "willow",
-      "x": 37,
-      "y": 41
-    },
-    {
-      "id": "willow",
+      "id": "fence",
       "x": 56,
-      "y": 10
+      "y": 76
     },
     {
-      "id": "sheep",
-      "x": 50,
+      "id": "fence",
+      "x": 63,
+      "y": 81
+    },
+    {
+      "id": "cart",
+      "x": 61,
+      "y": 80
+    },
+    {
+      "id": "melons",
+      "x": 56,
+      "y": 81
+    },
+    {
+      "id": "gourds",
+      "x": 56,
+      "y": 76
+    },
+    {
+      "id": "fence",
+      "x": 21,
+      "y": 47
+    },
+    {
+      "id": "fence",
+      "x": 27,
+      "y": 47
+    },
+    {
+      "id": "chickens",
+      "x": 25,
+      "y": 47
+    },
+    {
+      "id": "peach",
+      "x": 21,
+      "y": 43
+    },
+    {
+      "id": "fence",
+      "x": 27,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 33,
+      "y": 56
+    },
+    {
+      "id": "pigs",
+      "x": 31,
+      "y": 55
+    },
+    {
+      "id": "fence",
+      "x": 33,
+      "y": 47
+    },
+    {
+      "id": "fence",
+      "x": 39,
+      "y": 47
+    },
+    {
+      "id": "woodpile",
+      "x": 37,
+      "y": 47
+    },
+    {
+      "id": "jujube",
+      "x": 33,
+      "y": 43
+    },
+    {
+      "id": "melons",
+      "x": 38,
+      "y": 46
+    },
+    {
+      "id": "fence",
+      "x": 39,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 45,
+      "y": 56
+    },
+    {
+      "id": "jars",
+      "x": 43,
+      "y": 55
+    },
+    {
+      "id": "gourds",
+      "x": 39,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 45,
+      "y": 47
+    },
+    {
+      "id": "fence",
+      "x": 51,
+      "y": 47
+    },
+    {
+      "id": "pots",
+      "x": 49,
+      "y": 47
+    },
+    {
+      "id": "chestnut",
+      "x": 45,
+      "y": 43
+    },
+    {
+      "id": "fence",
+      "x": 81,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 87,
+      "y": 56
+    },
+    {
+      "id": "rack",
+      "x": 85,
+      "y": 55
+    },
+    {
+      "id": "melons",
+      "x": 86,
+      "y": 50
+    },
+    {
+      "id": "fence",
+      "x": 87,
+      "y": 47
+    },
+    {
+      "id": "fence",
+      "x": 93,
+      "y": 47
+    },
+    {
+      "id": "millstone",
+      "x": 91,
+      "y": 47
+    },
+    {
+      "id": "peach",
+      "x": 87,
+      "y": 43
+    },
+    {
+      "id": "fence",
+      "x": 93,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 99,
+      "y": 56
+    },
+    {
+      "id": "pestle",
+      "x": 97,
+      "y": 55
+    },
+    {
+      "id": "gourds",
+      "x": 93,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 99,
+      "y": 47
+    },
+    {
+      "id": "fence",
+      "x": 105,
+      "y": 47
+    },
+    {
+      "id": "dog",
+      "x": 103,
+      "y": 47
+    },
+    {
+      "id": "jujube",
+      "x": 99,
+      "y": 43
+    },
+    {
+      "id": "melons",
+      "x": 104,
+      "y": 46
+    },
+    {
+      "id": "fence",
+      "x": 105,
+      "y": 56
+    },
+    {
+      "id": "fence",
+      "x": 111,
+      "y": 56
+    },
+    {
+      "id": "cart",
+      "x": 109,
+      "y": 55
+    },
+    {
+      "id": "fence",
+      "x": 72,
+      "y": 35
+    },
+    {
+      "id": "fence",
+      "x": 65,
+      "y": 40
+    },
+    {
+      "id": "chickens",
+      "x": 67,
+      "y": 39
+    },
+    {
+      "id": "chestnut",
+      "x": 71,
+      "y": 36
+    },
+    {
+      "id": "fence",
+      "x": 56,
       "y": 30
     },
     {
-      "id": "sheep",
-      "x": 12,
+      "id": "fence",
+      "x": 63,
+      "y": 35
+    },
+    {
+      "id": "pigs",
+      "x": 61,
+      "y": 34
+    },
+    {
+      "id": "melons",
+      "x": 56,
+      "y": 35
+    },
+    {
+      "id": "gourds",
+      "x": 56,
+      "y": 30
+    },
+    {
+      "id": "fence",
+      "x": 72,
+      "y": 26
+    },
+    {
+      "id": "fence",
+      "x": 65,
       "y": 31
+    },
+    {
+      "id": "woodpile",
+      "x": 67,
+      "y": 30
+    },
+    {
+      "id": "peach",
+      "x": 71,
+      "y": 27
+    },
+    {
+      "id": "fence",
+      "x": 56,
+      "y": 22
+    },
+    {
+      "id": "fence",
+      "x": 63,
+      "y": 27
+    },
+    {
+      "id": "jars",
+      "x": 61,
+      "y": 26
+    },
+    {
+      "id": "fence",
+      "x": 72,
+      "y": 18
+    },
+    {
+      "id": "fence",
+      "x": 65,
+      "y": 23
+    },
+    {
+      "id": "pots",
+      "x": 67,
+      "y": 22
+    },
+    {
+      "id": "jujube",
+      "x": 71,
+      "y": 19
+    },
+    {
+      "id": "melons",
+      "x": 71,
+      "y": 23
+    },
+    {
+      "id": "graves",
+      "x": 12,
+      "y": 8
+    },
+    {
+      "id": "pine",
+      "x": 4,
+      "y": 5
+    },
+    {
+      "id": "pine",
+      "x": 10,
+      "y": 3
+    },
+    {
+      "id": "pine",
+      "x": 20,
+      "y": 4
+    },
+    {
+      "id": "rocks",
+      "x": 22,
+      "y": 10
+    },
+    {
+      "id": "altartree",
+      "x": 66,
+      "y": 12
+    },
+    {
+      "id": "haystack",
+      "x": 41,
+      "y": 62
+    },
+    {
+      "id": "haystack",
+      "x": 50,
+      "y": 66
+    },
+    {
+      "id": "haystack",
+      "x": 52,
+      "y": 73
+    },
+    {
+      "id": "cart",
+      "x": 47,
+      "y": 60
+    },
+    {
+      "id": "cartload",
+      "x": 49,
+      "y": 61
+    },
+    {
+      "id": "target",
+      "x": 45,
+      "y": 70
+    },
+    {
+      "id": "plough",
+      "x": 52,
+      "y": 75
+    },
+    {
+      "id": "woodpile",
+      "x": 46,
+      "y": 72
+    },
+    {
+      "id": "willow",
+      "x": 62,
+      "y": 50
+    },
+    {
+      "id": "willow",
+      "x": 117,
+      "y": 40
+    },
+    {
+      "id": "willow",
+      "x": 112,
+      "y": 62
+    },
+    {
+      "id": "willow",
+      "x": 103,
+      "y": 86
+    },
+    {
+      "id": "willow",
+      "x": 121,
+      "y": 16
+    },
+    {
+      "id": "vats",
+      "x": 110,
+      "y": 60
+    },
+    {
+      "id": "hemp",
+      "x": 108,
+      "y": 57
+    },
+    {
+      "id": "ice",
+      "x": 101,
+      "y": 71
     },
     {
       "id": "ducks",
-      "x": 47,
-      "y": 31
+      "x": 103,
+      "y": 72
     },
     {
-      "id": "horses",
-      "x": 56,
-      "y": 22
+      "id": "sheep",
+      "x": 126,
+      "y": 32
+    },
+    {
+      "id": "sheep",
+      "x": 134,
+      "y": 28
+    },
+    {
+      "id": "jars",
+      "x": 51,
+      "y": 24
+    },
+    {
+      "id": "rack",
+      "x": 47,
+      "y": 27
+    },
+    {
+      "id": "chestnut",
+      "x": 43,
+      "y": 27
+    },
+    {
+      "id": "chestnut",
+      "x": 54,
+      "y": 36
+    },
+    {
+      "id": "peach",
+      "x": 55,
+      "y": 28
+    },
+    {
+      "id": "pine",
+      "x": 40,
+      "y": 15
+    },
+    {
+      "id": "rocks",
+      "x": 33,
+      "y": 19
+    },
+    {
+      "id": "banner",
+      "x": 127,
+      "y": 44
     }
   ]
 }

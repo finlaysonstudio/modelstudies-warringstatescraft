@@ -20,10 +20,19 @@ const LIJI = (line: number, note: string): Cite => ({
 export const VILLAGE_YEAR: SiteYear = {
   1: {
     note: {
-      en: "The ground is still hard. The ploughshares are mended, the field banks and the paths repaired, and the elder walks the boundaries before the season opens; no tree is felled and no nest overturned.",
-      zh: "地尚冻。修耒耜，修封疆，审端径术；里正巡田界。禁伐木，毋覆巢。",
+      en: "The ground is still hard. The ploughshares are mended, the field banks and the paths repaired, and the elder walks the boundaries before the season opens; no tree is felled and no nest overturned. In the fields: the wheat on the south blocks is green under the frost, the millet blocks stand in stubble, the paddy in mud, the hemp ground and the bean blocks bare; the ice is carried up to the ice house.",
+      zh: "地尚冻。修耒耜，修封疆，审端径术；里典巡田界。禁伐木，毋覆巢。田中：南田之麦青于霜下，禾田皆茬，稻田泥，麻田、菽田空；纳冰于凌阴。",
     },
     tasks: [
+      {
+        who: "fieldofficer",
+        kind: "labour",
+        at: "byre",
+        line: {
+          en: "The county's field officer reckons the ward's oxen at the byre.",
+          zh: "田啬夫于牢课牛。",
+        },
+      },
       {
         who: "peasant",
         kind: "labour",
@@ -37,26 +46,26 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "elder",
         kind: "stroll",
-        from: "elder",
-        to: "fields-west",
+        from: "house-01",
+        to: "field-west",
         line: {
           en: "The elder walks the field banks to see the boundaries repaired.",
           zh: "里正巡西田，视封疆。",
         },
       },
       {
-        who: "woodcutter",
+        who: "peasant",
         kind: "labour",
         at: "woods",
         line: {
-          en: "The woodcutter gathers deadfall; no standing tree is felled this month.",
-          zh: "樵夫拾枯枝，是月禁伐木。",
+          en: "A farmer gathers deadfall in the woods; no standing tree is felled this month.",
+          zh: "农夫拾枯枝于林，是月禁伐木。",
         },
       },
       {
         who: "matron",
         kind: "labour",
-        at: "house-2",
+        at: "house-02",
         weight: 2,
         line: {
           en: "The goodwife brews the new year's wine.",
@@ -66,7 +75,7 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "child",
         kind: "stroll",
-        from: "house-4",
+        from: "house-04",
         to: "pond",
         line: {
           en: "A child goes to see the fish rise to the ice.",
@@ -90,15 +99,15 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   2: {
     note: {
-      en: "The east wind has loosened the ground. The oxen go out to the west fields and the plough begins; the pools are not drained and the woods not burned. On a chosen day the ward sacrifices at the altar of the soil.",
-      zh: "东风解冻。牛出西田，始耕；毋竭川泽，毋焚山林。择元日，命民社。",
+      en: "The east wind has loosened the ground. The oxen go out to the west blocks and the plough begins; the pools are not drained and the woods not burned. On a chosen day the ward sacrifices at the altar of the soil, and in the matchmaker's month a bride is brought along the lane. In the fields: the wheat green, the millet blocks turned behind the plough, the peach at the gates in blossom.",
+      zh: "东风解冻。牛出西田，始耕；毋竭川泽，毋焚山林。择元日，命民社；中春令会男女，迎妇于里道。田中：麦青，禾田耕翻，门桃始华。",
     },
     tasks: [
       {
         who: "peasant",
         kind: "till",
         from: "byre",
-        to: "fields-west",
+        to: "field-west",
         count: 2,
         weight: 3,
         line: {
@@ -110,7 +119,7 @@ export const VILLAGE_YEAR: SiteYear = {
         who: "ox",
         kind: "till",
         from: "byre",
-        to: "fields-south",
+        to: "field-south",
         line: {
           en: "The ox drags the plough across the south fields.",
           zh: "牛曳犁过南田。",
@@ -129,7 +138,7 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "matron",
         kind: "stroll",
-        from: "house-2",
+        from: "house-02",
         to: "well",
         line: {
           en: "The goodwife draws water for the seed.",
@@ -137,12 +146,12 @@ export const VILLAGE_YEAR: SiteYear = {
         },
       },
       {
-        who: "fisher",
+        who: "child",
         kind: "labour",
         at: "pond",
         line: {
-          en: "The fisher mends the nets; the pond is not to be drained.",
-          zh: "渔者补网，毋漉陂池。",
+          en: "A boy mends the nets at the pond; the pond is not to be drained.",
+          zh: "童子补网于陂，毋漉陂池。",
         },
       },
     ],
@@ -162,10 +171,20 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   3: {
     note: {
-      en: "The mulberry is in leaf and no one may cut it. The girls pick the leaves and the silkworms are fed in the houses; the millet is sown behind the plough, and the brook's banks are cleared before the rains.",
-      zh: "桑叶生，毋伐桑柘。采桑女采叶，室中饲蚕；播粟于犁后；修溪防以待雨。",
+      en: "The mulberry is in leaf and no one may cut it. The girls pick the leaves and the silkworms are fed in the shed; the millet is sown behind the plough, the paddy flooded and set, the hemp sown by the washing place, and the young go down to the water for the lustration. In the fields: the wheat in ear, the broomcorn on the north block already green, the paddy under water with its seedlings, the west blocks bare and sown.",
+      zh: "桑叶生，毋伐桑柘。女采叶，蚕室饲蚕；播禾于犁后，灌稻田而莳秧，种麻于沤池之侧；上巳，少者下水祓除。田中：麦秀，北田之黍已青，稻田水满秧立，西田播而未生。",
     },
     tasks: [
+      {
+        who: "girl",
+        kind: "stroll",
+        from: "house-22",
+        to: "orchard",
+        line: {
+          en: "A small girl follows her mother to the mulberry with a basket.",
+          zh: "小女随母携筐往桑。",
+        },
+      },
       {
         who: "maiden",
         kind: "labour",
@@ -180,7 +199,7 @@ export const VILLAGE_YEAR: SiteYear = {
         who: "peasant",
         kind: "till",
         from: "granary",
-        to: "fields-east",
+        to: "field-east",
         count: 2,
         weight: 2,
         line: {
@@ -189,19 +208,19 @@ export const VILLAGE_YEAR: SiteYear = {
         },
       },
       {
-        who: "weaver",
+        who: "matron",
         kind: "stroll",
-        from: "house-3",
+        from: "house-03",
         to: "orchard",
         line: {
-          en: "The weaver goes to the plot for the day's leaves.",
-          zh: "织妇往桑取叶。",
+          en: "A wife goes to the plot for the day's leaves.",
+          zh: "妇人往桑取叶。",
         },
       },
       {
         who: "elder",
         kind: "stroll",
-        from: "elder",
+        from: "house-01",
         to: "ford",
         line: {
           en: "The elder sees the brook's banks cleared at the ford.",
@@ -211,7 +230,7 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "child",
         kind: "stroll",
-        from: "house-5",
+        from: "house-05",
         to: "orchard",
         line: {
           en: "A child carries a basket to the mulberry plot.",
@@ -222,14 +241,14 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   4: {
     note: {
-      en: "The wheat on the south fields is cut and carried in, the first harvest of the year. The cocoons are reeled in the weaver's house and the silk tax is set aside; the county's officer comes to see that no season is lost.",
-      zh: "南田刈麦，岁之首获。织妇之舍缫茧，留茧税。县吏至，劝农毋失时。",
+      en: "The wheat on the south blocks is cut and carried in, the first harvest of the year, and the beans go in behind the reapers; the cocoons are reeled at the shed and the silk tax set aside; the county's field officer comes to see the oxen and that no season is lost. In the fields: the wheat gold and then stubble, the millets green, the hemp rising, the paddy green over water.",
+      zh: "南田刈麦，岁之首获，刈后种菽；蚕室缫茧，留茧税；田啬夫至肤牛，劝农毋失时。田中：麦黄而后茬，禾黍青，麻起，稻青于水上。",
     },
     tasks: [
       {
         who: "peasant",
         kind: "till",
-        from: "fields-south",
+        from: "field-south",
         to: "threshing",
         count: 3,
         weight: 3,
@@ -239,17 +258,20 @@ export const VILLAGE_YEAR: SiteYear = {
         },
       },
       {
-        who: "weaver",
+        who: "matron",
         kind: "labour",
-        at: "house-3",
+        at: "house-03",
         weight: 2,
-        line: { en: "The weaver reels the cocoons.", zh: "织妇缫茧。" },
+        line: {
+          en: "The wives reel the cocoons at the shed.",
+          zh: "妇人缫茧于蚕室。",
+        },
       },
       {
         who: "clerk",
         kind: "stroll",
         from: "station",
-        to: "fields-south",
+        to: "field-south",
         line: {
           en: "The post clerk walks out to the fields with the county's order to hasten the harvest.",
           zh: "邮人持县令至田，趣民收麦。",
@@ -267,7 +289,7 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "matron",
         kind: "stroll",
-        from: "house-2",
+        from: "house-02",
         to: "granary",
         line: {
           en: "The goodwife carries the first wheat to the granary.",
@@ -278,15 +300,15 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   5: {
     note: {
-      en: "The rains are due and the ward prays for them. The millet is weeded and the hemp stands high; at the longest day the houses keep still, and no fire is lit to the south.",
-      zh: "雩以祈雨。耘粟，麻方长。日长至，家家掩身，毋用火南方。",
+      en: "The rains are due and the ward prays for them at the altar. The millet is weeded and the hemp stands high; the broomcorn on the north block is the first grain in, tasted at the altar; at the longest day the houses keep still, and no fire is lit to the south. In the fields: the broomcorn ripe and reaped, the foxtail green, the beans coming up on the south and the east, the hemp tall, the melons on the garden beds.",
+      zh: "雩以祈雨。耘禾，麻方长；北田之黍先登，荐于社；日长至，家家掩身，毋用火南方。田中：黍熟而刈，禾青，南田、东田之菽生，麻高，圃有瓜。",
     },
     tasks: [
       {
         who: "peasant",
         kind: "till",
-        from: "house-1",
-        to: "fields-west",
+        from: "house-01",
+        to: "field-west",
         count: 2,
         weight: 3,
         line: {
@@ -297,39 +319,39 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "child",
         kind: "till",
-        from: "house-4",
-        to: "fields-east",
+        from: "house-04",
+        to: "field-east",
         line: {
           en: "A child pulls weeds at the edge of the east fields.",
           zh: "童子于东田边拔草。",
         },
       },
       {
-        who: "fisher",
+        who: "child",
         kind: "labour",
         at: "pond",
         line: {
-          en: "The fisher sets the summer nets now the statute allows it.",
-          zh: "渔者置夏网，律所许也。",
+          en: "A boy sets the summer nets now the statute allows it.",
+          zh: "童子置夏网，律所许也。",
         },
       },
       {
         who: "matron",
         kind: "labour",
-        at: "house-2",
+        at: "house-02",
         line: {
           en: "The goodwife keeps the house still at the solstice.",
           zh: "主妇日至掩身。",
         },
       },
       {
-        who: "woodcutter",
+        who: "peasant",
         kind: "stroll",
         from: "woods",
         to: "well",
         line: {
-          en: "The woodcutter comes down to the well in the heat.",
-          zh: "樵夫暑中下就井。",
+          en: "A farmer comes down to the well in the heat.",
+          zh: "农夫暑中下就井。",
         },
       },
     ],
@@ -349,15 +371,15 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   6: {
     note: {
-      en: "The great rains. The weeds are cut and burned and the water run over them to manure the fields; the hemp is cut and retted in the pond. No earthwork is raised and no one is levied.",
-      zh: "大雨时行。烧薙行水以粪田；刈麻，沤于陂。不可以兴土功，不可以起大众。",
+      en: "The great rains. The weeds are cut and burned and the water run over them to manure the fields; the wives dye at the washing place with the vats. No earthwork is raised and no one is levied. In the fields: the foxtail heading, the beans in bush, the hemp at its height, the paddy green, the gourds on the fences.",
+      zh: "大雨时行。烧薙行水以粪田；妇人于沤池染采。不可以兴土功，不可以起大众。田中：禾将秀，菽成丛，麻极高，稻青，藩有壶。",
     },
     tasks: [
       {
         who: "peasant",
         kind: "till",
-        from: "house-6",
-        to: "fields-south",
+        from: "house-06",
+        to: "field-south",
         count: 2,
         weight: 2,
         line: {
@@ -368,7 +390,7 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "matron",
         kind: "till",
-        from: "house-2",
+        from: "house-02",
         to: "pond",
         count: 2,
         weight: 2,
@@ -388,18 +410,18 @@ export const VILLAGE_YEAR: SiteYear = {
         },
       },
       {
-        who: "fisher",
+        who: "child",
         kind: "labour",
         at: "pond",
         line: {
-          en: "The fisher takes the pond's fish while the water is high.",
-          zh: "渔者乘水盛取鱼。",
+          en: "A boy takes the pond's fish while the water is high.",
+          zh: "童子乘水盛取鱼。",
         },
       },
       {
         who: "elder",
         kind: "stroll",
-        from: "elder",
+        from: "house-01",
         to: "ford",
         line: {
           en: "The elder watches the ford in the flood.",
@@ -410,14 +432,14 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   7: {
     note: {
-      en: "The cool wind comes and the first millet is cut. The new grain is tasted and offered at the altar before anyone eats of it; the brook's banks are made good against the autumn floods and the house walls patched.",
-      zh: "凉风至，始刈粟。尝新，先荐于社；完堤防以备水潦，坏墙垣。",
+      en: "The cool wind comes and the first millet is cut. The new grain is tasted and offered at the altar before anyone eats of it, the children eat the melons, the hemp is cut and retted at the water; the brook's banks are made good against the autumn floods and the house walls patched. In the fields: the foxtail in ear on the west and north blocks, the hemp ground cut to stalks, the beans in pod, the paddy green.",
+      zh: "凉风至，始刈禾。尝新，先荐于社；童子食瓜；刈麻，沤于池；完堤防以备水潦，坏墙垣。田中：西田、北田之禾秀，麻田刈而余茎，菽荚，稻青。",
     },
     tasks: [
       {
         who: "peasant",
         kind: "till",
-        from: "fields-east",
+        from: "field-east",
         to: "threshing",
         count: 3,
         weight: 3,
@@ -438,29 +460,29 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "matron",
         kind: "labour",
-        at: "house-2",
+        at: "house-02",
         line: {
           en: "The goodwife patches the house wall with mud.",
           zh: "主妇以泥坏墙垣。",
         },
       },
       {
-        who: "woodcutter",
+        who: "peasant",
         kind: "labour",
         at: "ford",
         line: {
-          en: "The woodcutter drives stakes into the bank at the ford.",
-          zh: "樵夫于津上打桩固堤。",
+          en: "A farmer drives stakes into the bank at the ford.",
+          zh: "农夫于津上打桩固堤。",
         },
       },
       {
-        who: "merchant",
+        who: "carrier",
         kind: "stroll",
         from: "station",
         to: "threshing",
         line: {
-          en: "The grain dealer comes up the lane to see the new millet.",
-          zh: "粜者自邮道来视新粟。",
+          en: "The pedlar comes up the lane to see the new millet.",
+          zh: "贩夫自邮道来视新粟。",
         },
       },
     ],
@@ -480,15 +502,15 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   8: {
     note: {
-      en: "The geese come south. The harvest is gathered and the vegetables stored; the wheat is sown for next year before the season passes. The old are given their staves, and the ward meets at the altar for the autumn thanksgiving.",
-      zh: "鸿雁来。收敛，畜菜；劝种麦，毋失时。养衰老，授几杖；会于社，秋报。",
+      en: "The geese come south. The county's clerk takes the register at the hall and a boy is entered as grown; the jujubes are beaten down and the gourds cut; the wheat is sown on the south blocks for next year before the season passes, and the hemp is spun. The old are given their staves, and the ward meets at the altar for the autumn thanksgiving. In the fields: the foxtail heavy in the ear, the beans yellowing on the east, the south blocks turned and sown to wheat, the paddy turning, the jujube in red fruit at the gates.",
+      zh: "鸿雁来。令史于序案比，童子傅为大；剥枣断壶；南田劝种麦，毋失时；载绩。养衰老，授几杖；会于社，秋报。田中：禾穗重，东田之菽黄，南田耕而种麦，稻将黄，门枣红。",
     },
     tasks: [
       {
         who: "peasant",
         kind: "till",
         from: "granary",
-        to: "fields-west",
+        to: "field-west",
         count: 2,
         weight: 3,
         line: {
@@ -499,7 +521,7 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "matron",
         kind: "labour",
-        at: "house-2",
+        at: "house-02",
         weight: 2,
         line: {
           en: "The goodwife pickles the vegetables for the winter.",
@@ -509,11 +531,11 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "child",
         kind: "stroll",
-        from: "house-1",
-        to: "elder",
+        from: "house-01",
+        to: "house-25",
         line: {
-          en: "A child carries a staff to the oldest house.",
-          zh: "童子送杖于老者之家。",
+          en: "A child carries a staff from the elder to the Han house, where the oldest man of the ward lives.",
+          zh: "童子自里典之舍送杖于韩氏，里中最老者所居。",
         },
       },
       {
@@ -556,10 +578,19 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   9: {
     note: {
-      en: "The leaves yellow and fall. The threshing floor is beaten and the garden plots made, the last millet threshed and the charcoal burned in the woods; the doors are plastered against the cold.",
-      zh: "草木黄落。筑场圃，打最后之粟，伐薪为炭；墐户以御寒。",
+      en: "The leaves yellow and fall. The harvest: every villager who is not old is in the blocks, the men reaping the millet, the wives and children carrying; the beans are pulled on the east; the threshing floor is beaten and the fodder and straw levy driven to the station; the winter clothes are issued. In the fields: the west and north blocks reaped to stubble, the beans pulled, the paddy gold, the wheat shoots green on the south, the chestnuts at the gates.",
+      zh: "草木黄落。收获：里中非老者皆在田，丁夫刈禾，妇子负之；东田拔菽；筑场圃，输刍稾于邮；九月授衣。田中：西田、北田刈而余茬，菽拔，稻黄，南田麦苗青，门栗。",
     },
     tasks: [
+      {
+        who: "granny",
+        kind: "labour",
+        at: "threshing",
+        line: {
+          en: "A granny sits at the edge of the floor to watch the threshing.",
+          zh: "老妪坐场边观打谷。",
+        },
+      },
       {
         who: "peasant",
         kind: "gather",
@@ -572,20 +603,20 @@ export const VILLAGE_YEAR: SiteYear = {
         },
       },
       {
-        who: "woodcutter",
+        who: "peasant",
         kind: "labour",
         at: "woods",
         weight: 2,
         effect: "smoke",
         line: {
-          en: "The woodcutter burns charcoal in the woods.",
-          zh: "樵夫于林中烧炭。",
+          en: "A farmer burns charcoal in the woods.",
+          zh: "农夫于林中烧炭。",
         },
       },
       {
         who: "matron",
         kind: "labour",
-        at: "house-2",
+        at: "house-02",
         line: {
           en: "The goodwife plasters the door and the window.",
           zh: "主妇墐户塞向。",
@@ -598,21 +629,21 @@ export const VILLAGE_YEAR: SiteYear = {
         line: { en: "The ox treads the floor hard.", zh: "牛筑场。" },
       },
       {
-        who: "merchant",
+        who: "carrier",
         kind: "gather",
         at: "granary",
         count: 2,
         line: {
-          en: "The grain dealer weighs the millet at the granary.",
-          zh: "粜者于仓量粟。",
+          en: "The pedlar weighs the millet at the granary.",
+          zh: "贩夫于仓量粟。",
         },
       },
     ],
   },
   10: {
     note: {
-      en: "Winter is shut in. The grain is stored, the fences and the byre repaired, and the oxen brought in for the county's inspection. The ward drinks the year's wine at the elder's house, and the offering is laid for the ancestors and the household spirits.",
-      zh: "闭塞成冬。纳禾稼，修篱与牢，牛归以待县之课。里人于里正之舍朋酒斯飨；腊先祖五祀。",
+      en: "Qin's year opens: the elder carries the ward's tallies to the station. The rice is reaped in the paddy and every household's grain goes into the granary; the floor is threshed and the whole ward feasts at the hall; the lieutenant musters the corvée party and takes the garrison man; the oxen are brought in for the county's inspection. In the fields: the paddy reaped to stubble in the mud, the millet blocks and the bean blocks bare, the wheat green on the south, the haystacks by the floor, the carts loaded.",
+      zh: "秦岁首：里典持券上计于邮。稻田刈稻，户纳禾稼于仓；涤场，里人于序朋酒斯飨；士吏发徭，取戍卒；牛归以待县之课。田中：稻田刈而余茬于泥，禾田、菽田空，南田麦青，场侧积稾，车载刍稾。",
     },
     tasks: [
       {
@@ -649,29 +680,29 @@ export const VILLAGE_YEAR: SiteYear = {
         },
       },
       {
-        who: "woodcutter",
+        who: "peasant",
         kind: "labour",
-        at: "house-5",
-        line: { en: "The woodcutter mends the fence.", zh: "樵夫修篱。" },
+        at: "house-05",
+        line: { en: "A farmer mends the fence.", zh: "农夫修篱。" },
       },
       {
-        who: "weaver",
+        who: "matron",
         kind: "labour",
-        at: "house-3",
+        at: "house-03",
         line: {
-          en: "The weaver sits at the loom now the fields are done.",
-          zh: "织妇织于机，田事既毕。",
+          en: "The wives sit at the loom now the fields are done.",
+          zh: "妇人织于机，田事既毕。",
         },
       },
     ],
     rites: [
       {
-        title: { en: "The winter feast", zh: "饗" },
+        title: { en: "The winter feast", zh: "飨" },
         who: "elder",
-        at: "elder",
-        count: 5,
+        at: "hall",
+        count: 8,
         line: {
-          en: "The ward gathers at the elder's house with two jars of wine and a lamb, and wishes him long life.",
+          en: "The ward gathers at the hall with two jars of wine and a lamb, and raises the horn.",
           zh: "朋酒斯飨，曰杀羔羊，跻彼公堂，称彼兕觥，万寿无疆。",
         },
         cite: QIYUE(3838, "七月: 朋酒斯饗"),
@@ -680,24 +711,33 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   11: {
     note: {
-      en: "The shortest day. No earthwork is begun and no one is levied. The women weave and spin, the men twist rope and mend the tools, and the wine is brewed for the year's end; a beast left out is anyone's to take.",
-      zh: "日短至。土事毋作，毋起大众。妇织，男索绹修器，酿酒以待岁终；畜兽放佚者，取之不诘。",
+      en: "The shortest day. No earthwork is begun and no one is levied. The lieutenant drills the ward's men on the floor and they shoot at the target; every man goes to the woods for the winter's firewood; the women weave and spin through the nights; a mother of the second 伍 is carried to the graves. In the fields: stubble and bare ground, the wheat alone green on the south, the target stood up by the floor.",
+      zh: "日短至。土事毋作，毋起大众。士吏教大阅于场，射侯；丁夫皆入林伐薪；妇人夜绩；二伍之母葬于丘。田中：茬与空地，唯南田麦青，场侧立侯。",
     },
     tasks: [
       {
-        who: "weaver",
+        who: "lieutenant",
         kind: "labour",
-        at: "house-3",
+        at: "threshing",
+        line: {
+          en: "The county's lieutenant drills the ward's men on the floor.",
+          zh: "士吏于场教里丁习战。",
+        },
+      },
+      {
+        who: "matron",
+        kind: "labour",
+        at: "house-03",
         weight: 3,
         line: {
-          en: "The weaver works the loom through the short day.",
-          zh: "织妇终日织。",
+          en: "The wives work the loom through the short day.",
+          zh: "妇人终日织。",
         },
       },
       {
         who: "peasant",
         kind: "labour",
-        at: "house-1",
+        at: "house-10",
         weight: 2,
         line: {
           en: "The farmer twists rope by the door.",
@@ -707,7 +747,7 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "matron",
         kind: "labour",
-        at: "house-2",
+        at: "house-02",
         line: {
           en: "The goodwife sets the yeast for the wine.",
           zh: "主妇下曲酿酒。",
@@ -725,8 +765,8 @@ export const VILLAGE_YEAR: SiteYear = {
       {
         who: "child",
         kind: "stroll",
-        from: "house-4",
-        to: "house-1",
+        from: "house-04",
+        to: "house-01",
         line: {
           en: "A child runs between the houses in the snow.",
           zh: "童子雪中走于舍间。",
@@ -736,12 +776,22 @@ export const VILLAGE_YEAR: SiteYear = {
   },
   12: {
     note: {
-      en: "The waters are frozen to the bottom. The ice is cut and stored, the seed grain issued, and the ploughs mended for the spring; the ward drives out the old year at the altar with the year's-end offering.",
-      zh: "水泽腹坚。取冰而藏，出五种，修耒耜以待春；里人于社蜡祭，逐旧岁。",
+      en: "The waters are frozen to the bottom. The ward thanks the eight spirits at the altar and drinks by age in the hall, the men come back from the hunt with game for the La, the young men drive out the pestilence along the lanes with drums and masks, and the ice is cut on the pond for the ice house; the seed grain is issued and the ploughs mended for the spring. In the fields: snow on the stubble, the wheat green under it, the ice stacked on the bank.",
+      zh: "水泽腹坚。里人于社蜡，序中饮酒以齿；丁夫自林田猎而归以腊；少者鼓而蒙面，逐疫于里道；凿冰于陂以纳凌阴；出五种，修耒耜以待春。田中：雪覆茬，麦青于雪下，冰积于岸。",
     },
     tasks: [
       {
-        who: "woodcutter",
+        who: "grandfather",
+        kind: "stroll",
+        from: "house-25",
+        to: "hall",
+        line: {
+          en: "The oldest man of the ward is helped to the hall to be seated first.",
+          zh: "里中最老者扶至序，先席之。",
+        },
+      },
+      {
+        who: "peasant",
         kind: "till",
         from: "pond",
         to: "granary",
@@ -773,18 +823,18 @@ export const VILLAGE_YEAR: SiteYear = {
         },
       },
       {
-        who: "fisher",
+        who: "child",
         kind: "labour",
         at: "pond",
         line: {
-          en: "The fisher cuts a hole in the ice for the year's first fish.",
-          zh: "渔者凿冰始渔。",
+          en: "A boy cuts a hole in the ice for the year's first fish.",
+          zh: "童子凿冰始渔。",
         },
       },
       {
         who: "matron",
         kind: "stroll",
-        from: "house-2",
+        from: "house-02",
         to: "graves",
         line: {
           en: "The goodwife carries the year's-end offering to the family graves.",
