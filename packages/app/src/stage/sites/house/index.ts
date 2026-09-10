@@ -10,11 +10,17 @@
  * but a room: its walls and roof are composed from a kit, its floor is a
  * ground, its furniture is a place, and the household walks in by the door.
  * No chapter is set here; the people are the family, its retainers, and its
- * servants.
+ * servants, kept on a register (`./register`), walked through a day per role
+ * and month (`./circuits`), and played through the *Yili*'s year of rites
+ * (`./events`), plan `20260909_Plan_house_year.md`.
  */
-import type { FeatureNote, Localized } from "../legend";
-import type { Site, Townsperson } from "../site";
-import { HOUSE_YEAR } from "./years/house";
+import type { FeatureNote, Localized } from "../../legend";
+import { villagersOf } from "../../register";
+import type { Site, Townsperson } from "../../site";
+import { HOUSE_YEAR } from "../years/house";
+import { HOUSE_CIRCUITS } from "./circuits";
+import { HOUSE_EVENTS } from "./events";
+import { HOUSE_REGISTER, HOUSE_VISITORS } from "./register";
 
 export const HOUSE_NAMES: Record<string, Localized> = {
   gate: { en: "the gatehouse", zh: "门" },
@@ -28,6 +34,9 @@ export const HOUSE_NAMES: Record<string, Localized> = {
   hall: { en: "the hall", zh: "堂" },
   "wing-west": { en: "the west range", zh: "西厢" },
   "wing-east": { en: "the east range", zh: "东厢" },
+  shrine: { en: "the ancestral shrine", zh: "庙" },
+  "east-steps": { en: "the east steps", zh: "阼阶" },
+  "west-steps": { en: "the west steps", zh: "西阶" },
   court: { en: "the court", zh: "庭" },
   "inner-door": { en: "the inner door", zh: "闱" },
   chamber: { en: "the inner chambers", zh: "寝" },
@@ -36,6 +45,9 @@ export const HOUSE_NAMES: Record<string, Localized> = {
   pond: { en: "the pond", zh: "池" },
   garden: { en: "the kitchen garden", zh: "圃" },
   street: { en: "the street", zh: "街" },
+  edge: { en: "the street's end", zh: "街口" },
+  // the west range's roof, where the dead are called back from
+  roof: { en: "the west range's roof", zh: "西厢屋上" },
   "house-west": { en: "the neighbour's house", zh: "西邻" },
   "house-east": { en: "the house beyond", zh: "北邻" },
   neighbour: { en: "the minister's compound", zh: "东邻卿第" },
@@ -124,6 +136,17 @@ export const HOUSE_FEATURES: Record<string, FeatureNote> = {
       zh: "庭为夯土，道则铺石，客至阶不濡，主升阼阶、客升西阶之礼得行。灵寿宫殿台基之间亦以石道相通。",
     },
   },
+  shrine: {
+    title: { en: "The ancestral shrine", zh: "庙" },
+    what: {
+      en: "The house's own temple on the east of the court, where the tablets stand and the seasonal sacrifices are laid.",
+      zh: "庭东之家庙，神主所在，四时之祭所行。",
+    },
+    history: {
+      en: "The Liji sets the shrine first among a gentleman's buildings and gives a great officer three and a shi one; it stands on the east side of the court because the ancestors take the honoured side, and the Yili opens the capping and every sacrifice at its gate, where the day is divined and the victims are inspected. What the family owes its dead is done here every season, and the year's first day and its last offering begin before the tablets.",
+      zh: "礼记：君子将营宫室，宗庙为先；大夫三庙，士一庙。庙在庭东，以祖先居尊位；仪礼冠礼及诸祭皆始于庙门，筮日、视牲于是。一家事其先者，四时行于此，正日与岁末之祭亦自神主始。",
+    },
+  },
   pond: {
     title: { en: "The pond", zh: "池" },
     what: {
@@ -137,6 +160,10 @@ export const HOUSE_FEATURES: Record<string, FeatureNote> = {
   },
 };
 
+/**
+ * the household by archetype, as the site listed it before the register;
+ * kept as the fallback `villagersOf` never reaches while the register stands
+ */
 export const HOUSEHOLD: readonly Townsperson[] = [
   {
     archetype: "master",
@@ -216,25 +243,46 @@ export const HOUSEHOLD: readonly Townsperson[] = [
   },
 ];
 
-/** the places a stroll may start or end: anything inside the wall, and the gate */
+/**
+ * the places a stroll may start or end: anything inside the wall, and the
+ * gate; not the roof (only the invocator climbs it, at the calling back) nor
+ * the street's end (where the circuits and the events go out by)
+ */
 export const HOUSE_STROLL_PLACES: readonly string[] = Object.keys(
   HOUSE_NAMES,
 ).filter(
   (key) =>
-    !["street", "house-west", "house-east", "neighbour", "pond"].includes(key),
+    ![
+      "street",
+      "edge",
+      "roof",
+      "house-west",
+      "house-east",
+      "neighbour",
+      "pond",
+    ].includes(key),
 );
 
 export const HOUSE: Site = {
   id: "house",
+  // the register's drawn people as townsfolk: twenty-four members and six visitors
+  folk: villagersOf({
+    register: HOUSE_REGISTER,
+    visitors: HOUSE_VISITORS,
+    folk: HOUSEHOLD,
+  }),
   path: "/craft/house",
   crumb: "House",
   title: { en: "A Model House", zh: "模范之第" },
   seat: "house",
   intro:
-    "The compound of a great officer inside a capital, at about a metre a tile, close enough that the household walks into its buildings rather than past them: every hall, range, and shed is walled and roofed from a building kit, the roof lifts while someone is inside, and the furniture is where its people sit. It is the plan the ritual texts assume and the Zhongshan king's bronze plan confirms in outline: a gate on the ward's street with a keeper's room beside it and a screen wall inside, a forecourt of chariot shed, stable, well, kitchen, and granary, a second gate into the court of the audience hall on its terrace with a range of rooms down each side, and a third wall behind the hall closing the inner chambers, the women's rooms, the kitchen garden, and the pond with its pavilion. The Qin case form measures such a house wall and room by room; the Yili's rites of visiting are staged across its gates and up its steps. Click any building, wall, or court to read what it is. The figures are the family, its retainers, and its servants.",
+    "The compound of a great officer inside a capital, at about a metre a tile, close enough that the household walks into its buildings rather than past them: every hall, range, and shed is walled and roofed from a building kit, the roof lifts while someone is inside, and the furniture is where its people sit. It is the plan the ritual texts assume and the Zhongshan king's bronze plan confirms in outline: a gate on the ward's street with a keeper's room beside it and a screen wall inside, a forecourt of chariot shed, stable, well, kitchen, and granary, a second gate into the court of the audience hall on its terrace with a range of rooms down each side, and a third wall behind the hall closing the inner chambers, the women's rooms, the kitchen garden, and the pond with its pavilion. The Qin case form measures such a house wall and room by room; the Yili's rites of visiting are staged across its gates and up its steps. Click any building, wall, or court to read what it is. The figures are one great officer's household, twenty-five on its register with the six who come to it from outside, each with a name on one convention and no one of them a person of the record: they keep the Yili's year, the heir capped in the second month, the daughter fetched at dusk in the ninth, the old tutor buried in the twelfth, and the four sacrifices at the shrine between.",
   names: HOUSE_NAMES,
   features: HOUSE_FEATURES,
-  folk: HOUSEHOLD,
+  register: HOUSE_REGISTER,
+  visitors: HOUSE_VISITORS,
+  circuits: HOUSE_CIRCUITS,
+  events: HOUSE_EVENTS,
   strollPlaces: HOUSE_STROLL_PLACES,
   scale: 1,
   smoking: ["hearth"],
@@ -248,8 +296,8 @@ export const HOUSE: Site = {
     nothing: { en: "Nothing has stirred yet.", zh: "第尚未醒。" },
     folk: { en: "Who lives here", zh: "一家之人" },
     folkNote: {
-      en: "A great house was a family, the retainers it fed, and the servants it owned or hired, in that order of rank and the reverse order of number. The Zhanguoce has a chancellor keep clients by the hundred; the Qin statutes count a household's servants with its oxen. The house's people are sorted as the house would have sorted them.",
-      zh: "大家者，一家、所养之客、所畜之仆，以位则如此，以数则反之。战国策相国养客数百；秦律计一户之臣妾与其牛。此第之人依家之所序而分。",
+      en: "A great house was a family, the retainers it fed, and the servants it owned or hired, in that order of rank and the reverse order of number. The Zhanguoce has a chancellor keep clients by the hundred; the Qin statutes count a household's servants with its oxen. The house's people are sorted as the house would have sorted them. The household is a composite drawn from the Yili's rites and the Liji's rules, and every name is invented on one convention: no member is a person of the record.",
+      zh: "大家者，一家、所养之客、所畜之仆，以位则如此，以数则反之。战国策相国养客数百；秦律计一户之臣妾与其牛。此第之人依家之所序而分。一家之人合仪礼、礼记而拟，名皆依一例，无一人见于史。",
     },
   },
   sources: [
@@ -263,7 +311,11 @@ export const HOUSE: Site = {
     },
     {
       name: "The Yili",
-      text: ": the rites of visiting and of the district feast, staged across the gates, the court, and the east and west steps of a house exactly this shape.",
+      text: "(士冠禮, 士昏禮, 士相見禮, 鄉飲酒禮, 燕禮, 聘禮, 喪服, 士喪禮, 既夕禮, 士虞禮, 特牲饋食禮, 少牢饋食禮, 有司): the capping, the wedding, the visit, the district drinking, the banquet, the mission, the mourning and the burial, and the sacrifices, staged across the gates, the court, and the east and west steps of a house exactly this shape; the year's events are these rites on the days they fix.",
+    },
+    {
+      name: "The Simin yueling",
+      text: "(Cui Shi, Han): a landed household's calendar month by month, the first day's offering and the wine to the elders, the spring brewing, the silk and the summer cloth, the airing of books and clothes on the seventh of the seventh, the autumn clothes cut, and the la offering to the ancestors and the five household spirits.",
     },
     {
       name: "The Zhongshan king's bronze plan",

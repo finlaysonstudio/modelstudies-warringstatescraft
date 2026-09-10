@@ -4,7 +4,11 @@
  * the *Neize*'s daily order (`liji-zh` 770), the *Seventh Month*'s hunt and
  * the *Cricket* (`shijing-zh` 3830, 5160), and the *Yili*'s district drinking
  * (`yili-zh` 475). Every `who` is one of the house's folk, every place one of
- * `HOUSE_NAMES`; `almanac.spec.ts` holds both.
+ * `HOUSE_NAMES`; `almanac.spec.ts` holds both. Since the register (2026-09-09)
+ * the folk are the register's drawn people, so the tasks name the family's
+ * archetypes too (heir, girl, dowager, younglady, concubine); the rites the
+ * year keeps are also the days of `sites/house/events.ts`, which stages them
+ * with the same cites.
  */
 import type { Cite, SiteYear } from "../../almanac";
 
@@ -95,6 +99,16 @@ export const HOUSE_YEAR: SiteYear = {
     },
     tasks: [
       {
+        who: "heir",
+        kind: "stroll",
+        from: "wing-west",
+        to: "shrine",
+        line: {
+          en: "The heir goes to the shrine to be shown the place he will be capped.",
+          zh: "冢子至庙，视将冠之位。",
+        },
+      },
+      {
         who: "groom",
         kind: "labour",
         at: "shed",
@@ -165,6 +179,16 @@ export const HOUSE_YEAR: SiteYear = {
       zh: "夫人亲蚕。斋戒，躬采桑首叶，婢于东房饲箔；上巳，阖家临水祓禊。",
     },
     tasks: [
+      {
+        who: "girl",
+        kind: "stroll",
+        from: "east-rooms",
+        to: "garden",
+        line: {
+          en: "The younger daughter picks mulberry leaves in the garden for the trays.",
+          zh: "次女采桑于圃以饲蚕。",
+        },
+      },
       {
         who: "lady",
         kind: "stroll",
@@ -298,6 +322,16 @@ export const HOUSE_YEAR: SiteYear = {
     },
     tasks: [
       {
+        who: "dowager",
+        kind: "stroll",
+        from: "chamber",
+        to: "pavilion",
+        line: {
+          en: "The dowager is helped out to the pavilion for the cool over the water.",
+          zh: "太夫人出就榭，纳池上之凉。",
+        },
+      },
+      {
         who: "musician",
         kind: "labour",
         at: "hall",
@@ -355,6 +389,15 @@ export const HOUSE_YEAR: SiteYear = {
       zh: "大雨时行。庭水泄，圉人闭马，客于客案饱食以度雨日；东房染夏丝，钟覆以御湿。",
     },
     tasks: [
+      {
+        who: "younglady",
+        kind: "labour",
+        at: "loom",
+        line: {
+          en: "The elder daughter weaves the fine summer cloth at the loom.",
+          zh: "长女织缣于机。",
+        },
+      },
       {
         who: "maid",
         kind: "labour",
@@ -480,6 +523,16 @@ export const HOUSE_YEAR: SiteYear = {
       zh: "鸿雁来。主人于堂行乡饮酒礼，以齿为序，乐师间歌；养衰老，授几杖，行糜粥；夫人出秋衣于箱。",
     },
     tasks: [
+      {
+        who: "concubine",
+        kind: "stroll",
+        from: "east-rooms",
+        to: "chest",
+        line: {
+          en: "The concubine carries the dyed silk in to the chest.",
+          zh: "妾纳染帛于衣箱。",
+        },
+      },
       {
         who: "musician",
         kind: "labour",

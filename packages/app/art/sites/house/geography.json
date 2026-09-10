@@ -4,178 +4,88 @@
   "fills": [
     {
       "terrain": "earth",
-      "rect": [
-        0,
-        0,
-        144,
-        114
-      ]
+      "rect": [0, 0, 144, 114]
     },
     {
       "terrain": "road",
-      "rect": [
-        0,
-        106,
-        144,
-        8
-      ],
+      "rect": [0, 106, 144, 8],
       "feature": "street"
     },
     {
       "terrain": "road",
-      "rect": [
-        134,
-        0,
-        4,
-        106
-      ],
+      "rect": [134, 0, 4, 106],
       "feature": "street"
     },
     {
       "terrain": "grass",
-      "rect": [
-        18,
-        8,
-        30,
-        20
-      ]
+      "rect": [18, 8, 30, 20]
     },
     {
       "terrain": "river",
-      "ellipse": [
-        36,
-        19,
-        6,
-        4
-      ],
+      "ellipse": [36, 19, 6, 4],
       "feature": "pond"
     },
     {
       "terrain": "garden",
-      "rect": [
-        88,
-        24,
-        40,
-        7
-      ]
+      "rect": [88, 24, 40, 7]
     },
     {
       "terrain": "platform",
-      "rect": [
-        56,
-        37,
-        32,
-        19
-      ]
+      "rect": [56, 37, 32, 19]
     },
     {
       "terrain": "cobble",
-      "rect": [
-        71,
-        94,
-        2,
-        3
-      ],
+      "rect": [71, 94, 2, 3],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        71,
-        94,
-        10,
-        2
-      ],
+      "rect": [71, 94, 10, 2],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        79,
-        89,
-        2,
-        7
-      ],
+      "rect": [79, 89, 2, 7],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        71,
-        89,
-        10,
-        2
-      ],
+      "rect": [71, 89, 10, 2],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        71,
-        74,
-        2,
-        17
-      ],
+      "rect": [71, 74, 2, 17],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        71,
-        56,
-        2,
-        10
-      ],
+      "rect": [71, 56, 2, 10],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        32,
-        50,
-        24,
-        2
-      ],
+      "rect": [32, 50, 24, 2],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        88,
-        50,
-        24,
-        2
-      ],
+      "rect": [88, 50, 24, 2],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        71,
-        23,
-        2,
-        9
-      ],
+      "rect": [71, 23, 2, 9],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        71,
-        26,
-        34,
-        2
-      ],
+      "rect": [71, 26, 34, 2],
       "feature": "walk"
     },
     {
       "terrain": "cobble",
-      "rect": [
-        103,
-        22,
-        2,
-        5
-      ],
+      "rect": [103, 22, 2, 5],
       "feature": "walk"
     }
   ],
@@ -183,12 +93,7 @@
     {
       "id": "compound",
       "kit": "kit.wall",
-      "rect": [
-        14,
-        6,
-        116,
-        98
-      ],
+      "rect": [14, 6, 116, 98],
       "floor": null,
       "doors": [
         {
@@ -202,12 +107,7 @@
     {
       "id": "gate",
       "kit": "kit.hall",
-      "rect": [
-        66,
-        97,
-        12,
-        8
-      ],
+      "rect": [66, 97, 12, 8],
       "doors": [
         {
           "side": "n",
@@ -222,12 +122,7 @@
     {
       "id": "shed",
       "kit": "kit.outbuilding",
-      "rect": [
-        18,
-        88,
-        16,
-        12
-      ],
+      "rect": [18, 88, 16, 12],
       "floor": "earth",
       "doors": [
         {
@@ -240,12 +135,7 @@
     {
       "id": "stable",
       "kit": "kit.outbuilding",
-      "rect": [
-        36,
-        88,
-        16,
-        12
-      ],
+      "rect": [36, 88, 16, 12],
       "floor": "earth",
       "doors": [
         {
@@ -258,12 +148,7 @@
     {
       "id": "kitchen",
       "kit": "kit.outbuilding",
-      "rect": [
-        92,
-        88,
-        16,
-        12
-      ],
+      "rect": [92, 88, 16, 12],
       "floor": "earth",
       "doors": [
         {
@@ -276,12 +161,7 @@
     {
       "id": "granary",
       "kit": "kit.outbuilding",
-      "rect": [
-        110,
-        88,
-        16,
-        12
-      ],
+      "rect": [110, 88, 16, 12],
       "floor": "earth",
       "doors": [
         {
@@ -294,12 +174,7 @@
     {
       "id": "inner-gate",
       "kit": "kit.hall",
-      "rect": [
-        66,
-        66,
-        12,
-        8
-      ],
+      "rect": [66, 66, 12, 8],
       "doors": [
         {
           "side": "n",
@@ -314,12 +189,7 @@
     {
       "id": "hall",
       "kit": "kit.hall",
-      "rect": [
-        60,
-        40,
-        24,
-        12
-      ],
+      "rect": [60, 40, 24, 12],
       "doors": [
         {
           "side": "s",
@@ -334,12 +204,7 @@
     {
       "id": "wing-west",
       "kit": "kit.hall",
-      "rect": [
-        20,
-        36,
-        12,
-        31
-      ],
+      "rect": [20, 36, 12, 31],
       "doors": [
         {
           "side": "e",
@@ -351,12 +216,7 @@
     {
       "id": "wing-east",
       "kit": "kit.hall",
-      "rect": [
-        112,
-        36,
-        12,
-        31
-      ],
+      "rect": [112, 36, 12, 31],
       "doors": [
         {
           "side": "w",
@@ -366,14 +226,21 @@
       ]
     },
     {
+      "id": "shrine",
+      "kit": "kit.shrine",
+      "rect": [90, 36, 16, 12],
+      "doors": [
+        {
+          "side": "s",
+          "at": 7
+        }
+      ],
+      "feature": "shrine"
+    },
+    {
       "id": "chamber",
       "kit": "kit.hall",
-      "rect": [
-        60,
-        10,
-        24,
-        12
-      ],
+      "rect": [60, 10, 24, 12],
       "doors": [
         {
           "side": "s",
@@ -384,12 +251,7 @@
     {
       "id": "east-rooms",
       "kit": "kit.hall",
-      "rect": [
-        92,
-        9,
-        24,
-        12
-      ],
+      "rect": [92, 9, 24, 12],
       "doors": [
         {
           "side": "s",
@@ -401,50 +263,26 @@
   "walls": [
     {
       "kit": "kit.wall",
-      "from": [
-        66,
-        92
-      ],
-      "to": [
-        77,
-        92
-      ],
+      "from": [66, 92],
+      "to": [77, 92],
       "feature": "screen"
     },
     {
       "kit": "kit.wall",
-      "from": [
-        15,
-        70
-      ],
-      "to": [
-        65,
-        70
-      ],
+      "from": [15, 70],
+      "to": [65, 70],
       "feature": "courtwall"
     },
     {
       "kit": "kit.wall",
-      "from": [
-        78,
-        70
-      ],
-      "to": [
-        128,
-        70
-      ],
+      "from": [78, 70],
+      "to": [128, 70],
       "feature": "courtwall"
     },
     {
       "kit": "kit.wall",
-      "from": [
-        15,
-        32
-      ],
-      "to": [
-        128,
-        32
-      ],
+      "from": [15, 32],
+      "to": [128, 32],
       "gaps": [
         {
           "at": 56,
@@ -506,16 +344,35 @@
       "marker": "audience-hall",
       "room": true
     },
+    "east-steps": {
+      "x": 79,
+      "y": 54,
+      "marker": "steps"
+    },
+    "west-steps": {
+      "x": 64,
+      "y": 54,
+      "marker": "steps"
+    },
     "wing-west": {
       "x": 25,
       "y": 51,
       "marker": "wing",
       "room": true
     },
+    "roof": {
+      "x": 25,
+      "y": 44
+    },
     "wing-east": {
       "x": 117,
       "y": 51,
       "marker": "wing",
+      "room": true
+    },
+    "shrine": {
+      "x": 97,
+      "y": 42,
       "room": true
     },
     "court": {
@@ -555,6 +412,10 @@
       "x": 71,
       "y": 110
     },
+    "edge": {
+      "x": 143,
+      "y": 110
+    },
     "house-west": {
       "x": 6,
       "y": 60,
@@ -576,8 +437,8 @@
       "marker": "dais"
     },
     "tablets": {
-      "x": 63,
-      "y": 42,
+      "x": 98,
+      "y": 39,
       "marker": "tablets"
     },
     "lamp": {
@@ -861,6 +722,16 @@
       "id": "icechest",
       "x": 82,
       "y": 48
+    },
+    {
+      "id": "stalks",
+      "x": 93,
+      "y": 45
+    },
+    {
+      "id": "wineset",
+      "x": 102,
+      "y": 44
     }
   ]
 }

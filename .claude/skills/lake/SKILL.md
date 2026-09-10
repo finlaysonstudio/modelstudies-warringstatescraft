@@ -121,7 +121,7 @@ redistributed. Cite it, or take the passage from `zuozhuan-zh` instead. Four RAN
 | `period` | 68 | `prompt` | Chinese originals, ten public-domain English translations, and under `--topic life` the year and the household (the Simin Yueling, the Da Dai Liji, the Fan Shengzhi Shu, the Lienü Zhuan, the Yuefu Shiji, the Yutai Xinyong, the Erya, Legge's Li Ki and She King, Steele's I-li) |
 | `situation` | 124 | `reader` | 18 FRUS crisis volumes, 103 CRS reports, 6 treaty texts |
 | `method` | 11 | `internal` | Wargame handbooks, RAND and CSIS studies, the two arXiv papers, three crisis datasets |
-| `world` | 74 | `reader` | The archaeology of the city (`lingshou`, `xue`, `boren`, `fangmatan`, `documents`, `trades`, `building`, `capitals`), the rooms (`interior`), the year (`season`), and the period's novel (`fiction`) |
+| `world` | 122 | `reader` | The archaeology of the city (`lingshou`, `xue`, `boren`, `fangmatan`, `documents`, `trades`, `building`, `capitals`), the rooms (`interior`), the year (`season`), the period's novel (`fiction`), and the household's rites (`house`) |
 | `house` | 21 | split | 12 scenario exports `prompt`, the 8 Lamparth cells `internal`, `house-simulates-index` `reader` |
 
 `situation` carries `--topic`: `taiwan`, `china-military`, `escalation-nuclear`,
@@ -136,7 +136,7 @@ redistributed. Cite it, or take the passage from `zuozhuan-zh` instead. Four RAN
 the Zhao hun, the Changtaiguan slips), `season` (the year: the solar terms, the pentads, the Yueling, the
 Xia Xiaozheng, the Simin Yueling, the Chu Silk Manuscript, the altar days, Shangsi, Laba, the well-field,
 millet, sericulture, the pictorial stones, the Qimin Yaoshu), `fiction` (the Dongzhou Lieguo Zhi and the
-Lienü Zhuan page; a novel is reader-side on purpose). `period` carries `--topic life` for the year and
+Lienü Zhuan page; a novel is reader-side on purpose), and `house` (2026-09-09: the household's rites behind the house's year, `house-*`: the capping, the six rites of marriage, the funeral and the three-year mourning, the ancestral temple and the 昭穆, the 宗法, the 家臣, the 大夫 and the 士, the 招魂; the rites themselves are `yili-zh` by chapter, 士冠禮 226, 士昏禮 263, 士相見禮 347, 鄉飲酒禮 475, 燕禮 509, 聘禮 133, 喪服 175, 士喪禮 301, 既夕禮 86, 士虞禮 367, 特牲饋食禮 387, 少牢饋食禮 196, 有司 547), and `village` (2026-09-09, 36 `village-*` pages: the 里 and the 什伍, the 里正, the 編戶齊民, corvée and conscription, Shang Yang, the household register, the 儺, Laba, the 鄉飲酒禮, the 社神, the ox plough, the five grains, the Han slips; the English Corvée, Conscription in China, Nuo folk religion, Hukou, Chinese village, foxtail and proso millet, hemp). `period` carries `--topic village` with `era: han` for six Han witnesses (`jijiupian-zh`, `fengsutongyi-zh`, `baihutong-zh`, `chunqiufanlu-zh`, `duduan-zh`, `xinshu-zh`); the village's own lines are `liji-zh` 月令 (501 社 單出里, 1580 祈穀, 1590 命民社, 1606 親蠶, 1618 登麥·獻繭, 1627 大雩, 1628 登黍, 1641 染采, 1643 燒薙, 1651 嘗新, 1665 勸種麥, 1676 農事備收, 1697 大飲烝, 1721 大難, 1844 蜡), `zhouli-zh` 372 女巫, 521 黨正 讀法·飲酒于序, 522 族師, 541 媒氏, 555 五家為鄰, 780 什伍, 1344 大閱, 1409 職方氏, `shuihudi-zh` 361 廄苑律, 410 傅律, 416 戍律, 443 芻稾, 520 徭律, `shijing-zh` 七月 3823–3838 and 甫田 1074, `hanshu-zh` 食貨志 6621–6635, `shiji-zh` 2122 初臘 and 3991 十月為歲首, `lunyu-zh` 774 鄉人儺, `mengzi-zh` 1460 井田, `shangjunshu-zh` 114 生者著死者削. `period` carries `--topic life` for the year and
 the household (the Yueling itself is `liji-zh` 月令 from line 1575; 七月 is `shijing-zh` 3823). The Chuci (`chuci-zh`, 招魂 from line 396) and the Shijing
 (`shijing-zh`) are in `period`.
 
