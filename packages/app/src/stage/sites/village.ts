@@ -171,6 +171,7 @@ export const VILLAGE: Site = {
   features: VILLAGE_FEATURES,
   folk: VILLAGERS,
   strollPlaces: VILLAGE_STROLL_PLACES,
+  scale: 10,
   smoking: [],
   year: VILLAGE_YEAR,
   words: {

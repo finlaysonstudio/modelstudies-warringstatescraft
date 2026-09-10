@@ -80,6 +80,11 @@ const TERRAIN_COLORS: Record<
   mulberry: { fill: "#8fb04f", rim: "#5e4a30", dots: "#6f8f3a" },
   garden: { fill: "#6f9a3c", rim: "#5a4632", dots: "#4f3a2a" },
   plank: { fill: "#6b4a2c", rim: "#4a3220", dots: "#7d5a38" },
+  millet: { fill: "#b0a848", rim: "#7a8c34", dots: "#8f8a3a" },
+  wheat: { fill: "#a9b85a", rim: "#7a8c34", dots: "#c2b25a" },
+  bean: { fill: "#7fa64a", rim: "#7a8c34", dots: "#5f8a3a" },
+  hemp: { fill: "#6f9a4e", rim: "#7a8c34", dots: "#4f7a3a" },
+  paddy: { fill: "#5f9a6a", rim: "#3f6f4f", dots: "#4a86b0" },
 };
 
 const WATER_COLORS: Record<Water, string[]> = {
@@ -224,6 +229,17 @@ const SPRITE_COLORS: Record<StageArchetype, { body: string; accent: string }> =
     maid: { body: "#7fa0a8", accent: "#f2f0e8" },
     cook: { body: "#9a7a5a", accent: "#f2f0e8" },
     groom: { body: "#6b5a3a", accent: "#5b3a1e" },
+    // the registered sites
+    girl: { body: "#c9a0b0", accent: "#f1c9a5" },
+    granny: { body: "#5a4a3e", accent: "#c8c0b0" },
+    grandfather: { body: "#8c8c88", accent: "#c8c0b0" },
+    fieldofficer: { body: "#2c3e50", accent: "#1b1b1b" },
+    lieutenant: { body: "#6b4f31", accent: "#b3261e" },
+    heir: { body: "#d9c9a3", accent: "#2b2b2b" },
+    younglady: { body: "#c8102e", accent: "#e9c46a" },
+    concubine: { body: "#b08aa0", accent: "#e9c46a" },
+    guest: { body: "#3b3b5a", accent: "#1b1b1b" },
+    invocator: { body: "#1b1b1b", accent: "#c8102e" },
   };
 
 const SKIN = rgba("#f1c9a5");

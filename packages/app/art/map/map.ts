@@ -213,7 +213,14 @@ export const DRAW_ORDER: readonly Ground[] = [
   "scrub",
   "loess",
   "steppe",
+  // the crops are one rank with the field: a boundary between two crops is
+  // the bank, and the bank is `road` drawn above them
   "field",
+  "millet",
+  "wheat",
+  "bean",
+  "hemp",
+  "paddy",
   "forest",
   "bamboo",
   "hills",
@@ -261,6 +268,11 @@ export const LETTERS: Record<Ground, string> = {
   mulberry: "m",
   garden: "g",
   plank: "p",
+  millet: "'",
+  wheat: "W",
+  bean: "b",
+  hemp: "h",
+  paddy: "r",
   river: "~",
   sea: "=",
 };

@@ -972,7 +972,20 @@ export type StageDirectionKind =
   | "labour"
   | "till"
   | "rite"
-  | "gather";
+  | "gather"
+  // the populace: the year's work and rites on a registered site
+  | "levy"
+  | "muster"
+  | "inspect"
+  | "register"
+  | "wed"
+  | "drill"
+  | "feast"
+  | "exorcise"
+  | "inter"
+  | "receive"
+  | "sacrifice"
+  | "mourn";
 
 export type StageArchetype =
   | "envoy"
@@ -1038,7 +1051,18 @@ export type StageArchetype =
   | "steward"
   | "maid"
   | "cook"
-  | "groom";
+  | "groom"
+  // the registered sites
+  | "girl"
+  | "granny"
+  | "grandfather"
+  | "fieldofficer"
+  | "lieutenant"
+  | "heir"
+  | "younglady"
+  | "concubine"
+  | "guest"
+  | "invocator";
 
 export type StageEffect =
   | "scroll"
@@ -1063,11 +1087,16 @@ export type StageEffect =
   | "bronze"
   | "bell"
   | "stele"
-  | "oxen-fire";
+  | "oxen-fire"
+  | "drum";
 
 export interface StageActor {
   seat: string;
   archetype: StageArchetype;
+  /** a sprite id preferred over the archetype's default */
+  variant?: string;
+  /** overlay ids drawn on the figure */
+  overlays?: string[];
 }
 
 export interface StageDirection {
@@ -1079,6 +1108,8 @@ export interface StageDirection {
   against?: string;
   count?: number;
   effect?: StageEffect;
+  /** an action of the sprite played on arrival */
+  pose?: string;
 }
 
 export type StageBeatKind =

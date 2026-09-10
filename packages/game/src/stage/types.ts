@@ -60,6 +60,20 @@ export type StageDirectionKind =
   | "till"
   | "rite"
   | "gather"
+  // the populace (scope "town"): the year's work and rites on a registered
+  // site, played by the scheduler and by an event's script, never coded
+  | "levy"
+  | "muster"
+  | "inspect"
+  | "register"
+  | "wed"
+  | "drill"
+  | "feast"
+  | "exorcise"
+  | "inter"
+  | "receive"
+  | "sacrifice"
+  | "mourn"
   | "abdicate"
   | "audience"
   | "debate"
@@ -144,7 +158,20 @@ export type StageArchetype =
   | "steward"
   | "maid"
   | "cook"
-  | "groom";
+  | "groom"
+  // the registered sites: the ages and the offices a household register
+  // counts (the village's girls, grannies, and 伍老, the county's officers)
+  // and the family and callers of an elite compound
+  | "girl"
+  | "granny"
+  | "grandfather"
+  | "fieldofficer"
+  | "lieutenant"
+  | "heir"
+  | "younglady"
+  | "concubine"
+  | "guest"
+  | "invocator";
 
 /** the effect a direction plays at its place or on arrival */
 export type StageEffect =
@@ -170,12 +197,22 @@ export type StageEffect =
   | "bronze"
   | "bell"
   | "stele"
-  | "oxen-fire";
+  | "oxen-fire"
+  // the populace: the drum of the exorcism and the drill
+  | "drum";
 
 export interface StageActor {
   /** the seat whose figure acts */
   seat: string;
   archetype: StageArchetype;
+  /**
+   * A sprite id the scene prefers over the archetype's default, so two
+   * figures of one archetype are two people. Checked for shape alone; no
+   * coder is offered it.
+   */
+  variant?: string;
+  /** overlay ids drawn on the figure (a cap, a sash, a lamp); shape alone */
+  overlays?: string[];
 }
 
 /**
@@ -193,6 +230,11 @@ export interface StageDirection {
   /** figures in the group, for columns and crowds */
   count?: number;
   effect?: StageEffect;
+  /**
+   * An action of the sprite played on arrival instead of the rest frame
+   * (`hoe`, `kneel`, `weave`). Checked for shape alone; never coded.
+   */
+  pose?: string;
 }
 
 export type StageBeatKind =

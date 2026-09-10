@@ -768,6 +768,114 @@ export const DIRECTIONS: Record<StageDirectionKind, DirectionRule> = {
     gloss:
       "the ward gathers: at the threshing floor, the elder's house, the market, or the drill ground",
   },
+  // the populace: the year's work and rites on a registered site (the
+  // village's and the house's events), played by the scheduler and by an
+  // event's script; offered to no coder
+  levy: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    count: 4,
+    effect: "tally",
+    gloss: "the state's take carted out: the grain, the fodder, the cloth",
+  },
+  muster: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "infantry",
+    count: 6,
+    effect: "banner",
+    gloss: "men assembled for the corvée or the garrison",
+  },
+  inspect: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "fieldofficer",
+    gloss: "the county's officer at the byre or the field",
+  },
+  register: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "clerk",
+    effect: "scroll",
+    gloss: "households file past the clerk; the steward's accounts",
+  },
+  wed: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "maiden",
+    count: 6,
+    effect: "banner",
+    gloss: "the bride brought along the lane at dusk",
+  },
+  drill: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "infantry",
+    count: 8,
+    effect: "arrows",
+    gloss: "the review: ranks, then the target",
+  },
+  feast: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "elder",
+    count: 8,
+    effect: "plate",
+    gloss: "the ward or the retainers seated by age",
+  },
+  exorcise: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    count: 4,
+    effect: "drum",
+    gloss: "drums and masks from door to door",
+  },
+  inter: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    count: 5,
+    effect: "grey",
+    gloss: "the household to the graves",
+  },
+  receive: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "guest",
+    count: 2,
+    effect: "banner",
+    gloss: "a caller refused thrice at the gate and led in",
+  },
+  sacrifice: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "invocator",
+    count: 6,
+    effect: "smoke",
+    gloss: "the household at the shrine in their places",
+  },
+  mourn: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "retainer",
+    count: 8,
+    effect: "grey",
+    gloss: "the household in hemp about the coffin",
+  },
 };
 
 export const DIRECTION_KINDS = Object.keys(DIRECTIONS) as StageDirectionKind[];
@@ -852,6 +960,17 @@ export const ARCHETYPES: StageArchetype[] = [
   "maid",
   "cook",
   "groom",
+  // the registered sites
+  "girl",
+  "granny",
+  "grandfather",
+  "fieldofficer",
+  "lieutenant",
+  "heir",
+  "younglady",
+  "concubine",
+  "guest",
+  "invocator",
 ];
 
 export const EFFECTS: StageEffect[] = [
@@ -877,6 +996,7 @@ export const EFFECTS: StageEffect[] = [
   "bell",
   "stele",
   "oxen-fire",
+  "drum",
 ];
 
 /**

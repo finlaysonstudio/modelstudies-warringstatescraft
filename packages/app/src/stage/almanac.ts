@@ -389,6 +389,23 @@ export const DECOR_MONTHS: Partial<Record<Decor, readonly Month[]>> = {
   lotus: [5, 6, 7, 8, 9],
   ducks: [2, 3, 4, 5, 6, 7, 8, 9, 10],
   sheep: [3, 4, 5, 6, 7, 8, 9, 10],
+  // the registered village: the ice cut in the twelfth month and stacked on
+  // the bank until it goes into the ice house; the melons of the seventh
+  // month and the gourds of the eighth (七月食瓜，八月斷壺); the target stood
+  // up for the drill of the eleventh; the levy's cartload of the ninth and
+  // tenth; the coffin and the bier of the house's eleventh month
+  ice: [12, 1, 2],
+  melons: [5, 6, 7],
+  gourds: [6, 7, 8],
+  target: [11],
+  cartload: [9, 10],
+  coffin: [11],
+  bier: [11],
+  mingjing: [11],
+  torches: [11, 12],
+  victims: [4, 7, 10, 1],
+  icecart: [12, 2, 6],
+  caps: [2],
 };
 
 export const isShownInMonth = (decor: string, month: Month): boolean => {
@@ -412,6 +429,10 @@ export const SEASONAL_DECOR: Partial<
   },
   willow: { autumn: "decor.willow~autumn", winter: "decor.willow~winter" },
   lotus: { summer: "decor.lotus~summer", autumn: "decor.lotus~autumn" },
+  // the jujube in red fruit in the eighth month (八月剝棗), the peach in
+  // blossom in the spring (桃始華)
+  jujube: { autumn: "decor.jujube~autumn" },
+  peach: { spring: "decor.peach~spring" },
 };
 
 /** The asset a decor wears in a season, or its plain id. */

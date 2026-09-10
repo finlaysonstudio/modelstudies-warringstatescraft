@@ -54,6 +54,15 @@ export const TERRAINS = [
   // the plank floor: the inside of a building drawn from a kit, laid as a
   // ground so a figure walks it the way it walks a yard
   "plank",
+  // the crops: what the six grounds of 審時 bear beside the foxtail millet
+  // `field` already draws. Each is a ground with seasons of its own, laid in
+  // the blocks the well-field gives it, so the map changes with the month
+  // in what stands in a block and not only in colour.
+  "millet",
+  "wheat",
+  "bean",
+  "hemp",
+  "paddy",
 ] as const;
 export type Terrain = (typeof TERRAINS)[number];
 
@@ -129,6 +138,14 @@ export const SETTLEMENT_MARKERS = [
   "manger",
   "trough",
   "armrack",
+  // the registered village: the ward hall (序), the silkworm shed, the ice
+  // house dug into the hill, the ward gate (閭) where a lane leaves the
+  // houses; and the house's two flights of steps on the hall's terrace
+  "wardhall",
+  "silkshed",
+  "icehouse",
+  "wardgate",
+  "steps",
 ] as const;
 
 export const MARKERS = [
@@ -227,6 +244,29 @@ export const DECOR = [
   "garments",
   "basin",
   "icechest",
+  // the registered village: the archery target, the altar's tree, the dye
+  // vats, the winter ice on the bank, the levy's cartload, the foot
+  // pestle, and what grows at the gates and on the beds
+  "target",
+  "altartree",
+  "vats",
+  "ice",
+  "cartload",
+  "pestle",
+  "melons",
+  "gourds",
+  "jujube",
+  "chestnut",
+  "peach",
+  // the registered house: the year's rites after the Yili
+  "bier",
+  "coffin",
+  "mingjing",
+  "stalks",
+  "victims",
+  "caps",
+  "torches",
+  "icecart",
 ] as const;
 export type Decor = (typeof DECOR)[number];
 
@@ -263,6 +303,7 @@ export const EFFECTS: readonly StageEffect[] = [
   "bell",
   "stele",
   "oxen-fire",
+  "drum",
 ];
 
 export const ARCHETYPES: readonly StageArchetype[] = [
@@ -328,6 +369,17 @@ export const ARCHETYPES: readonly StageArchetype[] = [
   "maid",
   "cook",
   "groom",
+  // the registered sites
+  "girl",
+  "granny",
+  "grandfather",
+  "fieldofficer",
+  "lieutenant",
+  "heir",
+  "younglady",
+  "concubine",
+  "guest",
+  "invocator",
 ];
 
 /**
@@ -399,7 +451,198 @@ export const ARCHETYPE_SPRITES: Record<StageArchetype, string[]> = {
   maid: ["sprite.maid", "sprite.matron"],
   cook: ["sprite.cook", "sprite.labourer"],
   groom: ["sprite.groom", "sprite.peasant"],
+  // the registered sites: each its own sprite, then the nearest figure
+  girl: ["sprite.girl", "sprite.child"],
+  granny: ["sprite.granny", "sprite.matron"],
+  grandfather: ["sprite.grandfather", "sprite.elder"],
+  fieldofficer: ["sprite.fieldofficer", "sprite.clerk"],
+  lieutenant: ["sprite.lieutenant", "sprite.guard"],
+  heir: ["sprite.heir", "sprite.scholar"],
+  younglady: ["sprite.younglady", "sprite.maiden"],
+  concubine: ["sprite.concubine", "sprite.lady"],
+  guest: ["sprite.guest", "sprite.scholar"],
+  invocator: ["sprite.invocator", "sprite.diviner"],
 };
+
+/**
+ * The sprite variants a register may name (`Villager.sprite`,
+ * `StageActor.variant`): a second, third, or fourth drawing of one
+ * archetype so that a lane of thirty farmers is not one man thirty times.
+ * Each is a period sprite generated at 48 px; where the layer does not carry
+ * one yet the scene falls back through `ARCHETYPE_SPRITES`.
+ */
+export const SPRITE_VARIANTS: Partial<Record<StageArchetype, string[]>> = {
+  peasant: [
+    "sprite.peasant",
+    "sprite.farmer-b",
+    "sprite.farmer-c",
+    "sprite.farmer-d",
+    "sprite.farmer-e",
+  ],
+  matron: [
+    "sprite.matron",
+    "sprite.goodwife-b",
+    "sprite.goodwife-c",
+    "sprite.goodwife-d",
+  ],
+  maiden: ["sprite.maiden", "sprite.maiden-b"],
+  child: ["sprite.child", "sprite.child-b"],
+  girl: ["sprite.girl", "sprite.girl-b"],
+  granny: ["sprite.granny", "sprite.granny-b"],
+  grandfather: ["sprite.grandfather", "sprite.grandfather-b"],
+  heir: ["sprite.heir", "sprite.heir-capped"],
+  maid: ["sprite.maid", "sprite.maid-b"],
+  cook: ["sprite.cook", "sprite.cook-b"],
+};
+
+/**
+ * Overlays: a small still per facing keyed to a slot on the figure, drawn at
+ * the sprite's anchor for that slot (plan `20260909_Plan_populace_engine.md`
+ * §7.2). `overlay.<id>` in the manifest; the slot says which anchor.
+ */
+export type OverlaySlot = "head" | "shoulders" | "hand" | "back";
+
+export const OVERLAYS: Record<string, OverlaySlot> = {
+  // the village
+  hat: "head",
+  pole: "hand",
+  sash: "shoulders",
+  mask: "head",
+  lamp: "hand",
+  // the house
+  cap: "head",
+  hemp: "shoulders",
+  pheasant: "hand",
+  goose: "hand",
+  clapper: "hand",
+  tablet: "hand",
+  basket: "back",
+};
+
+export const overlayId = (overlay: string): string => `overlay.${overlay}`;
+
+/**
+ * The cells a marker's image covers on a routed map, as offsets from the
+ * place's cell, blocked, less the anchor cell itself, which is the door and
+ * stays open (engine plan §3.1). A marker absent here covers its own cell
+ * only, which the goal-always-allowed rule keeps reachable.
+ */
+export const MARKER_FOOTPRINTS: Partial<Record<Marker, [number, number][]>> = {
+  farmhouse: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [1, 0],
+  ],
+  byre: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [1, 0],
+  ],
+  granary: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [1, 0],
+  ],
+  wardhall: [
+    [-2, -1],
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [2, -1],
+    [-2, 0],
+    [-1, 0],
+    [1, 0],
+    [2, 0],
+  ],
+  silkshed: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [1, 0],
+  ],
+  icehouse: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+  ],
+  // the two posts, with the opening between them as the anchor
+  wardgate: [
+    [-1, 0],
+    [1, 0],
+  ],
+  house: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [1, 0],
+  ],
+  mansion: [
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [-1, 0],
+    [1, 0],
+  ],
+  // the interiors: stood-up furniture blocks its own cell's neighbours
+  // where the piece is wider than a tile
+  loom: [[1, 0]],
+  bed: [[1, 0]],
+  table: [[1, 0]],
+};
+
+/**
+ * The decor a walker goes round rather than through: fences, piles, jars,
+ * stones, trees, and stood-up furniture. The animals and the crops do not
+ * block (engine plan §3.1).
+ */
+export const BLOCKING_DECOR: ReadonlySet<Decor> = new Set<Decor>([
+  "pine",
+  "bamboo",
+  "beacon",
+  "tumulus",
+  "stele",
+  "grove",
+  "rocks",
+  "cart",
+  "rack",
+  "pots",
+  "woodpile",
+  "haystack",
+  "millstone",
+  "fence",
+  "jars",
+  "willow",
+  "graves",
+  "tripod",
+  "chariot",
+  "plum",
+  "bells",
+  "panel",
+  "canopy",
+  "lamptree",
+  "icechest",
+  "target",
+  "altartree",
+  "vats",
+  "ice",
+  "cartload",
+  "pestle",
+  "jujube",
+  "chestnut",
+  "peach",
+  "bier",
+  "coffin",
+  "victims",
+  "icecart",
+]);
 
 export const terrainId = (terrain: Terrain): string => `terrain.${terrain}`;
 export const waterId = (water: Water): string => `water.${water}`;
@@ -661,6 +904,95 @@ export const DIRECTION_RULES: Record<StageDirectionKind, DirectionRule> = {
     effect: "banner",
   },
   gather: { band: 0, scope: "town", places: "at", actor: "peasant", count: 3 },
+  // the populace: the year's work and rites on a registered site
+  levy: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    count: 4,
+    effect: "tally",
+  },
+  muster: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "infantry",
+    count: 6,
+    effect: "banner",
+  },
+  inspect: { band: 0, scope: "town", places: "at", actor: "fieldofficer" },
+  register: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "clerk",
+    effect: "scroll",
+  },
+  wed: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "maiden",
+    count: 6,
+    effect: "banner",
+  },
+  drill: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "infantry",
+    count: 8,
+    effect: "arrows",
+  },
+  feast: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "elder",
+    count: 8,
+    effect: "plate",
+  },
+  exorcise: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    count: 4,
+    effect: "drum",
+  },
+  inter: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "peasant",
+    count: 5,
+    effect: "grey",
+  },
+  receive: {
+    band: 0,
+    scope: "town",
+    places: "route",
+    actor: "guest",
+    count: 2,
+    effect: "banner",
+  },
+  sacrifice: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "invocator",
+    count: 6,
+    effect: "smoke",
+  },
+  mourn: {
+    band: 0,
+    scope: "town",
+    places: "at",
+    actor: "retainer",
+    count: 8,
+    effect: "grey",
+  },
 };
 
 /** One-line captions per direction (a browser mirror of the vocabulary's glosses). */
@@ -723,4 +1055,16 @@ export const DIRECTION_CAPTIONS: Record<
   till: { en: "works the field", zh: "耕" },
   rite: { en: "keeps the rite", zh: "行礼" },
   gather: { en: "gathers", zh: "会" },
+  levy: { en: "carts out the levy", zh: "输赋" },
+  muster: { en: "musters", zh: "发卒" },
+  inspect: { en: "inspects", zh: "课" },
+  register: { en: "takes the register", zh: "案户" },
+  wed: { en: "brings the bride", zh: "亲迎" },
+  drill: { en: "drills", zh: "习射" },
+  feast: { en: "feasts", zh: "饮酒" },
+  exorcise: { en: "drives out the pestilence", zh: "逐疫" },
+  inter: { en: "buries", zh: "葬" },
+  receive: { en: "receives the caller", zh: "士相见" },
+  sacrifice: { en: "sacrifices", zh: "祭" },
+  mourn: { en: "mourns", zh: "哭" },
 };

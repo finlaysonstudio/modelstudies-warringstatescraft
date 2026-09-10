@@ -283,6 +283,63 @@ export const TERRAIN_NOTES: Partial<Record<Terrain, LegendNote>> = {
       zh: "此世之堂立于台上，夯土之上铺板，家人席地而坐、而食、而卧：升阶脱屦，位在席次。庖厩之属则仍以夯土为地。",
     },
   },
+  // the crops of the registered village (審時 names six grounds a field
+  // bears; the foxtail millet is `field` above)
+  millet: {
+    title: { en: "Broomcorn millet", zh: "黍" },
+    what: {
+      en: "A block of broomcorn millet: the glutinous, early millet, a hand ahead of the foxtail in every month.",
+      zh: "黍田：黏而早熟之谷，节节先禾一候。",
+    },
+    history: {
+      en: "The Yueling's summer names the millet's ripening as the marker of the fifth month (登黍), and the Seventh Month sows early and late kinds together (黍稷重穋). The broomcorn was the grain of the feast and the ancestral offering, the wine grain, grown on one block where the foxtail took the rest.",
+      zh: "月令仲夏登黍；七月黍稷重穋。黍为祭飨、酿酒之谷，一区种之，余皆禾稷。",
+    },
+  },
+  wheat: {
+    title: { en: "Wheat", zh: "麥" },
+    what: {
+      en: "A block of winter wheat: sown in the eighth month, green through the cold, gold and reaped in the fourth.",
+      zh: "麦田：八月种，越冬而青，四月黄而刈。",
+    },
+    history: {
+      en: "The Yueling has the officers urge the wheat sown in the eighth month with no delay allowed (勸種麥，毋或失時) and reports it in in the fourth (登麥); the Lüshi's agricultural chapters fix its furrows. Wheat was the one crop that stood in a field through winter, and the one that ripened when the millets' stores ran lowest, which is why the state pressed it.",
+      zh: "月令仲秋乃劝种麦，毋或失时；孟夏农乃登麦。吕氏春秋任地、审时定其畎亩。麦独越冬立田，熟于青黄不接之时，故官劝之。",
+    },
+  },
+  bean: {
+    title: { en: "Beans", zh: "菽" },
+    what: {
+      en: "A block of soy beans, sown after the wheat and pulled in the tenth month.",
+      zh: "菽田：麦后种，十月拔。",
+    },
+    history: {
+      en: "The Seventh Month has the household boil beans in the sixth month (烹葵及菽) and bring the crops in in the tenth (十月納禾稼，黍稷重穋，禾麻菽麥); the Simin Yueling sows them after the wheat comes off. Beans were the poor household's flesh: the phrase for a hard year was 'bean gruel and water'.",
+      zh: "七月六月烹葵及菽，十月纳禾稼，黍稷重穋，禾麻菽麦；四民月令麦后种大豆。菽为贫家之肉，岁凶则啜菽饮水。",
+    },
+  },
+  hemp: {
+    title: { en: "Hemp ground", zh: "麻田" },
+    what: {
+      en: "The hemp ground by the washing place: tall green stalks in summer, cut in the seventh month and retted in the brook.",
+      zh: "麻田在浣处之侧：夏则青而高，七月刈之，沤于溪。",
+    },
+    history: {
+      en: "The Seventh Month spins the hemp in the eighth month (八月載績) and gathers its seed in the ninth (九月叔苴), and the Chenfeng has the hemp retted in the moat (東門之池，可以漚麻). Hemp was every household's cloth and every mourner's garment; the male plants were cut for fibre and the female left for seed.",
+      zh: "七月八月载绩，九月叔苴；陈风东门之池，可以沤麻。麻为编户之衣、居丧之服；牡麻刈以为纑，牝麻留以取实。",
+    },
+  },
+  paddy: {
+    title: { en: "Paddy", zh: "稻田" },
+    what: {
+      en: "The one wet block below the pond: flooded and set in spring, green over water in summer, gold in the ninth month.",
+      zh: "陂下湿地一区：春灌而莳，夏青于水上，九月黄。",
+    },
+    history: {
+      en: "The Seventh Month reaps rice in the tenth month for the spring wine (十月穫稻，為此春酒), and the Zhouli's officer of the paddies (稻人) keeps the dikes and channels that hold water on it. In the north rice was a wet corner of a dry country, grown where a pond let it be, and the wine it made was the ward's for the drinking rite.",
+      zh: "七月十月获稻，为此春酒；周礼稻人掌稼下地，以潴畜水，以沟荡水。北土稻在陂泽之隅，酿为乡饮之酒。",
+    },
+  },
 };
 
 export const WATER_NOTES: Record<Water, LegendNote> = {
@@ -807,6 +864,217 @@ export const DECOR_NOTES: Record<Decor, LegendNote> = {
     history: {
       en: "The Zhouli keeps an ice office to cut ice in winter and store it for the summer, the Zhao hun's feast pours wine strained of its lees and chilled until it is cool and clear, and the Zeng marquis's tomb yielded a pair of bronze ice chests, each holding a wine jar with room for the ice round it.",
       zh: "周礼凌人掌冰，冬藏夏用；招魂挫糟冻饮，酎清凉；曾侯乙墓出铜鉴缶一对，鉴纳缶，缶外置冰。",
+    },
+  },
+  // the registered village
+  target: {
+    title: { en: "Archery target", zh: "侯" },
+    what: {
+      en: "The target (侯) on its frame at the threshing floor, stood up for the winter drill.",
+      zh: "场上之侯，冬月习射时立之。",
+    },
+    history: {
+      en: "The Yili's district archery (鄉射禮) stands the target at the end of the ground and shoots by pairs, the drum keeping time; the Yueling has the officers drill the men in the eleventh month. A ward's archery was its levy's training and its rite at once, and the cloth target with its painted centre is the one the rite names.",
+      zh: "仪礼乡射礼张侯于场末，耦射而鼓节之；月令仲冬命将帅讲武习射。里之射，既教其卒，亦行其礼，侯布画鹄即礼所名。",
+    },
+  },
+  altartree: {
+    title: { en: "The altar's tree", zh: "社树" },
+    what: {
+      en: "An old broad tree on the altar mound beside the altar of the soil.",
+      zh: "社坛之上老树一株。",
+    },
+    history: {
+      en: "The Analects have the three dynasties plant their altars of soil with pine, cypress, and chestnut (夏后氏以松，殷人以柏，周人以栗), and the Zhouli's altar was a mound with a tree rather than a building. A 社 with no tree was not a 社; the tree was what the ward gathered under and what the pig was killed beside.",
+      zh: "论语哀公问社，夏后氏以松，殷人以柏，周人以栗；周礼社坛树之以其野之所宜木。社无树不成社，里人会于其下，社豕杀于其侧。",
+    },
+  },
+  vats: {
+    title: { en: "Dye vats", zh: "染缸" },
+    what: {
+      en: "Clay vats at the washing place below the ford, for the sixth month's dyeing.",
+      zh: "津下浣处陶缸数口，六月染缯于此。",
+    },
+    history: {
+      en: "The Zhouli's dyer (染人) dyes silk in spring and the thread in summer, and the Seventh Month dyes the cloth black and yellow in the eighth for the lord's robe (載玄載黃，我朱孔陽). A village dyed at its water, since a vat is filled and emptied a dozen times, and the indigo and the madder were its own.",
+      zh: "周礼染人春暴练，夏纁玄；七月载玄载黄，我朱孔阳，为公子裳。里之染在其水，缸注而泻者屡；蓝、茜自种。",
+    },
+  },
+  ice: {
+    title: { en: "Cut ice", zh: "凿冰" },
+    what: {
+      en: "Blocks of ice cut from the pond and stacked on the bank before they go into the ice house.",
+      zh: "陂上凿出之冰块，堆于岸，将纳于凌阴。",
+    },
+    history: {
+      en: "The Seventh Month cuts ice in the twelfth month and stores it in the first (二之日鑿冰沖沖，三之日納于凌陰), and the Zhouli's ice officer (凌人) takes three times what the summer will use. The ice was cut where the water stood still, carried up the bank, and packed in straw under the hill.",
+      zh: "七月二之日凿冰冲冲，三之日纳于凌阴；周礼凌人掌冰，三其凌。冰凿于止水，舁于岸，藁裹而藏于山下。",
+    },
+  },
+  cartload: {
+    title: { en: "The levy's cart", zh: "赋车" },
+    what: {
+      en: "A cart loaded with fodder and straw, the ward's levy waiting at the lane.",
+      zh: "刍藁满车，里之赋待发于道。",
+    },
+    history: {
+      en: "The Qin field statute takes fodder and straw from every qing of land by weight (入芻三石，藁二石, 田律), whatever the harvest, and the ward carts it to the county. The grain tax came in the ninth month and the cloth with it; the loaded cart at the gate is the state's take made visible.",
+      zh: "秦田律入顷刍三石、藁二石，不问丰歉，里输于县。九月纳粟，布帛随之；门前满载之车，即国之所取。",
+    },
+  },
+  pestle: {
+    title: { en: "Foot pestle", zh: "碓" },
+    what: {
+      en: "A treadle pestle in a yard: a beam on a pivot, its head dropping into a stone mortar.",
+      zh: "院中踏碓：横木为杠，足踏其尾，杵落石臼。",
+    },
+    history: {
+      en: "Millet is hulled before it is eaten, and the treadle pestle did with the foot what the hand pestle and mortar of the Odes did with the arm (或舂或揄). The Han pictorial stones show it in every farmyard, and Huan Tan credits it with ten times the mortar's work; it is the one machine a farmhouse owned.",
+      zh: "粟必舂而后食，踏碓以足代或舂或揄之臂。汉画像石农院多有之，桓谭新论言其力十倍于杵臼；农家所有之机，唯此而已。",
+    },
+  },
+  melons: {
+    title: { en: "Melon patch", zh: "瓜" },
+    what: {
+      en: "Melon vines spreading over a bed by the house.",
+      zh: "舍旁瓜蔓一畦。",
+    },
+    history: {
+      en: "The Seventh Month eats melons in the seventh month (七月食瓜), and the Xinnantian ode grows them on the field bank for the ancestors (中田有廬，疆埸有瓜，是剝是菹，獻之皇祖). A melon patch at the gate was every household's, and the pickled melon its offering.",
+      zh: "七月七月食瓜；信南山中田有庐，疆埸有瓜，是剥是菹，献之皇祖。门前瓜畦家家有之，菹以荐祖。",
+    },
+  },
+  gourds: {
+    title: { en: "Gourds", zh: "壶" },
+    what: {
+      en: "Bottle gourds ripening on a fence, cut down in the eighth month.",
+      zh: "篱上壶卢垂垂，八月断之。",
+    },
+    history: {
+      en: "The Seventh Month cuts the gourds in the eighth month (八月斷壺); dried, a gourd was a dipper, a bottle, a float for crossing water (the Odes' 匏), and its flesh a vegetable. The vine took the fence and cost nothing.",
+      zh: "七月八月断壶；壶干则为瓢、为壶、为渡水之匏，其肉为蔬。蔓依篱而生，不费一畦。",
+    },
+  },
+  jujube: {
+    title: { en: "Jujube", zh: "枣" },
+    what: {
+      en: "A jujube tree by a gate, in red fruit in the eighth month.",
+      zh: "门前枣树，八月实红。",
+    },
+    history: {
+      en: "The Seventh Month knocks down the jujubes in the eighth month (八月剝棗) and cuts the rice in the tenth for the spring wine that keeps the old alive (以介眉壽). The jujube was the north's sweet fruit, dried for winter and stoned for the offering; the Zhouli lists it among the things the woman of the house brings to the rite.",
+      zh: "七月八月剥枣，十月获稻，为此春酒，以介眉寿。枣为北土之甘果，干以过冬，去核以荐；周礼笾人实枣于笾。",
+    },
+  },
+  chestnut: {
+    title: { en: "Chestnut", zh: "栗" },
+    what: {
+      en: "A chestnut tree on the orchard's edge.",
+      zh: "园边栗树。",
+    },
+    history: {
+      en: "The Zhou planted their altars of soil with chestnut, and the Zhouli's basket-keeper offers chestnuts at the rites beside the jujubes and the dried peaches. The Dongmen ode has the chestnuts at the eastern gate where the houses of the ward stand (東門之栗，有踐家室).",
+      zh: "周人以栗为社树；周礼笾人馈食之笾，其实枣、栗、桃、干䕩。东门之栗，有践家室。",
+    },
+  },
+  peach: {
+    title: { en: "Peach", zh: "桃" },
+    what: {
+      en: "A peach tree by a gate, in blossom in the second and third months.",
+      zh: "门前桃树，二三月花。",
+    },
+    history: {
+      en: "The Yueling opens the second month with the peach in flower (桃始華), and the wedding ode is set under it (桃之夭夭，灼灼其華，之子于歸). The peach was planted at the gate against ill fortune as much as for its fruit; a peach-wood bow shot the exorcism's arrows.",
+      zh: "月令仲春桃始华；桃夭之诗，之子于归。桃植于门，禳凶亦取其实；桃弧棘矢，以除其灾。",
+    },
+  },
+  // the registered house: the year's rites after the Yili
+  bier: {
+    title: { en: "Bier", zh: "柩车" },
+    what: {
+      en: "The coffin on its carriage, drawn to the graves by the household's men.",
+      zh: "柩载于车，家人挽之以往墓。",
+    },
+    history: {
+      en: "The Yili's rite of the burial (既夕禮) loads the coffin on its carriage at the gate before dawn, sets the banner on it, and has the mourners follow it out with the funeral goods carried before. The carriage was hung with curtains and drawn by men rather than horses at a 士's funeral.",
+      zh: "仪礼既夕礼，质明载柩于车，铭旌置焉，明器陈于前，主人从之。士之柩车，惟裳帷，人挽而不驾。",
+    },
+  },
+  coffin: {
+    title: { en: "Coffin", zh: "殡" },
+    what: {
+      en: "The coffin laid in the west wing between the death and the burial, the mourners' places about it.",
+      zh: "殡于西序，葬前所在，哭位环之。",
+    },
+    history: {
+      en: "The Yili's rite of the death (士喪禮) washes and dresses the body, lays it in the coffin on the third day, and keeps it in the hall's west side under a canopy until the burial, the household wailing morning and evening in their places. A 士 was buried in the third month; a great officer waited five.",
+      zh: "仪礼士丧礼，沐浴袭敛，三日而殡于西阶上，帷之，朝夕哭于位。士三月而葬，大夫五月。",
+    },
+  },
+  mingjing: {
+    title: { en: "Mourning banner", zh: "铭旌" },
+    what: {
+      en: "The red banner with the dead one's name, set at the west steps and carried before the bier.",
+      zh: "书名之赤旌，竖于西阶，柩行则前导。",
+    },
+    history: {
+      en: "The Yili writes the banner as 'the coffin of so-and-so of such a house' (某氏某之柩), on red cloth on a bamboo pole three feet long for a 士, set on the west step and carried at the head of the procession to the grave, where it is laid on the coffin. It is the one place the dead's name is written.",
+      zh: "仪礼士丧礼为铭，各以其物，曰某氏某之柩，缁长半幅，赪末，竹杠长三尺，置于西阶上；既夕，铭旌前导，至圹置于柩上。",
+    },
+  },
+  stalks: {
+    title: { en: "Yarrow stalks", zh: "筮" },
+    what: {
+      en: "The diviner's yarrow stalks on their board, cast at the shrine gate to fix a day or a guest.",
+      zh: "筮人之蓍，布于版，于庙门筮日、筮宾。",
+    },
+    history: {
+      en: "The Yili's capping opens by divining the day at the shrine gate: the diviner faces west, the master's man states the matter, the stalks are cast and read, and the guest is divined the same way three days before. Yarrow decided what the ward's shell would have; a house of rank kept a diviner for it.",
+      zh: "仪礼士冠礼，筮于庙门，筮人执策抽上韇，主人告事，卒筮书卦，宰告吉；前期三日筮宾。士以蓍不以龟。",
+    },
+  },
+  victims: {
+    title: { en: "The victims", zh: "牲" },
+    what: {
+      en: "The sheep and the pig tethered at the shrine gate on the day of a sacrifice.",
+      zh: "祭日羊、豕系于庙门。",
+    },
+    history: {
+      en: "The Yili's sacrifice at a 士's shrine (特牲饋食禮) presents one pig; a great officer's (少牢饋食禮) the small set, a sheep and a pig, inspected at the gate the evening before and killed at dawn. The invocator reports them whole and fat, which is what the rite calls 'announcing the victims'.",
+      zh: "仪礼特牲馈食礼，士祭以豕一；少牢馈食礼，大夫祭以羊、豕，前夕视牲于庙门，质明杀之。祝告牲曰腯，是谓告牲。",
+    },
+  },
+  caps: {
+    title: { en: "The three caps", zh: "三冠" },
+    what: {
+      en: "The cloth cap, the leather cap, and the ceremonial cap on their tray, for the capping.",
+      zh: "缁布冠、皮弁、爵弁陈于篚，以待冠者。",
+    },
+    history: {
+      en: "The Yili caps a son three times at twenty: the black cloth cap first, the deerskin cap second, the dark ceremonial cap third, each with its own charge, and then names him with a courtesy name. The three lie ready on the west steps; a capped man is grown on the register and may be married, serve, and mourn as an adult.",
+      zh: "仪礼士冠礼，三加：始加缁布冠，再加皮弁，三加爵弁，各有祝辞，既冠而字之。三冠陈于西阶下；既冠则成人，可以娶、可以仕、可以服。",
+    },
+  },
+  torches: {
+    title: { en: "Torches", zh: "庭燎" },
+    what: {
+      en: "Torches set in the forecourt at dusk, for a rite that runs into the night.",
+      zh: "庭中燎火，昏后行礼所需。",
+    },
+    history: {
+      en: "The Yili's wedding is at dusk and lights the courtyard with torches, and the rite of the death keeps a torch burning through the vigil. The Odes' 庭燎 is the palace court lit before dawn for the audience; a house lit its own court the same way with pitch-pine bound in bundles.",
+      zh: "仪礼士昏礼昏时行礼，执烛前马；士丧礼宵为燎于中庭。诗庭燎，夜未央，庭燎之光。家燎以束松为之。",
+    },
+  },
+  icecart: {
+    title: { en: "Ice cart", zh: "冰车" },
+    what: {
+      en: "A cart bringing packed ice into the compound from the ice house.",
+      zh: "自凌阴运冰入第之车。",
+    },
+    history: {
+      en: "The Zhouli's ice officer stores ice in winter and issues it from spring: for the rites' victims, for the wine, and for the dead. The Yili's rite of the death sets a tray of ice under the body in the summer months (夏月用冰), which is what the cart is for in the eleventh month's stead when the month is hot.",
+      zh: "周礼凌人冬藏冰，春始治鉴，祭祀共冰鉴，宾客共冰，大丧共夷盘冰。仪礼士丧礼夏月用冰，冰车所以供之。",
     },
   },
 };
@@ -1584,6 +1852,62 @@ export const MARKER_NOTES: Record<Marker | "region", LegendNote> = {
     history: {
       en: "A gatehouse was a guardroom, and a great house kept arms for its own retainers: the bronze dagger-axe on a long shaft was the weapon of the age, and a lacquered leather shield went with it. The Zhouli sets guards at the gates of the palace with their weapons racked beside them; a house copied the palace at its own scale.",
       zh: "门舍即卫舍，大家为家臣备兵：长柄铜戈为此世之器，漆革盾配之。周礼设宫门之卫，兵架于侧；家仿宫制而小之。",
+    },
+  },
+  // the registered village and the house
+  wardhall: {
+    title: { en: "Ward hall", zh: "序" },
+    what: {
+      en: "A thatched hall on a low terrace at the crossroads, open at the front: the ward's meeting place.",
+      zh: "十字路口低台上茅堂一座，前敞：里人所会。",
+    },
+    history: {
+      en: "Mencius names the schools of the three dynasties (校, 序, 庠) and the Zhouli has the ward's officer read the statutes to the households at the start of the year and hold the drinking rite in the local hall (黨正...屬民而讀法). The hall is where the register was taken, the rite held, the drill's feast seated by age, and the elder judged a quarrel.",
+      zh: "孟子夏曰校，殷曰序，周曰庠；周礼党正正岁属民读法，以礼属民而饮酒于序。案户于此，饮酒于此，射后之飨序齿于此，里正听讼亦于此。",
+    },
+  },
+  silkshed: {
+    title: { en: "Silkworm shed", zh: "蚕室" },
+    what: {
+      en: "A low thatched shed with racks of trays, behind the mulberry plot.",
+      zh: "桑园之后低舍，架上列箔。",
+    },
+    history: {
+      en: "The Yueling's third month has the women go to the mulberries and forbids other work while the worms feed (蠶事既登); the Seventh Month picks the leaves in the same month (蠶月條桑). The worms were kept warm and dark in a shed of their own, fed by the daughters, and a ward's silk was its tax cloth as much as its finery.",
+      zh: "月令季春后妃齐戒亲东乡躬桑，禁妇女毋观，省妇使以劝蚕事；七月蚕月条桑。蚕育于暗室，女子饲之；里之丝，赋亦在焉。",
+    },
+  },
+  icehouse: {
+    title: { en: "Ice house", zh: "凌阴" },
+    what: {
+      en: "A mound with a timber door dug into the hill below the woods.",
+      zh: "林下山中土室，木门一扇。",
+    },
+    history: {
+      en: "The Seventh Month cuts ice in the twelfth month and stores it in the first, in the ice house (納于凌陰), and opens it in the fourth with a lamb offered (獻羔祭韭). The Qin capital's ice house has been excavated: a pit lined with rammed earth and a drain, roofed and shaded. A ward's was the same in small.",
+      zh: "七月二之日凿冰冲冲，三之日纳于凌阴，四之日其蚤，献羔祭韭。秦雍城凌阴已发掘：夯土为壁，有排水之道，覆而荫之。里之凌阴其小者。",
+    },
+  },
+  wardgate: {
+    title: { en: "Ward gate", zh: "闾" },
+    what: {
+      en: "Two posts and a lintel across the lane where it leaves the houses.",
+      zh: "里道出舍处两柱一楣。",
+    },
+    history: {
+      en: "A 里 was a gated place: the Zhouli's ward has its gate and its gate-keeper, the Analects have the villagers drive out the pestilence while the master stands in court dress at the eastern step, and the Qin statutes shut the gate at night and fine the ward whose gate let a runaway through. A lane's gate is where the ward began.",
+      zh: "里有闾：周礼里宰掌其闾；论语乡人傩，朝服而立于阼阶；秦律夜闭闾门，亡人出者罚其里。闾者里之所始。",
+    },
+  },
+  steps: {
+    title: { en: "The steps", zh: "阶" },
+    what: {
+      en: "One of the two flights of steps up the hall's terrace: the host's on the east, the guest's on the west.",
+      zh: "堂之两阶：东为阼阶，主人所升；西为西阶，宾所升。",
+    },
+    history: {
+      en: "Every Yili rite is staged by the steps. The host ascends by the eastern (阼階), the guest by the western, and who stands where on which step is the whole choreography of the capping, the wedding, the audience, and the mourning: the coffin lies at the west steps, the dead are called back from the roof above them, and the son who has become the head of the house takes the eastern.",
+      zh: "仪礼诸礼皆以阶为位。主人升自阼阶，宾升自西阶，冠、昏、相见、丧，其进退揖让皆系于阶。殡于西阶上，复于屋上，主人既成则升阼。",
     },
   },
 };

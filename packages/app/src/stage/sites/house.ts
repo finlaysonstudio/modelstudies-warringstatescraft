@@ -236,6 +236,7 @@ export const HOUSE: Site = {
   features: HOUSE_FEATURES,
   folk: HOUSEHOLD,
   strollPlaces: HOUSE_STROLL_PLACES,
+  scale: 1,
   smoking: ["hearth"],
   year: HOUSE_YEAR,
   words: {

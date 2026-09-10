@@ -314,6 +314,7 @@ export const CITY: Site = {
   features: SETTLEMENT_FEATURES,
   folk: TOWNSFOLK,
   strollPlaces: STROLL_PLACES,
+  scale: 30,
   smoking: ["kiln", "foundry", "smithy"],
   year: CITY_YEAR,
   words: {
