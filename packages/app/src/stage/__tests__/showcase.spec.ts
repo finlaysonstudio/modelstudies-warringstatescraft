@@ -10,7 +10,9 @@ import {
   plainOf,
   patchIndexes,
   showcaseOf,
+  wearerOf,
 } from "../showcase";
+import { OVERLAYS, overlayId } from "../catalog";
 
 const asset = (
   id: string,
@@ -47,6 +49,18 @@ describe("groupOf", () => {
     expect(groupOf("decor.pine")).toBe("decor");
     expect(groupOf("sprite.envoy")).toBe("figure");
     expect(groupOf("effect.fire")).toBeNull();
+  });
+
+  it("reads an overlay as its own group, worn by the archetype that first wears it", () => {
+    expect(groupOf("overlay.hat")).toBe("overlay");
+    expect(wearerOf("overlay.hat")).toBe("peasant");
+    expect(wearerOf("overlay.sash")).toBe("maiden");
+    expect(wearerOf("overlay.tablet")).toBe("steward");
+    // an overlay no archetype is named for goes on the peasant
+    expect(wearerOf("overlay.unheard")).toBe("peasant");
+    for (const name of Object.keys(OVERLAYS)) {
+      expect(groupOf(overlayId(name))).toBe("overlay");
+    }
   });
 
   it("reads a transition as its own group, whichever ground it draws", () => {
@@ -109,6 +123,28 @@ describe("showcaseOf", () => {
       (section) => section.group,
     );
     expect(groups).toEqual(["ground", "pair", "place", "figure"]);
+  });
+
+  it("shows an overlay after the figures, and a sprite variant after its archetype", () => {
+    const showcase = showcaseOf(
+      manifestOf([
+        asset("overlay.pole", "period", 1),
+        asset("overlay.hat", "period", 1),
+        asset("sprite.farmer-b", "period", 6),
+        asset("sprite.peasant", "period", 6),
+      ]),
+    );
+    const groups = showcase.sections.map((section) => section.group);
+    expect(groups).toEqual(["figure", "overlay"]);
+    const [figures, overlays] = showcase.sections;
+    expect(figures.assets.map((entry) => entry.id)).toEqual([
+      "sprite.peasant",
+      "sprite.farmer-b",
+    ]);
+    expect(overlays.assets.map((entry) => entry.id)).toEqual([
+      "overlay.hat",
+      "overlay.pole",
+    ]);
   });
 
   it("totals the generations the layer cost", () => {

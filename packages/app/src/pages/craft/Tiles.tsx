@@ -7,6 +7,8 @@ import { orientationOf, variantOf } from "../../../art/map/map";
 import { loadStageManifest } from "../../stage/assets";
 import type { StageAsset, StageFacing } from "../../stage/manifest";
 import { STAGE_SETS, stageSetOf } from "../../stage/sets";
+import { spriteFor } from "../../stage/assets";
+import type { StageManifest } from "../../stage/manifest";
 import {
   PATCH,
   islandShape,
@@ -14,6 +16,7 @@ import {
   plainOf,
   patchIndexes,
   showcaseOf,
+  wearerOf,
   type Showcase,
 } from "../../stage/showcase";
 
@@ -32,6 +35,8 @@ const FACINGS: StageFacing[] = ["down", "left", "right", "up"];
 const STAGE_TILES = { width: 9, height: 5 };
 /** the field the four facings walk in, in tiles, and the gap between them */
 const STRIP_TILES = { width: 11, height: 3, gap: 0.5 };
+/** the gap between a sprite's walk row and each pose row beneath it, in tiles */
+const ROW_GAP_TILES = 0.25;
 
 type LoadState =
   | { phase: "loading" }
@@ -46,6 +51,8 @@ type LoadState =
       river?: StageAsset;
       /** every ground a transition may be laid over, by its bare name */
       beds: Record<string, StageAsset>;
+      /** the whole manifest, for the sprite an overlay is drawn on */
+      manifest: StageManifest;
     };
 
 export function Tiles() {
@@ -66,6 +73,7 @@ export function Tiles() {
           tile: manifest.tile,
           grass: manifest.assets["terrain.grass"],
           river: manifest.assets["water.river"],
+          manifest,
           beds: Object.fromEntries(
             Object.values(manifest.assets)
               .filter((asset) => !asset.id.includes("@"))
@@ -96,6 +104,7 @@ export function Tiles() {
   const grass = state.phase === "ready" ? state.grass : undefined;
   const river = state.phase === "ready" ? state.river : undefined;
   const beds = state.phase === "ready" ? state.beds : {};
+  const manifest = state.phase === "ready" ? state.manifest : null;
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
@@ -219,6 +228,17 @@ export function Tiles() {
                     <GroundPatch asset={asset} bed={under} tile={tile} />
                   ) : section.group === "figure" ? (
                     <FigureStrip asset={asset} bed={bed} tile={tile} />
+                  ) : section.group === "overlay" ? (
+                    <OverlayStrip
+                      asset={asset}
+                      wearer={
+                        manifest
+                          ? spriteFor(manifest, wearerOf(asset.id))
+                          : undefined
+                      }
+                      bed={bed}
+                      tile={tile}
+                    />
                   ) : (
                     <MarkerPlot asset={asset} bed={bed} tile={tile} />
                   )}
@@ -343,6 +363,14 @@ function finishChips(finish?: Record<string, unknown>): string[] {
   if (variants) chips.push(`${variants} variants`);
   const tone = number(finish.variantTone);
   if (tone) chips.push(`tone ±${tone}`);
+  if (Array.isArray(finish.actions)) {
+    chips.push(`poses ${(finish.actions as string[]).join(", ")}`);
+  }
+  if (typeof finish.mirror === "string")
+    chips.push(`${finish.mirror} mirrored`);
+  if (typeof finish.slot === "string") chips.push(`slot ${finish.slot}`);
+  const beat = number(finish.beat);
+  if (beat) chips.push(`beat of ${beat}`);
   const adjust = finish.adjust as Record<string, unknown> | undefined;
   const hue = number(adjust?.hue);
   const saturation = number(adjust?.saturation);
@@ -447,7 +475,78 @@ function MarkerPlot({
   );
 }
 
-/** The four facings of one archetype, walking. */
+/** The rows a sprite card walks: the walk first, then each pose it carries. */
+function rowsOf(
+  meta: NonNullable<StageAsset["sprite"]>,
+): { id: string; frames: Record<StageFacing, number[]> }[] {
+  return [
+    { id: "walk", frames: meta.walk },
+    ...Object.entries(meta.actions ?? {}).map(([id, frames]) => ({
+      id,
+      frames,
+    })),
+  ];
+}
+
+/** Where a sprite's rows and columns land on a card, in canvas pixels. */
+function stripLayout(
+  meta: NonNullable<StageAsset["sprite"]> | undefined,
+  tile: number,
+  scale: number,
+) {
+  const frameWidth = (meta?.frameWidth ?? tile) * scale;
+  const frameHeight = (meta?.frameHeight ?? tile) * scale;
+  const rows = meta ? rowsOf(meta).length : 1;
+  const width = STRIP_TILES.width * tile;
+  const gap = STRIP_TILES.gap * tile;
+  const rowGap = ROW_GAP_TILES * tile;
+  const stack = frameHeight * rows + rowGap * (rows - 1);
+  const height = Math.max(STRIP_TILES.height * tile, Math.ceil(stack + tile));
+  const span = frameWidth * FACINGS.length + gap * (FACINGS.length - 1);
+  const left = Math.round((width - span) / 2);
+  const top = Math.round((height - stack) / 2);
+  return {
+    frameWidth,
+    frameHeight,
+    width,
+    height,
+    /** the top-left corner of one frame */
+    at: (column: number, row: number) => ({
+      x: Math.round(left + column * (frameWidth + gap)),
+      y: Math.round(top + row * (frameHeight + rowGap)),
+    }),
+  };
+}
+
+/** Draws one frame of a sprite sheet at a canvas position. */
+function drawFrame(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  meta: NonNullable<StageAsset["sprite"]>,
+  frame: number,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): void {
+  ctx.drawImage(
+    image,
+    (frame % meta.columns) * meta.frameWidth,
+    Math.floor(frame / meta.columns) * meta.frameHeight,
+    meta.frameWidth,
+    meta.frameHeight,
+    x,
+    y,
+    Math.round(width),
+    Math.round(height),
+  );
+}
+
+/**
+ * The four facings of one archetype, walking, and beneath the walk every
+ * pose the sprite carries, each played across its own four facings so a
+ * pose is judged the way the walk is.
+ */
 function FigureStrip({
   asset,
   bed,
@@ -463,50 +562,150 @@ function FigureStrip({
   const tick = useTick(200);
   const meta = asset.sprite;
   const scale = tile / (asset.tile || tile);
-  const frameWidth = (meta?.frameWidth ?? tile) * scale;
-  const frameHeight = (meta?.frameHeight ?? tile) * scale;
-  const width = STRIP_TILES.width * tile;
-  const height = STRIP_TILES.height * tile;
-  const gap = STRIP_TILES.gap * tile;
-  const span = frameWidth * FACINGS.length + gap * (FACINGS.length - 1);
-  const left = Math.round((width - span) / 2);
-  const top = Math.round((height - frameHeight) / 2);
+  const layout = stripLayout(meta, tile, scale);
+  const rows = meta ? rowsOf(meta) : [];
   const draw = (ctx: CanvasRenderingContext2D) => {
     if (ground) {
       drawField(
         ctx,
         ground,
         STRIP_TILES.width,
-        STRIP_TILES.height,
+        Math.ceil(layout.height / tile),
         tile,
         still,
       );
     }
     if (!image || !meta) return;
-    FACINGS.forEach((facing, column) => {
-      const frames = meta.walk[facing];
-      if (!frames?.length) return;
-      const frame = frames[tick % frames.length];
-      ctx.drawImage(
-        image,
-        (frame % meta.columns) * meta.frameWidth,
-        Math.floor(frame / meta.columns) * meta.frameHeight,
-        meta.frameWidth,
-        meta.frameHeight,
-        Math.round(left + column * (frameWidth + gap)),
-        top,
-        Math.round(frameWidth),
-        Math.round(frameHeight),
-      );
+    rows.forEach((row, rowIndex) => {
+      FACINGS.forEach((facing, column) => {
+        const frames = row.frames[facing];
+        if (!frames?.length) return;
+        const frame = frames[tick % frames.length];
+        const { x, y } = layout.at(column, rowIndex);
+        drawFrame(
+          ctx,
+          image,
+          meta,
+          frame,
+          x,
+          y,
+          layout.frameWidth,
+          layout.frameHeight,
+        );
+      });
     });
   };
   return (
-    <Plot
-      width={width}
-      height={height}
-      draw={draw}
-      deps={[image, ground, tick, tile]}
-    />
+    <>
+      <Plot
+        width={layout.width}
+        height={layout.height}
+        draw={draw}
+        deps={[image, ground, tick, tile]}
+      />
+      {rows.length > 1 && (
+        <p className="border-t border-white/5 px-4 py-1.5 font-plex-mono text-[10px] text-zinc-600">
+          {rows.map((row) => row.id).join(" · ")}
+        </p>
+      )}
+    </>
+  );
+}
+
+/**
+ * An overlay on the sprite of the archetype that first wears it, walking:
+ * every frame draws the overlay's facing at the wearer's anchor for the
+ * slot, less the overlay's own pivot, so the card shows the same placement
+ * the scene will. A `back` piece goes under the figure when it faces the
+ * viewer and over it otherwise.
+ */
+function OverlayStrip({
+  asset,
+  wearer,
+  bed,
+  tile,
+}: {
+  asset: StageAsset;
+  wearer?: StageAsset;
+  bed?: StageAsset;
+  tile: number;
+}) {
+  const image = useImage(asset.url);
+  const figure = useImage(wearer?.url);
+  const ground = useImage(bed?.url);
+  const still = isWaterBed(bed);
+  const tick = useTick(200);
+  const meta = wearer?.sprite;
+  const overlay = asset.overlay;
+  const scale = tile / (wearer?.tile || tile);
+  const overlayScale = tile / (asset.tile || tile);
+  const layout = stripLayout(meta, tile, scale);
+  const draw = (ctx: CanvasRenderingContext2D) => {
+    if (ground) {
+      drawField(
+        ctx,
+        ground,
+        STRIP_TILES.width,
+        Math.ceil(layout.height / tile),
+        tile,
+        still,
+      );
+    }
+    if (!image || !overlay || !asset.frame) return;
+    const frameWidth = asset.frame.width;
+    const frameHeight = asset.frame.height;
+    FACINGS.forEach((facing, column) => {
+      const { x, y } = layout.at(column, 0);
+      const frames = meta?.walk[facing];
+      const frame = frames?.length ? frames[tick % frames.length] : undefined;
+      const anchors = frame === undefined ? undefined : meta?.anchors?.[frame];
+      const anchor = anchors?.[overlay.slot] ?? [
+        Math.floor((meta?.frameWidth ?? tile) / 2),
+        Math.floor((meta?.frameHeight ?? tile) / 2),
+      ];
+      const pivot = overlay.pivots[facing];
+      const drawOverlay = () =>
+        ctx.drawImage(
+          image,
+          overlay.facings[facing] * frameWidth,
+          0,
+          frameWidth,
+          frameHeight,
+          Math.round(x + anchor[0] * scale - pivot[0] * overlayScale),
+          Math.round(y + anchor[1] * scale - pivot[1] * overlayScale),
+          Math.round(frameWidth * overlayScale),
+          Math.round(frameHeight * overlayScale),
+        );
+      const under = overlay.slot === "back" && facing === "down";
+      if (under) drawOverlay();
+      if (figure && meta && frame !== undefined) {
+        drawFrame(
+          ctx,
+          figure,
+          meta,
+          frame,
+          x,
+          y,
+          layout.frameWidth,
+          layout.frameHeight,
+        );
+      }
+      if (!under) drawOverlay();
+    });
+  };
+  return (
+    <>
+      <Plot
+        width={layout.width}
+        height={layout.height}
+        draw={draw}
+        deps={[image, figure, ground, tick, tile]}
+      />
+      <p className="border-t border-white/5 px-4 py-1.5 font-plex-mono text-[10px] text-zinc-600">
+        {overlay?.slot ?? "?"} · on {wearer?.id ?? "no sprite"}
+        {wearer && !wearer.sprite?.anchors && " (no anchors: centred)"}
+      </p>
+    </>
   );
 }
 

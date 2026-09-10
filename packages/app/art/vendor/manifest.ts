@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { BadRequestError } from "@jaypie/errors";
 
 import { A2_LAYOUTS, type A2Layout } from "./autotile";
-import type { SpriteMeta } from "./slice";
+import type { Facing, OverlaySlot, SpriteMeta } from "./slice";
 
 export type SheetKind = "a2" | "a1" | "characters" | "image";
 
@@ -65,7 +65,20 @@ export interface PacksManifest {
 }
 
 export type AssetKind =
-  "blob" | "water" | "sprite" | "image" | "effect" | "kit";
+  "blob" | "water" | "sprite" | "image" | "effect" | "kit" | "overlay";
+
+/**
+ * An overlay: a small still per facing keyed to a slot on the figure, laid
+ * out as one frame per facing side by side. `pivots` is the point of each
+ * frame the scene puts on the wearer's anchor for the slot.
+ */
+export interface OverlayMeta {
+  slot: OverlaySlot;
+  /** the frame index per facing */
+  facings: Record<Facing, number>;
+  /** the point of each facing's frame that lands on the anchor */
+  pivots: Record<Facing, [number, number]>;
+}
 
 /**
  * Where a building kit's cell sits on each of its frames. A kit piece is
@@ -124,6 +137,8 @@ export interface AssetEntry {
   tileset?: string;
   /** kit: where the map cell sits on every frame. */
   kit?: KitMeta;
+  /** overlay: the slot, the frame per facing, and each frame's pivot. */
+  overlay?: OverlayMeta;
   pack: string;
   /** period only: the prompt and the finishing the id was made with. */
   record?: AssetRecord;
@@ -146,6 +161,7 @@ export const ASSET_PREFIXES: Record<AssetKind, string> = {
   image: "image.",
   effect: "effect.",
   kit: "kit.",
+  overlay: "overlay.",
 };
 
 export const sha1Of = (bytes: Uint8Array): string =>

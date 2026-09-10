@@ -1268,7 +1268,154 @@
       "characterId": "df689e31-f6fd-4a2b-84d2-2c6811668198",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "the 16 px set's peasant at twice the canvas and a grade more detail; walk group 166e86e4-2e5a-4412-8584-d5b34dc65438, four frames per cardinal facing"
+      "note": "the 16 px set's peasant at twice the canvas and a grade more detail; walk group 166e86e4-2e5a-4412-8584-d5b34dc65438, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "hoe",
+          "dir": "peasant48/hoe",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "hoeing the ground with a long-handled hoe, raising it and bringing it down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "8d773a30-2191-4a00-aaa0-1d38b400780e",
+          "date": "2026-09-09",
+          "generations": 3,
+          "note": "the first pose of the queue; a v3 custom animation costs one generation a facing at 48 px, so a three-facing pose is three, the east row mirrored from the west by the build"
+        },
+        {
+          "id": "reap",
+          "dir": "peasant48/reap",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "reaping with a sickle, bending forward and swinging the sickle low in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "c01fe45c-f934-442c-b0b6-70c9133fe64f",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "peasant48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "50482f80-3283-4dbc-bce9-a95a163f7477",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "thresh",
+          "dir": "peasant48/thresh",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "threshing with a flail, swinging it up over the shoulder and down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "3404fe40-88b8-48db-b529-5c3a7e0ff394",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sow",
+          "dir": "peasant48/sow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sowing seed by hand, taking grain from a basket at the hip and scattering it in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ea1d9786-1866-44a7-9817-27ae96b3d65d",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "chop",
+          "dir": "peasant48/chop",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "chopping firewood with an axe, raising it over the head and bringing it down on a log in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "394cc59a-a18c-4d31-aae9-ac1fec2b3204",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "peasant48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fc2032ea-5333-4012-97ef-7a3d3f58f1e4",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "peasant48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fd7decfc-1824-46c3-af1a-8cc25984ef4f",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "peasant48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "92f1c895-c40a-41ad-a03d-736adaba8def",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.mohist",
@@ -3058,7 +3205,26 @@
       "prompt": "a squat bronze tripod brazier full of glowing orange embers with a thin wisp of grey smoke rising, no people",
       "jobId": "1ae91adf-7bc6-4a12-a3b4-c651997328c5",
       "date": "2026-09-06",
-      "generations": 1
+      "generations": 1,
+      "seasons": {
+        "night": {
+          "file": "objects32/brazier-night.png",
+          "tool": "create_map_object",
+          "settings": {
+            "width": 32,
+            "height": 32,
+            "detail": "medium detail",
+            "shading": "medium shading",
+            "outline": "single color outline",
+            "view": "low top-down"
+          },
+          "prompt": "a squat bronze tripod brazier blazing at night: full of bright orange and yellow flames rising from red embers, a warm glowing halo of firelight around the bowl and a pool of orange light on the ground beneath, a thin wisp of grey smoke, no people",
+          "jobId": "949496bb-66d4-470d-92e8-93db2907b4ce",
+          "date": "2026-09-09",
+          "generations": 1,
+          "note": "the blazing frame the scene swaps in after dark"
+        }
+      }
     },
     {
       "id": "decor.haystack",
@@ -3529,7 +3695,153 @@
       "characterId": "0d51488e-e5d9-40d5-ae88-1625ead8fba2",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the household the Liye registers count member by member; the ward is her ground; four frames per cardinal facing, one generation per facing"
+      "note": "the household the Liye registers count member by member; the ward is her ground; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "weave",
+          "dir": "matron48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "1001bc03-4965-4257-b6a2-dc508bc43b6c",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "draw",
+          "dir": "matron48/draw",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing water from a well, pulling a rope up hand over hand in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "655958fb-e4bd-453d-8793-7ef23addaf27",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "matron48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "95f55042-278d-4b94-b7ee-1be928874dd8",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "pick",
+          "dir": "matron48/pick",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "picking leaves from a bush, reaching out with one arm and drawing it back to a basket in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "da08bf50-2d24-4d5f-ac4b-5664ace9d94e",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "matron48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "c5faea59-2729-4150-a5d7-6f311ba633a4",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "dye",
+          "dir": "matron48/dye",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "dipping a length of cloth into a dye vat and lifting it out dripping, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "68f87cf1-1a41-4b5d-baa5-687943551b0f",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "wash",
+          "dir": "matron48/wash",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and washing clothes in a tub, rubbing and wringing the cloth in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "370206d0-da05-421c-889f-268e6b0448c6",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "matron48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "7252e3ba-1001-44fb-9baa-b15d22131bb0",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "matron48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "8af9ae76-ce0a-493b-b949-8f65a6d87e9e",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.child",
@@ -3550,7 +3862,73 @@
       "characterId": "58ef1720-46cd-473e-9dac-884ce227d91e",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the children the registers count as minors; wanders the wards and the market; four frames per cardinal facing, one generation per facing"
+      "note": "the children the registers count as minors; wanders the wards and the market; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "play",
+          "dir": "child48/play",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "skipping and jumping in place with arms swinging",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fcec96e8-d61d-468f-bedb-2b424bbc287a",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "child48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "5ef3e42a-bd20-4771-bf28-8f9864219979",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "child48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "173b91e7-1cd7-4790-9f3f-5989417b67a5",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "fish",
+          "dir": "child48/fish",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "holding a fishing rod out over the water, the line bobbing, then a small tug, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "94b00722-2015-43b1-b092-480b2d54814e",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.convict",
@@ -3645,6 +4023,21 @@
             "saturation": 0.4,
             "value": 0.85
           }
+        },
+        "spring": {
+          "adjust": {
+            "saturation": 0.9,
+            "value": 1.05
+          },
+          "note": "the first beds, a recolour of the plain sheet"
+        },
+        "autumn": {
+          "adjust": {
+            "hue": -12,
+            "saturation": 0.75,
+            "value": 0.92
+          },
+          "note": "the beds going over, a recolour"
         }
       }
     },
@@ -4101,7 +4494,26 @@
       "jobId": "8fb55e3f-b388-40ad-8cd7-ea08b2274c4b",
       "date": "2026-09-06",
       "generations": 1,
-      "note": "the object canvas is 32 px at the least, so the lamp is drawn narrow inside it"
+      "note": "the object canvas is 32 px at the least, so the lamp is drawn narrow inside it",
+      "seasons": {
+        "night": {
+          "file": "objects32/lantern-night.png",
+          "tool": "create_map_object",
+          "settings": {
+            "width": 32,
+            "height": 40,
+            "detail": "medium detail",
+            "shading": "medium shading",
+            "outline": "single color outline",
+            "view": "low top-down"
+          },
+          "prompt": "a tall bronze lamp stand of the Warring States period lit at night: a slender dark green bronze column on a round base with a small shallow oil dish at the top holding a bright yellow-orange flame, a warm glowing halo of light around the flame and a soft pool of orange light on the stone paving below, no people",
+          "jobId": "8f2a6b9a-38e5-4c05-8e30-2be5e2f24f51",
+          "date": "2026-09-09",
+          "generations": 1,
+          "note": "the lit frame the scene swaps in after dark"
+        }
+      }
     },
     {
       "id": "sprite.elder",
@@ -4122,7 +4534,73 @@
       "characterId": "1ab099a8-3338-404c-b301-ce2dfc214b19",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the village elder (三老, 里正) the Qin statutes hold answerable for the ward's registers and the Liye slips name at the head of each household list; the dove staff is the one the Han later gave the aged; four frames per cardinal facing, one generation per facing"
+      "note": "the village elder (三老, 里正) the Qin statutes hold answerable for the ward's registers and the Liye slips name at the head of each household list; the dove staff is the one the Han later gave the aged; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "kneel",
+          "dir": "elder48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "426b4098-36ff-4032-a9bf-978db9def67a",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "elder48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "3d771622-f523-4094-8f54-b25187f40e94",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "read",
+          "dir": "elder48/read",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and reading a bundle of bamboo slips held in both hands, turning it slowly",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "143fbf0d-39ed-4fb5-bc32-6aaa2e731eaa",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "stand",
+          "dir": "elder48/stand",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "standing still with hands folded in the sleeves, breathing gently, a slight sway in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fcc05360-2f37-4115-9899-23ecf8b1dc38",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.herdsman",
@@ -4206,7 +4684,89 @@
       "characterId": "06309b7b-aa00-4e2f-8249-c14459a81e1f",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the mulberry-picking girl of the Odes (十畝之間, 桑中); the village orchard is her ground; four frames per cardinal facing, one generation per facing"
+      "note": "the mulberry-picking girl of the Odes (十畝之間, 桑中); the village orchard is her ground; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "pick",
+          "dir": "maiden48/pick",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "picking leaves from a bush, reaching out with one arm and drawing it back to a basket in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ae30b97c-bffb-4888-a62d-04a032c50d26",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "maiden48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9b71f83f-115e-4180-8c37-72986b8c37a3",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "maiden48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "940f1c0e-2b2a-4e78-9b8b-499f1e3045b7",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "maiden48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "946b5ec9-be3d-47d7-be6f-83f2a6b48465",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "wash",
+          "dir": "maiden48/wash",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and washing clothes in a tub, rubbing and wringing the cloth in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e85657b2-f6f7-4b84-916b-d76404f61946",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.master",
@@ -4227,7 +4787,89 @@
       "characterId": "070ecc27-125b-40b3-8d86-d6e4d2367032",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the master of an elite compound, the host of the Yili's rites; the hall is his ground; four frames per cardinal facing, one generation per facing"
+      "note": "the master of an elite compound, the host of the Yili's rites; the hall is his ground; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "kneel",
+          "dir": "master48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "54ade513-8445-444c-b714-a4e1f9be13db",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "master48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "2140cf3f-d6d8-489d-8175-e904916e6b48",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "master48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e4503621-e521-4684-8874-1e3e0666f0bf",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "read",
+          "dir": "master48/read",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and reading a bundle of bamboo slips held in both hands, turning it slowly",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "067c6fa1-ec1a-4aab-825f-030c57447cd7",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "shoot",
+          "dir": "master48/shoot",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing a bow and loosing an arrow, then lowering the bow",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fb4158ae-5b49-4df6-ae25-c5c830334d35",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.lady",
@@ -4248,7 +4890,89 @@
       "characterId": "37d57495-d4da-467e-b354-ec1eb4af56bc",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the lady of the house, whose ground is the inner chamber behind the inner door the Liji keeps; four frames per cardinal facing, one generation per facing"
+      "note": "the lady of the house, whose ground is the inner chamber behind the inner door the Liji keeps; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "bow",
+          "dir": "lady48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "b3452ad8-b3fd-4723-ae19-4b6ab6478a84",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "lady48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "5c5a6d5b-5986-497b-9761-96a440b6b881",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "weave",
+          "dir": "lady48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "4de6502a-bc41-4cb0-b1b8-98a609dabe04",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "lady48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "168c299a-bf45-4d0b-8d5b-9da3921a85b4",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "serve",
+          "dir": "lady48/serve",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "serving, holding a tray in both hands and bowing slightly forward and back",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "b857d2cd-2ebc-4c1e-b743-15c9c21df919",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.steward",
@@ -4290,7 +5014,105 @@
       "characterId": "bd9bc8a8-a166-441c-9b48-400dbfaadb83",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the serving woman of the household; the east rooms behind the hall are her ground; four frames per cardinal facing, one generation per facing"
+      "note": "the serving woman of the household; the east rooms behind the hall are her ground; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "sweep",
+          "dir": "maid48/sweep",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sweeping the floor with a broom, swinging it side to side in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "75238729-1943-4b8b-83e5-3ef46466b20a",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "serve",
+          "dir": "maid48/serve",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "serving, holding a tray in both hands and bowing slightly forward and back",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "f40888be-91d8-40ee-9cb3-684a82472676",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "draw",
+          "dir": "maid48/draw",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing water from a well, pulling a rope up hand over hand in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "16efad20-1d84-4dcd-8e6d-9d99a6a9623f",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "weave",
+          "dir": "maid48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "c6f2abb5-4ca6-4421-a997-35f07ba910f9",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "maid48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling down and sitting back on the heels, hands on the thighs, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "12d8406d-0d87-4985-87b7-dca3195639bd",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "maid48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ca21e03d-93d5-48eb-bf1c-59524350965e",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.cook",
@@ -4311,7 +5133,73 @@
       "characterId": "95900475-1b3f-4cf3-8f3c-c25b2947f337",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the cook of a great house's kitchen, the trade Yi Yin and Pao Ding made proverbial; the kitchen is his ground; four frames per cardinal facing, one generation per facing"
+      "note": "the cook of a great house's kitchen, the trade Yi Yin and Pao Ding made proverbial; the kitchen is his ground; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "cook",
+          "dir": "cook48/cook",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "cooking, stirring a pot with a ladle in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "25ce050c-4159-4f33-b05b-6310d545f42c",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "chop",
+          "dir": "cook48/chop",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "chopping on a board with a cleaver, raising it and bringing it down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fef2abde-cdb3-4880-a5c3-0f26cc062763",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "cook48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "21aaa582-8c60-4ebf-9c70-55c91d68f17e",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "cook48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "b3288171-7ad6-402a-a3a7-ff0ff38e009f",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "decor.plum",
@@ -4975,7 +5863,26 @@
       "jobId": "cb1dae1d-985b-4f76-aead-1ccdf1e54684",
       "date": "2026-09-06",
       "generations": 1,
-      "note": "The fifteen-dish lamp of King Cuo's tomb, for the chamber."
+      "note": "The fifteen-dish lamp of King Cuo's tomb, for the chamber.",
+      "seasons": {
+        "night": {
+          "file": "objects32/lamptree-night.png",
+          "tool": "create_map_object",
+          "settings": {
+            "width": 48,
+            "height": 64,
+            "detail": "medium detail",
+            "shading": "medium shading",
+            "outline": "single color outline",
+            "view": "low top-down"
+          },
+          "prompt": "a Warring States Chinese bronze lamp tree lit at night seen from above: a tall dark green bronze stand branching like a tree into fifteen small oil-lamp dishes each holding a bright yellow flame, small bronze monkeys and birds on the branches, a soft warm glow around the top, on a round base, standing on a dark brown wooden plank floor, no people",
+          "jobId": "481be895-2f03-4269-a484-c43cbeac3f07",
+          "date": "2026-09-09",
+          "generations": 1,
+          "note": "the fifteen-dish lamp lit, the night sibling the scene swaps in under the night grade as it does the lantern's"
+        }
+      }
     },
     {
       "id": "decor.mirror",
@@ -5052,6 +5959,3633 @@
       "date": "2026-09-06",
       "generations": 1,
       "note": "The Zeng marquis's ice chest, for the hall's chilled wine."
+    },
+    {
+      "id": "image.wardhall",
+      "kind": "image",
+      "file": "objects32/wardhall.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 160,
+        "height": 96,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese village ward hall standing on a low tan rammed-earth terrace with horizontal layer lines: a long thatched hall of pale grey straw with a wide open front held on dark timber posts, a short earthen ramp at the front, a low wattle fence at each side, no people",
+      "jobId": "f8c972da-ff80-4069-81f7-d58fb4d4eb45",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the ward hall (li shu), the village's own hall where the elder hears the ward and the archery is held; a 5 × 2 footprint on a rammed terrace, the one village marker larger than a farmhouse"
+    },
+    {
+      "id": "image.silkshed",
+      "kind": "image",
+      "file": "objects32/silkshed.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 96,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a low silkworm shed of the Warring States period in north China: a long low thatched shed of pale grey straw on tan rammed-earth walls, one open side showing rows of shallow bamboo trays on wooden racks inside, a bundle of mulberry branches leaning by the door, no people",
+      "jobId": "6592f9f2-5f3b-4b23-b886-e03f27b8e460",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the silkworm shed the Odes' fourth month fills; a long low thatched shed with trays"
+    },
+    {
+      "id": "image.icehouse",
+      "kind": "image",
+      "file": "objects32/icehouse.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 96,
+        "height": 64,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "an ice house of the Warring States period: a low rounded mound of packed earth and turf dug into a hillside, a small dark timber door with a heavy plank frame set into the front of the mound, a few stones around the door, no people",
+      "jobId": "c9e7d8f9-4048-4c8c-8954-0f4714d2dd68",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the ling yin of the Yueling, the ice cut in the twelfth month and stored under earth; drawn as a turfed mound with a timber door"
+    },
+    {
+      "id": "image.wardgate",
+      "kind": "image",
+      "file": "objects32/wardgate.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 96,
+        "height": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese village ward gate across a lane: two thick weathered dark timber posts with a plain timber lintel beam across the top, a short stretch of low wattle fence at the foot of each post, the opening between the posts empty, no doors, no roof, no people",
+      "jobId": "7ef30d36-f9fc-4851-9768-80882df57a97",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the gate across the lane where the ward is shut at night; two posts, a lintel, a wattle fence either side"
+    },
+    {
+      "id": "decor.target",
+      "kind": "image",
+      "file": "objects32/target.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "an ancient Chinese archery target of the Warring States period: a square of stretched cloth painted with concentric rings of red and white, hung on a tall wooden frame of two posts and a crossbar, standing on grass, no people",
+      "jobId": "3c5357ab-ccd3-43fc-a7da-db2036c2a6b9",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the xiang archery's cloth target on its frame"
+    },
+    {
+      "id": "decor.altartree",
+      "kind": "image",
+      "file": "objects32/altartree.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 80,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "an old broad sacred tree on a low earthen mound seen from above: a very wide spreading crown of dense dark green leaves, a thick gnarled dark trunk, a few strips of pale cloth tied to the lower branches, a small flat stone at the foot of the trunk, no people",
+      "jobId": "82745c33-3b34-4d13-970e-ef8e2a0c3a06",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the she's own tree on its mound, the altar of the soil the village gathers at"
+    },
+    {
+      "id": "decor.vats",
+      "kind": "image",
+      "file": "objects32/vats.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "three large dye vats of the Warring States period on beaten earth: wide round dark brown clay vats sunk half into the ground, one full of deep indigo blue dye, one of madder red, one of dark liquid, a few strips of dyed cloth hanging on a short pole beside them, no people",
+      "jobId": "0c685dbd-5e04-4e95-a81b-6dbc979ed435",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the dye vats of the Yueling's autumn dyeing"
+    },
+    {
+      "id": "decor.ice",
+      "kind": "image",
+      "file": "objects32/ice.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a stack of cut ice blocks on a snowy riverbank seen from above: pale blue-white translucent rectangular blocks of ice piled in two rows, a few loose blocks beside the stack, a little snow on the ground, no people",
+      "jobId": "0b7c3ec7-8ade-4975-9366-c8e09224dbc2",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the cut ice stacked on the bank before it is carried to the icehouse; the twelfth month's decor"
+    },
+    {
+      "id": "decor.cartload",
+      "kind": "image",
+      "file": "objects32/cartload.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 40,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese two-wheeled wooden ox cart standing idle, heaped high with a load of yellow straw and bundled fodder tied down with rope, large many-spoked wooden wheels, a long draught pole resting on the ground, no ox, no people",
+      "jobId": "786e0cc0-d13b-4366-a408-99c0f11ba4ee",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the levy's ox cart heaped with the grain tax, standing at the granary"
+    },
+    {
+      "id": "decor.pestle",
+      "kind": "image",
+      "file": "objects32/pestle.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "an ancient Chinese foot-operated pestle for hulling grain: a long wooden beam pivoted on a low timber frame, a heavy wooden pestle head at one end over a stone mortar sunk in the beaten earth, a small pile of millet beside it, no people",
+      "jobId": "c93d850b-4a34-4515-8430-34a5e15854c9",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the foot-treadle pestle (dui) for hulling millet, beside the threshing floor"
+    },
+    {
+      "id": "decor.melons",
+      "kind": "image",
+      "file": "objects32/melons.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a melon patch on a bed of dark turned earth seen from above: sprawling green vines with large lobed leaves and several round pale green striped melons lying among them, no people",
+      "jobId": "76603947-0567-4e2d-bac3-d6e39cd9eae8",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the Odes' seventh month eats melons; the first call was rate-limited and retried once with the same prompt (no charge for the failed call)"
+    },
+    {
+      "id": "decor.gourds",
+      "kind": "image",
+      "file": "objects32/gourds.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 40,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "bottle gourds growing on a low wattle fence seen from above: green climbing vines with broad leaves draped over a short fence of woven sticks, several pale green and tan bottle-shaped gourds hanging down, no people",
+      "jobId": "2129a00a-0936-48a0-b119-2311e459496b",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the Odes' eighth month cuts gourds; drawn on a wattle fence, and the vine came back thin, so it reads faint at a distance"
+    },
+    {
+      "id": "decor.jujube",
+      "kind": "image",
+      "file": "objects32/jujube.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a single jujube tree in summer leaf seen from above: a slender crooked dark trunk with thorny zigzag branches, a loose crown of small glossy green oval leaves, standing on bare earth, no fruit, no people",
+      "jobId": "a5613487-bdd3-49c5-9f70-3d2293eec7bb",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the Odes' eighth month beats the jujubes; the first call was rate-limited and retried once with the same prompt",
+      "seasons": {
+        "autumn": {
+          "file": "objects32/jujube-autumn.png",
+          "tool": "create_map_object",
+          "settings": {
+            "width": 40,
+            "height": 48,
+            "detail": "medium detail",
+            "shading": "medium shading",
+            "outline": "single color outline",
+            "view": "low top-down"
+          },
+          "prompt": "a single jujube tree in autumn heavy with fruit seen from above: a slender crooked dark trunk with thorny zigzag branches, a loose crown of small green-yellow oval leaves thick with many small dark red jujube fruits, a few fallen red fruits on the bare earth below, no people",
+          "jobId": "42b19dd8-5fb1-4fd8-8766-5be35accc31d",
+          "date": "2026-09-09",
+          "generations": 1
+        }
+      }
+    },
+    {
+      "id": "decor.chestnut",
+      "kind": "image",
+      "file": "objects32/chestnut.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 56,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a single broad chestnut tree seen from above: a stout dark brown trunk, a wide rounded crown of large long serrated dark green leaves, a few spiky pale green burrs among the leaves, standing on bare earth, no people",
+      "jobId": "6451643d-b2e8-4238-895b-6eb7ad622461",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the chestnut at the gate the Odes' tenth month gathers"
+    },
+    {
+      "id": "decor.peach",
+      "kind": "image",
+      "file": "objects32/peach.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 40,
+        "height": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a single peach tree in summer leaf seen from above: a short dark trunk, spreading branches with a loose crown of long narrow green leaves, a few small round pink-blushed peaches among the leaves, standing on bare earth, no flowers, no people",
+      "jobId": "6c4a856f-d1f8-4149-bf44-12912e2ffc96",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the peach the Yueling's second month sees blossom",
+      "seasons": {
+        "spring": {
+          "file": "objects32/peach-spring.png",
+          "tool": "create_map_object",
+          "settings": {
+            "width": 40,
+            "height": 48,
+            "detail": "medium detail",
+            "shading": "medium shading",
+            "outline": "single color outline",
+            "view": "low top-down"
+          },
+          "prompt": "a single peach tree in full spring blossom seen from above: a short dark trunk, spreading bare branches covered in many small bright pink five-petalled flowers, no leaves, a few fallen pink petals on the bare earth below, no people",
+          "jobId": "cc61e794-09f5-4c91-871c-c7d4503258b9",
+          "date": "2026-09-09",
+          "generations": 1
+        }
+      }
+    },
+    {
+      "id": "effect.drum",
+      "kind": "effect",
+      "file": "objects32/drum.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese barrel drum being beaten: a large round wooden drum with a red lacquered body and a pale hide head, standing upright on a short wooden stand, two drumsticks crossed on the head, three small curved motion lines above it, no people",
+      "jobId": "a6321732-d30d-44d4-a91c-d725664aa4e5",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the rite's drum, generated as one still and built to four beat frames by scaling the still about its centre (1, 1.12, 1, 0.88), since the period build had no effect kind before and a still swelling in place reads as a beat at 8 fps; the plan's four generated frames would have cost four",
+      "frames": 4
+    },
+    {
+      "id": "terrain.wheat",
+      "kind": "tileset",
+      "file": "tilesets32/wheat.png",
+      "metadata": "tilesets32/wheat.json",
+      "against": "grass",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25,
+        "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+      },
+      "prompt": "young winter wheat fields in spring seen from above, dense parallel rows of bright green wheat blades on ridges of dark tilled earth, the rows close and even with brown soil showing in the furrows between them, small plots divided by earth banks, strictly green and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the planted field",
+      "jobId": "46d8474c-8abe-4a2c-875f-7c1c7993fd1b",
+      "date": "2026-09-09",
+      "generations": 3,
+      "keyTolerance": 20,
+      "note": "winter wheat: sown in the eighth month, green through spring, cut in the fifth. The plain sheet is the spring green; summer and autumn are generated, winter is the plain sheet dulled toward the dormant blade. a tileset was measured at three generations this cycle (the balance fell 33 over eleven crop sheets), where the earlier records say one; the count here is the measured one",
+      "adjust": {
+        "saturation": 0.85,
+        "value": 0.95
+      },
+      "seasons": {
+        "summer": {
+          "file": "tilesets32/wheat-summer.png",
+          "metadata": "tilesets32/wheat-summer.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+          },
+          "prompt": "ripe wheat fields in early summer seen from above, dense parallel rows of tall golden-yellow wheat heavy with bearded ears on ridges of tilled earth, warm gold and straw yellow with thin dark brown shadow lines in the furrows between the rows, small plots divided by earth banks, strictly gold, straw yellow, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
+          "jobId": "9b2409e7-c5a4-4258-80e6-1cd71242c256",
+          "date": "2026-09-09",
+          "generations": 3,
+          "adjust": {
+            "saturation": 0.9,
+            "value": 0.96
+          }
+        },
+        "autumn": {
+          "file": "tilesets32/wheat-autumn.png",
+          "metadata": "tilesets32/wheat-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+          },
+          "prompt": "newly sown winter wheat fields in autumn seen from above, sparse parallel rows of short pale green wheat shoots just emerging from ridges of dark brown tilled earth, mostly bare soil with thin green lines along each ridge, small plots divided by earth banks, strictly dark brown, tan, and pale green, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the sown field",
+          "jobId": "795ea285-8dc9-4926-ab04-1e74a6ca1c55",
+          "date": "2026-09-09",
+          "generations": 3,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          },
+          "note": "the new sowing: sparse pale rows on bare earth"
+        },
+        "winter": {
+          "adjust": {
+            "hue": -10,
+            "saturation": 0.45,
+            "value": 0.8
+          },
+          "note": "dormant winter wheat, a recolour of the spring sheet"
+        }
+      }
+    },
+    {
+      "id": "terrain.bean",
+      "kind": "tileset",
+      "file": "tilesets32/bean.png",
+      "metadata": "tilesets32/bean.json",
+      "against": "grass",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25,
+        "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+      },
+      "prompt": "soybean fields in summer seen from above, parallel rows of low bushy green soybean plants with small trifoliate leaves on ridges of tilled brown earth, rounded dark green bushes in even rows with brown soil showing in the furrows between them, small plots divided by earth banks, strictly green and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the planted field",
+      "jobId": "c815270a-dc06-4e52-bfe2-04b74bdf8b4b",
+      "date": "2026-09-09",
+      "generations": 3,
+      "keyTolerance": 20,
+      "note": "soybean: sown in the fourth month, cut in the ninth. The plain sheet is the summer rows; autumn is generated; winter and spring are the rows recoloured to the bare bed, since the plot is turned earth then. a tileset was measured at three generations this cycle (the balance fell 33 over eleven crop sheets), where the earlier records say one; the count here is the measured one",
+      "adjust": {
+        "saturation": 0.85,
+        "value": 0.95
+      },
+      "seasons": {
+        "autumn": {
+          "file": "tilesets32/bean-autumn.png",
+          "metadata": "tilesets32/bean-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+          },
+          "prompt": "soybean fields in autumn ready for harvest seen from above, parallel rows of low bushy soybean plants gone yellow-brown and heavy with pale tan pods on ridges of tilled brown earth, dull yellow and ochre bushes in even rows with brown soil showing in the furrows between them, small plots divided by earth banks, strictly yellow, ochre, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
+          "jobId": "5bf5801d-3d3e-4fb3-8fa9-d0ca1aada2c3",
+          "date": "2026-09-09",
+          "generations": 3,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          }
+        },
+        "winter": {
+          "file": "tilesets32/bean-autumn.png",
+          "metadata": "tilesets32/bean-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+          },
+          "prompt": "soybean fields in autumn ready for harvest seen from above, parallel rows of low bushy soybean plants gone yellow-brown and heavy with pale tan pods on ridges of tilled brown earth, dull yellow and ochre bushes in even rows with brown soil showing in the furrows between them, small plots divided by earth banks, strictly yellow, ochre, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
+          "jobId": "5bf5801d-3d3e-4fb3-8fa9-d0ca1aada2c3",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.3,
+            "value": 0.78
+          },
+          "note": "the bare bed after harvest: the autumn sheet with the colour taken out, since a hue shift of the plain sheet turns its red pods purple"
+        },
+        "spring": {
+          "file": "tilesets32/bean-autumn.png",
+          "metadata": "tilesets32/bean-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+          },
+          "prompt": "soybean fields in autumn ready for harvest seen from above, parallel rows of low bushy soybean plants gone yellow-brown and heavy with pale tan pods on ridges of tilled brown earth, dull yellow and ochre bushes in even rows with brown soil showing in the furrows between them, small plots divided by earth banks, strictly yellow, ochre, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
+          "jobId": "5bf5801d-3d3e-4fb3-8fa9-d0ca1aada2c3",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.45,
+            "value": 0.88
+          },
+          "note": "the turned bed before sowing: the autumn sheet dulled"
+        }
+      }
+    },
+    {
+      "id": "terrain.hemp",
+      "kind": "tileset",
+      "file": "tilesets32/hemp.png",
+      "metadata": "tilesets32/hemp.json",
+      "against": "grass",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25,
+        "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+      },
+      "prompt": "hemp fields in high summer seen from above, dense stands of tall slender green hemp plants with narrow spreading palmate leaves growing close together in rows on tilled brown earth, a thick even mass of mid-green foliage with dark shadow between the plants and a little brown soil showing at the row ends, small plots divided by earth banks, strictly green and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the planted field",
+      "jobId": "0d41ab48-39dc-45b7-bdbc-d5ebc0f90657",
+      "date": "2026-09-09",
+      "generations": 3,
+      "keyTolerance": 20,
+      "note": "hemp: sown in the third month, cut in the seventh. The plain sheet is the summer stand; autumn (the cut stalks) is generated; spring is the young stand lightened, winter the bare ground recoloured. a tileset was measured at three generations this cycle (the balance fell 33 over eleven crop sheets), where the earlier records say one; the count here is the measured one",
+      "adjust": {
+        "saturation": 0.85,
+        "value": 0.95
+      },
+      "seasons": {
+        "autumn": {
+          "file": "tilesets32/hemp-autumn.png",
+          "metadata": "tilesets32/hemp-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+          },
+          "prompt": "a harvested hemp field in autumn seen from above, rows of cut pale straw-coloured hemp stalks lying in bundles on tilled brown earth, short tan stubble in lines along the ridges and bare dark soil in the furrows between them, small plots divided by earth banks, strictly straw yellow, tan, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the cut field",
+          "jobId": "e994ec1f-46a4-46f8-8ffb-fad0eb4b1f8e",
+          "date": "2026-09-09",
+          "generations": 3,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          }
+        },
+        "spring": {
+          "adjust": {
+            "saturation": 0.8,
+            "value": 1.06
+          },
+          "note": "the young stand, a recolour"
+        },
+        "winter": {
+          "file": "tilesets32/hemp-autumn.png",
+          "metadata": "tilesets32/hemp-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
+          },
+          "prompt": "a harvested hemp field in autumn seen from above, rows of cut pale straw-coloured hemp stalks lying in bundles on tilled brown earth, short tan stubble in lines along the ridges and bare dark soil in the furrows between them, small plots divided by earth banks, strictly straw yellow, tan, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the cut field",
+          "jobId": "e994ec1f-46a4-46f8-8ffb-fad0eb4b1f8e",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.3,
+            "value": 0.78
+          },
+          "note": "the bare ground after the cut: the autumn sheet with the colour taken out"
+        }
+      }
+    },
+    {
+      "id": "terrain.paddy",
+      "kind": "tileset",
+      "file": "tilesets32/paddy.png",
+      "metadata": "tilesets32/paddy.json",
+      "against": "marsh",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25,
+        "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+      },
+      "prompt": "flooded rice paddy fields in spring seen from above, rectangular plots of still shallow water in dull grey-green with thin lines of young bright green rice seedlings just planted in even rows across the water, low straight earth bunds of dark brown mud dividing the plots, strictly grey-green, bright green, and brown, no purple, no violet, no magenta, no pink; transition: a low mud bund between the swamp and the flooded paddy",
+      "jobId": "e7f654a6-661c-4583-97ec-73bb6810322e",
+      "date": "2026-09-09",
+      "generations": 3,
+      "keyTolerance": 20,
+      "note": "wet rice on the low ground by the brook, chained to the marsh base tile rather than the grass because the paddy stands in the fen and its bund is a mud bank against water. The plain sheet is the spring flooding; summer, autumn, and winter are generated. a tileset was measured at three generations this cycle (the balance fell 33 over eleven crop sheets), where the earlier records say one; the count here is the measured one",
+      "adjust": {
+        "saturation": 0.85,
+        "value": 0.95
+      },
+      "seasons": {
+        "summer": {
+          "file": "tilesets32/paddy-summer.png",
+          "metadata": "tilesets32/paddy-summer.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+          },
+          "prompt": "rice paddy fields in summer seen from above, rectangular plots thick with tall lush green rice plants standing in shallow water, an even mass of bright green with thin dark lines of water showing between the rows, low straight earth bunds of dark brown mud dividing the plots, strictly green and brown, no purple, no violet, no magenta, no pink; transition: a low mud bund between the swamp and the paddy",
+          "jobId": "7140830f-09de-4348-bbfd-f1a191a5766c",
+          "date": "2026-09-09",
+          "generations": 3,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          }
+        },
+        "autumn": {
+          "file": "tilesets32/paddy-autumn.png",
+          "metadata": "tilesets32/paddy-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+          },
+          "prompt": "ripe rice paddy fields in autumn seen from above, rectangular plots of tall golden-yellow rice heavy with drooping seed heads standing in drained muddy ground, an even mass of warm gold with thin dark brown lines between the rows, low straight earth bunds of dark brown mud dividing the plots, strictly gold, amber, and brown, no purple, no violet, no magenta, no pink; transition: a low mud bund between the swamp and the ripe paddy",
+          "jobId": "747f8336-3440-4c56-9df9-6261796f0ff1",
+          "date": "2026-09-09",
+          "generations": 3,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          }
+        },
+        "winter": {
+          "file": "tilesets32/paddy-winter.png",
+          "metadata": "tilesets32/paddy-winter.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+          },
+          "prompt": "winter rice paddy, cut rice stubble in cold grey mud, thin ice in the furrows, no green, no pink; transition: low mud bund between the fen and the flooded paddy",
+          "jobId": "ca4c4f8c-ab8c-4a43-b39d-1d7993760890",
+          "date": "2026-09-09",
+          "generations": 3,
+          "adjust": {
+            "saturation": 0.6,
+            "value": 0.9
+          },
+          "note": "the first call (the longer prompt, 'harvested rice paddy fields in winter…') was refused by the rate limit and not charged; this shorter prompt was the retry"
+        }
+      }
+    },
+    {
+      "id": "terrain.millet",
+      "kind": "tileset",
+      "file": "tilesets32/field.png",
+      "metadata": "tilesets32/field.json",
+      "against": "grass",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25
+      },
+      "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ploughed field",
+      "jobId": "5a31a0bc-d5dd-4296-9b94-0cb274950392",
+      "date": "2026-09-09",
+      "generations": 0,
+      "note": "the broomcorn millet (shu) beside the foxtail (ji) `terrain.field` draws: the same four sheets as the field under a second name with the hue a few degrees warmer and the value a shade paler, so the two millets read as kin and no generation is spent on a crop that differs from the field by the colour of its head",
+      "keyTolerance": 20,
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.6,
+        "value": 0.96
+      },
+      "seasons": {
+        "summer": {
+          "file": "tilesets32/field-summer.png",
+          "metadata": "tilesets32/field-summer.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25
+          },
+          "prompt": "cultivated millet fields in high summer seen from above, parallel rows of young green millet plants standing on ridges of ochre tilled earth, dark green leafy rows with brown soil showing in the furrows between them, small plots divided by earth banks, strictly green and ochre brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the planted field",
+          "jobId": "2c0e12f0-378f-4a73-9a00-9c7ddec6855f",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95,
+            "hue": 8
+          }
+        },
+        "autumn": {
+          "file": "tilesets32/field-autumn.png",
+          "metadata": "tilesets32/field-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25
+          },
+          "prompt": "ripe millet fields at harvest seen from above, parallel rows of tall golden-yellow millet heavy with seed heads on ridges of tilled earth, warm gold and amber with dark brown shadow lines in the furrows between the rows, small plots divided by earth banks, strictly gold, amber, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
+          "jobId": "ece8cce2-0451-415f-b3dd-690cc6f99db0",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.9,
+            "value": 0.96,
+            "hue": 8
+          }
+        },
+        "winter": {
+          "file": "tilesets32/field-winter.png",
+          "metadata": "tilesets32/field-winter.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25
+          },
+          "prompt": "bare harvested millet fields in winter seen from above, parallel furrows of frozen grey-brown earth with pale stubble in rows and a thin dusting of white snow lying in the furrows between the ridges, small plots divided by earth banks, strictly grey-brown, pale tan, and white, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the frozen field",
+          "jobId": "c1e82028-ad10-4dfd-a461-c3324cfa453a",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "hue": 30,
+            "saturation": 0.28,
+            "value": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "kit.shrine",
+      "kind": "kit",
+      "dir": "kits32/shrine",
+      "tool": "create_building_kit",
+      "settings": {
+        "tile_type": "square_topdown",
+        "tile_size": 32,
+        "wall_tiles": 2,
+        "seed": 7,
+        "floor_description": "dark lacquered wooden plank floor, deep brown-black boards with a faint sheen",
+        "floor2_description": "a Warring States Chinese hipped roof surface of grey clay tiles: close rows of dark grey semicylindrical tiles running up the slope with pale mortar lines between them and thin patches of green moss in the lower rows, a uniform even texture with no eave and no edge, seen from above"
+      },
+      "prompt": "Warring States Chinese ancestral shrine walls: smooth white lime-plastered rammed earth on a low footing of grey dressed stone blocks, with glossy dark red lacquered timber columns at the corners and beside the doorway, a course of dark grey clay tiles along the top, low top-down pixel art",
+      "jobId": "b1390c7f-8feb-47a9-9652-dd343bb16161",
+      "date": "2026-09-09",
+      "generations": 40,
+      "note": "The shrine kit, the fourth beside the hall, the outbuilding, and the wall: white plaster on a stone footing under grey tile, so the ancestral shrine reads apart from the hall's ochre and the outbuilding's thatch. The generator kept the plaster and the footing and dropped the red-lacquered columns the prompt asked for at the corners (the pillar piece alone carries a post), which is a fault for the re-roll batch to weigh, not a bar to laying it. The generation count is the tool's stated ceiling for a 32 px kit and is settled against the balance in the track's report."
+    },
+    {
+      "id": "sprite.farmer-b",
+      "kind": "sprite",
+      "dir": "farmer-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese older farmer, bareheaded with grey-streaked hair tied in a knot, a darker brown hemp tunic with a rope belt, bare lower legs, carrying a wooden spade over one shoulder, low top-down view",
+      "characterId": "b9e7f838-089e-440a-a80e-4ef0e30852de",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the older farmer, second of the peasant's five variants (village plan §7.1): bareheaded, a spade; walk group 9d9d1442-23fc-4d5e-b1a2-b58ac1644618, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "hoe",
+          "dir": "farmer-b48/hoe",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "hoeing the ground with a long-handled hoe, raising it and bringing it down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "89ef745f-ee57-4f34-b8b6-c4abc92dd33f",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "reap",
+          "dir": "farmer-b48/reap",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "reaping with a sickle, bending forward and swinging the sickle low in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "2528fcf5-0299-48ce-b9af-c3d2b70a5e9f",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "farmer-b48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "82225c93-99dc-4562-b572-988cdf7eef23",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "thresh",
+          "dir": "farmer-b48/thresh",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "threshing with a flail, swinging it up over the shoulder and down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "8a07c856-b26c-4064-8e13-441beae32176",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sow",
+          "dir": "farmer-b48/sow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sowing seed by hand, taking grain from a basket at the hip and scattering it in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "52235f8b-223e-4c6b-9f9d-38fe657d650d",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "chop",
+          "dir": "farmer-b48/chop",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "chopping firewood with an axe, raising it over the head and bringing it down on a log in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "cca9a8dc-2823-4d72-88bf-90bcdb90edaf",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "farmer-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "14a908ad-df16-4e09-a205-0fe8f0c71995",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "farmer-b48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "de09dace-47be-4969-90f1-27cc0101012a",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "farmer-b48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ccc5ae7b-52bf-489a-8abc-f32f2a4020d6",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.farmer-c",
+      "kind": "sprite",
+      "dir": "farmer-c48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese young farmer, a wide conical straw hat pushed back on his head, a short undyed pale hemp tunic with a rope belt, bare lower legs, a bamboo carrying pole across his shoulders with a woven basket hanging at each end, low top-down view",
+      "characterId": "fda0dd87-79a8-48dd-ab5b-50cecb8573c5",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the young farmer with the carrying pole, third of the peasant's variants; walk group 6d8ae67e-7363-4bb0-811c-2c7a4a5203db, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "hoe",
+          "dir": "farmer-c48/hoe",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "hoeing the ground with a long-handled hoe, raising it and bringing it down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ee169ace-c3db-4de3-971a-5206c5e2e29b",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "reap",
+          "dir": "farmer-c48/reap",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "reaping with a sickle, bending forward and swinging the sickle low in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "3ba6482d-369d-4678-8f6d-82c10c190e62",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "farmer-c48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "6f4870e2-17dd-462c-b771-7e124b053470",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "thresh",
+          "dir": "farmer-c48/thresh",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "threshing with a flail, swinging it up over the shoulder and down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "5c79e882-d072-4828-87fc-1f06c98489f6",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sow",
+          "dir": "farmer-c48/sow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sowing seed by hand, taking grain from a basket at the hip and scattering it in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e640108e-f8f8-40b7-af65-86d78f4271f5",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "chop",
+          "dir": "farmer-c48/chop",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "chopping firewood with an axe, raising it over the head and bringing it down on a log in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "a9b7a25c-9174-4db2-bbb2-56a5272520be",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "farmer-c48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "70e860ef-8ab7-4c94-92bb-76d3c2ea05e3",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "farmer-c48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "a14e2c8c-7936-4196-aec5-2375ea774883",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "farmer-c48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "cc42fafa-a6c3-46d5-8949-73b9446bab09",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.goodwife-b",
+      "kind": "sprite",
+      "dir": "goodwife-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese older peasant woman, grey hair in a low bun, a plain undyed hemp tunic with a dark brown apron over it, carrying a woven basket on one arm, low top-down view",
+      "characterId": "ee5dea99-b3c4-42fc-ad95-a59684d7a24f",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the older wife with the basket, second of the matron's four variants; walk group 00d6ad11-34f9-4e6e-9a35-eca9a34fb15b, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "weave",
+          "dir": "goodwife-b48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "61db4fa8-c044-4cfc-b4cc-b1827ba96e40",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "draw",
+          "dir": "goodwife-b48/draw",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing water from a well, pulling a rope up hand over hand in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9119d35c-ec06-44dc-8e3c-5c22680b868a",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "goodwife-b48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "308b7480-00a1-49aa-ab6f-8cc758549cf8",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "pick",
+          "dir": "goodwife-b48/pick",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "picking leaves from a bush, reaching out with one arm and drawing it back to a basket in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "8e23da1c-f40e-422d-b71a-3db7e1787208",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "goodwife-b48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "75e6d1f4-434f-4fec-99cb-f696b9684c41",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "dye",
+          "dir": "goodwife-b48/dye",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "dipping a length of cloth into a dye vat and lifting it out dripping, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9e2081f8-ab86-440b-9c86-c83fd171b0a4",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "wash",
+          "dir": "goodwife-b48/wash",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and washing clothes in a tub, rubbing and wringing the cloth in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "58122818-928f-49b3-99c1-40cf4ee0a324",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "goodwife-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "58cf2069-141d-45da-a3bc-dabd0f4bca51",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "goodwife-b48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "c13f2c10-d5ee-4a36-be18-f4b725b6897c",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.farmer-d",
+      "kind": "sprite",
+      "dir": "farmer-d48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese broad-shouldered farmer with a short black beard, a sleeveless undyed hemp tunic with a rope belt, bare muscular arms, bare lower legs, empty hands, low top-down view",
+      "characterId": "7fa7fc4d-231e-4700-9c5a-4d81bdc7086d",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the broad farmer, bare-armed, fourth of the peasant's variants; walk group 9647439f-1331-4a4d-a348-3b0ae43970b2, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "hoe",
+          "dir": "farmer-d48/hoe",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "hoeing the ground with a long-handled hoe, raising it and bringing it down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "005ab754-e46e-4257-a919-3c18cbf81994",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "reap",
+          "dir": "farmer-d48/reap",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "reaping with a sickle, bending forward and swinging the sickle low in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "1d9380d0-5aec-497c-83e4-68fbeb72f4bb",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "farmer-d48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9b5c4b8f-886b-4060-8f3d-7e760f724923",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "thresh",
+          "dir": "farmer-d48/thresh",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "threshing with a flail, swinging it up over the shoulder and down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "8e8287bf-22dd-47c5-af30-4d9de00eb5a7",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sow",
+          "dir": "farmer-d48/sow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sowing seed by hand, taking grain from a basket at the hip and scattering it in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "92fa16a4-4cfd-4f37-b4ed-fb89a2543e83",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "chop",
+          "dir": "farmer-d48/chop",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "chopping firewood with an axe, raising it over the head and bringing it down on a log in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "aa0e8871-d7f9-4a1c-af6b-7fd02b096825",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "farmer-d48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "61255cd7-3da2-4883-a26a-68a435b5287e",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "farmer-d48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "07007f75-266e-4ea7-9386-f6fa8d0259c5",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "farmer-d48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "5952a346-5046-4892-b301-db357bb9222e",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.farmer-e",
+      "kind": "sprite",
+      "dir": "farmer-e48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese thin farmer, a pale headcloth tied over his hair, a patched grey-brown hemp tunic with a rope belt, bare lower legs, carrying a wooden hoe over one shoulder, low top-down view",
+      "characterId": "6401c3d3-3d7b-4145-a75f-fb1afd4708fe",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the thin farmer in the headcloth, fifth of the peasant's variants; walk group 6165706b-dac4-48a4-88f0-21f1abed980b, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "hoe",
+          "dir": "farmer-e48/hoe",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "hoeing the ground with a long-handled hoe, raising it and bringing it down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "c158f33b-6b92-4c2b-aed1-49d950dd0037",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "reap",
+          "dir": "farmer-e48/reap",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "reaping with a sickle, bending forward and swinging the sickle low in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "44da6daa-5b72-4adc-8893-f46a18ecad5c",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "farmer-e48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "3ad76b1a-4c4d-4e04-a005-18714a925f8b",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "thresh",
+          "dir": "farmer-e48/thresh",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "threshing with a flail, swinging it up over the shoulder and down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "00955e8f-5455-4db5-8a58-32ffaf364bb2",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sow",
+          "dir": "farmer-e48/sow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sowing seed by hand, taking grain from a basket at the hip and scattering it in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "f3c5f9a6-c9a5-48fd-a19d-8bd0b00e5f93",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "chop",
+          "dir": "farmer-e48/chop",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "chopping firewood with an axe, raising it over the head and bringing it down on a log in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "2d931679-dcc5-43ce-abbe-90a14c168d48",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "farmer-e48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "f3bf64df-68c9-410c-927f-143968ff9d7a",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "farmer-e48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "2f830560-661a-4445-9627-c68a24f24184",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "farmer-e48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e421b3ec-f20d-4034-9233-cb3738539b6f",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.goodwife-c",
+      "kind": "sprite",
+      "dir": "goodwife-c48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese young peasant woman, black hair in a low bun, a hemp tunic dyed indigo blue with a rope belt, carrying a round brown clay water jar on her hip, low top-down view",
+      "characterId": "9891fa5b-51a2-4e7c-b8ab-2988b228595a",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the young wife in indigo with the water jar, third of the matron's variants; walk group 8e5a2094-efd5-401e-9f43-f8449265c009, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "weave",
+          "dir": "goodwife-c48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e324317a-2f68-4f9a-9331-fa3222fd06a5",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "draw",
+          "dir": "goodwife-c48/draw",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing water from a well, pulling a rope up hand over hand in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "66070364-5176-48ab-90ef-58b982dec4f4",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "goodwife-c48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "1e2851ca-7266-41f0-a803-967f0206f8a1",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "pick",
+          "dir": "goodwife-c48/pick",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "picking leaves from a bush, reaching out with one arm and drawing it back to a basket in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ee8ea2d4-540d-4f15-bbb1-ac3c3fe5919e",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "goodwife-c48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "edc438bc-60a9-49c7-9790-d283c1a5ab39",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "dye",
+          "dir": "goodwife-c48/dye",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "dipping a length of cloth into a dye vat and lifting it out dripping, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "96c9adb6-efef-4d9a-bd39-b5388aa68aec",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "wash",
+          "dir": "goodwife-c48/wash",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and washing clothes in a tub, rubbing and wringing the cloth in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9b23b5e7-9a23-48a4-884e-ebaad64d66be",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "goodwife-c48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e46bf5db-f24f-4034-aa7e-2ed510ca0b1e",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "goodwife-c48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "d073a7fb-ab0c-4aea-8522-3a7d643b1180",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.goodwife-d",
+      "kind": "sprite",
+      "dir": "goodwife-d48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese peasant woman, her hair bound in a pale cloth, a brown hemp tunic with a rope belt, holding a wooden drop spindle with a twist of pale thread, low top-down view",
+      "characterId": "98520254-1c7c-4399-809c-0375e8328167",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the wife in the headcloth with the spindle, fourth of the matron's variants; walk group f89ac72b-b91c-4c15-b7ae-d323a5d7419c, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "weave",
+          "dir": "goodwife-d48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "7f53fa0c-ddf0-41a6-bae6-7cdc6c5cd178",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "draw",
+          "dir": "goodwife-d48/draw",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing water from a well, pulling a rope up hand over hand in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "0d241895-95ea-42dc-bd51-2d0bf12155d9",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "goodwife-d48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "83e39da0-1ec3-4825-86dc-00c764b2b908",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "pick",
+          "dir": "goodwife-d48/pick",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "picking leaves from a bush, reaching out with one arm and drawing it back to a basket in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "a5c37212-1a87-4914-9b41-45782f1f5ab2",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "goodwife-d48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "f4272edd-4866-42e4-86b5-578ac9814bbf",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "dye",
+          "dir": "goodwife-d48/dye",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "dipping a length of cloth into a dye vat and lifting it out dripping, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ea69ac3a-b63c-48dd-b348-b94dc0e45278",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "wash",
+          "dir": "goodwife-d48/wash",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and washing clothes in a tub, rubbing and wringing the cloth in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ceba3cdc-1d38-4d3b-b049-872ad2e954fe",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "goodwife-d48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "a5102346-3a00-4b35-b73c-48f340fddbe9",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "goodwife-d48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "12749f33-712e-4c8f-835e-90a5a09cffa4",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.maiden-b",
+      "kind": "sprite",
+      "dir": "maiden-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese peasant girl of marriageable age, black hair in a single knot, a pale hemp tunic with a rope belt, carrying a shallow woven mulberry basket in both hands, low top-down view",
+      "characterId": "3a209ea2-2096-46dd-b9d6-23a78c24b752",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the second daughter with the mulberry basket, the maiden's second variant; walk group 9a6069e7-2530-4cf6-bdd5-05817795682f, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "carry",
+          "dir": "maiden-b48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "1b6102d3-d152-4c81-84cd-5d24d1e87841",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "maiden-b48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "438e7311-609b-4c93-b437-26e547933015",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "pick",
+          "dir": "maiden-b48/pick",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "picking leaves from a bush, reaching out with one arm and drawing it back to a basket in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "5deba002-06e6-449c-bd14-06499f42d749",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "maiden-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "55bbde8f-483e-4467-9995-efaad39200fa",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "wash",
+          "dir": "maiden-b48/wash",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and washing clothes in a tub, rubbing and wringing the cloth in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "96542fb7-c94f-4f4e-b55b-72171d103d4d",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.child-b",
+      "kind": "sprite",
+      "dir": "child-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese small peasant boy, hair in a topknot, a short undyed hemp tunic, bare legs and bare feet, empty hands, low top-down view",
+      "characterId": "8de00f6a-fee2-4eb8-9406-f2e51c09974b",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the second boy, the child's second variant; walk group fdb707ea-f308-41dc-b3b5-cc0492b08b86, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "play",
+          "dir": "child-b48/play",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "skipping and jumping in place with arms swinging",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "48bd5962-44f1-46bd-a527-342643f62ea3",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "child-b48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ca622a70-33d2-4d14-afd1-3408415150ff",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "child-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "0b03a766-607e-4ea0-9785-b2ae67c55164",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "fish",
+          "dir": "child-b48/fish",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "holding a fishing rod out over the water, the line bobbing, then a small tug, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "944231a1-7694-4693-b82b-5b2459f3b3fd",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.girl-b",
+      "kind": "sprite",
+      "dir": "girl-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese small peasant girl, hair in two knots, a short dark brown hemp tunic, bare feet, holding a white duck under one arm, low top-down view",
+      "characterId": "0aba7625-c946-4d33-8e87-6dd0a16ca0c8",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the small girl with the duck under her arm, the girl's second variant; walk group 59f5abee-88b2-4f4b-8434-9497b65623a8, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "play",
+          "dir": "girl-b48/play",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "skipping and jumping in place with arms swinging",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "6d1767a0-587b-4c34-9d52-209489957afd",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "girl-b48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "4fc950f5-261e-47a5-b342-590164c679a0",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "girl-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "f8adaba1-c2cf-4794-9e85-eb11b5dfb3da",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.granny",
+      "kind": "sprite",
+      "dir": "granny48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese old peasant woman, bent with age, white hair in a bun, a grey hemp shawl over a brown tunic, leaning on a wooden walking stick, low top-down view",
+      "characterId": "ace9e720-9065-4cf3-af72-f49c192663f5",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the old woman on her stick, the granny's own sprite; walk group fe21fd0b-0d73-483f-8d3b-1be149f7b087, four frames per cardinal facing"
+    },
+    {
+      "id": "terrain.road@wheat",
+      "kind": "tileset",
+      "file": "tilesets32/road-on-wheat.png",
+      "metadata": "tilesets32/road-on-wheat.json",
+      "against": "wheat",
+      "tool": "create_topdown_tileset",
+      "prompt": "young winter wheat fields in spring seen from above, dense parallel rows of bright green wheat blades on ridges of dark tilled earth, the rows close and even with brown soil showing in the furrows between them, small plots divided by earth banks, strictly green and brown, no purple, no violet, no magenta, no pink ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the cart track cutting through the wheat rows, loose pale dust spilling onto the tilled earth at the edge of the plots",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "69148b51-579e-42f6-93f9-fb51f88a9152",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "43b1dd8b-4e51-4a03-bbad-f0727c734a0d",
+      "date": "2026-09-09",
+      "generations": 3,
+      "note": "the lane's bank as it meets the wheat: chained to both base tiles as road@field is, and laid where the village's plots meet the lane. The seasons need no sheet of their own, since the build matches the pair's lower half onto the colours the wheat wears in each season; the count is the measured three a tileset costs this cycle",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "id": "terrain.road@bean",
+      "kind": "tileset",
+      "file": "tilesets32/road-on-bean.png",
+      "metadata": "tilesets32/road-on-bean.json",
+      "against": "bean",
+      "tool": "create_topdown_tileset",
+      "prompt": "soybean fields in summer seen from above, parallel rows of low bushy green soybean plants with small trifoliate leaves on ridges of tilled brown earth, the rows even with dark soil showing in the furrows between them, small plots divided by earth banks, strictly green and brown, no purple, no violet, no magenta, no pink ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the cart track cutting through the bean rows, loose pale dust spilling onto the tilled earth at the edge of the plots",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "9bececb6-5484-4c29-9964-38300438c0f5",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "1840b36f-2d31-48b6-b00e-76c4d4d59d7b",
+      "date": "2026-09-09",
+      "generations": 3,
+      "note": "the lane's bank as it meets the bean: chained to both base tiles as road@field is, and laid where the village's plots meet the lane. The seasons need no sheet of their own, since the build matches the pair's lower half onto the colours the bean wears in each season; the count is the measured three a tileset costs this cycle",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      }
+    },
+    {
+      "kind": "tileset",
+      "file": "tilesets32/road-on-field.png",
+      "metadata": "tilesets32/road-on-field.json",
+      "tool": "create_topdown_tileset",
+      "prompt": "cultivated millet fields seen from above, parallel furrows of tilled earth in warm ochre and tan with dark brown shadow lines between the ridges, small plots divided by earth banks, strictly ochre brown and dark brown, no purple, no violet, no magenta, no pink ↗ bare dry dirt, a track of loose pale tan dust and fine gravel worn by cart wheels, two shallow parallel ruts pressed into the soft earth, scuffed and uneven, entirely soil, not one stone slab, no paving, no bricks, no flagstones, no masonry · the cart track cutting through the furrows, loose pale dust spilling onto the tilled earth at the edge of the plots",
+      "settings": {
+        "transition_size": 0.25,
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "tile_size": 32,
+        "lower_base_tile_id": "04bc7d03-e2b3-4c12-bd2a-936fa35cd52b",
+        "upper_base_tile_id": "5b8f9a14-c8fd-489b-9281-d97e4a66759a"
+      },
+      "jobId": "05dfc6f7-9b7b-4475-a7ae-d219e4a8848a",
+      "adjust": {
+        "hue": 14,
+        "saturation": 0.62,
+        "value": 0.7
+      },
+      "id": "terrain.road@millet",
+      "against": "millet",
+      "date": "2026-09-09",
+      "generations": 0,
+      "note": "the lane's bank against the broomcorn millet: the road@field sheet under a second pair id, since terrain.millet is the field's own sheets recoloured, and the build matches the lower half onto the millet's colours"
+    },
+    {
+      "id": "terrain.paddy@marsh",
+      "kind": "tileset",
+      "file": "tilesets32/paddy.png",
+      "metadata": "tilesets32/paddy.json",
+      "against": "marsh",
+      "tool": "create_topdown_tileset",
+      "settings": {
+        "tile": 32,
+        "view": "high top-down",
+        "detail": "highly detailed",
+        "shading": "detailed shading",
+        "transition": 0.25,
+        "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+      },
+      "prompt": "flooded rice paddy fields in spring seen from above, rectangular plots of still shallow water in dull grey-green with thin lines of young bright green rice seedlings just planted in even rows across the water, low straight earth bunds of dark brown mud dividing the plots, strictly grey-green, bright green, and brown, no purple, no violet, no magenta, no pink; transition: a low mud bund between the swamp and the flooded paddy",
+      "jobId": "e7f654a6-661c-4583-97ec-73bb6810322e",
+      "date": "2026-09-09",
+      "generations": 0,
+      "adjust": {
+        "saturation": 0.85,
+        "value": 0.95
+      },
+      "seasons": {
+        "summer": {
+          "file": "tilesets32/paddy-summer.png",
+          "metadata": "tilesets32/paddy-summer.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+          },
+          "prompt": "rice paddy fields in summer seen from above, rectangular plots thick with tall lush green rice plants standing in shallow water, an even mass of bright green with thin dark lines of water showing between the rows, low straight earth bunds of dark brown mud dividing the plots, strictly green and brown, no purple, no violet, no magenta, no pink; transition: a low mud bund between the swamp and the paddy",
+          "jobId": "7140830f-09de-4348-bbfd-f1a191a5766c",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          }
+        },
+        "autumn": {
+          "file": "tilesets32/paddy-autumn.png",
+          "metadata": "tilesets32/paddy-autumn.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+          },
+          "prompt": "ripe rice paddy fields in autumn seen from above, rectangular plots of tall golden-yellow rice heavy with drooping seed heads standing in drained muddy ground, an even mass of warm gold with thin dark brown lines between the rows, low straight earth bunds of dark brown mud dividing the plots, strictly gold, amber, and brown, no purple, no violet, no magenta, no pink; transition: a low mud bund between the swamp and the ripe paddy",
+          "jobId": "747f8336-3440-4c56-9df9-6261796f0ff1",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.85,
+            "value": 0.95
+          }
+        },
+        "winter": {
+          "file": "tilesets32/paddy-winter.png",
+          "metadata": "tilesets32/paddy-winter.json",
+          "tool": "create_topdown_tileset",
+          "settings": {
+            "tile": 32,
+            "view": "high top-down",
+            "detail": "highly detailed",
+            "shading": "detailed shading",
+            "transition": 0.25,
+            "lowerBaseTileId": "02934586-c1f2-4561-8e62-4bb0384c38e4"
+          },
+          "prompt": "winter rice paddy, cut rice stubble in cold grey mud, thin ice in the furrows, no green, no pink; transition: low mud bund between the fen and the flooded paddy",
+          "jobId": "ca4c4f8c-ab8c-4a43-b39d-1d7993760890",
+          "date": "2026-09-09",
+          "generations": 0,
+          "adjust": {
+            "saturation": 0.6,
+            "value": 0.9
+          }
+        }
+      },
+      "note": "the paddy's own sheet as the pair against the marsh it was chained to: the plain item keys the marsh out so the paddy can meet grass, and this pair keeps the drawn bund where the geography lays the paddy in the fen; no generation, the seasons being the plain item's own files"
+    },
+    {
+      "id": "sprite.grandfather",
+      "kind": "sprite",
+      "dir": "grandfather48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese old village elder, a long grey beard, a small dark cloth cap, a plain grey-brown hemp robe, leaning on a tall wooden staff, low top-down view",
+      "characterId": "72387883-f8f7-4e61-92e9-05a659570cd1",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the wu elder of the village year, a stooped old man in a dark cap leaning on a staff, drawn beside the elder so the shrine rites have two old men to stand at them; walk group c6e96530-b4e7-4d1e-bde2-c71d8142f055, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "sit",
+          "dir": "grandfather48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "d1be61e0-9d1b-429d-9d7c-73e596732b03",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "grandfather48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "4db14349-d74d-4364-a262-c7013706b97a",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "grandfather48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "3a61cb9f-c222-46f5-9460-6e1a014b14d8",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.girl",
+      "kind": "sprite",
+      "dir": "girl48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese small peasant girl, hair in two knots, a short pale hemp tunic, bare feet, empty hands, low top-down view",
+      "characterId": "a9865856-71e2-4823-aaf9-ecb4dd0cb767",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the village girl's own sprite, a child in a short tunic with her hair in two knots, so the girl archetype is no longer the child's sprite worn by a second name; the south facing failed under load once and was re-queued into the same group; walk group eb8040ee-06ea-4224-afa2-6c64679ae823, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "play",
+          "dir": "girl48/play",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "skipping and jumping in place with arms swinging",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "8b3724bf-2f75-48a4-952b-8b716962f690",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "girl48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fb410c94-d9b8-466e-914a-a76652ff1bc2",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "girl48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "c2faa642-c9a5-4273-a9e9-a874b8f41291",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.granny-b",
+      "kind": "sprite",
+      "dir": "granny-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese old peasant woman, bent with age, white hair in a bun, a dark hemp tunic, holding a wooden drop spindle with a twist of pale thread, low top-down view",
+      "characterId": "35f37877-c488-4f17-ad87-8345cca2e319",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the second grandmother of the village register, a stout old woman with a headcloth and a basket, drawn beside the granny so two households have an old woman of their own; walk group 84f460b0-305e-4a66-bae9-5aebae4d56ef, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.grandfather-b",
+      "kind": "sprite",
+      "dir": "grandfather-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese old peasant man, bald and bareheaded with a grey beard, a plain brown hemp tunic with a rope belt, leaning on a tall wooden staff, low top-down view",
+      "characterId": "408200fc-0187-43ab-81f6-f972f042452b",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the second grandfather of the village register, bald and bare-headed with a grey beard, drawn beside the capped wu elder; walk group f27cefdb-cb60-473e-abe5-7b78b5ad70c4, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "sit",
+          "dir": "grandfather-b48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "12c6d7f4-4117-4a7c-a8a3-d8e4329eed26",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "grandfather-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "15f6a8a4-3370-455f-a32b-292564b2a380",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.fieldofficer",
+      "kind": "sprite",
+      "dir": "fieldofficer48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese county field officer, a black cloth cap, a plain dark grey long robe with a sash, holding a wooden writing tablet in one hand, low top-down view",
+      "characterId": "3b321cbc-f572-4f64-917e-90babde64a23",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the county's field officer (田嗇夫), the visitor who inspects the fields and the granary in the village year, in a dark robe and cap with a slip in hand; walk group e59f9de0-e97c-4b3b-b6bc-9af6dab78694, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.lieutenant",
+      "kind": "sprite",
+      "dir": "lieutenant48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese county lieutenant, a brown leather cap, a short dark red coat over trousers, a sword in a scabbard at his belt, low top-down view",
+      "characterId": "6a815188-dc78-41e6-8d7d-0d5b9617e2c8",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the county lieutenant (士吏), the armed visitor who reads the levy and the muster at the ward hall, in a leather cuirass and cap with a sword; walk group b5c901aa-34b6-4870-be3d-5efbc7dc38e3, four frames per cardinal facing"
+    },
+    {
+      "id": "overlay.hat",
+      "kind": "overlay",
+      "file": "objects32/hat.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a wide conical straw hat of a Warring States Chinese peasant seen from a low top-down view, pale yellow woven straw with a darker brim edge and a small peak, alone on a transparent background, no head, no person, no ground",
+      "jobId": "1f40548e-eda1-4e4d-98d0-7771cb998abc",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the peasants' straw hat for the field months, worn at the head anchor; one still, mirrored for east"
+    },
+    {
+      "id": "overlay.pole",
+      "kind": "overlay",
+      "file": "objects32/pole.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese carrying pole seen from a low top-down view, a long slender bamboo shoulder pole with a woven basket hanging from a cord at each end, alone on a transparent background, no person, no ground",
+      "jobId": "23b38861-c345-4ccd-aaf0-e5d9310c296a",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the carrying pole for the levy and the market road, at the hand anchor; the generator drew one basket clearly and the other as a knot, usable as a pole in the hand"
+    },
+    {
+      "id": "overlay.sash",
+      "kind": "overlay",
+      "file": "objects32/sash.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a bride's red silk sash of the Warring States Chinese period seen from a low top-down view, a broad band of bright red silk draped over two shoulders and knotted at the front with the ends hanging, alone on a transparent background, no person, no head, no ground",
+      "jobId": "f56e496f-eca0-45b8-9f64-fd151093640b",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the bride's red sash, at the shoulders; the maiden wears it under the canopy effect rather than having a bride state of her own"
+    },
+    {
+      "id": "overlay.mask",
+      "kind": "overlay",
+      "file": "objects32/mask.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese exorcist's bear mask seen from a low top-down view, a fierce dark bronze mask with four round golden eyes, bared teeth, and a bearskin ruff, alone on a transparent background, no person, no ground",
+      "jobId": "371ec992-1aa1-47ee-bb18-e5fbfcac7473",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the exorcist's bear mask of the twelfth month's nuo, at the head; came back as a bear's face with a ruff, four eyes not distinct at 32 px"
+    },
+    {
+      "id": "overlay.lamp",
+      "kind": "overlay",
+      "file": "objects32/lamp.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small lit hand lamp of the Warring States Chinese period seen from a low top-down view, a shallow bronze oil dish on a short handle with a small yellow flame and a soft warm glow, alone on a transparent background, no hand, no person, no ground",
+      "jobId": "557ae2a8-24dc-4223-9176-a6c7fb51787a",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the lit hand lamp of the maids' night walk, shared by the village and the house, at the hand"
+    },
+    {
+      "id": "overlay.cap",
+      "kind": "overlay",
+      "file": "objects32/cap.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a small black lacquered cap of a Warring States Chinese nobleman seen from a low top-down view, a low black cap with a narrow crown and a thin chin cord, alone on a transparent background, no head, no person, no ground",
+      "jobId": "20d64b4d-9bf6-405e-a897-50ed50df8065",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the capping rite's black cap, at the head; the still reads more as a lidded pot than a cap at this size, a re-roll candidate for batch 8"
+    },
+    {
+      "id": "overlay.hemp",
+      "kind": "overlay",
+      "file": "objects32/hemp.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a mourner's coarse hemp cloth of the Warring States Chinese period seen from a low top-down view, a rough undyed pale hemp cape draped over two shoulders with a frayed hem, alone on a transparent background, no person, no head, no ground",
+      "jobId": "a597540b-fea6-4a08-906b-4fc29c7f03df",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the mourners' coarse hemp over the shoulders for the funeral months"
+    },
+    {
+      "id": "overlay.pheasant",
+      "kind": "overlay",
+      "file": "objects32/pheasant.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a dead pheasant held as a gift of the Warring States Chinese period seen from a low top-down view, a plump bird with a bronze and green body, a red face, and a long barred tail, hanging by its feet from a cord, alone on a transparent background, no hand, no person, no ground",
+      "jobId": "a29c5c6e-871e-407b-a37d-a692d371f328",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the gentleman's gift bird carried to a visit, at the hand"
+    },
+    {
+      "id": "overlay.goose",
+      "kind": "overlay",
+      "file": "objects32/goose.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a live grey goose held as a betrothal gift of the Warring States Chinese period seen from a low top-down view, a plump grey and white goose with an orange bill, wings folded, tied at the feet with a red cord, alone on a transparent background, no hand, no person, no ground",
+      "jobId": "70151bc6-61a8-455c-9589-4f6984ac0496",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the betrothal goose carried in at the nacai, at the hand"
+    },
+    {
+      "id": "overlay.clapper",
+      "kind": "overlay",
+      "file": "objects32/clapper.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a wooden clapper bell of the Warring States Chinese period seen from a low top-down view, a small bronze bell with a wooden tongue on a short wooden handle, alone on a transparent background, no hand, no person, no ground",
+      "jobId": "55a609d7-f501-44ad-a664-79669ac2ba8c",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the wooden-tongued bell shaken to summon the household, at the hand"
+    },
+    {
+      "id": "overlay.tablet",
+      "kind": "overlay",
+      "file": "objects32/tablet.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a narrow wooden writing tablet of the Warring States Chinese period seen from a low top-down view, a slender pale wooden slip with a few columns of small black brush strokes, alone on a transparent background, no hand, no person, no ground",
+      "jobId": "571adfbb-6c60-4e09-8f56-86a2f9a2db49",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the steward's writing slip, at the hand"
+    },
+    {
+      "id": "overlay.basket",
+      "kind": "overlay",
+      "file": "objects32/basket.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a woven back basket of the Warring States Chinese period seen from a low top-down view, a deep tapering basket of pale yellow woven bamboo with two hemp shoulder straps, seen from behind, alone on a transparent background, no person, no ground",
+      "jobId": "a1b5c639-7bb0-4450-808a-9cf60060fd6a",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the back basket for gathering, at the back anchor and drawn beneath the figure when it faces south"
+    },
+    {
+      "id": "sprite.heir",
+      "kind": "sprite",
+      "dir": "heir48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese young nobleman before his capping, a youth with long black hair unbound and falling loose to his shoulders, a plain pale grey long robe with wide sleeves and a dark sash, cloth shoes, empty hands, low top-down view",
+      "characterId": "94748174-8379-43b6-9c9d-9aa636589e50",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the heir of the house before his capping, hair unbound; the first of the pair the house plan asks to be judged side by side in /craft/tiles; walk group 5bdf12e2-d8a5-4a21-b64f-8421c11da14d, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "kneel",
+          "dir": "heir48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "beb546aa-20d9-464d-8b0f-2486c635666e",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "heir48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "97cb1620-2d6a-4bfd-845c-590c4ab943fd",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "heir48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "108eaf1e-e993-4d49-8de0-5c506a0e7c73",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "read",
+          "dir": "heir48/read",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and reading a bundle of bamboo slips held in both hands, turning it slowly",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "f8efd91e-f7c6-4895-8c7a-43bc33c0e364",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "write",
+          "dir": "heir48/write",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and writing with a brush on a bamboo slip held in the other hand",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "64243bc4-e919-437f-b3c3-61b6d998b1d9",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "shoot",
+          "dir": "heir48/shoot",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing a bow and loosing an arrow, then lowering the bow",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9b17e59f-7e57-4dbc-b863-15d94f472b57",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.younglady",
+      "kind": "sprite",
+      "dir": "younglady48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese noble daughter, a young woman with black hair in a high knot with a jade pin, a long pale green silk robe with wide sleeves and a red sash, hands folded in her sleeves, low top-down view",
+      "characterId": "ab5de877-438d-4087-988c-c1df1906102c",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the daughter of the house in pale green with a jade pin, the bride of the third month's wedding; three facings queued when three slots were free and the east added to the group after; walk group c86d735b-c7bf-48d2-9f7a-2c6c16fdca50, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.dowager",
+      "kind": "sprite",
+      "dir": "dowager48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese old noblewoman, white hair in a high knot, a long dark plum silk robe with wide sleeves over a pale underrobe, leaning on a slender wooden stick, low top-down view",
+      "characterId": "3e7b56d6-7109-481e-a175-73e1b5c6c479",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the master's mother, white-haired in dark plum, with her stick; walk group e4687108-6777-4534-a73a-acbbaee041fc, four frames per cardinal facing"
+    },
+    {
+      "id": "decor.bier",
+      "kind": "image",
+      "file": "objects32/bier.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 64,
+        "height": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese funeral bier of the Yili's coffin-out rite: a black lacquered coffin on a low four-wheeled wooden cart draped in white hemp cloth, a small white canopy frame over it, standing on beaten earth, no people",
+      "jobId": "40062160-b560-4d7d-9e99-f482c628e94b",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the coffin cart (柩車) drawn out of the gate at the twelfth month's burial, Yili 既夕; event-time decor the engine has no direction for yet"
+    },
+    {
+      "id": "decor.coffin",
+      "kind": "image",
+      "file": "objects32/coffin.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese coffin laid out in a chamber for the encoffining: a long black lacquered wooden coffin with red rim lines on a low wooden trestle, a white hemp cloth folded over the foot, seen from a low top-down view, no people",
+      "jobId": "7df02c85-0293-4e7e-8460-c8264896da0c",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the encoffined body in the wing between the dressing and the burial, Yili 士喪禮; came back a small violet-tinted bar at 48 x 32, pinned toward black by the adjust and a re-roll candidate for batch 8 at a larger canvas",
+      "adjust": {
+        "saturation": 0.5,
+        "value": 1.1
+      }
+    },
+    {
+      "id": "sprite.maid-b",
+      "kind": "sprite",
+      "dir": "maid-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese household maid, a young woman with black hair in a low bun, a plain grey-blue long tunic with narrow sleeves and a white apron, carrying a small wooden tray, low top-down view",
+      "characterId": "48d4f65f-06b4-4d42-8933-bee04d4f14dd",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the second maid of the household, with a tray; walk group 2f186547-bb16-47d7-bfe6-5802d90be7ae, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "sweep",
+          "dir": "maid-b48/sweep",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sweeping the floor with a broom, swinging it side to side in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e3acd060-3a9f-4560-8e79-84a2572a3971",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "serve",
+          "dir": "maid-b48/serve",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "serving, holding a tray in both hands and bowing slightly forward and back",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "52af653a-b910-460b-8c42-faea5b14c5e9",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "draw",
+          "dir": "maid-b48/draw",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing water from a well, pulling a rope up hand over hand in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9dcd6a64-a4f1-4111-881c-eb522b3b0973",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "weave",
+          "dir": "maid-b48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "d5cf8eff-d8f8-41af-982b-efcd6d211517",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "maid-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling down and sitting back on the heels, hands on the thighs, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "209835b7-cbbe-46c2-976f-89e6231bc570",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "maid-b48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e502d82f-8cd5-449a-bb5b-df57f0ca920d",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.cook-b",
+      "kind": "sprite",
+      "dir": "cook-b48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese household cook, a stout woman with black hair bound in a white cloth, a brown tunic with the sleeves rolled and a stained apron, holding a wooden ladle, low top-down view",
+      "characterId": "e8c47b9d-ea8d-4739-b85f-e3c713f774e4",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the second cook, with a ladle; walk group b0500db6-5fbf-4d6d-bbe1-b16f7125a3d7, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "cook",
+          "dir": "cook-b48/cook",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "cooking, stirring a pot with a ladle in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "d4d0ec8f-6c0d-492a-8cf3-0fc22e9dc5bf",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "chop",
+          "dir": "cook-b48/chop",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "chopping on a board with a cleaver, raising it and bringing it down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "7fa13eb9-84cb-4aa3-a90a-8356325634c8",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "carry",
+          "dir": "cook-b48/carry",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place carrying a shoulder pole with a load at each end, the pole bobbing",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "bf9abd77-58ae-473c-b835-0134037d5032",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "kneel",
+          "dir": "cook-b48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fadedba6-5fea-4def-8ce0-149a31ecb5cd",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.heir-capped",
+      "kind": "sprite",
+      "dir": "heir-capped48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames",
+        "reference": "the heir's south rotation"
+      },
+      "prompt": "Warring States Chinese young nobleman just capped, a youth with black hair drawn up under a small black lacquered cap tied beneath the chin, a plain pale grey long robe with wide sleeves and a dark sash, cloth shoes, empty hands, low top-down view",
+      "characterId": "eccc63a7-39ab-4c7b-864d-4f1fc9dc0a58",
+      "date": "2026-09-09",
+      "generations": 5,
+      "note": "the heir after the capping rite, the same face and robe under the black cap, generated in v3 reference mode from the heir's south rotation (one generation for the create rather than two); if the two do not read as one person the capped state falls back to overlay.cap on the first; walk group 9febffa8-2994-4605-b2f7-e14e147a21f2, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "kneel",
+          "dir": "heir-capped48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "2fc53c86-c91c-472b-8d48-4f19132b8172",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "heir-capped48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "a609480e-0d8f-4b5b-88dc-9f7475a5c435",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "heir-capped48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "3bc52701-b865-45a7-96b7-6bd2fe8e2990",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "read",
+          "dir": "heir-capped48/read",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and reading a bundle of bamboo slips held in both hands, turning it slowly",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "13393141-a1b0-46c3-b539-3ddfdd7cbb6e",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "write",
+          "dir": "heir-capped48/write",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and writing with a brush on a bamboo slip held in the other hand",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "42bafec4-f8f9-49b4-88bc-37df5d938a63",
+          "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "shoot",
+          "dir": "heir-capped48/shoot",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "drawing a bow and loosing an arrow, then lowering the bow",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "26d2f2fd-f4b2-4bd1-a958-03037de1e75c",
+          "date": "2026-09-09",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.concubine",
+      "kind": "sprite",
+      "dir": "concubine48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese noble concubine, a young woman with black hair in a low knot with a single pin, a long pale rose silk robe with wide sleeves and a pale sash, empty hands, low top-down view",
+      "characterId": "2e1ba0fa-d4d9-46c8-b869-67ac4ffa3928",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the concubine in pale rose, the zither's player; walk group bb26e834-6257-4726-a57d-0253ddc17e78, four frames per cardinal facing"
+    },
+    {
+      "id": "decor.mingjing",
+      "kind": "image",
+      "file": "objects32/mingjing.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese mourning banner on its pole: a tall slender bamboo pole planted in the earth with a long narrow strip of dark red silk hanging from its top, a few white brushed characters on the silk, seen from a low top-down view, no people",
+      "jobId": "3a18f9ba-a8f6-4130-b5e1-5131a0227c01",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the mourning banner (銘旌) planted at the gate between the dressing and the burial, Yili 士喪禮"
+    },
+    {
+      "id": "sprite.guest",
+      "kind": "sprite",
+      "dir": "guest48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese gentleman guest, a man with a short black beard in a tall black cloth cap, a long dark blue robe with wide sleeves and a pale sash, hands folded before him, low top-down view",
+      "characterId": "fa84213c-9ac3-4546-8638-0a1438d688f5",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the gentleman visitor of the shi visit rite, bearded in a tall black cap; walk group 6cde1e58-3b56-4e59-9b2c-b85abb24aafc, four frames per cardinal facing"
+    },
+    {
+      "id": "sprite.invocator",
+      "kind": "sprite",
+      "dir": "invocator48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese invocator of the ancestral shrine, a man in a plain black long robe with wide sleeves and a black cloth cap, holding a narrow wooden prayer tablet in both hands before his chest, low top-down view",
+      "characterId": "5a6017e3-a009-493b-8e77-4e7b89f73acc",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the zhu of the ancestral shrine, in black with the prayer tablet; walk group cf959cfb-926e-4758-a391-ae5d87e0f795, four frames per cardinal facing"
+    },
+    {
+      "id": "decor.stalks",
+      "kind": "image",
+      "file": "objects32/stalks.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese divination board with yarrow stalks: a low square dark lacquered wooden board on the ground with a bundle of fifty pale dry yarrow stalks laid across it and a few stalks separated into small heaps, seen from a low top-down view, no people",
+      "jobId": "e528bf65-3bbd-49a5-8a7c-50f0c93f9cd5",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the yarrow on its board for the divination of a day, Yili 士冠禮 筮于廟門; the generator drew the board as a hinged pair of panels with the stalks laid across"
+    },
+    {
+      "id": "decor.victims",
+      "kind": "image",
+      "file": "objects32/victims.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese sacrificial sheep and pig tethered at a shrine gate: a white sheep and a black pig side by side tied by short hemp ropes to a low wooden post, standing on beaten earth, seen from a low top-down view, no people",
+      "jobId": "fb4ed2f4-dd5b-41df-a84f-f9ea9b641f01",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the sheep and the pig tethered at the shrine gate for the summer sacrifice, Yili 少牢饋食禮"
+    },
+    {
+      "id": "decor.caps",
+      "kind": "image",
+      "file": "objects32/caps.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese capping rite's tray: three caps side by side on a low red lacquered wooden tray on the ground, a black cloth cap, a white deerskin cap, and a tall dark cap with red cords, seen from a low top-down view, no people",
+      "jobId": "c45ae9cb-b93f-4386-91f0-fb6378c879f1",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the three caps on their tray for the capping rite, Yili 士冠禮"
+    },
+    {
+      "id": "decor.torches",
+      "kind": "image",
+      "file": "objects32/torches.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 32,
+        "height": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese courtyard torch stand at dusk: a tall dark wooden post planted in beaten earth with a bundle of burning reeds bound at its top, a bright yellow-orange flame and a soft warm glow, seen from a low top-down view, no people",
+      "jobId": "8d829169-feb7-4001-9a84-be724c374294",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the courtyard torch (庭燎) lit at dusk for the wedding's evening rite, Yili 士昏禮"
+    },
+    {
+      "id": "decor.icecart",
+      "kind": "image",
+      "file": "objects32/icecart.png",
+      "tool": "create_map_object",
+      "settings": {
+        "width": 48,
+        "height": 32,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color outline",
+        "view": "low top-down"
+      },
+      "prompt": "a Warring States Chinese two-wheeled hand cart loaded with blocks of pale blue-white ice packed in straw, dark wooden wheels and shafts resting on beaten earth, seen from a low top-down view, no people",
+      "jobId": "5f95a565-9ee2-457f-8440-b05abd903b93",
+      "date": "2026-09-09",
+      "generations": 1,
+      "note": "the cart that brings the winter's ice from the ice house to the ice chest, Zhouli 凌人"
+    },
+    {
+      "id": "sprite.diviner",
+      "kind": "sprite",
+      "dir": "diviner48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese diviner, an older man with a grey beard in a plain dark brown long robe and a tall pointed cloth cap, holding a bundle of pale yarrow stalks in one hand, low top-down view",
+      "characterId": "d06bd8fc-33c4-42fa-9004-978d104ac438",
+      "date": "2026-09-09",
+      "generations": 6,
+      "note": "the diviner of the day's divination, grey-bearded with the yarrow bundle; walk group e73ca822-9ea1-4ccb-9220-2726e51b1a56, four frames per cardinal facing"
     }
   ]
 }

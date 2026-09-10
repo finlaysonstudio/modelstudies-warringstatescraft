@@ -36,12 +36,31 @@ export type Facing = "down" | "left" | "right" | "up";
 
 export const FACINGS: readonly Facing[] = ["down", "left", "right", "up"];
 
+/** Where an overlay attaches on one frame, in that frame's pixels. */
+export type OverlaySlot = "head" | "shoulders" | "hand" | "back";
+
+/** One frame's anchors: `[x, y]` per slot, read from the frame's own pixels. */
+export type SpriteAnchors = Record<OverlaySlot, [number, number]>;
+
 /** A walking sprite sheet: frames in rows per facing, RPG Maker order. */
 export interface SpriteMeta {
   frameWidth: number;
   frameHeight: number;
   columns: number;
   walk: Record<Facing, number[]>;
+  /**
+   * The poses a period sprite carries beyond the walk (`hoe`, `reap`,
+   * `kneel`): the frame indexes per facing, stacked after the walk rows.
+   */
+  actions?: Record<string, Record<Facing, number[]>>;
+  /**
+   * The overlay anchors of every frame, indexed by frame: `head` the
+   * topmost opaque row's centre, `shoulders` a quarter down the figure,
+   * `hand` the outermost opaque column at mid-height on the facing's
+   * leading side, `back` the trailing side. Read by the build so an overlay
+   * follows the walk's bob and a pose's reach with no hand-placed offset.
+   */
+  anchors?: SpriteAnchors[];
 }
 
 export interface SpriteMetaOptions {

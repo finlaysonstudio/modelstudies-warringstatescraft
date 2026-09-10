@@ -14,12 +14,14 @@ import { BadRequestError } from "@jaypie/errors";
  *
  * `--kind` is what the id names: `tileset` (the Wang sheet and its corner
  * metadata, the default), `object` (one PNG, or one frame per facing when the
- * object was generated in eight directions), `character` (the animation
- * frames), or `kit` (a building kit's eighty pieces, `<name>/<n>.png`).
- * Anything with facings is unpacked to `<name>/walk/<facing>-<n>.png`,
- * so a still and a walk cycle read the same way. `--dir` names the
- * subdirectory of the raw tree the files land in, so a second art set's
- * downloads sit beside the first set's rather than over them.
+ * object was generated in eight directions), `character` (every animation
+ * group of the character, `<name>/<animation>/<facing>-<n>.png`, the walk
+ * under `walk/` and each pose under its own name), or `kit` (a building
+ * kit's eighty pieces, `<name>/<n>.png`). An object with facings is unpacked
+ * to `<name>/walk/<facing>-<n>.png`, so a still and a walk cycle read the
+ * same way. `--dir` names the subdirectory of the raw tree the files land
+ * in, so a second art set's downloads sit beside the first set's rather than
+ * over them.
  */
 
 const ENDPOINT = "https://api.pixellab.ai/mcp";
@@ -139,19 +141,23 @@ export const readZip = (data: Uint8Array): Map<string, Uint8Array> => {
 };
 
 /**
- * The archive's frames for one facing, in order: the animation's frames when
- * the subject was animated (`<State>/animations/<name>/<facing>/frame_NNN.png`),
- * otherwise the single rotation it was generated with. A still and a walk
- * cycle then land in the same shape, and the spec's `frames` count is what
- * says which one an id is.
+ * The archive's frames for one facing of one animation, in order
+ * (`<State>/animations/<animation>/<facing>/frame_NNN.png`); with no
+ * animation named, the frames of whichever animation the archive holds,
+ * otherwise the single rotation the subject was generated with. A still and
+ * a walk cycle then land in the same shape, and the spec's `frames` count is
+ * what says which one an id is.
  */
 const framesOf = (
   entries: Map<string, Uint8Array>,
   facing: string,
+  animation = "[^/]+",
 ): Uint8Array[] => {
   const animated = [...entries.keys()]
     .filter((entry) =>
-      new RegExp(`/animations/[^/]+/${facing}/frame_\\d+\\.png$`).test(entry),
+      new RegExp(`/animations/${animation}/${facing}/frame_\\d+\\.png$`).test(
+        entry,
+      ),
     )
     .sort();
   if (animated.length) {
@@ -164,22 +170,44 @@ const framesOf = (
   return rotation ? [entries.get(rotation) as Uint8Array] : [];
 };
 
-/** Writes each facing's frames as `<facing>-<n>.png`, returning how many. */
+/** The animation groups an archive holds, by the name they were stored under. */
+export const animationsOf = (entries: Map<string, Uint8Array>): string[] => {
+  const names = new Set<string>();
+  for (const entry of entries.keys()) {
+    const match = /\/animations\/([^/]+)\/[^/]+\/frame_\d+\.png$/.exec(entry);
+    if (match) names.add(match[1]);
+  }
+  return [...names].sort();
+};
+
+/**
+ * Writes each facing's frames as `<facing>-<n>.png`, returning how many.
+ * `require` names the facings that must be present: a walk needs all four,
+ * while a pose is generated in three and the build mirrors the fourth, so
+ * an absent facing there is the plan rather than a fault.
+ */
 const writeFrames = async ({
   entries,
   dir,
   name,
+  animation,
+  require = FACINGS,
 }: {
   entries: Map<string, Uint8Array>;
   dir: string;
   name: string;
+  animation?: string;
+  require?: readonly string[];
 }): Promise<number> => {
   await mkdir(dir, { recursive: true });
   let written = 0;
   for (const facing of FACINGS) {
-    const frames = framesOf(entries, facing);
+    const frames = framesOf(entries, facing, animation);
     if (frames.length === 0) {
-      throw new BadRequestError(`${name} has no ${facing} frames`);
+      if (require.includes(facing)) {
+        throw new BadRequestError(`${name} has no ${facing} frames`);
+      }
+      continue;
     }
     for (const [index, frame] of frames.entries()) {
       await writeFile(path.join(dir, `${facing}-${index}.png`), frame);
@@ -189,9 +217,16 @@ const writeFrames = async ({
   return written;
 };
 
+/** the one animation group every character carries, and the build requires whole */
+const WALK = "walk";
+
 /**
- * A character's walk frames, laid out the way the period build reads them.
- * The archive holds one directory per state, the animations under it.
+ * A character's animations, laid out the way the period build reads them:
+ * the walk under `walk/`, every other group under the name it was stored
+ * with (`hoe/`, `kneel/`), each `<facing>-<n>.png`. The archive holds one
+ * directory per state, the animations under it. Only the walk has to carry
+ * all four facings; a pose is generated in three and the build mirrors the
+ * fourth.
  */
 export const fetchCharacter = async ({
   id,
@@ -202,12 +237,27 @@ export const fetchCharacter = async ({
   const entries = readZip(
     await download(`${ENDPOINT}/characters/${id}/download`),
   );
-  const written = await writeFrames({
-    entries,
-    dir: path.join(dir, name, "walk"),
-    name,
-  });
-  log(`${name}  ${written} frames  ← ${id}`);
+  const animations = animationsOf(entries);
+  if (!animations.includes(WALK)) {
+    // a character generated with no walk at all is still a set of
+    // rotations, which land as a one-frame walk
+    const written = await writeFrames({
+      entries,
+      dir: path.join(dir, name, WALK),
+      name,
+    });
+    log(`${name}/${WALK}  ${written} frames (rotations)  ← ${id}`);
+  }
+  for (const animation of animations) {
+    const written = await writeFrames({
+      entries,
+      dir: path.join(dir, name, animation),
+      name: `${name}/${animation}`,
+      animation,
+      require: animation === WALK ? FACINGS : [],
+    });
+    log(`${name}/${animation}  ${written} frames  ← ${id}`);
+  }
 };
 
 /**

@@ -1,4 +1,5 @@
 import { blobIndexOf, maskOf } from "../../art/vendor/blob";
+import type { StageArchetype } from "../lib/types";
 import {
   ARCHETYPES,
   ARCHETYPE_SPRITES,
@@ -6,11 +7,14 @@ import {
   EFFECTS,
   MARKERS,
   MARKER_VARIANTS,
+  OVERLAYS,
+  SPRITE_VARIANTS,
   TERRAINS,
   WATERS,
   decorId,
   effectId,
   markerId,
+  overlayId,
   terrainId,
   waterId,
 } from "./catalog";
@@ -25,13 +29,41 @@ import { stageSet, type StageSet } from "./sets";
  */
 
 export type ShowcaseGroup =
-  "ground" | "pair" | "season" | "place" | "decor" | "figure";
+  "ground" | "pair" | "season" | "place" | "decor" | "figure" | "overlay";
 
 /** The plain id a seasonal sheet is a sibling of, or the id itself. */
 export const plainOf = (id: string): string =>
   id.includes("~") ? id.slice(0, id.indexOf("~")) : id;
 
-const SEASON_ORDER = ["spring", "summer", "autumn", "winter"];
+/** the year's order, and the night after it: the fifth `~` sibling a decor may have */
+const SEASON_ORDER = ["spring", "summer", "autumn", "winter", "night"];
+
+/**
+ * The archetype an overlay is judged on: the first figure each one is worn
+ * by in the site plans (the straw hat and the pole on the farmer, the sash
+ * on the bride, the cap on the heir, the hemp on the retainer, the lamp on
+ * the maid), and the peasant for anything the plans leave open. The scene
+ * draws an overlay on whoever wears it; this is only which sprite the card
+ * shows it on, so congruence is judged where the walk is.
+ */
+export const OVERLAY_WEARERS: Record<string, StageArchetype> = {
+  hat: "peasant",
+  pole: "peasant",
+  sash: "maiden",
+  mask: "peasant",
+  lamp: "maid",
+  cap: "heir",
+  hemp: "retainer",
+  pheasant: "guest",
+  goose: "guest",
+  clapper: "guard",
+  tablet: "steward",
+  basket: "matron",
+};
+
+/** The archetype an overlay's card draws it on. */
+export const wearerOf = (id: string): StageArchetype =>
+  OVERLAY_WEARERS[id.slice("overlay.".length)] ?? "peasant";
 
 /** The lower ground a transition sheet is drawn against, or null for a plain one. */
 export const lowerOf = (id: string): string | null =>
@@ -46,6 +78,7 @@ export const groupOf = (id: string): ShowcaseGroup | null => {
   if (id.startsWith("image.")) return "place";
   if (id.startsWith("decor.")) return "decor";
   if (id.startsWith("sprite.")) return "figure";
+  if (id.startsWith("overlay.")) return "overlay";
   return null;
 };
 
@@ -61,7 +94,13 @@ export const CATALOG_ORDER: Record<ShowcaseGroup, string[]> = {
     (marker) => MARKER_VARIANTS[marker] ?? [markerId(marker)],
   ),
   decor: DECOR.map(decorId),
-  figure: ARCHETYPES.map((archetype) => ARCHETYPE_SPRITES[archetype][0]),
+  // each archetype's own sprite, then the variants a register may name
+  figure: ARCHETYPES.flatMap((archetype) => {
+    const own = ARCHETYPE_SPRITES[archetype][0];
+    const variants = SPRITE_VARIANTS[archetype] ?? [];
+    return [own, ...variants.filter((id) => id !== own)];
+  }),
+  overlay: Object.keys(OVERLAYS).map(overlayId),
 };
 
 /** Every catalog id the stage may ask for, whichever layer answers. */
@@ -70,6 +109,7 @@ export const WANTED_IDS: string[] = [
   ...CATALOG_ORDER.place,
   ...CATALOG_ORDER.decor,
   ...CATALOG_ORDER.figure,
+  ...CATALOG_ORDER.overlay,
   ...EFFECTS.map(effectId),
 ];
 
@@ -142,7 +182,13 @@ const SECTIONS: { group: ShowcaseGroup; title: string; blurb: string }[] = [
     group: "figure",
     title: "Figures",
     blurb:
-      "One walk cycle per archetype, four frames a facing, animated as the stage walks a move from one place to another. Each card names the frame it was generated at.",
+      "One walk cycle per archetype, four frames a facing, animated as the stage walks a move from one place to another, and beneath it every pose the sprite carries, each walking the same four facings. A pose is generated in three facings and the fourth is the west row mirrored, so what reads wrong in the east column is the mirror and not the generator. Each card names the frame it was generated at.",
+  },
+  {
+    group: "overlay",
+    title: "Overlays",
+    blurb:
+      "A small still per facing keyed to a slot on a figure: a cap, a sash, a lamp, a basket. Each is drawn here on the sprite of the archetype that first wears it, at the anchor the build read from that sprite's own pixels, frame by frame as it walks, so an overlay that drifts off the head or the hand is judged where the walk is rather than on a site.",
   },
 ];
 
