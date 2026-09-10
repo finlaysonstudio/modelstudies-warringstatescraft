@@ -45,6 +45,15 @@ export interface StagePlan {
 }
 
 export const WALK_SPEED_PX_PER_S = 160;
+/**
+ * The stride a registered site's people walk at, in tiles a second on a
+ * site at a metre a tile; a site at a coarser scale strides faster by its
+ * scale's magnitude (`strideOf`), so a crossing of the village takes about
+ * the share of a double-hour a crossing of the house does.
+ */
+export const STRIDE_TILES_PER_S = 2;
+/** the gap between one walker and the next in a file on a routed path */
+export const FILE_GAP_MS = 350;
 export const WALK_MIN_MS = 900;
 export const WALK_MAX_MS = 3200;
 export const HOLD_MS = 900;
@@ -64,6 +73,22 @@ export const walkMsOf = (distance: number, unit = 1): number =>
     WALK_MIN_MS,
     WALK_MAX_MS,
   );
+
+/** tiles a second at a site's scale (metres a tile): 2 at the house, 4 at the village, about 5 at the city */
+export const strideOf = (scale: number): number =>
+  STRIDE_TILES_PER_S * Math.max(1, 1 + Math.log10(Math.max(1, scale)));
+
+/**
+ * How long a walk of `distance` pixels takes at a site's stride, with no
+ * clamp: a figure crossing the whole village takes its time, since the
+ * clock is what the populace keeps and a beat's patience is not the measure.
+ */
+export const strideMsOf = (
+  distance: number,
+  tilePx: number,
+  scale: number,
+): number =>
+  Math.max(1, Math.round((distance / (strideOf(scale) * tilePx)) * 1000));
 
 /** The length of a polyline in pixels. */
 export const lengthOf = (points: StagePoint[]): number =>

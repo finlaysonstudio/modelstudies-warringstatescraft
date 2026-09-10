@@ -4,6 +4,7 @@ import city from "../../../art/sites/city/geography.json";
 import house from "../../../art/sites/house/geography.json";
 import village from "../../../art/sites/village/geography.json";
 import { ARCHETYPES, DECOR, MARKERS, TERRAINS, WATERS } from "../catalog";
+import { villagersOf } from "../register";
 import { STAGE_SETS } from "../sets";
 import {
   ORDER_LABELS,
@@ -97,12 +98,17 @@ describe("sites", () => {
 
       it("seats every figure at a place, as an archetype the catalog draws", () => {
         const seats = new Set<string>();
-        for (const person of site.folk) {
+        for (const person of villagersOf(site)) {
           expect(ARCHETYPES, person.archetype).toContain(person.archetype);
-          expect(seats.has(person.archetype), `${person.archetype} twice`).toBe(
-            false,
-          );
-          seats.add(person.archetype);
+          // a registered site seats by villager, so two of one archetype
+          // are two people; the city seats by archetype and may not repeat
+          if (!site.register) {
+            expect(
+              seats.has(person.archetype),
+              `${person.archetype} twice`,
+            ).toBe(false);
+            seats.add(person.archetype);
+          }
           if (person.home) expect(places, person.home).toContain(person.home);
           expect(ORDER_LABELS[person.order]).toBeDefined();
           for (const language of LANGUAGES) {

@@ -36,6 +36,8 @@ export type Order =
  * figure with no home only strolls.
  */
 export interface Townsperson {
+  /** the villager id on a registered site; a city townsperson has none */
+  id?: string;
   archetype: StageArchetype;
   order: Order;
   label: Localized;
@@ -46,6 +48,11 @@ export interface Townsperson {
 export interface SiteSource {
   name: string;
   text: string;
+  /**
+   * when the witness wrote: the period's own, Qin, a Han witness read for
+   * the customs the period left unrecorded, or later; the page marks it
+   */
+  era?: "warring-states" | "qin" | "han" | "later";
 }
 
 /**
@@ -138,6 +145,8 @@ export interface Household {
   rank?: string;
   /** the head's villager id */
   head: string;
+  /** the household's own field, where a circuit's `plot` resolves */
+  plot?: string;
   members: Villager[];
   note?: Localized;
 }

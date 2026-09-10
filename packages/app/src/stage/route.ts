@@ -10,7 +10,10 @@
  * beside a jamb reads as walking through it. The endpoints are always
  * allowed, since a place may stand on furniture or in a doorway, and a path
  * is a list of cells from the start to the goal inclusive, or null when no
- * way exists.
+ * way exists. With a cost grid the search is weighted: a step pays the cell
+ * it lands on, so a walker keeps to the lane past a field and to the bank
+ * past a block, and the Manhattan heuristic stays admissible because the
+ * least a step can cost is 1.
  */
 
 export interface Cell {
@@ -23,6 +26,13 @@ export interface Grid {
   height: number;
   /** one byte per cell, row-major; non-zero is blocked */
   blocked: Uint8Array;
+  /**
+   * The price of stepping onto each cell, row-major, when the grid is a cost
+   * grid (`grid.ts`): a lane is 1, a yard 2, grass 3, a field 8, a hill 24.
+   * A blocked cell is 0 here as well. Absent, every step costs 1 and the
+   * search is the plain shortest path.
+   */
+  cost?: Uint8Array;
 }
 
 const STEPS: readonly Cell[] = [
@@ -87,7 +97,7 @@ export const findPath = ({
   from: Cell;
   to: Cell;
 }): Cell[] | null => {
-  const { width, height, blocked } = grid;
+  const { width, height, blocked, cost } = grid;
   const inside = (cell: Cell): boolean =>
     cell.x >= 0 && cell.y >= 0 && cell.x < width && cell.y < height;
   if (!inside(from) || !inside(to)) return null;
@@ -128,7 +138,7 @@ export const findPath = ({
       if (closed[next]) continue;
       // the goal is always allowed: a place may stand on what blocks
       if (blocked[next] && next !== goal) continue;
-      const tentative = g[current] + 1;
+      const tentative = g[current] + (cost ? Math.max(1, cost[next]) : 1);
       if (tentative >= g[next]) continue;
       came[next] = current;
       g[next] = tentative;

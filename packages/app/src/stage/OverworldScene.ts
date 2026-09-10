@@ -1,19 +1,38 @@
 import Phaser from "phaser";
 
-import type { StageBeat, StageSequence } from "../lib/types";
+import type {
+  StageActor,
+  StageBeat,
+  StageDirection,
+  StageSequence,
+} from "../lib/types";
 import { spriteFor } from "./assets";
 import {
   facingOf,
+  FILE_GAP_MS,
   formation,
   lengthOf,
   PAN_MS,
   planBeat,
   routePlan,
+  strideMsOf,
   type StageAction,
   type StagePlaces,
   type StagePlan,
   type StagePoint,
 } from "./beats";
+import {
+  clampHour,
+  hourLightOf,
+  isNight,
+  nightOf,
+  type SiteClock,
+} from "./clock";
+import { gridOf, isRouted, type GridMap } from "./grid";
+import type { Localized } from "./legend";
+import { Populace, type Figure, type PopulaceDriver } from "./populace";
+import type { CircuitContext } from "./register";
+import type { Site, SiteEvent } from "./site";
 import {
   ARCHETYPES,
   DECOR,
@@ -40,7 +59,12 @@ import {
 } from "./almanac";
 import { KIT_PASSABLE } from "./kit";
 import { BARE_GROUND, type LegendKind } from "./legend";
-import type { StageAsset, StageManifest } from "./manifest";
+import type {
+  StageAsset,
+  StageFacing,
+  StageManifest,
+  StageOverlaySlot,
+} from "./manifest";
 import { findPath, simplifyPath, type Grid } from "./route";
 import { BASE_TILE, DEFAULT_STAGE_SET, stageSet } from "./sets";
 
@@ -78,7 +102,8 @@ const PICK_COLOR = 0xff7550;
 
 /** What a reader picked out of the map. */
 export interface StagePick {
-  kind: LegendKind;
+  /** `figure` is one of a registered site's people, by villager id */
+  kind: LegendKind | "figure";
   /** the ground name, the decor id, or the place key */
   id: string;
   /** for a place, the marker the map drew (`region` when it has none) */
@@ -138,6 +163,23 @@ export interface OverworldCallbacks {
   onPick?: (pick: StagePick | null) => void;
   /** the camera's zoom and its bounds, whenever any of them changes */
   onZoom?: (zoom: StageZoom) => void;
+  /** the site's clock, a few times a second while the populace runs */
+  onClock?: (clock: SiteClock, next: SiteEvent | undefined) => void;
+  /** a stop's or an event's line for the day log, with the hour it was said */
+  onLine?: (line: Localized, clock: SiteClock, figure?: Figure) => void;
+  /** an event has begun (its script is on the queue) */
+  onEvent?: (event: SiteEvent) => void;
+}
+
+/** a registered site the scene runs a populace for */
+export interface PopulaceConfig {
+  site: Site;
+  month: Month;
+  /** the double-hour the clock opens at (卯 by default) */
+  hour?: number;
+  /** the event the clock opens just before */
+  event?: string;
+  paused?: boolean;
 }
 
 export interface OverworldConfig extends OverworldCallbacks {
@@ -165,6 +207,8 @@ export interface OverworldConfig extends OverworldCallbacks {
   roofs?: boolean;
   /** the month of the almanac the site is shown in (none: the plain art, no weather) */
   month?: Month;
+  /** the register to walk: one figure a villager on the site's clock */
+  populace?: PopulaceConfig;
 }
 
 interface TiledPoint {
@@ -209,6 +253,27 @@ const GEESE_CROSSING_MS = 36000;
 const GEESE_REST_MS = 18000;
 const FLAKE_TEXTURE = "stage.flake";
 const ROOF_LIFTED_ALPHA = 0.12;
+/** the night: a deep blue over the whole map, deepest at `NIGHT_ALPHA` */
+const NIGHT_COLOR = 0x0a1230;
+const NIGHT_ALPHA = 0.45;
+const NIGHT_DEPTH = 4501;
+/** the decor lit at night, each by its `~night` sibling where the set has one */
+const NIGHT_DECOR = new Set([
+  "lantern",
+  "brazier",
+  "lamptree",
+  "lamp",
+  "torches",
+]);
+/** how often the clock is reported to the page, in ms */
+const CLOCK_REPORT_MS = 250;
+/** a figure standing at a place stands a little off it, so two are two */
+const STAND_SPREAD = 6;
+/** the depth a figure on the roof is drawn at, above every roof */
+const ROOF_FIGURE_DEPTH = 9000;
+/** the place keys the engine treats specially */
+const EDGE_PLACE = "edge";
+const ROOF_PLACE = "roof";
 const ROOF_FADE_RATE = 0.08;
 /** what a hidden decor answers a click with */
 const EMPTY_BOUNDS = new Phaser.Geom.Rectangle(0, 0, 0, 0);
@@ -225,6 +290,67 @@ const boundsOf = (text: Phaser.GameObjects.Text): Phaser.Geom.Rectangle =>
 /** the frame a figure rests on (a static sprite has one frame per facing) */
 const restFrame = (sprite: NonNullable<StageAsset["sprite"]>): number =>
   sprite.walk.down[1] ?? sprite.walk.down[0] ?? 0;
+
+/** the rest frame of a facing, so a figure keeps looking where it went */
+const restFrameFacing = (
+  sprite: NonNullable<StageAsset["sprite"]>,
+  facing: StageFacing,
+): number => {
+  const row = sprite.walk[facing] ?? sprite.walk.down;
+  return row[1] ?? row[0] ?? restFrame(sprite);
+};
+
+/**
+ * Where an overlay sits on a sprite the build did not measure: the head
+ * over the crown, the shoulders a third down, the hand at mid-height on
+ * the facing's leading side, the back on the trailing side.
+ */
+const defaultAnchor = (
+  sprite: NonNullable<StageAsset["sprite"]>,
+  slot: StageOverlaySlot,
+  facing: StageFacing,
+): [number, number] => {
+  const w = sprite.frameWidth;
+  const h = sprite.frameHeight;
+  const lead = facing === "left" ? 0.2 : facing === "right" ? 0.8 : 0.72;
+  switch (slot) {
+    case "head":
+      return [w * 0.5, h * 0.12];
+    case "shoulders":
+      return [w * 0.5, h * 0.38];
+    case "hand":
+      return [w * lead, h * 0.58];
+    default:
+      return [w * (1 - lead), h * 0.45];
+  }
+};
+
+/** one more tile past the edge along the last leg, so a figure walks off rather than stopping at it */
+const beyondEdge = (
+  stand: StagePoint,
+  points: StagePoint[],
+  tile: number,
+): StagePoint => {
+  const before = points.length >= 2 ? points[points.length - 2] : stand;
+  const dx = stand.x - before.x;
+  const dy = stand.y - before.y;
+  const length = Math.hypot(dx, dy) || 1;
+  return {
+    x: stand.x + (dx / length) * tile * 1.5,
+    y: stand.y + (dy / length) * tile * 1.5,
+  };
+};
+
+/** one figure's sprite and the overlays it wears */
+interface FigureView {
+  figure: Figure;
+  sprite: Phaser.GameObjects.Sprite;
+  asset: StageAsset;
+  facing: StageFacing;
+  overlays: { id: string; image: Phaser.GameObjects.Image }[];
+  /** the walk in progress, so a jump can stop it */
+  walking: boolean;
+}
 
 /**
  * The overworld: the Tiled map, its places and their labels, the seats'
@@ -275,6 +401,15 @@ export class OverworldScene extends Phaser.Scene {
   month?: Month;
   /** the cells a figure cannot cross; absent on a map with no walls to respect */
   private grid?: Grid;
+  /** the registered site's people, on their clock */
+  private populace?: Populace;
+  private figureViews = new Map<string, FigureView>();
+  private clockReportedAt = 0;
+  private nightGrade?: Phaser.GameObjects.Rectangle;
+  private castGrade?: Phaser.GameObjects.Rectangle;
+  private nightShown = false;
+  /** the event whose script is on the queue, and the beat that ends it */
+  private pendingEvent?: { id: string; lastBeat: string };
   private reportedZoom = 0;
   /**
    * The map's tile over the base tile. Every constant below is written for a
@@ -352,15 +487,32 @@ export class OverworldScene extends Phaser.Scene {
         frameHeight: asset.frame.height,
       });
     });
-    ARCHETYPES.forEach((archetype) => {
-      const asset = spriteFor(manifest, archetype);
+    const loadSprite = (asset: StageAsset | undefined): void => {
       if (!asset?.sprite || this.loadedSprites.has(asset.id)) return;
       this.loadedSprites.set(asset.id, asset);
       this.load.spritesheet(asset.id, asset.url, {
         frameWidth: asset.sprite.frameWidth,
         frameHeight: asset.sprite.frameHeight,
       });
-    });
+    };
+    ARCHETYPES.forEach((archetype) =>
+      loadSprite(spriteFor(manifest, archetype)),
+    );
+    if (this.config.populace) {
+      // a register names sprite variants and overlays the archetypes alone
+      // do not: every sprite and overlay the set carries is loaded
+      Object.values(manifest.assets)
+        .filter((asset) => asset.kind === "sprite")
+        .forEach(loadSprite);
+      Object.values(manifest.assets)
+        .filter((asset) => asset.kind === "overlay" && asset.frame)
+        .forEach((asset) => {
+          this.load.spritesheet(asset.id, asset.url, {
+            frameWidth: asset.frame!.width,
+            frameHeight: asset.frame!.height,
+          });
+        });
+    }
   }
 
   /**
@@ -515,7 +667,7 @@ export class OverworldScene extends Phaser.Scene {
     }
 
     for (const asset of this.loadedSprites.values()) {
-      if (!asset.sprite) continue;
+      if (!asset.sprite || !this.textures.exists(asset.id)) continue;
       for (const [facing, frames] of Object.entries(asset.sprite.walk)) {
         this.anims.create({
           key: `${asset.id}:${facing}`,
@@ -524,7 +676,23 @@ export class OverworldScene extends Phaser.Scene {
           repeat: -1,
         });
       }
+      // the poses a period sprite carries: `${id}:${pose}:${facing}`
+      for (const [pose, facings] of Object.entries(
+        asset.sprite.actions ?? {},
+      )) {
+        for (const [facing, frames] of Object.entries(facings)) {
+          if (!frames.length) continue;
+          this.anims.create({
+            key: `${asset.id}:${pose}:${facing}`,
+            frames: this.anims.generateFrameNumbers(asset.id, { frames }),
+            frameRate: 6,
+            repeat: -1,
+          });
+        }
+      }
     }
+    this.buildGrid(map);
+    this.buildPopulace();
     for (const effect of EFFECTS) {
       const asset = this.config.manifest.assets[effectId(effect)];
       if (!asset?.frames || !this.textures.exists(asset.id)) continue;
@@ -566,18 +734,467 @@ export class OverworldScene extends Phaser.Scene {
     this.pump();
   }
 
-  update(): void {
+  update(time: number, delta: number): void {
     this.updateLabels();
     this.reportZoom();
     this.liftRoofs();
     this.driftWeather();
+    this.runPopulace(time, delta);
+  }
+
+  /**
+   * The cost grid of a routed map, read from the Tiled JSON the map was
+   * loaded from: a site map is stamped `routed` by its build, and the
+   * overworld is not, so the overworld's columns keep crossing rivers on
+   * purpose while a village's people keep to the lanes and the banks.
+   */
+  private buildGrid(map: Phaser.Tilemaps.Tilemap): void {
+    const cached = this.cache.tilemap.get("overworld") as
+      { data?: GridMap } | undefined;
+    const json = cached?.data;
+    if (!json || !isRouted(json)) return;
+    const grid = gridOf(json);
+    if (grid.width !== map.width || grid.height !== map.height) return;
+    this.grid = grid;
+  }
+
+  /** whether the map is one the populace and a file walk on a cost grid */
+  private get routed(): boolean {
+    return this.grid?.cost !== undefined;
+  }
+
+  // ---- the populace -------------------------------------------------------
+
+  private buildPopulace(): void {
+    const config = this.config.populace;
+    const map = this.map;
+    if (!config || !map) return;
+    const markers: Record<string, string | undefined> = {};
+    for (const object of (map.getObjectLayer("places")?.objects ??
+      []) as TiledPoint[]) {
+      markers[object.name] = object.type || object.class || undefined;
+    }
+    const context: CircuitContext = {
+      places: this.places,
+      markers,
+      edge: this.places[EDGE_PLACE] ? EDGE_PLACE : undefined,
+    };
+    this.populace = new Populace({
+      site: config.site,
+      month: this.month ?? config.month,
+      context,
+      driver: this.driver(),
+      hour: config.hour,
+      event: config.event,
+    });
+    this.populace.paused = config.paused ?? false;
+    this.applyHour(true);
+  }
+
+  /** every figure off the map, for a month change to rebuild them */
+  private destroyPopulace(): void {
+    for (const view of this.figureViews.values()) {
+      this.tweens.killTweensOf(view.sprite);
+      for (const { image } of view.overlays) image.destroy();
+      view.sprite.destroy();
+    }
+    this.figureViews.clear();
+    this.pickables = this.pickables.filter((p) => p.pick.kind !== "figure");
+    this.pendingEvent = undefined;
+    this.populace = undefined;
+  }
+
+  private runPopulace(time: number, delta: number): void {
+    const populace = this.populace;
+    if (!populace) return;
+    populace.tick(Math.min(delta, 250));
+    for (const view of this.figureViews.values()) this.placeOverlays(view);
+    this.applyHour();
+    if (time - this.clockReportedAt >= CLOCK_REPORT_MS) {
+      this.clockReportedAt = time;
+      this.config.onClock?.(populace.clock, populace.nextEvent());
+    }
+  }
+
+  /** the page's pause switch */
+  setPaused(paused: boolean): void {
+    if (this.populace) this.populace.paused = paused;
+  }
+
+  /** the page's jump to an hour of the day */
+  setHour(hour: number): void {
+    this.populace?.jumpTo(clampHour(hour));
+    this.dropEventBeats();
+  }
+
+  /** the page's jump to an event of the month */
+  jumpToEvent(id: string): void {
+    this.populace?.jumpToEvent(id);
+    this.dropEventBeats();
+  }
+
+  /** the clock, for a page that asks */
+  get clock(): SiteClock | undefined {
+    return this.populace?.clock;
+  }
+
+  private dropEventBeats(): void {
+    if (!this.pendingEvent) return;
+    this.queue = [];
+    this.pendingEvent = undefined;
+  }
+
+  /** the light of the hour over the month's own grade, and the lamps lit */
+  private applyHour(force = false): void {
+    const map = this.map;
+    const populace = this.populace;
+    if (!map || !populace) return;
+    const hour = populace.clock.hour;
+    const night = nightOf(hour);
+    if (!this.nightGrade) {
+      this.nightGrade = this.add
+        .rectangle(0, 0, map.widthInPixels, map.heightInPixels)
+        .setOrigin(0, 0)
+        .setDepth(NIGHT_DEPTH)
+        .setFillStyle(NIGHT_COLOR, 1);
+      this.castGrade = this.add
+        .rectangle(0, 0, map.widthInPixels, map.heightInPixels)
+        .setOrigin(0, 0)
+        .setDepth(NIGHT_DEPTH - 0.5);
+    }
+    this.nightGrade.setAlpha(NIGHT_ALPHA * night);
+    const light = hourLightOf(hour);
+    if (light === "dawn") {
+      this.castGrade
+        ?.setFillStyle(GRADES.cold.color, 0.12 * (1 - (hour - 4)))
+        .setBlendMode(Phaser.BlendModes.SCREEN)
+        .setVisible(true);
+    } else if (light === "dusk") {
+      this.castGrade
+        ?.setFillStyle(GRADES.amber.color, 0.22 * Math.min(1, (hour - 9) / 1.5))
+        .setBlendMode(Phaser.BlendModes.MULTIPLY)
+        .setVisible(true);
+    } else {
+      this.castGrade?.setVisible(false);
+    }
+    const dark = isNight(hour) || light === "dusk";
+    if (force || dark !== this.nightShown) {
+      this.nightShown = dark;
+      this.dressDecor();
+    }
+  }
+
+  /** the decor's texture for the season and, at night, the lit frame */
+  private dressDecor(): void {
+    const month = this.month;
+    const season = month ? seasonOf(month) : undefined;
+    for (const { decor, image } of this.decorImages) {
+      const seasonal = season ? seasonalDecorId(decor, season) : undefined;
+      const plain =
+        seasonal && this.textures.exists(seasonal)
+          ? seasonal
+          : `decor.${decor}`;
+      const lit = `decor.${decor}~night`;
+      const wanted =
+        this.nightShown && NIGHT_DECOR.has(decor) && this.textures.exists(lit)
+          ? lit
+          : plain;
+      if (image.texture.key !== wanted && this.textures.exists(wanted))
+        image.setTexture(wanted);
+    }
+  }
+
+  /** the sprite a villager or an actor wears: its variant, else its archetype's */
+  private spriteOf(
+    archetype: StageActor["archetype"],
+    variant?: string,
+  ): StageAsset | undefined {
+    if (variant) {
+      const own = this.config.manifest.assets[`sprite.${variant}`];
+      if (own?.sprite && this.textures.exists(own.id)) return own;
+    }
+    const asset = spriteFor(this.config.manifest, archetype);
+    return asset && this.textures.exists(asset.id) ? asset : undefined;
+  }
+
+  /** where a figure stands at a place: a little off it, by its own hash */
+  private standAt(place: string, id: string): StagePoint {
+    const point = this.places[place];
+    const h = hashOf(id);
+    const u = this.unit;
+    return {
+      x: point.x + ((h % 7) - 3) * STAND_SPREAD * u * 0.5,
+      y: point.y + ((Math.floor(h / 7) % 5) - 2) * STAND_SPREAD * u * 0.5,
+    };
+  }
+
+  private restOf(view: FigureView): void {
+    view.sprite.anims.stop();
+    view.sprite.setFrame(restFrameFacing(view.asset.sprite!, view.facing));
+  }
+
+  /** plays a pose where the sprite carries it, else rests */
+  private poseOf(view: FigureView, pose: string | undefined): void {
+    if (pose) {
+      const key = `${view.asset.id}:${pose}:${view.facing}`;
+      if (this.anims.exists(key)) {
+        view.sprite.play(key, true);
+        return;
+      }
+    }
+    this.restOf(view);
+  }
+
+  /** the overlays' images, one per id, on the wearer's anchors */
+  private wear(view: FigureView, ids: string[]): void {
+    for (const { image } of view.overlays) image.destroy();
+    view.overlays = [];
+    for (const id of ids) {
+      const key = id.startsWith("overlay.") ? id : `overlay.${id}`;
+      const asset = this.config.manifest.assets[key];
+      if (!asset?.overlay || !this.textures.exists(key)) continue;
+      const image = this.add
+        .image(view.sprite.x, view.sprite.y, key)
+        .setScale(this.scaleOf(asset))
+        .setVisible(view.sprite.visible);
+      view.overlays.push({ id: key, image });
+    }
+    this.placeOverlays(view);
+  }
+
+  /** an overlay follows the frame's anchor for its slot, so it bobs with the walk */
+  private placeOverlays(view: FigureView): void {
+    if (!view.overlays.length) return;
+    const { sprite, asset } = view;
+    const meta = asset.sprite!;
+    const scale = this.scaleOf(asset);
+    const frame = Number(sprite.frame.name);
+    const anchors = meta.anchors?.[Number.isFinite(frame) ? frame : 0];
+    const left = sprite.x - meta.frameWidth * scale * 0.5;
+    const top = sprite.y - meta.frameHeight * scale;
+    for (const { id, image } of view.overlays) {
+      const overlay = this.config.manifest.assets[id]?.overlay;
+      if (!overlay) continue;
+      const slot = overlay.slot;
+      const [ax, ay] =
+        anchors?.[slot] ?? defaultAnchor(meta, slot, view.facing);
+      const frameIndex = overlay.facings[view.facing] ?? 0;
+      const [px, py] = overlay.pivots[view.facing] ?? [0, 0];
+      const frameOf = image.texture.get(frameIndex);
+      image
+        .setFrame(frameIndex)
+        .setOrigin(
+          frameOf.width ? px / frameOf.width : 0.5,
+          frameOf.height ? py / frameOf.height : 0.5,
+        )
+        .setPosition(left + ax * scale, top + ay * scale)
+        .setDepth(sprite.depth + 0.5)
+        .setVisible(sprite.visible);
+    }
+  }
+
+  /**
+   * A beat's actor wearing the direction's overlays: a live view the beat
+   * clears with the rest, positioned each step of the walk rather than each
+   * frame, since a beat's actors are not the populace's figures.
+   */
+  private dressActor(
+    sprite: Phaser.GameObjects.Sprite,
+    asset: StageAsset,
+    actor: StageActor,
+  ): { facing: StageFacing; follow: () => void } {
+    const ids = actor.overlays ?? [];
+    const view: FigureView = {
+      figure: undefined as unknown as Figure,
+      sprite,
+      asset,
+      facing: "down",
+      overlays: [],
+      walking: false,
+    };
+    if (ids.length) {
+      this.wear(view, ids);
+      for (const { image } of view.overlays) this.live.push(image);
+    }
+    return {
+      get facing() {
+        return view.facing;
+      },
+      set facing(f: StageFacing) {
+        view.facing = f;
+      },
+      follow: () => this.placeOverlays(view),
+    };
+  }
+
+  /** the way the scene answers the scheduler */
+  private driver(): PopulaceDriver {
+    const views = this.figureViews;
+    const viewOf = (figure: Figure): FigureView | undefined => {
+      const have = views.get(figure.id);
+      if (have) return have;
+      if (!this.places[figure.at] && !this.places[figure.villager.home])
+        return undefined;
+      const asset = this.spriteOf(
+        figure.villager.archetype,
+        figure.villager.sprite,
+      );
+      if (!asset?.sprite) return undefined;
+      const start = this.standAt(
+        this.places[figure.at] ? figure.at : figure.villager.home,
+        figure.id,
+      );
+      const sprite = this.add
+        .sprite(start.x, start.y, asset.id)
+        .setOrigin(0.5, 1)
+        .setScale(this.scaleOf(asset))
+        .setDepth(start.y);
+      const view: FigureView = {
+        figure,
+        sprite,
+        asset,
+        facing: "down",
+        overlays: [],
+        walking: false,
+      };
+      this.restOf(view);
+      views.set(figure.id, view);
+      this.addPickable(
+        { kind: "figure", id: figure.id },
+        () => (sprite.visible ? sprite.getBounds() : EMPTY_BOUNDS),
+        start.y,
+      );
+      return view;
+    };
+    return {
+      place: (figure, at) => {
+        const view = viewOf(figure);
+        const point = this.places[at];
+        if (!view || !point) return;
+        this.tweens.killTweensOf(view.sprite);
+        view.walking = false;
+        const stand = this.standAt(at, figure.id);
+        view.sprite.setPosition(stand.x, stand.y);
+        view.sprite.setDepth(at === ROOF_PLACE ? ROOF_FIGURE_DEPTH : stand.y);
+        this.placeOverlays(view);
+      },
+      walk: (figure, to, onArrive) => {
+        const view = viewOf(figure);
+        const target = this.places[to];
+        if (!view || !target) {
+          onArrive();
+          return;
+        }
+        this.tweens.killTweensOf(view.sprite);
+        const from = { x: view.sprite.x, y: view.sprite.y };
+        const stand = this.standAt(to, figure.id);
+        const scale = this.config.populace?.site.scale ?? 1;
+        const tile = this.map?.tileWidth ?? BASE_TILE;
+        const straight = to === ROOF_PLACE || figure.at === ROOF_PLACE;
+        const way = straight ? null : this.routeOf(from, stand);
+        const points = way && way.length >= 2 ? way : [from, stand];
+        if (to === EDGE_PLACE) points.push(beyondEdge(stand, points, tile));
+        const ms = strideMsOf(lengthOf(points), tile, scale);
+        view.walking = true;
+        if (to === ROOF_PLACE) view.sprite.setDepth(ROOF_FIGURE_DEPTH);
+        this.walkAlong({
+          sprite: view.sprite,
+          asset: view.asset,
+          points,
+          ms,
+          delay: 0,
+          keepDepth: to === ROOF_PLACE,
+          onFacing: (facing) => {
+            view.facing = facing;
+          },
+          onDone: () => {
+            view.walking = false;
+            if (to !== ROOF_PLACE) view.sprite.setDepth(view.sprite.y);
+            onArrive();
+          },
+        });
+      },
+      pose: (figure, pose) => {
+        const view = viewOf(figure);
+        if (view) this.poseOf(view, pose);
+      },
+      overlays: (figure, ids) => {
+        const view = viewOf(figure);
+        if (view) this.wear(view, ids);
+      },
+      show: (figure, visible) => {
+        const view = viewOf(figure);
+        if (!view) return;
+        view.sprite.setVisible(visible);
+        for (const { image } of view.overlays) image.setVisible(visible);
+      },
+      line: (text, clock, figure) => {
+        this.config.onLine?.(text, clock, figure);
+      },
+      event: (event, attendees) => {
+        this.playEvent(event, attendees);
+      },
+      remove: (figure) => {
+        const view = views.get(figure.id);
+        if (!view) return;
+        this.tweens.killTweensOf(view.sprite);
+        for (const { image } of view.overlays) image.destroy();
+        view.sprite.destroy();
+        views.delete(figure.id);
+        this.pickables = this.pickables.filter(
+          (p) => !(p.pick.kind === "figure" && p.pick.id === figure.id),
+        );
+      },
+    };
+  }
+
+  /**
+   * An event's script on the beat queue: each scene is one beat, played in
+   * order with the camera following if `follow` is on, and the last beat's
+   * end is the populace's word to send the attendants on with their day.
+   */
+  private playEvent(event: SiteEvent, attendees: Figure[]): void {
+    const site = this.config.populace?.site;
+    if (!site) return;
+    const beats: StageBeat[] = event.script.map((scene, i) => ({
+      id: `event.${event.id}.${i + 1}`,
+      kind: "scene",
+      turn: i + 1,
+      seat: site.seat,
+      title: event.title.en,
+      directions: scene,
+    }));
+    if (event.line) this.config.onLine?.(event.line, this.populace!.clock);
+    this.config.onEvent?.(event);
+    if (!beats.length) {
+      this.populace?.eventDone(event.id);
+      return;
+    }
+    this.pendingEvent = { id: event.id, lastBeat: beats[beats.length - 1].id };
+    // the attendants are already walking there; the script's own actors are
+    // the beat's, spawned and faded as any beat's are
+    void attendees;
+    for (const beat of beats) this.enqueue(beat);
   }
 
   /** Shows the site in a month of its year; `undefined` is the plain art. */
   setMonth(month: Month | undefined): void {
     if (month === this.month) return;
     this.month = month;
-    if (this.map) this.applyMonth();
+    if (!this.map) return;
+    this.applyMonth();
+    // the register is a month's: who is away, what the circuits are, which
+    // events fall, so the populace is rebuilt rather than moved
+    if (this.config.populace) {
+      const hour = this.populace?.clock.hour;
+      const paused = this.populace?.paused ?? false;
+      this.destroyPopulace();
+      this.buildPopulace();
+      if (this.populace) {
+        if (hour !== undefined) this.populace.jumpTo(hour);
+        this.populace.paused = paused;
+      }
+    }
   }
 
   /**
@@ -604,10 +1221,8 @@ export class OverworldScene extends Phaser.Scene {
     }
     for (const { decor, image } of this.decorImages) {
       image.setVisible(month === undefined || isShownInMonth(decor, month));
-      const wanted = season ? seasonalDecorId(decor, season) : `decor.${decor}`;
-      const id = this.textures.exists(wanted) ? wanted : `decor.${decor}`;
-      if (image.texture.key !== id) image.setTexture(id);
     }
+    this.dressDecor();
     this.gradeLight(map, record?.light);
     this.setWeather(record?.weather);
     this.flyGeese(map, record?.geese === true);
@@ -813,7 +1428,7 @@ export class OverworldScene extends Phaser.Scene {
         }
       }
     }
-    this.grid = grid;
+    if (!this.grid) this.grid = grid;
     const byRoom = new Map<string, Roof>();
     for (const object of (map.getObjectLayer("roofs")?.objects ??
       []) as TiledPoint[]) {
@@ -862,6 +1477,11 @@ export class OverworldScene extends Phaser.Scene {
       (object): object is Phaser.GameObjects.Sprite =>
         object instanceof Phaser.GameObjects.Sprite && object.active,
     );
+    // a figure on the roof is drawn above it and does not lift it
+    for (const view of this.figureViews.values()) {
+      if (view.sprite.visible && view.figure.at !== ROOF_PLACE)
+        feet.push(view.sprite);
+    }
     const open = this.current?.kind === "place" ? this.current.id : undefined;
     for (const roof of this.roofs) {
       const lifted =
@@ -1052,7 +1672,14 @@ export class OverworldScene extends Phaser.Scene {
     bounds: Phaser.Geom.Rectangle | (() => Phaser.Geom.Rectangle),
     y: number,
   ): void {
-    const tier = pick.kind === "decor" ? 1 : pick.marker === "region" ? 0 : 2;
+    const tier =
+      pick.kind === "figure"
+        ? 3
+        : pick.kind === "decor"
+          ? 1
+          : pick.marker === "region"
+            ? 0
+            : 2;
     this.pickables.push({
       pick,
       bounds: typeof bounds === "function" ? bounds : () => bounds,
@@ -1327,6 +1954,11 @@ export class OverworldScene extends Phaser.Scene {
     this.playBeat(beat, () => {
       this.playing = false;
       this.config.onBeatEnd?.(beat);
+      if (this.pendingEvent?.lastBeat === beat.id) {
+        const { id } = this.pendingEvent;
+        this.pendingEvent = undefined;
+        this.populace?.eventDone(id);
+      }
       this.pump();
     });
   }
@@ -1382,6 +2014,9 @@ export class OverworldScene extends Phaser.Scene {
     ms,
     delay,
     onStep,
+    onFacing,
+    onDone,
+    keepDepth = false,
   }: {
     sprite: Phaser.GameObjects.Sprite;
     asset: StageAsset;
@@ -1389,19 +2024,29 @@ export class OverworldScene extends Phaser.Scene {
     ms: number;
     delay: number;
     onStep?: (x: number, y: number) => void;
+    /** each leg's facing, for a figure that wears overlays */
+    onFacing?: (facing: StageFacing) => void;
+    /** the walk's end, after the rest frame is set */
+    onDone?: () => void;
+    /** a figure climbing the roof keeps its depth above it */
+    keepDepth?: boolean;
   }): void {
     const total = lengthOf(points) || 1;
+    let facing: StageFacing = "down";
     const step = (i: number): void => {
       if (!sprite.active) return;
       if (i >= points.length - 1) {
         sprite.anims.stop();
-        sprite.setFrame(restFrame(asset.sprite!));
+        sprite.setFrame(restFrameFacing(asset.sprite!, facing));
+        onDone?.();
         return;
       }
       const a = points[i];
       const b = points[i + 1];
       const leg = Math.hypot(b.x - a.x, b.y - a.y);
-      sprite.play(`${asset.id}:${facingOf(a, b)}`, true);
+      facing = facingOf(a, b);
+      onFacing?.(facing);
+      sprite.play(`${asset.id}:${facing}`, true);
       this.tweens.add({
         targets: sprite,
         x: b.x,
@@ -1409,7 +2054,7 @@ export class OverworldScene extends Phaser.Scene {
         duration: Math.max(1, Math.round((ms * leg) / total)),
         ease: "Linear",
         onUpdate: () => {
-          sprite.setDepth(sprite.y);
+          if (!keepDepth) sprite.setDepth(sprite.y);
           onStep?.(sprite.x, sprite.y);
         },
         onComplete: () => step(i + 1),
@@ -1420,9 +2065,17 @@ export class OverworldScene extends Phaser.Scene {
 
   private runAction(action: StageAction): void {
     const { direction, from, to, travels, count, walkMs, totalMs } = action;
-    const asset = spriteFor(this.config.manifest, direction.actor.archetype);
+    const asset = this.spriteOf(
+      direction.actor.archetype,
+      direction.actor.variant,
+    );
     const color = this.config.colors[direction.actor.seat] ?? 0xffffff;
-    const offsets = formation(count, 10 * this.unit);
+    // on a routed path the followers walk the same line in a file, one
+    // after another through a gate or a doorway; off it, a loose column
+    const filed = travels && action.path !== undefined && this.routed;
+    const offsets = filed
+      ? Array.from({ length: count }, () => ({ x: 0, y: 0 }))
+      : formation(count, 10 * this.unit);
     const facing = travels ? facingOf(from, to) : "down";
     const actors: Phaser.GameObjects.Sprite[] = [];
     const way = action.path ?? [from, to];
@@ -1445,6 +2098,18 @@ export class OverworldScene extends Phaser.Scene {
         sprite.play(`${asset.id}:${facing}`);
         actors.push(sprite);
         this.live.push(sprite);
+        const worn = this.dressActor(sprite, asset, direction.actor);
+        const pose = (): void => {
+          if (!sprite.active) return;
+          const key = direction.pose
+            ? `${asset.id}:${direction.pose}:${worn.facing}`
+            : undefined;
+          if (key && this.anims.exists(key)) sprite.play(key, true);
+          else {
+            sprite.anims.stop();
+            sprite.setFrame(restFrameFacing(asset.sprite!, worn.facing));
+          }
+        };
         if (travels) {
           this.walkAlong({
             sprite,
@@ -1454,15 +2119,18 @@ export class OverworldScene extends Phaser.Scene {
               y: point.y + offset.y,
             })),
             ms: walkMs,
-            delay: i * 70,
-            onStep: i === 0 ? placeFlag : undefined,
+            delay: filed ? i * FILE_GAP_MS : i * 70,
+            onStep: (x, y) => {
+              if (i === 0) placeFlag(x, y);
+              worn.follow();
+            },
+            onFacing: (f) => {
+              worn.facing = f;
+            },
+            onDone: pose,
           });
         } else {
-          this.time.delayedCall(700 + i * 90, () => {
-            if (!sprite.active) return;
-            sprite.anims.stop();
-            sprite.setFrame(restFrame(asset.sprite!));
-          });
+          this.time.delayedCall(700 + i * 90, pose);
         }
       });
       const lead = actors[0];

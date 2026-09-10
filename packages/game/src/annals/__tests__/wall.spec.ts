@@ -110,6 +110,16 @@ describe("the wall between the Annals and the bench", () => {
       ...EFFECTS.filter((entry) => !GAME_EFFECTS.includes(entry)),
     ];
     expect(held.length).toBeGreaterThan(0);
+    // the sites' own devices never reach a coder: a sprite variant, an
+    // overlay, a pose, and the town kinds are the populace's, not a game's
+    for (const word of ["variant", "overlays", "pose"]) {
+      expect(new RegExp(`\\b${word}\\b`).test(prompt), word).toBe(false);
+    }
+    for (const kind of DIRECTION_KINDS.filter(
+      (kind: StageDirectionKind) => scopeOf(kind) === "town",
+    )) {
+      expect(prompt.includes(`- ${kind} (`), kind).toBe(false);
+    }
   });
 
   it("keeps the Annals off the package index", () => {

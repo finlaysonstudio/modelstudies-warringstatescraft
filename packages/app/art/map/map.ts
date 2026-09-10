@@ -469,6 +469,8 @@ export interface TiledMap {
   nextobjectid: number;
   tilesets: (TiledTileset & { firstgid: number })[];
   layers: TiledLayer[];
+  /** map-level properties (`routed` marks a site map the populace paths on) */
+  properties?: TiledProperty[];
 }
 
 export interface BuildTiledMapOptions {

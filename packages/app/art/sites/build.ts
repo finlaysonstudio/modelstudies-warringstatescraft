@@ -97,6 +97,9 @@ const buildSite = (site: Site): boolean => {
       imageDir: set.sources[set.sources.length - 1],
       pairs,
     });
+    // every site map is routed: the populace walks it on a cost grid read
+    // from the map itself (`stage/grid.ts`), and the overworld stays unrouted
+    map.properties = [{ name: "routed", type: "bool", value: true }];
     const file = set.tile === 32 ? `${site.id}32.tmj` : `${site.id}.tmj`;
     writeFileSync(join(publicStage, file), JSON.stringify(map));
     const ground = coverageOf(set, layers);

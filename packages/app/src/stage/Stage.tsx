@@ -1,21 +1,31 @@
 import clsx from "clsx";
 import Phaser from "phaser";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { StageBeat, StageScript, StageSequence } from "../lib/types";
 import type { Month } from "./almanac";
+import type { SiteClock } from "./clock";
 import { loadStageManifest } from "./assets";
 import type { StagePlan } from "./beats";
 import { DIRECTION_CAPTIONS } from "./catalog";
-import { featureFor, KIND_LABELS, legendFor, type FeatureNote } from "./legend";
+import {
+  featureFor,
+  KIND_LABELS,
+  legendFor,
+  type FeatureNote,
+  type Localized,
+} from "./legend";
 import {
   OverworldScene,
   VIEW_HEIGHT,
   VIEW_WIDTH,
   ZOOM_STEP,
+  type PopulaceConfig,
   type StagePick,
   type StageZoom,
 } from "./OverworldScene";
+import type { Figure } from "./populace";
+import type { SiteEvent } from "./site";
 import { DEFAULT_STAGE_SET, stageSet, type StageSetId } from "./sets";
 
 export interface StageProps {
@@ -65,6 +75,27 @@ export interface StageProps {
   onIdle?: () => void;
   /** Called once the scene has loaded its map and is ready to play beats. */
   onReady?: () => void;
+  /**
+   * A registered site's people on the site's clock: the scene builds one
+   * figure per drawn villager and walks their circuits through the month.
+   * The `month` prop is the register's month; `hour` and `event` open the clock.
+   */
+  populace?: Omit<PopulaceConfig, "month" | "paused">;
+  /** whether the clock stands (default false) */
+  paused?: boolean;
+  /**
+   * A jump the page asks for: to an hour or to an event. `key` must change
+   * for a jump to apply, so the same hour can be jumped to twice.
+   */
+  jump?: { key: number; hour?: number; event?: string };
+  /** the clock, a few times a second, and the next event of the month */
+  onClock?: (clock: SiteClock, next: SiteEvent | undefined) => void;
+  /** a line said on the site, with the hour and, for a stop, the figure */
+  onLine?: (line: Localized, clock: SiteClock, figure?: Figure) => void;
+  /** an event has begun */
+  onEvent?: (event: SiteEvent) => void;
+  /** the card for a figure pick, by villager id; without it the pick shows nothing */
+  renderFigure?: (id: string, close: () => void) => ReactNode;
 }
 
 type Status =
@@ -119,6 +150,13 @@ export function Stage({
   featureNotes,
   onIdle,
   onReady,
+  populace,
+  paused = false,
+  jump,
+  onClock,
+  onLine,
+  onEvent,
+  renderFigure,
 }: StageProps) {
   const set = stageSet(setId);
   const host = useRef<HTMLDivElement>(null);
@@ -139,6 +177,12 @@ export function Stage({
   onIdleRef.current = onIdle;
   const onReadyRef = useRef(onReady);
   onReadyRef.current = onReady;
+  const onClockRef = useRef(onClock);
+  onClockRef.current = onClock;
+  const onLineRef = useRef(onLine);
+  onLineRef.current = onLine;
+  const onEventRef = useRef(onEvent);
+  onEventRef.current = onEvent;
 
   useEffect(() => {
     let cancelled = false;
@@ -164,6 +208,19 @@ export function Stage({
           mapUrl: map?.url ?? set.map,
           featuresUrl: map?.features,
           flags,
+          populace:
+            populace && month !== undefined
+              ? { ...populace, month, paused }
+              : undefined,
+          onClock: (clock, next) => {
+            if (!cancelled) onClockRef.current?.(clock, next);
+          },
+          onLine: (line, clock, figure) => {
+            if (!cancelled) onLineRef.current?.(line, clock, figure);
+          },
+          onEvent: (event) => {
+            if (!cancelled) onEventRef.current?.(event);
+          },
           onReady: () => {
             if (cancelled) return;
             sceneRef.current = scene;
@@ -224,8 +281,8 @@ export function Stage({
       sceneRef.current = null;
       game?.destroy(true);
     };
-    // the scene is built once per script, set, and map; names and colours travel with it
-  }, [script.id, set.id, map?.url]);
+    // the scene is built once per script, set, map, and site; names and colours travel with it
+  }, [script.id, set.id, map?.url, populace?.site.id]);
 
   useEffect(() => {
     if (status.phase !== "ready" || !sceneRef.current) return;
@@ -246,6 +303,14 @@ export function Stage({
   useEffect(() => {
     sceneRef.current?.setMonth(month);
   }, [month, status]);
+  useEffect(() => {
+    sceneRef.current?.setPaused(paused);
+  }, [paused, status]);
+  useEffect(() => {
+    if (!jump || !sceneRef.current) return;
+    if (jump.event) sceneRef.current.jumpToEvent(jump.event);
+    else if (jump.hour !== undefined) sceneRef.current.setHour(jump.hour);
+  }, [jump?.key, status]);
 
   const close = (): void => {
     sceneRef.current?.clearPick();
@@ -277,12 +342,13 @@ export function Stage({
     : [];
   // what the map draws generally, and what this particular stretch of it is:
   // the note about rivers, and then the note about the Wei
-  const kindNote = pick
-    ? legendFor(
-        pick.kind,
-        pick.kind === "place" ? (pick.marker ?? "region") : pick.id,
-      )
-    : null;
+  const kindNote =
+    pick && pick.kind !== "figure"
+      ? legendFor(
+          pick.kind,
+          pick.kind === "place" ? (pick.marker ?? "region") : pick.id,
+        )
+      : null;
   // a place standing on a named feature is read as both: the marker says what
   // a ford is, and the feature says what this river is (the Jing's crossing
   // carries the Jing's history)
@@ -397,7 +463,17 @@ export function Stage({
           />
         </div>
       )}
-      {pick && note && (
+      {pick?.kind === "figure" && renderFigure && (
+        <div
+          className={clsx(
+            "absolute left-3 max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3",
+            eyebrow === false ? "top-3" : "top-10",
+          )}
+        >
+          {renderFigure(pick.id, close)}
+        </div>
+      )}
+      {pick && pick.kind !== "figure" && note && (
         <div
           className={clsx(
             "absolute left-3 max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3",
