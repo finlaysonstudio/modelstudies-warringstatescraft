@@ -2,7 +2,11 @@ import { App } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import { beforeAll, describe, expect, it } from "vitest";
 import { SubmissionSiteStack } from "../stacks/site-stack.js";
-import { PROJECT_PREFIX, stackId } from "../shared/project.js";
+import {
+  PROJECT_PREFIX,
+  PROJECT_QUALIFIER,
+  stackId,
+} from "../shared/project.js";
 
 // Synthesized once: the assertions read the template, none of them mutate it.
 let template: Template;
@@ -33,7 +37,7 @@ describe("SubmissionSiteStack", () => {
   describe("Happy Paths", () => {
     it("names the stack for the submission", () => {
       expect(stack.stackName).toBe(
-        `cdk-${PROJECT_PREFIX}-chinatalk-submission-2026-sandbox-dev`,
+        `cdk-${PROJECT_PREFIX}-chinatalk-submission-2026-${PROJECT_QUALIFIER}`,
       );
     });
 
@@ -57,10 +61,10 @@ describe("SubmissionSiteStack", () => {
         (resource) => (resource.Properties as { Name: string }).Name,
       );
       expect(names).toContain(
-        `/${PROJECT_PREFIX}/sandbox-dev/chinatalk-submission-2026/bucket-name`,
+        `/${PROJECT_PREFIX}/${PROJECT_QUALIFIER}/chinatalk-submission-2026/bucket-name`,
       );
       expect(names).toContain(
-        `/${PROJECT_PREFIX}/sandbox-dev/chinatalk-submission-2026/distribution-id`,
+        `/${PROJECT_PREFIX}/${PROJECT_QUALIFIER}/chinatalk-submission-2026/distribution-id`,
       );
     });
   });

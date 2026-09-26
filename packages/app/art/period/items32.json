@@ -33,8 +33,8 @@
         "autumn": {
           "adjust": {
             "hue": -48,
-            "saturation": 1.0,
-            "value": 1.0
+            "saturation": 1,
+            "value": 1
           }
         },
         "winter": {
@@ -248,7 +248,7 @@
           "adjust": {
             "hue": 22,
             "saturation": 0.28,
-            "value": 1.0
+            "value": 1
           },
           "note": "the stubble rows came back rose-pink for all the prompt's forbidding it; the adjust turns them toward the earth and takes most of the colour out, since the prompt was ignored and a second generation would be too"
         }
@@ -334,7 +334,7 @@
           "adjust": {
             "hue": -42,
             "saturation": 0.85,
-            "value": 1.0
+            "value": 1
           }
         },
         "winter": {
@@ -1142,7 +1142,25 @@
       "characterId": "666abb3b-8262-4a25-97f1-60118f692c53",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "the 16 px set's infantry at twice the canvas and a grade more detail; walk group 4eca5b12-3b1d-44c6-a164-1e982a07b979, four frames per cardinal facing"
+      "note": "the 16 px set's infantry at twice the canvas and a grade more detail; walk group 4eca5b12-3b1d-44c6-a164-1e982a07b979, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "stance",
+          "dir": "infantry48/stance",
+          "frames": 4,
+          "mirror": "east",
+          "prompt": "standing at attention with the staff held upright at the side and the shield close to the body, weight settling slightly, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 4,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "67629d98-6a97-46bd-b33d-4b2cf63a0d15",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.merchant",
@@ -1226,7 +1244,25 @@
       "characterId": "dc29d86f-fb9d-4284-8c99-ae0e0e0d7a47",
       "date": "2026-08-25",
       "generations": 6,
-      "note": "the 16 px set's clerk at twice the canvas and a grade more detail; walk group a079e0eb-380f-436f-93cf-4a00c2d9e07c, four frames per cardinal facing"
+      "note": "the 16 px set's clerk at twice the canvas and a grade more detail; walk group a079e0eb-380f-436f-93cf-4a00c2d9e07c, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "write",
+          "dir": "clerk48/write",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and writing with a brush on a bamboo slip held in the other hand",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "b5440bde-759c-49a7-a6ef-2fea9340aa81",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.labourer",
@@ -1413,6 +1449,22 @@
           },
           "jobId": "92f1c895-c40a-41ad-a03d-736adaba8def",
           "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "stance",
+          "dir": "peasant48/stance",
+          "frames": 4,
+          "mirror": "east",
+          "prompt": "standing stiffly at attention in a drill, feet together, arms straight down at the sides, chest out, a slight sway",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 4,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "1c39c864-e9e3-45ad-9cb5-f41b6c9939b9",
+          "date": "2026-09-26",
           "generations": 3
         }
       ]
@@ -3338,7 +3390,7 @@
           "adjust": {
             "hue": -45,
             "saturation": 0.85,
-            "value": 1.0
+            "value": 1
           }
         },
         "winter": {
@@ -3898,19 +3950,20 @@
         },
         {
           "id": "kneel",
-          "dir": "child48/kneel",
+          "dir": "child48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "173b91e7-1cd7-4790-9f3f-5989417b67a5",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "70e61f7a-572f-48d2-8d5a-e45df5ee15ea",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height; the earlier take stayed standing in every facing"
         },
         {
           "id": "fish",
@@ -3991,7 +4044,25 @@
       "characterId": "91a18f67-e206-4eef-a034-6b1ad30b1cd7",
       "date": "2026-09-06",
       "generations": 11,
-      "note": "the se player of the Zhanguoce's Linzi, and the house's hall; first drawn in standard mode, which returned a 68 px canvas for a 48 px request (five generations), then redrawn in v3 at 48 px like every other figure (six more); four frames per cardinal facing, one generation per facing"
+      "note": "the se player of the Zhanguoce's Linzi, and the house's hall; first drawn in standard mode, which returned a 68 px canvas for a 48 px request (five generations), then redrawn in v3 at 48 px like every other figure (six more); four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "strike",
+          "dir": "musician48/strike",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "beating a drum with a stick in one hand, the arm rising and striking down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ea666526-743c-468d-b3e3-7c3659edfda4",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "terrain.garden",
@@ -4538,19 +4609,20 @@
       "actions": [
         {
           "id": "kneel",
-          "dir": "elder48/kneel",
+          "dir": "elder48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "426b4098-36ff-4032-a9bf-978db9def67a",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "cb9d98b1-76dd-45b5-b3ed-4c757b502090",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         },
         {
           "id": "bow",
@@ -4621,7 +4693,41 @@
       "characterId": "b6ed5597-a741-431b-ac72-9a95627c21b9",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the herdsman of the village meadow; the Shangjunshu's count of horses and oxen and the Zhouli's pasturage officers assume him; four frames per cardinal facing, one generation per facing"
+      "note": "the herdsman of the village meadow; the Shangjunshu's count of horses and oxen and the Zhouli's pasturage officers assume him; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "kneel",
+          "dir": "herdsman48/kneel",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "2a0b59e0-cfe3-4b79-b064-f0ab94d46417",
+          "date": "2026-09-26",
+          "generations": 3
+        },
+        {
+          "id": "lead",
+          "dir": "herdsman48/lead",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place leading an animal behind on a rope, one arm stretched back holding the taut rope, the other hand swinging the stick",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "6342748d-0888-4994-98ed-c8debedf8872",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.woodcutter",
@@ -5082,19 +5188,20 @@
         },
         {
           "id": "kneel",
-          "dir": "maid48/kneel",
+          "dir": "maid48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling down and sitting back on the heels, hands on the thighs, breathing gently",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "12d8406d-0d87-4985-87b7-dca3195639bd",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "23332556-0372-491d-8757-86a9bb11d382",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height; the short-tunic figures had stayed standing under the earlier wording, and this one goes down in all three facings"
         },
         {
           "id": "carry",
@@ -5185,19 +5292,20 @@
         },
         {
           "id": "kneel",
-          "dir": "cook48/kneel",
+          "dir": "cook48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "b3288171-7ad6-402a-a3a7-ff0ff38e009f",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "e41a2e6f-5b98-4abf-aa75-516108f57c5d",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         }
       ]
     },
@@ -5351,7 +5459,25 @@
       "characterId": "5ac9ed1a-b1b3-4142-9110-ca974488c799",
       "date": "2026-09-06",
       "generations": 6,
-      "note": "the groom who keeps the chariot horses of a great house; the stable is his ground; four frames per cardinal facing, one generation per facing"
+      "note": "the groom who keeps the chariot horses of a great house; the stable is his ground; four frames per cardinal facing, one generation per facing",
+      "actions": [
+        {
+          "id": "lead",
+          "dir": "groom48/lead",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "walking in place leading a horse behind on a rope halter, one arm stretched back holding the taut rope, the other arm swinging",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "1bc188af-a92f-4c74-b7ce-04064e63cd1b",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "kit.hall",
@@ -6182,11 +6308,11 @@
         "outline": "single color outline",
         "view": "low top-down"
       },
-      "prompt": "bottle gourds growing on a low wattle fence seen from above: green climbing vines with broad leaves draped over a short fence of woven sticks, several pale green and tan bottle-shaped gourds hanging down, no people",
-      "jobId": "2129a00a-0936-48a0-b119-2311e459496b",
-      "date": "2026-09-09",
-      "generations": 1,
-      "note": "the Odes' eighth month cuts gourds; drawn on a wattle fence, and the vine came back thin, so it reads faint at a distance"
+      "prompt": "bottle gourds on a low wattle fence seen from above: a short fence of woven brown sticks thickly covered by a dense green climbing vine with big broad leaves, five large pale green and tan bottle-shaped gourds with narrow necks hanging down in front of the fence, bold and clearly readable, no people",
+      "jobId": "4318719d-0d66-4bfc-9781-7948ce1c5652",
+      "date": "2026-09-26",
+      "generations": 2,
+      "note": "the Odes' eighth month cuts gourds; the first pass came back a thin vine that read faint at a distance, re-rolled 2026-09-26 with the gourds named large and in front of the fence"
     },
     {
       "id": "decor.jujube",
@@ -6418,14 +6544,15 @@
             "transition": 0.25,
             "lowerBaseTileId": "bb50318d-3817-4e1c-b112-7ace3e260efd"
           },
-          "prompt": "soybean fields in autumn ready for harvest seen from above, parallel rows of low bushy soybean plants gone yellow-brown and heavy with pale tan pods on ridges of tilled brown earth, dull yellow and ochre bushes in even rows with brown soil showing in the furrows between them, small plots divided by earth banks, strictly yellow, ochre, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
-          "jobId": "5bf5801d-3d3e-4fb3-8fa9-d0ca1aada2c3",
-          "date": "2026-09-09",
-          "generations": 3,
+          "prompt": "soybean fields in autumn ready for harvest seen from above, parallel rows of low bushy soybean plants gone dull yellow-brown and heavy with tan pods on ridges of tilled dark brown earth, the bushes ragged and rounded in even rows with dark soil in the furrows between them, small plots divided by earth banks, an organic leafy texture with no square shapes and no grid, strictly yellow, ochre, and brown, no purple, no violet, no magenta, no pink; transition: a low earth bank between the grass and the ripe field",
+          "jobId": "99a51a3f-7147-4b11-91ff-55397c704902",
+          "date": "2026-09-26",
+          "generations": 6,
           "adjust": {
             "saturation": 0.85,
             "value": 0.95
-          }
+          },
+          "note": "the first autumn came back as a grid of yellow squares, re-rolled 2026-09-26 with the leafy texture asked for and the grid forbidden; it came back as dark turned earth with a ripe yellow rim, which is the cut field and also what the winter recolour wants"
         },
         "winter": {
           "file": "tilesets32/bean-autumn.png",
@@ -6729,7 +6856,7 @@
           "adjust": {
             "hue": 30,
             "saturation": 0.28,
-            "value": 1.0
+            "value": 1
           }
         }
       }
@@ -6917,6 +7044,22 @@
           "jobId": "ccc5ae7b-52bf-489a-8abc-f32f2a4020d6",
           "date": "2026-09-09",
           "generations": 3
+        },
+        {
+          "id": "stance",
+          "dir": "farmer-b48/stance",
+          "frames": 4,
+          "mirror": "east",
+          "prompt": "standing stiffly at attention in a drill, feet together, arms straight down at the sides, chest out, a slight sway",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 4,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "94e7d70c-8c2d-4989-89d8-e406ad6a55f6",
+          "date": "2026-09-26",
+          "generations": 3
         }
       ]
     },
@@ -7083,6 +7226,22 @@
           },
           "jobId": "cc42fafa-a6c3-46d5-8949-73b9446bab09",
           "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "stance",
+          "dir": "farmer-c48/stance",
+          "frames": 4,
+          "mirror": "east",
+          "prompt": "standing stiffly at attention in a drill, feet together, arms straight down at the sides, chest out, a slight sway",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 4,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "ca955629-262a-463a-a9f7-c1eaff2e487f",
+          "date": "2026-09-26",
           "generations": 3
         }
       ]
@@ -7325,19 +7484,20 @@
         },
         {
           "id": "thresh",
-          "dir": "farmer-d48/thresh",
+          "dir": "farmer-d48/thresh2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "threshing with a flail, swinging it up over the shoulder and down in a loop",
+          "prompt": "threshing grain with a two-piece flail: a short swingle on a rope hinge at the end of a long handle, raised high over the shoulder and whipped down flat onto the grain at the feet, in a loop",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "8e8287bf-22dd-47c5-af30-4d9de00eb5a7",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "d6ca5b92-6c00-44d4-bdb6-467a4d6dd691",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the flail described as a swingle on a rope hinge; this figure alone drew the hinge, the other four farmers swung their hoe again and keep their first thresh"
         },
         {
           "id": "sow",
@@ -7417,6 +7577,22 @@
           },
           "jobId": "5952a346-5046-4892-b301-db357bb9222e",
           "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "stance",
+          "dir": "farmer-d48/stance",
+          "frames": 4,
+          "mirror": "east",
+          "prompt": "standing stiffly at attention in a drill, feet together, arms straight down at the sides, chest out, a slight sway",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 4,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9f7ed59c-ac9b-4078-884e-411acfd9f3b8",
+          "date": "2026-09-26",
           "generations": 3
         }
       ]
@@ -7584,6 +7760,22 @@
           },
           "jobId": "e421b3ec-f20d-4034-9233-cb3738539b6f",
           "date": "2026-09-09",
+          "generations": 3
+        },
+        {
+          "id": "stance",
+          "dir": "farmer-e48/stance",
+          "frames": 4,
+          "mirror": "east",
+          "prompt": "standing stiffly at attention in a drill, feet together, arms straight down at the sides, chest out, a slight sway",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 4,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "44a79f37-14e5-4500-8bd5-a54d2acfefee",
+          "date": "2026-09-26",
           "generations": 3
         }
       ]
@@ -7993,19 +8185,20 @@
         },
         {
           "id": "kneel",
-          "dir": "maiden-b48/kneel",
+          "dir": "maiden-b48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "55bbde8f-483e-4467-9995-efaad39200fa",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "cde301b2-3f13-43e2-be64-6f741483383f",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         },
         {
           "id": "wash",
@@ -8080,19 +8273,20 @@
         },
         {
           "id": "kneel",
-          "dir": "child-b48/kneel",
+          "dir": "child-b48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "0b03a766-607e-4ea0-9785-b2ae67c55164",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "74e9dbac-a6b0-4f44-b0ef-81e9d89a24c0",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         },
         {
           "id": "fish",
@@ -8167,19 +8361,20 @@
         },
         {
           "id": "kneel",
-          "dir": "girl-b48/kneel",
+          "dir": "girl-b48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "f8adaba1-c2cf-4794-9e85-eb11b5dfb3da",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "95310f3f-082d-440e-9578-1d58787c84e3",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         }
       ]
     },
@@ -8202,7 +8397,57 @@
       "characterId": "ace9e720-9065-4cf3-af72-f49c192663f5",
       "date": "2026-09-09",
       "generations": 6,
-      "note": "the old woman on her stick, the granny's own sprite; walk group fe21fd0b-0d73-483f-8d3b-1be149f7b087, four frames per cardinal facing"
+      "note": "the old woman on her stick, the granny's own sprite; walk group fe21fd0b-0d73-483f-8d3b-1be149f7b087, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "weave",
+          "dir": "granny48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "fdf86103-43a6-422b-8c55-f843f5ce66d6",
+          "date": "2026-09-26",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "granny48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "af11f997-4c55-4b22-adc2-9ace5d43ba52",
+          "date": "2026-09-26",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "granny48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "d29175a6-e8a7-4c93-878b-19659408c899",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "terrain.road@wheat",
@@ -8411,19 +8656,20 @@
         },
         {
           "id": "kneel",
-          "dir": "grandfather48/kneel",
+          "dir": "grandfather48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "4db14349-d74d-4364-a262-c7013706b97a",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "277b021d-cdcb-4b21-a8bb-74b73021c096",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         },
         {
           "id": "bow",
@@ -8498,19 +8744,20 @@
         },
         {
           "id": "kneel",
-          "dir": "girl48/kneel",
+          "dir": "girl48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "c2faa642-c9a5-4273-a9e9-a874b8f41291",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "1f0b96f8-a0a0-46be-8751-8493e8ef02f3",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         }
       ]
     },
@@ -8533,7 +8780,57 @@
       "characterId": "35f37877-c488-4f17-ad87-8345cca2e319",
       "date": "2026-09-09",
       "generations": 6,
-      "note": "the second grandmother of the village register, a stout old woman with a headcloth and a basket, drawn beside the granny so two households have an old woman of their own; walk group 84f460b0-305e-4a66-bae9-5aebae4d56ef, four frames per cardinal facing"
+      "note": "the second grandmother of the village register, a stout old woman with a headcloth and a basket, drawn beside the granny so two households have an old woman of their own; walk group 84f460b0-305e-4a66-bae9-5aebae4d56ef, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "weave",
+          "dir": "granny-b48/weave",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "weaving at a loom, arms moving side to side passing the shuttle and beating the weft",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "faf23ac5-52c5-4541-8466-0c4bf4ad2251",
+          "date": "2026-09-26",
+          "generations": 3
+        },
+        {
+          "id": "spin",
+          "dir": "granny-b48/spin",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "spinning thread on a spindle, drawing out the thread with one hand and twirling the spindle with the other",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "1055f5a2-8e5e-4222-9789-f27a2b5cb889",
+          "date": "2026-09-26",
+          "generations": 3
+        },
+        {
+          "id": "sit",
+          "dir": "granny-b48/sit",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "sitting cross-legged on the floor, hands in the lap, breathing gently",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "94823378-b160-406c-91dc-88573c9a5cf2",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.grandfather-b",
@@ -8587,6 +8884,22 @@
           "jobId": "15f6a8a4-3370-455f-a32b-292564b2a380",
           "date": "2026-09-09",
           "generations": 3
+        },
+        {
+          "id": "bow",
+          "dir": "grandfather-b48/bow",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "bowing deeply from the waist with hands folded before the chest, then rising",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "e8cd3cdb-ef06-4900-9802-1f29ec353181",
+          "date": "2026-09-26",
+          "generations": 3
         }
       ]
     },
@@ -8609,7 +8922,25 @@
       "characterId": "3b321cbc-f572-4f64-917e-90babde64a23",
       "date": "2026-09-09",
       "generations": 6,
-      "note": "the county's field officer (田嗇夫), the visitor who inspects the fields and the granary in the village year, in a dark robe and cap with a slip in hand; walk group e59f9de0-e97c-4b3b-b6bc-9af6dab78694, four frames per cardinal facing"
+      "note": "the county's field officer (田嗇夫), the visitor who inspects the fields and the granary in the village year, in a dark robe and cap with a slip in hand; walk group e59f9de0-e97c-4b3b-b6bc-9af6dab78694, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "inspect",
+          "dir": "fieldofficer48/inspect",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "standing and leaning forward to look closely down at something low, one hand behind the back, then straightening and raising the tablet to note it, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "aae0aabb-e188-4ee6-a637-38dd7328bdb3",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "sprite.lieutenant",
@@ -8630,7 +8961,25 @@
       "characterId": "6a815188-dc78-41e6-8d7d-0d5b9617e2c8",
       "date": "2026-09-09",
       "generations": 6,
-      "note": "the county lieutenant (士吏), the armed visitor who reads the levy and the muster at the ward hall, in a leather cuirass and cap with a sword; walk group b5c901aa-34b6-4870-be3d-5efbc7dc38e3, four frames per cardinal facing"
+      "note": "the county lieutenant (士吏), the armed visitor who reads the levy and the muster at the ward hall, in a leather cuirass and cap with a sword; walk group b5c901aa-34b6-4870-be3d-5efbc7dc38e3, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "command",
+          "dir": "lieutenant48/command",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "standing with feet apart, raising one arm and pointing forward sharply, then lowering the hand to the sword hilt, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "15b992b6-f3ae-489b-bc31-2efd9adb1a8d",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "overlay.hat",
@@ -8740,11 +9089,11 @@
         "outline": "single color outline",
         "view": "low top-down"
       },
-      "prompt": "a small black lacquered cap of a Warring States Chinese nobleman seen from a low top-down view, a low black cap with a narrow crown and a thin chin cord, alone on a transparent background, no head, no person, no ground",
-      "jobId": "20d64b4d-9bf6-405e-a897-50ed50df8065",
-      "date": "2026-09-09",
-      "generations": 1,
-      "note": "the capping rite's black cap, at the head; the still reads more as a lidded pot than a cap at this size, a re-roll candidate for batch 8"
+      "prompt": "a small black cloth cap of a Warring States Chinese nobleman lying alone, seen from slightly above and in front: a low rounded black crown with a stiff flat top and a narrow black band around the base, two thin red chin cords hanging from the sides, a clean simple hat shape, not a pot, not a vessel, no lid, no knob, no head, no person, no ground, transparent background",
+      "jobId": "c36a138a-b560-406c-b6df-dd79df0a7cac",
+      "date": "2026-09-26",
+      "generations": 2,
+      "note": "the capping rite's black cap, at the head; the first still read as a lidded pot, re-rolled 2026-09-26 with the hat shape spelled out and the pot forbidden, and came back a cap with its red cords"
     },
     {
       "id": "overlay.hemp",
@@ -9046,22 +9395,18 @@
       "file": "objects32/coffin.png",
       "tool": "create_map_object",
       "settings": {
-        "width": 48,
-        "height": 32,
+        "width": 64,
+        "height": 40,
         "detail": "medium detail",
         "shading": "medium shading",
         "outline": "single color outline",
         "view": "low top-down"
       },
-      "prompt": "a Warring States Chinese coffin laid out in a chamber for the encoffining: a long black lacquered wooden coffin with red rim lines on a low wooden trestle, a white hemp cloth folded over the foot, seen from a low top-down view, no people",
-      "jobId": "7df02c85-0293-4e7e-8460-c8264896da0c",
-      "date": "2026-09-09",
-      "generations": 1,
-      "note": "the encoffined body in the wing between the dressing and the burial, Yili 士喪禮; came back a small violet-tinted bar at 48 x 32, pinned toward black by the adjust and a re-roll candidate for batch 8 at a larger canvas",
-      "adjust": {
-        "saturation": 0.5,
-        "value": 1.1
-      }
+      "prompt": "a Warring States Chinese coffin laid out for the encoffining seen from a low top-down view: a long rectangular black lacquered wooden coffin with a slightly domed lid, fine red painted rim lines along its edges, resting on a low wooden trestle of pale wood, a white hemp cloth folded over one end, clearly a coffin, no people",
+      "jobId": "a33a25bd-e1d5-4059-a283-79e127ac9d65",
+      "date": "2026-09-26",
+      "generations": 2,
+      "note": "the encoffined body in the wing between the dressing and the burial, Yili 士喪禮; the first pass came back a small violet-tinted bar at 48 x 32, re-rolled 2026-09-26 at 64 x 40 as a lidded black coffin with red rim lines on a pale trestle"
     },
     {
       "id": "sprite.maid-b",
@@ -9150,19 +9495,20 @@
         },
         {
           "id": "kneel",
-          "dir": "maid-b48/kneel",
+          "dir": "maid-b48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling down and sitting back on the heels, hands on the thighs, breathing gently",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "209835b7-cbbe-46c2-976f-89e6231bc570",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "d08a2164-0a17-4695-b76d-7dc21d440c30",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         },
         {
           "id": "carry",
@@ -9253,19 +9599,20 @@
         },
         {
           "id": "kneel",
-          "dir": "cook-b48/kneel",
+          "dir": "cook-b48/kneel2",
           "frames": 8,
           "mirror": "east",
-          "prompt": "kneeling on both knees on the floor, seated back on the heels with the body low, hands resting on the thighs, head bowing slightly forward and up in a loop",
+          "prompt": "dropping to both knees and sitting back on the heels, the body folded to half its standing height, hands flat on the thighs, staying low and breathing gently",
           "settings": {
             "mode": "v3",
             "frame_count": 8,
             "keep_first_frame": false,
             "directions": ["south", "west", "north"]
           },
-          "jobId": "fadedba6-5fea-4def-8ce0-149a31ecb5cd",
-          "date": "2026-09-09",
-          "generations": 3
+          "jobId": "1a9c5a19-fd47-44f2-8edb-0999851dbac2",
+          "date": "2026-09-26",
+          "generations": 6,
+          "note": "re-rolled 2026-09-26 with the kneel described as a drop to half the standing height, after the first wording left the figure standing in one or more facings; the figure now goes down in all three"
         }
       ]
     },
@@ -9469,7 +9816,25 @@
       "characterId": "5a6017e3-a009-493b-8e77-4e7b89f73acc",
       "date": "2026-09-09",
       "generations": 6,
-      "note": "the zhu of the ancestral shrine, in black with the prayer tablet; walk group cf959cfb-926e-4758-a391-ae5d87e0f795, four frames per cardinal facing"
+      "note": "the zhu of the ancestral shrine, in black with the prayer tablet; walk group cf959cfb-926e-4758-a391-ae5d87e0f795, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "call",
+          "dir": "invocator48/call",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "standing and raising both arms high overhead holding a long robe aloft, waving it slowly from side to side and calling out with the head thrown back, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "6e794353-8fd1-45a6-9f4e-28edcc1ccf8e",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
     },
     {
       "id": "decor.stalks",
@@ -9585,7 +9950,112 @@
       "characterId": "d06bd8fc-33c4-42fa-9004-978d104ac438",
       "date": "2026-09-09",
       "generations": 6,
-      "note": "the diviner of the day's divination, grey-bearded with the yarrow bundle; walk group e73ca822-9ea1-4ccb-9220-2726e51b1a56, four frames per cardinal facing"
+      "note": "the diviner of the day's divination, grey-bearded with the yarrow bundle; walk group e73ca822-9ea1-4ccb-9220-2726e51b1a56, four frames per cardinal facing",
+      "actions": [
+        {
+          "id": "divine",
+          "dir": "diviner48/divine",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "kneeling and holding a bundle of long stalks up in both hands, dividing the bundle and laying stalks down before the knees, in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "b4bcab7d-3459-40a8-b25c-1a697593f27f",
+          "date": "2026-09-26",
+          "generations": 3
+        }
+      ]
+    },
+    {
+      "id": "sprite.ox",
+      "kind": "sprite",
+      "dir": "ox48",
+      "frame": 68,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "standard",
+        "body": "quadruped",
+        "template": "horse",
+        "size": 48,
+        "detail": "medium detail",
+        "shading": "medium shading",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walk-4-frames"
+      },
+      "prompt": "Warring States Chinese draught ox, a stocky yellow-brown ox with a heavy neck hump, short curved grey horns, a broad pale muzzle with a rope through the nose, a plain wooden yoke resting on its neck, low top-down view",
+      "characterId": "0a03d8a9-d761-40f6-bbad-9deb35d177fa",
+      "date": "2026-09-26",
+      "generations": 5,
+      "note": "the village's oxen (the byre's pair the ploughing and the threshing events walk out), the first quadruped of the set: v3 draws no quadruped, so it is a standard-mode character on the horse template, whose canvas comes back at 68 px with the beast where a 48 px figure's walk puts it; it came back a flat saturated yellow with no yoke and no nose rope, and the finish below turns the coat to a dun rather than spending its walk again; walk group ada67e3e-ce80-4d4a-be19-5f9b17285c99",
+      "adjust": {
+        "hue": -14,
+        "saturation": 0.55,
+        "value": 0.82
+      },
+      "actions": [
+        {
+          "id": "plough",
+          "dir": "ox48/plough",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "the walk-8-frames template played in place as the plough's pull",
+          "settings": {
+            "mode": "template",
+            "template_animation_id": "walk-8-frames",
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "9c17c41f-7622-44f6-9368-b7234b9ee1b2",
+          "date": "2026-09-26",
+          "generations": 3,
+          "note": "a quadruped takes no v3 action, so the plough is the template's longer walk under the pose's name, the beast leaning into the furrow while the field scrolls under it in the reader's eye"
+        }
+      ]
+    },
+    {
+      "id": "sprite.guard",
+      "kind": "sprite",
+      "dir": "guard48",
+      "frame": 48,
+      "frames": 4,
+      "tool": "create_character + animate_character",
+      "settings": {
+        "mode": "v3",
+        "size": 48,
+        "detail": "medium detail",
+        "outline": "single color black outline",
+        "view": "low top-down",
+        "walk": "walking-4-frames"
+      },
+      "prompt": "Warring States Chinese gatekeeper of a great house, a broad man with a short black beard, a plain dark brown leather cap, a short dark grey coat with narrow sleeves over brown trousers and cloth shoes, a rope belt, holding a tall plain wooden staff upright in one hand, low top-down view",
+      "characterId": "0e284466-896a-4574-be04-6ba0b633b1cd",
+      "date": "2026-09-26",
+      "generations": 6,
+      "note": "the guard, which the fallback layer alone had drawn: the house's gatekeeper (閽人) is registered as one, and the city's gate and tower guards read from the same sprite; walk group 19555b83-9596-4374-98aa-5b14cf7ace6a",
+      "actions": [
+        {
+          "id": "strike",
+          "dir": "guard48/strike",
+          "frames": 8,
+          "mirror": "east",
+          "prompt": "beating a drum with a stick in one hand, the arm rising and striking down in a loop",
+          "settings": {
+            "mode": "v3",
+            "frame_count": 8,
+            "keep_first_frame": false,
+            "directions": ["south", "west", "north"]
+          },
+          "jobId": "4e202c15-2e2b-41e2-bcd6-29360057f3ad",
+          "date": "2026-09-26",
+          "generations": 3,
+          "note": "the nuo's drum at the gate, Yili and the Zhouli's 方相氏 season"
+        }
+      ]
     }
   ]
 }

@@ -131,6 +131,14 @@ export interface PeriodSpriteItem extends PeriodRecord {
   frames: number;
   /** the poses stacked after the walk rows, in this order */
   actions?: SpriteAction[];
+  /**
+   * A finish laid over every frame, walk and poses alike, the way a sheet or
+   * a still takes one: a standard-mode quadruped comes back in whatever
+   * colour the generator likes (the ox was a saturated yellow), and a
+   * recolour costs no generation where a re-roll costs its walk again.
+   */
+  desaturate?: number;
+  adjust?: ColourAdjustment;
 }
 
 /**
@@ -775,14 +783,15 @@ const finishOf = (item: PeriodItem): Record<string, unknown> | undefined => {
     };
   }
   if (item.kind === "sprite") {
-    return item.actions?.length
-      ? {
-          actions: item.actions.map((action) => action.id),
-          ...(item.actions.some((action) => action.mirror)
-            ? { mirror: item.actions.find((action) => action.mirror)?.mirror }
-            : {}),
-        }
-      : undefined;
+    const finish: Record<string, unknown> = {};
+    if (item.actions?.length) {
+      finish.actions = item.actions.map((action) => action.id);
+      const mirror = item.actions.find((action) => action.mirror)?.mirror;
+      if (mirror) finish.mirror = mirror;
+    }
+    if (item.desaturate) finish.desaturate = item.desaturate;
+    if (item.adjust) finish.adjust = item.adjust;
+    return Object.keys(finish).length ? finish : undefined;
   }
   if (item.kind === "overlay") {
     const finish: Record<string, unknown> = {
@@ -1407,21 +1416,38 @@ export const buildPeriod = async ({
       );
       continue;
     }
-    const frames = readFacings(
-      root,
-      path.join(item.dir, "walk"),
-      item.frames,
-      `${item.id} walk`,
+    const spriteFinish: SheetFinish = {
+      desaturate: item.desaturate,
+      adjust: item.adjust,
+    };
+    const finishFacings = (
+      facings: Record<string, Image[]>,
+    ): Record<string, Image[]> =>
+      Object.fromEntries(
+        Object.entries(facings).map(([facing, images]) => [
+          facing,
+          images.map((image) => applyFinish(image, spriteFinish)),
+        ]),
+      );
+    const frames = finishFacings(
+      readFacings(
+        root,
+        path.join(item.dir, "walk"),
+        item.frames,
+        `${item.id} walk`,
+      ),
     );
     const actions = (item.actions ?? []).map((action) => ({
       id: action.id,
       count: action.frames,
-      frames: readFacings(
-        root,
-        action.dir,
-        action.frames,
-        `${item.id} ${action.id}`,
-        action.mirror,
+      frames: finishFacings(
+        readFacings(
+          root,
+          action.dir,
+          action.frames,
+          `${item.id} ${action.id}`,
+          action.mirror,
+        ),
       ),
     }));
     const { image, meta } = assembleSprite(frames, {
