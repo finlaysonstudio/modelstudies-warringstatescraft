@@ -15,6 +15,11 @@ import { VILLAGE } from "../sites";
 import { CORVEE_PARTY, eventVillagerIds } from "../sites/village/events";
 import { HOUSE_SURNAMES } from "../sites/village/names";
 import {
+  FARMING_MONTHS,
+  turnsOf,
+  VILLAGE_TURNS,
+} from "../sites/village/register";
+import {
   VILLAGE_BLOCKS,
   VILLAGE_CIRCUITS,
   VILLAGE_DAYS,
@@ -251,8 +256,9 @@ describe("the village events", () => {
       for (const cite of e.cite) expectCite(cite, e.id);
     }
     // the plan's year, the month's 更卒, and the pedlar
+    // the tenth month's turn is the county's levy, an event of its own
     expect(VILLAGE_EVENTS.filter((e) => e.id.endsWith("-gengzu"))).toHaveLength(
-      12,
+      11,
     );
     expect(VILLAGE_EVENTS.filter((e) => e.id.endsWith("-pedlar"))).toHaveLength(
       12,
@@ -359,13 +365,74 @@ describe("the village events", () => {
     expect(winter.away.get("h07.zhong")).toBe("year");
     expect(registerAt(VILLAGE, 12).away.get("h07.zhong")).toBe("year");
     expect(registerAt(VILLAGE, 11).away.has("h13.lang")).toBe(false);
-    // the 更卒 by turns
-    expect(registerAt(VILLAGE, 1).away.get("h03.sheng")).toBe(1);
-    expect(registerAt(VILLAGE, 2).away.get("h23.xiong")).toBe(2);
-    expect(registerAt(VILLAGE, 2).away.has("h03.sheng")).toBe(false);
+    // the 更卒 by turns: a month away, and back the next
+    expect(registerAt(VILLAGE, 9).away.get("h03.sheng")).toBe(9);
+    expect(registerAt(VILLAGE, 10).away.has("h03.sheng")).toBe(false);
+    for (const id of turnsOf(12))
+      expect(registerAt(VILLAGE, 12).away.get(id), id).toBe(12);
     // the Wu mother is struck from the twelfth month
     expect(registerAt(VILLAGE, 12).struck.has("h09.ai")).toBe(true);
     expect(registerAt(VILLAGE, 11).struck.has("h09.ai")).toBe(false);
+  });
+});
+
+describe("the village labour turns", () => {
+  const households = VILLAGE.register ?? [];
+  const householdOfId = (id: string) =>
+    households.find((h) => h.members.some((v) => v.id === id))!;
+  const grownMen = households.flatMap((h) =>
+    h.members.filter((v) => v.sex === "m" && v.age === "大"),
+  );
+  const called = [...Object.values(VILLAGE_TURNS).flat(), ...CORVEE_PARTY];
+
+  it("calls every grown man once, but for the garrison man and the ox-master", () => {
+    expect(new Set(called).size).toBe(called.length);
+    const spared = grownMen
+      .map((v) => v.id)
+      .filter((id) => !called.includes(id))
+      .sort();
+    expect(spared).toEqual(["h05.zhong", "h07.zhong"]);
+    for (const id of called)
+      expect(
+        grownMen.some((v) => v.id === id),
+        id,
+      ).toBe(true);
+  });
+
+  it("never sends two of one household in a month", () => {
+    for (const month of MONTH_IDS) {
+      const ids = month === 10 ? CORVEE_PARTY : turnsOf(month);
+      const houses = ids.map((id) => householdOfId(id).id);
+      expect(new Set(houses).size, `month ${month}`).toBe(houses.length);
+    }
+  });
+
+  it("takes one man of a house that can spare him while the fields are worked, and the plain households in the slack months", () => {
+    // 大女子 is a widow at the head of a household, not a rank
+    const ranked = (id: string) =>
+      ["公士", "上造", "不更"].includes(householdOfId(id).rank ?? "");
+    const second = (id: string) =>
+      householdOfId(id).members.filter((v) => grownMen.includes(v)).length > 1;
+    for (const month of FARMING_MONTHS) {
+      const ids = turnsOf(month);
+      expect(ids, `month ${month}`).toHaveLength(1);
+      expect(ranked(ids[0]) || second(ids[0]), ids[0]).toBe(true);
+    }
+    for (const month of [11, 12, 1]) {
+      const ids = turnsOf(month);
+      expect(ids, `month ${month}`).toHaveLength(5);
+      for (const id of ids) expect(ranked(id), id).toBe(false);
+    }
+    expect(turnsOf(10)).toEqual([]);
+  });
+
+  it("names no man in a scene of the month he is away", () => {
+    for (const month of MONTH_IDS)
+      for (const event of VILLAGE_EVENTS.filter(
+        (e) => e.month === month && !e.id.endsWith("-gengzu"),
+      ))
+        for (const id of eventVillagerIds([event]))
+          expect(turnsOf(month).includes(id), `${event.id}: ${id}`).toBe(false);
   });
 });
 

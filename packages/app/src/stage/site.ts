@@ -243,6 +243,53 @@ export interface SiteEvent {
   changes?: RegisterChange[];
 }
 
+export type SiteSectionId =
+  "description" | "map" | "residents" | "calendar" | "sources";
+
+/** One page of a site: the chrome's subnav lists them and the route names one. */
+export interface SiteSection {
+  id: SiteSectionId;
+  label: string;
+}
+
+const SITE_SECTIONS: SiteSection[] = [
+  { id: "description", label: "Description" },
+  { id: "map", label: "Map" },
+  { id: "residents", label: "Residents" },
+  // the month: its dated events on a registered site, then the almanac
+  { id: "calendar", label: "Calendar" },
+  { id: "sources", label: "Sources" },
+];
+
+/** The pages a site has, in the order the subnav lists them. */
+export const siteSectionsOf = (_site: Site): SiteSection[] => SITE_SECTIONS;
+
+/** the addresses the calendar had while it was two pages */
+const MOVED_SECTIONS: Record<string, SiteSectionId> = {
+  almanac: "calendar",
+  events: "calendar",
+};
+
+/** The section a route segment names; anything else is the description. */
+export const siteSectionOf = (
+  site: Site,
+  segment: string | undefined,
+): SiteSectionId =>
+  siteSectionsOf(site).find((section) => section.id === segment)?.id ??
+  (segment ? MOVED_SECTIONS[segment] : undefined) ??
+  "description";
+
+/** A section's own address: the description is the site's bare route. */
+export const sitePathOf = (site: Site, section: SiteSectionId): string =>
+  section === "description" ? site.path : `${site.path}/${section}`;
+
+/**
+ * The language a site's pages read in, off the query string: the chrome's
+ * toggle writes it and the page reads it, so the two cannot disagree.
+ */
+export const siteLanguageOf = (params: URLSearchParams): "en" | "zh" =>
+  params.get("language") === "zh" ? "zh" : "en";
+
 export interface Site {
   id: SiteId;
   /** the route under `/world` */

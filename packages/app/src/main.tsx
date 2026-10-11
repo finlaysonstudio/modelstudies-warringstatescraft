@@ -71,7 +71,7 @@ if (root) {
             {SITES.map((site) => (
               <Route
                 key={site.id}
-                path={site.path}
+                path={`${site.path}/:section?`}
                 element={<Site site={site} />}
               />
             ))}

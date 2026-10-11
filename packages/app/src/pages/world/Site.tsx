@@ -1,9 +1,10 @@
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import type {
   Language,
+  StageArchetype,
   StageBeat,
   StageDirection,
   StageSequence,
@@ -20,7 +21,13 @@ import {
   type Rite,
   type Task,
 } from "../../stage/almanac";
+import {
+  avatarOf,
+  loadStageManifest,
+  type StageAvatar,
+} from "../../stage/assets";
 import { DIRECTION_RULES } from "../../stage/catalog";
+import type { StageManifest } from "../../stage/manifest";
 import {
   clockLabel,
   parseHour,
@@ -37,7 +44,8 @@ import {
   villagersOf,
   type RegisterState,
 } from "../../stage/register";
-import { STAGE_SETS, stageSetOf } from "../../stage/sets";
+import { DEFAULT_STAGE_SET, stageSet } from "../../stage/sets";
+import { siteLanguageOf, sitePathOf, siteSectionOf } from "../../stage/site";
 import {
   ORDER_LABELS,
   siteMapOf,
@@ -257,8 +265,12 @@ const nextBeat = (
 
 export function Site({ site }: { site: SiteRecord }) {
   const [params, setParams] = useSearchParams();
-  const set = stageSetOf(params.get("set"));
-  const [language, setLanguage] = useState<Language>("en");
+  const navigate = useNavigate();
+  // the chrome's subnav switches between the site's pages; the route names one
+  const section = siteSectionOf(site, useParams().section);
+  const set = stageSet(DEFAULT_STAGE_SET);
+  // the chrome's toggle writes the language; the page only reads it
+  const language: Language = siteLanguageOf(params);
   // a registered site runs its people on a clock rather than on a beat feed
   const registered = site.register !== undefined;
   const openHour = parseHour(params.get("hour"));
@@ -408,7 +420,7 @@ export function Site({ site }: { site: SiteRecord }) {
     [site, plan],
   );
 
-  // a new month empties the day and opens with its rites; before the map is
+  // a new month, or the other language, empties the day and opens with its rites; before the map is
   // ready the counter is still zero and `onReady` feeds the first beats
   useEffect(() => {
     ritesDue.current = true;
@@ -417,7 +429,7 @@ export function Site({ site }: { site: SiteRecord }) {
     if (walking && counter.current > 0) feed(AHEAD);
     // feed and walking are read at the moment the month turns, on purpose
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [month, site]);
+  }, [month, site, language]);
 
   // the scene reports idle when its queue runs dry; the town keeps walking
   // as long as the switch is on, one beat ahead of the reader's patience
@@ -431,6 +443,40 @@ export function Site({ site }: { site: SiteRecord }) {
   const onReady = useCallback(() => {
     if (walking && !registered && counter.current === 0) feed(AHEAD);
   }, [walking, feed, registered]);
+
+  // the stage is mounted on the map page alone, so leaving it ends the day
+  // that was playing: a return starts from a ready map, as a first visit does
+  useEffect(() => {
+    counter.current = 0;
+    played.current = 0;
+    ritesDue.current = true;
+    setBeats([]);
+    setLines([]);
+    setJump(undefined);
+  }, [section]);
+
+  // the residents page draws each person's portrait off the sheet the map
+  // walks, so it needs the art manifest the stage would otherwise load itself
+  const [manifest, setManifest] = useState<StageManifest | null>(null);
+  useEffect(() => {
+    if (section !== "residents" || manifest) return;
+    let cancelled = false;
+    void loadStageManifest({ set })
+      .then((loaded) => {
+        if (!cancelled) setManifest(loaded);
+      })
+      .catch(() => {
+        // the register reads without portraits
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [section, manifest, set]);
+  const portrait = useCallback(
+    (archetype: StageArchetype, variant?: string) =>
+      manifest ? avatarOf(manifest, archetype, variant) : undefined,
+    [manifest],
+  );
 
   const start = () => {
     setWalking(true);
@@ -447,181 +493,156 @@ export function Site({ site }: { site: SiteRecord }) {
     return [...groups.entries()];
   }, [folk]);
 
+  // the month is what the map, the register, the almanac, and the events read
+  const dated = section !== "description" && section !== "sources";
+
   return (
-    <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
+    <div className="mx-auto w-full max-w-7xl px-6 pt-8 pb-24 sm:px-16 sm:pt-10">
       <header className="animate-rise motion-reduce:animate-none">
-        <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          <Link to="/world" className="hover:text-white">
-            The World
-          </Link>
-          {" › "}
-          {site.crumb}
-        </p>
-        <h1 className="mt-2 text-3xl font-medium tracking-tight text-white">
-          {site.title[language]}
-        </h1>
-        <p className="mt-3 max-w-2xl text-pretty text-zinc-400">{site.intro}</p>
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <ToggleGroup
-            options={[
-              { value: "en", label: "en" },
-              { value: "zh", label: "zh" },
-            ]}
-            value={language}
-            onPick={(value) => {
-              setLanguage(value as Language);
-              setBeats([]);
-              setLines([]);
-            }}
-          />
-          <ToggleGroup
-            options={STAGE_SETS.map((option) => ({
-              value: option.id,
-              label: `${option.tile} px`,
-            }))}
-            value={set.id}
-            onPick={(value) =>
-              setParams(
-                (next) => {
-                  next.set("set", value);
-                  return next;
-                },
-                { replace: true },
-              )
-            }
-          />
-          {!registered && (
-            <button
-              type="button"
-              onClick={() => (walking ? setWalking(false) : start())}
-              className={clsx(
-                "cursor-pointer rounded-sm border border-white/10 px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
-                walking ? "text-white" : "text-zinc-400",
-              )}
-            >
-              {walking ? site.words.awake : site.words.wake}
-            </button>
-          )}
-          <label className="flex cursor-pointer items-center gap-x-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
-            <input
-              type="checkbox"
-              checked={follow}
-              onChange={(event) => setFollow(event.target.checked)}
-              className="cursor-pointer accent-brand-terminal"
-            />
-            follow the people
-          </label>
-          <MonthStrip month={month} language={language} onPick={setMonth} />
-          {site.words.roofs && (
-            <label className="flex cursor-pointer items-center gap-x-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
-              <input
-                type="checkbox"
-                checked={!roofs}
-                onChange={(event) => setRoofs(!event.target.checked)}
-                className="cursor-pointer accent-brand-terminal"
-              />
-              {site.words.roofs}
-            </label>
+        {section === "description" && (
+          <p className="max-w-2xl text-pretty text-zinc-400">{site.intro}</p>
+        )}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {dated && (
+            <MonthStrip month={month} language={language} onPick={setMonth} />
           )}
         </div>
       </header>
 
-      <section aria-label={`${site.crumb} map`} className="mt-8">
-        <Stage
-          script={script}
-          beats={beats}
-          names={names}
-          seatNames={seatNames}
-          colors={colors}
-          language={language}
-          view={VIEW}
-          interactive
-          follow={follow}
-          roofs={roofs}
-          month={month}
-          flags={false}
-          set={set.id}
-          eyebrow={false}
-          map={siteMapOf(site, set)}
-          featureNotes={site.features}
-          onIdle={onIdle}
-          onReady={onReady}
-          populace={
-            registered ? { site, hour: openHour, event: openEvent } : undefined
-          }
-          paused={paused}
-          jump={jump}
-          onClock={registered ? onClock : undefined}
-          onLine={registered ? onLine : undefined}
-          renderFigure={
-            registered
-              ? (id, close) => {
-                  const found = villagerOf(id);
-                  if (!found) return null;
-                  return (
-                    <FigureCard
-                      villager={found.villager}
-                      household={found.household}
-                      state={state}
-                      language={language}
-                      onClose={close}
-                    />
-                  );
-                }
-              : undefined
-          }
-        />
-        {registered ? (
-          <ClockStrip
-            clock={clock}
-            paused={paused}
-            next={nextEvent}
-            language={language}
-            onPause={() => setPaused((p) => !p)}
-            onHour={(hour) => jumpTo({ hour })}
-            onSkip={() => nextEvent && jumpTo({ event: nextEvent.id })}
-          />
-        ) : (
-          beats.length === 0 && (
-            <FirstStep note={site.words.firstStep} onStart={start} />
-          )
-        )}
-      </section>
-
-      <MonthCard record={record} plan={plan} language={language} />
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-[2fr_3fr]">
-        <section
-          aria-label={site.words.day.en}
-          className="rounded-sm border border-white/10 bg-black/20 p-5"
-        >
-          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-            {site.words.day[language]}
-          </h2>
-          {lines.length === 0 ? (
-            <p className="mt-3 text-sm text-zinc-500">
-              {site.words.nothing[language]}
-            </p>
-          ) : (
-            <ol className="mt-3 space-y-1.5">
-              {lines.map((line, index) => (
-                <li
-                  key={line.id}
+      {section === "map" && (
+        <>
+          <section aria-label={`${site.crumb} map`} className="mt-8">
+            {registered && (
+              <ClockStrip
+                clock={clock}
+                paused={paused}
+                next={nextEvent}
+                language={language}
+                onPause={() => setPaused((p) => !p)}
+                onHour={(hour) => jumpTo({ hour })}
+                onSkip={() => nextEvent && jumpTo({ event: nextEvent.id })}
+              />
+            )}
+            <Stage
+              script={script}
+              beats={beats}
+              names={names}
+              seatNames={seatNames}
+              colors={colors}
+              language={language}
+              view={VIEW}
+              interactive
+              follow={follow}
+              roofs={roofs}
+              month={month}
+              flags={false}
+              set={set.id}
+              eyebrow={false}
+              map={siteMapOf(site, set)}
+              featureNotes={site.features}
+              onIdle={onIdle}
+              onReady={onReady}
+              populace={
+                registered
+                  ? { site, hour: openHour, event: openEvent }
+                  : undefined
+              }
+              paused={paused}
+              jump={jump}
+              onClock={registered ? onClock : undefined}
+              onLine={registered ? onLine : undefined}
+              renderFigure={
+                registered
+                  ? (id, close) => {
+                      const found = villagerOf(id);
+                      if (!found) return null;
+                      return (
+                        <FigureCard
+                          villager={found.villager}
+                          household={found.household}
+                          state={state}
+                          language={language}
+                          onClose={close}
+                        />
+                      );
+                    }
+                  : undefined
+              }
+            />
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 empty:hidden">
+              {!registered && (
+                <button
+                  type="button"
+                  onClick={() => (walking ? setWalking(false) : start())}
                   className={clsx(
-                    "text-sm",
-                    index === 0 ? "text-zinc-200" : "text-zinc-500",
+                    "cursor-pointer rounded-sm border border-white/10 px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
+                    walking ? "text-white" : "text-zinc-400",
                   )}
                 >
-                  {line[language]}
-                </li>
-              ))}
-            </ol>
-          )}
-        </section>
+                  {walking ? site.words.awake : site.words.wake}
+                </button>
+              )}
+              {site.id !== "village" && (
+                <label className="flex cursor-pointer items-center gap-x-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                  <input
+                    type="checkbox"
+                    checked={follow}
+                    onChange={(event) => setFollow(event.target.checked)}
+                    className="cursor-pointer accent-brand-terminal"
+                  />
+                  follow the people
+                </label>
+              )}
+              {site.words.roofs && (
+                <label className="flex cursor-pointer items-center gap-x-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                  <input
+                    type="checkbox"
+                    checked={!roofs}
+                    onChange={(event) => setRoofs(!event.target.checked)}
+                    className="cursor-pointer accent-brand-terminal"
+                  />
+                  {site.words.roofs}
+                </label>
+              )}
+            </div>
+            {!registered && beats.length === 0 && (
+              <FirstStep note={site.words.firstStep} onStart={start} />
+            )}
+          </section>
+          <section
+            aria-label={site.words.day.en}
+            className="mt-6 rounded-sm border border-white/10 bg-black/20 p-5"
+          >
+            <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+              {site.words.day[language]}
+            </h2>
+            {lines.length === 0 ? (
+              <p className="mt-3 text-sm text-zinc-500">
+                {site.words.nothing[language]}
+              </p>
+            ) : (
+              <ol className="mt-3 space-y-1.5">
+                {lines.map((line, index) => (
+                  <li
+                    key={line.id}
+                    className={clsx(
+                      "text-sm",
+                      index === 0 ? "text-zinc-200" : "text-zinc-500",
+                    )}
+                  >
+                    {line[language]}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
+        </>
+      )}
 
+      {section === "residents" && (
         <section
           aria-label="Who lives here"
-          className="rounded-sm border border-white/10 bg-black/20 p-5"
+          className="mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
         >
           <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
             {site.words.folk[language]}
@@ -630,57 +651,85 @@ export function Site({ site }: { site: SiteRecord }) {
             {site.words.folkNote[language]}
           </p>
           {state && (
-            <RegisterPanel site={site} state={state} language={language} />
+            <RegisterPanel
+              site={site}
+              state={state}
+              language={language}
+              portrait={portrait}
+            />
           )}
           {!state && (
-            <dl className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+            <dl className="mt-4 space-y-4">
               {byOrder.map(([order, people]) => (
                 <div key={order}>
                   <dt className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
                     {ORDER_LABELS[order][language]}
                   </dt>
-                  <dd className="mt-1 text-sm text-zinc-300">
-                    {people
-                      .map((person) => person.label[language])
-                      .join(language === "zh" ? "、" : ", ")}
+                  <dd className="mt-1 grid gap-x-4 gap-y-2 sm:grid-cols-2 lg:grid-cols-4">
+                    {people.map((person, index) => (
+                      <Resident
+                        key={index}
+                        avatar={portrait(person.archetype)}
+                        name={person.label[language]}
+                      />
+                    ))}
                   </dd>
                 </div>
               ))}
             </dl>
           )}
         </section>
-      </div>
+      )}
 
-      {registered && (
+      {section === "calendar" && registered && eventsOfMonth.length === 0 && (
+        <p className="mt-8 text-sm text-zinc-500">
+          {language === "zh" ? "是月无事。" : "Nothing is dated in this month."}
+        </p>
+      )}
+      {section === "calendar" && registered && (
         <EventsPanel
           events={eventsOfMonth}
           language={language}
-          onJump={(id) => jumpTo({ event: id })}
+          onJump={(id) => {
+            // an event plays on the map: open that page just before it
+            const next = new URLSearchParams(params);
+            next.delete("hour");
+            next.set("event", id);
+            navigate({
+              pathname: sitePathOf(site, "map"),
+              search: `?${next}`,
+            });
+          }}
         />
       )}
+      {section === "calendar" && (
+        <MonthCard record={record} plan={plan} language={language} />
+      )}
 
-      <section
-        aria-label="Sources"
-        className="mt-6 rounded-sm border border-white/10 bg-black/20 p-5"
-      >
-        <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          What the plan is drawn from
-        </h2>
-        <ul className="mt-3 space-y-2 text-sm text-zinc-400">
-          {site.sources.map((source) => (
-            <li key={source.name}>
-              <span className="text-zinc-200">{source.name}</span>
-              {source.era && (
-                <span className="ml-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
-                  {ERA_LABELS[source.era]?.[language] ?? source.era}
-                </span>
-              )}
-              {source.text.startsWith(":") ? "" : " "}
-              {source.text}
-            </li>
-          ))}
-        </ul>
-      </section>
+      {section === "sources" && (
+        <section
+          aria-label="Sources"
+          className="mt-8 rounded-sm border border-white/10 bg-black/20 p-5"
+        >
+          <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
+            What the plan is drawn from
+          </h2>
+          <ul className="mt-3 space-y-2 text-sm text-zinc-400">
+            {site.sources.map((source) => (
+              <li key={source.name}>
+                <span className="text-zinc-200">{source.name}</span>
+                {source.era && (
+                  <span className="ml-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                    {ERA_LABELS[source.era]?.[language] ?? source.era}
+                  </span>
+                )}
+                {source.text.startsWith(":") ? "" : " "}
+                {source.text}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
@@ -777,36 +826,6 @@ function FirstStep({ note, onStart }: { note: string; onStart: () => void }) {
   );
 }
 
-function ToggleGroup({
-  options,
-  value,
-  onPick,
-}: {
-  options: { value: string; label: string }[];
-  value: string;
-  onPick: (value: string) => void;
-}) {
-  return (
-    <div className="flex items-center gap-x-1 rounded-sm border border-white/10 p-0.5">
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          onClick={() => onPick(option.value)}
-          className={clsx(
-            "cursor-pointer rounded-sm px-2 py-1 font-plex-mono text-[10px] tracking-wide uppercase",
-            option.value === value
-              ? "bg-white/10 text-white"
-              : "text-zinc-500 hover:text-zinc-200",
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 /** the eras a source is marked by: the period's own witnesses, and the Han ones read for the customs */
 const ERA_LABELS: Record<string, Localized> = {
   "warring-states": { en: "period", zh: "戰國" },
@@ -848,7 +867,7 @@ function ClockStrip({
 }) {
   const zh = language === "zh";
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+    <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2 font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
       <button
         type="button"
         onClick={onPause}
@@ -958,14 +977,77 @@ function FigureCard({
  * and name, then the members by relation and age class, the absent and the
  * struck marked.
  */
+/**
+ * One person as the residents page lists them: the portrait the map walks
+ * beside the name. A person the map does not draw, or a sheet still loading,
+ * keeps the portrait's box empty so a household's rows stay aligned.
+ */
+function Resident({
+  avatar,
+  name,
+  detail,
+  status,
+  struck = false,
+  dim = false,
+}: {
+  avatar?: StageAvatar;
+  name: string;
+  detail?: string;
+  status?: string | null;
+  struck?: boolean;
+  dim?: boolean;
+}) {
+  return (
+    <span className={clsx("flex items-center gap-x-2", dim && "opacity-50")}>
+      <span
+        aria-hidden
+        className={clsx(
+          "block size-12 shrink-0 rounded-sm bg-black/40",
+          !avatar && "border border-dashed border-white/10",
+        )}
+        style={
+          avatar
+            ? {
+                backgroundImage: `url(${avatar.url})`,
+                backgroundPosition: `${(48 - avatar.width) / 2 - avatar.x}px ${(48 - avatar.height) / 2 - avatar.y}px`,
+                backgroundRepeat: "no-repeat",
+                imageRendering: "pixelated",
+              }
+            : undefined
+        }
+      />
+      <span className="min-w-0">
+        <span
+          className={clsx(
+            "block truncate text-sm text-zinc-200",
+            struck && "line-through",
+          )}
+        >
+          {name}
+        </span>
+        {(detail || status) && (
+          <span className="block truncate text-xs text-zinc-500">
+            {[detail, status].filter(Boolean).join(" · ")}
+          </span>
+        )}
+      </span>
+    </span>
+  );
+}
+
 function RegisterPanel({
   site,
   state,
   language,
+  portrait,
 }: {
   site: SiteRecord;
   state: RegisterState;
   language: Language;
+  portrait: (
+    archetype: StageArchetype,
+    variant?: string,
+  ) => StageAvatar | undefined;
 }) {
   const zh = language === "zh";
   const byId = new Map(state.register.map((h) => [h.id, h]));
@@ -988,46 +1070,51 @@ function RegisterPanel({
           <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
             {group.title}
           </p>
-          <ul className="mt-1 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+          <ul className="mt-2 grid gap-4 lg:grid-cols-2">
             {group.households.map((household) => (
-              <li key={household.id} className="text-sm">
-                <span className="text-zinc-200">
+              <li
+                key={household.id}
+                className="rounded-sm border border-white/5 p-3"
+              >
+                <p className="text-sm text-zinc-200">
                   {household.rank ? `${household.rank} ` : ""}
                   {zh ? `${household.surname}氏` : household.surname}
-                </span>
-                <span className="block text-xs text-zinc-400">
-                  {household.members.map((member, index) => {
+                </p>
+                <ul className="mt-2 grid gap-x-4 gap-y-2 sm:grid-cols-2">
+                  {household.members.map((member) => {
                     const struck = state.struck.has(member.id);
                     const away = state.away.has(member.id);
+                    const status = struck
+                      ? zh
+                        ? "除籍"
+                        : "struck off"
+                      : away
+                        ? zh
+                          ? "不在"
+                          : "away"
+                        : !member.drawn
+                          ? zh
+                            ? "不入圖"
+                            : "not drawn"
+                          : null;
                     return (
-                      <span key={member.id}>
-                        {index > 0 ? (zh ? "、" : ", ") : ""}
-                        <span
-                          className={clsx(
-                            struck && "line-through text-zinc-600",
-                            !struck && away && "text-zinc-600",
-                            !member.drawn && "italic",
-                          )}
-                          title={
-                            struck
-                              ? zh
-                                ? "除籍"
-                                : "struck off"
-                              : away
-                                ? zh
-                                  ? "不在"
-                                  : "away"
-                                : `${member.relation} · ${ageLabel(member.age, language)}`
+                      <li key={member.id}>
+                        <Resident
+                          avatar={
+                            member.drawn
+                              ? portrait(member.archetype, member.sprite)
+                              : undefined
                           }
-                        >
-                          {member.relation}
-                          {member.name[language]}
-                          {member.age !== "大" ? `(${member.age})` : ""}
-                        </span>
-                      </span>
+                          name={member.name[language]}
+                          detail={`${member.relation} · ${ageLabel(member.age, language)}`}
+                          status={status}
+                          struck={struck}
+                          dim={struck || away || !member.drawn}
+                        />
+                      </li>
                     );
                   })}
-                </span>
+                </ul>
               </li>
             ))}
           </ul>
@@ -1038,12 +1125,22 @@ function RegisterPanel({
           <p className="font-plex-mono text-[10px] tracking-wide text-zinc-500 uppercase">
             {zh ? "來客" : "Who comes"}
           </p>
-          <p className="mt-1 text-xs text-zinc-400">
+          <ul className="mt-2 grid gap-x-4 gap-y-2 sm:grid-cols-2 lg:grid-cols-4">
             {state.visitors
               .filter((v) => isPresent(state, v) || !v.drawn)
-              .map((v) => `${v.name[language]}（${v.relation}）`)
-              .join(zh ? "、" : ", ")}
-          </p>
+              .map((v) => (
+                <li key={v.id}>
+                  <Resident
+                    avatar={
+                      v.drawn ? portrait(v.archetype, v.sprite) : undefined
+                    }
+                    name={v.name[language]}
+                    detail={v.relation}
+                    dim={!v.drawn}
+                  />
+                </li>
+              ))}
+          </ul>
         </div>
       )}
     </div>

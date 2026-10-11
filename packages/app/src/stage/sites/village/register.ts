@@ -141,8 +141,8 @@ const HOUSEHOLDS: HouseholdSpec[] = [
       maiden("fang", ["Fang", "妨"]),
     ],
     note: {
-      en: "The son Sheng is the ward's 更卒 in the odd months: away on the county's labour turn one month in two.",
-      zh: "子胜为更卒，单月更于县。",
+      en: "Two grown men in the house, so the son Sheng is the one the county calls at the harvest: his labour turn is the ninth month, and the father Ci's the eleventh.",
+      zh: "户有二丁，子胜九月更于县，父疵十一月。",
     },
   },
   {
@@ -455,8 +455,8 @@ const HOUSEHOLDS: HouseholdSpec[] = [
       sonswife("ji", ["Ji", "姞"]),
     ],
     note: {
-      en: "The son Xiong is the ward's 更卒 in the even months.",
-      zh: "子熊为更卒，双月更于县。",
+      en: "A ranked house with two grown men, called while the fields are worked: the father Bao's labour turn is the fourth month and the son Xiong's the eighth, never the two together.",
+      zh: "有爵之户，二丁，田时先行：父豹四月更，子熊八月，同居毋并行。",
     },
   },
   {
@@ -611,6 +611,40 @@ export const villager = (id: string): Villager => {
   return found;
 };
 
-/** the month's 更卒: the Wang son in the odd months, the Cai son in the even */
-export const gengzuOf = (month: number): string =>
-  month % 2 === 1 ? "h03.sheng" : "h23.xiong";
+/**
+ * The months the fields are worked (田時): the second through the ninth, the
+ * ploughing to the harvest. The rest is the slack season the statute sends
+ * the poor in.
+ */
+export const FARMING_MONTHS: readonly number[] = [2, 3, 4, 5, 6, 7, 8, 9];
+
+/**
+ * The year's labour turns (更卒), by the month each man walks out. Every
+ * grown man owes the county a month, and the Qin statute on labour service
+ * says who goes when: 田時先行富有賢人，以閒時行貧者, in the farming season
+ * the wealthy and able first, the poor in the slack season. So each farming
+ * month takes one man, from a house with a rank or with a second grown man to
+ * leave at the plough, and the unranked heads go five a month through the
+ * winter. No month takes two of one household (同居毋并行). The tenth month
+ * is not here: its ten are the party the county's levy takes (`CORVEE_PARTY`
+ * in `events.ts`), which is those men's turn for the year. Two grown men
+ * have no turn: the Zhao son, who leaves for the frontier in the tenth month,
+ * and the ox-master, who is not called away from the ward's oxen.
+ */
+export const VILLAGE_TURNS: Readonly<Record<number, readonly string[]>> = {
+  1: ["h07.gan", "h09.fu", "h11.chang", "h15.hu", "h19.zhang"],
+  2: ["h18.yang"],
+  3: ["h12.hu"],
+  4: ["h23.bao"],
+  5: ["h01.de"],
+  6: ["h16.yang"],
+  7: ["h05.qing"],
+  8: ["h23.xiong"],
+  9: ["h03.sheng"],
+  11: ["h03.ci", "h11.yi", "h14.chang", "h20.zu", "h25.shan"],
+  12: ["h10.ding", "h13.shi", "h17.deng", "h21.tan", "h24.lu"],
+};
+
+/** the men whose labour turn is a month; none in the tenth, the levy's own */
+export const turnsOf = (month: number): readonly string[] =>
+  VILLAGE_TURNS[month] ?? [];

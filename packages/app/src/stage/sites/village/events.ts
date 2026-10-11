@@ -17,7 +17,7 @@ import type {
   StageDirection,
 } from "../../../lib/types";
 import type { Attendance, Hour, RegisterChange, SiteEvent } from "../../site";
-import { gengzuOf, villager } from "./register";
+import { FARMING_MONTHS, turnsOf, villager } from "./register";
 
 const cite = (id: string, line: number, note: string): Cite => ({
   id,
@@ -109,6 +109,11 @@ const SHUIHUDI_FODDER = cite(
   "田律: 入頃芻稾 … 頃入芻三石、稾二石",
 );
 const SHUIHUDI_YAO = cite("shuihudi-zh", 520, "徭律");
+const YUELU_YAO = cite(
+  "village-geng-wang-zh",
+  173,
+  "岳麓秦簡 徭律 (as Wang Yanhui quotes it): 田時先行富有賢人，以閒時行貧者",
+);
 const HANSHU_WOODS = cite("hanshu-zh", 6631, "食貨志: 伐薪樵");
 const HANSHU_GENG = cite(
   "hanshu-zh",
@@ -279,25 +284,44 @@ const altar = (
     { attend: "all" },
   );
 
-/** the month's 更卒 walks out on the first day and is away the month */
-const gengzu = (month: Month): SiteEvent => {
-  const id = gengzuOf(month);
-  const home = villager(id).home;
+/**
+ * The month's 更卒 walk out on the first day and are away the month. Who goes
+ * is the statute's rule (`VILLAGE_TURNS`): one man of a house that can spare
+ * him while the fields are worked, five of the plain households in the slack
+ * months. The tenth month has none, since the county's levy is its own event.
+ */
+const gengzu = (month: Month): SiteEvent | undefined => {
+  const ids = turnsOf(month);
+  if (ids.length === 0) return undefined;
+  const farming = FARMING_MONTHS.includes(month);
   return event(
     `m${month}-gengzu`,
     month,
     1,
     4,
-    { en: "The month's labour turn", zh: "更卒" },
+    farming
+      ? { en: "A labour turn in the farming season", zh: "田时之更" }
+      : { en: "The slack-season labour turns", zh: "闲时之更" },
+    farming
+      ? {
+          en: "The fields are being worked, so the county calls one man only, from a house that can spare him: he walks out past the station to a month of the county's labour, and his household's day lacks him until it ends.",
+          zh: "田时也，县发一丁，先行有余力之家：出邮道，为县更一月，其家一月无之。",
+        }
+      : {
+          en: "The fields are in, and the tallies are called for the plain households: five of the ward's men, no two from one house, walk out past the station to a month of the county's labour.",
+          zh: "田事毕，以券行贫者：里中五丁，同居毋并行，出邮道，为县更一月。",
+        },
+    farming
+      ? [YUELU_YAO, SHUIHUDI_YAO, HANSHU_GENG]
+      : [YUELU_YAO, SHUIHUDI_YAO, SHUIHUDI_SHU, HANSHU_GENG],
+    [
+      ids.map((id) =>
+        route("stroll", person(id, ["pole"]), villager(id).home, "edge"),
+      ),
+    ],
     {
-      en: "One of the ward's grown men walks out past the station to the county's labour for the month, and his household's day lacks him until it ends.",
-      zh: "里中一丁出邮道，为县更卒一月，其家一月无之。",
-    },
-    [HANSHU_GENG],
-    [[route("stroll", person(id, ["pole"]), home, "edge")]],
-    {
-      attend: { villagers: [id] },
-      changes: [{ villager: id, set: { away: month } }],
+      attend: { villagers: [...ids] },
+      changes: ids.map((id) => ({ villager: id, set: { away: month } })),
     },
   );
 };
@@ -1418,10 +1442,10 @@ const YEAR_EVENTS: SiteEvent[] = [
   ),
 ];
 
-/** every event of the year: the dated ones, then the month's 更卒 and the pedlar */
+/** every event of the year: the dated ones, then the months' 更卒 and the pedlar */
 export const VILLAGE_EVENTS: SiteEvent[] = [
   ...YEAR_EVENTS,
-  ...MONTH_IDS.map(gengzu),
+  ...MONTH_IDS.flatMap((month) => gengzu(month) ?? []),
   ...MONTH_IDS.map(pedlar),
 ].sort((a, b) => a.month - b.month || a.day - b.day || a.hour - b.hour);
 

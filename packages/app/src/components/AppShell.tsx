@@ -1,16 +1,29 @@
 import clsx from "clsx";
 import { Radar } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Fragment, type ReactNode } from "react";
 import { CAMPAIGNS } from "../campaigns";
 import { SNAPSHOT, SNAPSHOT_DATE, SNAPSHOT_LABEL } from "../lib/snapshot";
+import {
+  siteLanguageOf,
+  siteSectionOf,
+  siteSectionsOf,
+  sitePathOf,
+} from "../stage/site";
 import { SITES } from "../stage/sites";
 
 // Site chrome: three-row grid, main is the only scroll container. The top
 // bar carries the campaign-level destinations; the Craft and World sub sites
-// each add their own section bar beneath. Branding lives in the bottom bar.
+// each add their own section bar beneath, and a site a third bar of its own
+// pages. Branding lives in the bottom bar.
 export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
+  const site = SITES.find(
+    (entry) => pathname === entry.path || pathname.startsWith(`${entry.path}/`),
+  );
+  const section = site
+    ? siteSectionOf(site, pathname.slice(site.path.length + 1))
+    : undefined;
   const inCraft = pathname === "/craft" || pathname.startsWith("/craft/");
   const inWorld = pathname === "/world" || pathname.startsWith("/world/");
   return (
@@ -87,6 +100,24 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
         )}
+        {site && (
+          <div className="border-t border-white/5">
+            <div className="mx-auto flex h-8 w-full max-w-7xl items-center gap-x-4 px-6 sm:px-16">
+              {siteSectionsOf(site).map((entry, index) => (
+                <Fragment key={entry.id}>
+                  {index > 0 && <Dot />}
+                  <SectionLink
+                    to={sitePathOf(site, entry.id)}
+                    label={entry.label}
+                    active={section === entry.id}
+                    preserveSearch
+                  />
+                </Fragment>
+              ))}
+              <LanguageToggle />
+            </div>
+          </div>
+        )}
       </header>
       {/* relative: absolutely positioned descendants must anchor inside the
           scroll container, not the document. */}
@@ -150,18 +181,61 @@ function NavLink({
   );
 }
 
+// One control for the two languages a site is written in, at the far end of
+// the site's own bar: a press reads the page in the other one. The choice is
+// the query string's, so it follows the reader across the site's pages.
+function LanguageToggle() {
+  const [params, setParams] = useSearchParams();
+  const language = siteLanguageOf(params);
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        setParams(
+          (next) => {
+            if (language === "en") next.set("language", "zh");
+            else next.delete("language");
+            return next;
+          },
+          { replace: true },
+        )
+      }
+      aria-label={language === "en" ? "Read in Chinese" : "Read in English"}
+      className="ml-auto cursor-pointer rounded-sm border border-white/10 px-2 py-0.5 font-plex-mono text-[10px] tracking-wide uppercase hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+    >
+      <span
+        className={language === "en" ? "text-brand-terminal" : "text-zinc-500"}
+      >
+        en
+      </span>
+      <span aria-hidden className="mx-1.5 text-zinc-700">
+        |
+      </span>
+      <span
+        className={language === "zh" ? "text-brand-terminal" : "text-zinc-500"}
+      >
+        zh
+      </span>
+    </button>
+  );
+}
+
 function SectionLink({
   to,
   label,
   active,
+  preserveSearch = false,
 }: {
   to: string;
   label: string;
   active: boolean;
+  /** a move between a site's pages keeps its query string (the month) */
+  preserveSearch?: boolean;
 }) {
+  const { search } = useLocation();
   return (
     <Link
-      to={to}
+      to={preserveSearch ? { pathname: to, search } : to}
       className={clsx(
         "font-plex-mono text-[10px] tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-terminal",
         active ? "text-brand-terminal" : "text-zinc-500 hover:text-zinc-200",

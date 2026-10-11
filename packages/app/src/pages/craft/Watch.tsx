@@ -18,7 +18,7 @@ import type {
 import { labelOf } from "../../lib/gazetteer";
 import { seatColor } from "../../stage/catalog";
 import { beatsRevealed } from "../../stage/cursor";
-import { stageSetOf } from "../../stage/sets";
+import { DEFAULT_STAGE_SET, stageSet } from "../../stage/sets";
 import { Stage } from "../../stage/Stage";
 
 // Watching one recorded game from a chosen seat's vantage, paced turn by
@@ -66,7 +66,7 @@ export function Watch() {
   const [revealed, setRevealed] = useState(1);
   const [staging, setStaging] = useState<StagingState>({ phase: "loading" });
   const stagingId = params.get("staging") ?? id;
-  const set = stageSetOf(params.get("set"));
+  const set = stageSet(DEFAULT_STAGE_SET);
 
   useEffect(() => {
     let cancelled = false;

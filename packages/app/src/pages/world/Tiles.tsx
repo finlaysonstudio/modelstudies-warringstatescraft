@@ -6,7 +6,7 @@ import { BLOB_COLUMNS, BLOB_FULL, BLOB_ROWS } from "../../../art/vendor/blob";
 import { orientationOf, variantOf } from "../../../art/map/map";
 import { loadStageManifest } from "../../stage/assets";
 import type { StageAsset, StageFacing } from "../../stage/manifest";
-import { STAGE_SETS, stageSetOf } from "../../stage/sets";
+import { DEFAULT_STAGE_SET, stageSet } from "../../stage/sets";
 import { spriteFor } from "../../stage/assets";
 import type { StageManifest } from "../../stage/manifest";
 import {
@@ -26,8 +26,9 @@ import {
 // purchased packs are named nowhere and rendered nowhere: their licence keeps
 // them out of anything that travels, so what a reader sees here is ours.
 //
-// One art set at a time, chosen by `?set=`: a set is its own resolution, so
-// every card draws at the tile the manifest names rather than at a constant.
+// The default art set alone: the page offers no choice of resolution, but a
+// set is its own resolution, so every card still draws at the tile the
+// manifest names rather than at a constant.
 
 const SHAPE = islandShape();
 const INDEXES = patchIndexes(SHAPE);
@@ -58,7 +59,7 @@ type LoadState =
 
 export function Tiles() {
   const [params, setParams] = useSearchParams();
-  const set = stageSetOf(params.get("set"));
+  const set = stageSet(DEFAULT_STAGE_SET);
   const [state, setState] = useState<LoadState>({ phase: "loading" });
 
   useEffect(() => {
@@ -137,36 +138,6 @@ export function Tiles() {
           map, and that finishing is as much of the tile as the generation is.
           Each patch is autotiled here by the same rule the map uses, so what a
           card shows is the transition rather than a swatch.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {STAGE_SETS.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              onClick={() =>
-                setParams(
-                  (next) => {
-                    next.set("set", option.id);
-                    return next;
-                  },
-                  { replace: true },
-                )
-              }
-              className={clsx(
-                "cursor-pointer rounded-sm border px-3 py-1.5 font-plex-mono text-xs transition-colors",
-                option.id === set.id
-                  ? "border-brand-terminal/40 text-brand-terminal"
-                  : "border-white/10 text-zinc-500 hover:border-white/20 hover:text-zinc-300",
-              )}
-              aria-pressed={option.id === set.id}
-            >
-              {option.title}
-              <span className="ml-2 text-zinc-600">{option.tile} px</span>
-            </button>
-          ))}
-        </div>
-        <p className="mt-3 max-w-2xl text-pretty text-sm text-zinc-500">
-          {set.blurb}
         </p>
         {showcase && (
           <p className="mt-4 font-plex-mono text-xs text-zinc-500">

@@ -139,6 +139,11 @@ const VILLAGE_BASE: Omit<Site, "folk"> = {
       era: "warring-states",
     },
     {
+      name: "The Yuelu Academy slips",
+      text: "(Qin; bought on the market, so unprovenanced): the statute on labour service that sets who is called when, the wealthy and able first while the fields are worked and the poor in the slack season, by tallies the township overseer carries with the ward chief. Read as Wang Yanhui's study of 2022 quotes it, not from the published slips; it is what the village's labour turns are dealt by.",
+      era: "qin",
+    },
+    {
       name: "Han witnesses",
       text: ": Dong Zhongshu on the month's labour turn and the year's garrison (Hanshu 食貨志), the Chunqiu Fanlu on praying for rain, the Duduan and the Fengsu Tongyi on the La and the exorcism, read for the customs the period left unrecorded.",
       era: "han",

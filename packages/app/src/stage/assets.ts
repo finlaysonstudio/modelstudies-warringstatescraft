@@ -107,3 +107,38 @@ export const spriteFor = (
   }
   return best;
 };
+
+/** One still frame of a sprite sheet: where it sits and the sheet it is cut from. */
+export interface StageAvatar {
+  url: string;
+  /** the frame's corner on the sheet, in the sheet's own pixels */
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * The portrait of a figure: the first frame of its walk toward the viewer,
+ * off the same sheet the scene walks. The sprite is chosen the way the scene
+ * chooses it — a register's variant where the set draws one, else the
+ * archetype's own — so the face on a page is the one on the map.
+ */
+export const avatarOf = (
+  manifest: StageManifest,
+  archetype: StageArchetype,
+  variant?: string,
+): StageAvatar | undefined => {
+  const own = variant ? manifest.assets[`sprite.${variant}`] : undefined;
+  const asset = own?.sprite ? own : spriteFor(manifest, archetype);
+  const meta = asset?.sprite;
+  const frame = meta?.walk.down[0];
+  if (!asset || !meta || frame === undefined) return undefined;
+  return {
+    url: asset.url,
+    x: (frame % meta.columns) * meta.frameWidth,
+    y: Math.floor(frame / meta.columns) * meta.frameHeight,
+    width: meta.frameWidth,
+    height: meta.frameHeight,
+  };
+};

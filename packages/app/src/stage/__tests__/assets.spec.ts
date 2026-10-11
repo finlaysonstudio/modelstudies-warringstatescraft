@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { loadStageManifest, spriteFor } from "../assets";
+import { avatarOf, loadStageManifest, spriteFor } from "../assets";
 import type { StageManifestFile } from "../manifest";
 
 const sprite = (file: string): StageManifestFile["assets"][string] => ({
@@ -107,5 +107,34 @@ describe("spriteFor", () => {
     });
     expect(spriteFor(manifest, "envoy")?.id).toBe("sprite.official");
     expect(spriteFor(manifest, "boat")).toBeUndefined();
+  });
+});
+
+describe("avatarOf", () => {
+  it("cuts the first frame of the walk toward the viewer", async () => {
+    const manifest = await loadStageManifest({
+      set: "period-16",
+      fetcher: fetcher(["fallback", "vendor", "period"]),
+    });
+    expect(avatarOf(manifest, "general")).toEqual({
+      url: "/stage/fallback/knight.png",
+      x: 0,
+      y: 0,
+      width: 24,
+      height: 24,
+    });
+  });
+
+  it("wears a register's variant where the set draws it, else the archetype's own", async () => {
+    const manifest = await loadStageManifest({
+      set: "period-16",
+      fetcher: fetcher(["fallback", "vendor", "period"]),
+    });
+    expect(avatarOf(manifest, "general", "envoy")?.url).toBe(
+      "/stage/period/envoy.png",
+    );
+    expect(avatarOf(manifest, "general", "nobody")?.url).toBe(
+      "/stage/fallback/knight.png",
+    );
   });
 });

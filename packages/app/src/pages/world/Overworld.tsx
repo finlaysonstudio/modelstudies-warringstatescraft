@@ -22,7 +22,7 @@ import {
 } from "../../stage/catalog";
 import { parseMonth, type Month } from "../../stage/almanac";
 import { MonthStrip } from "../../stage/MonthStrip";
-import { STAGE_SETS, stageSetOf } from "../../stage/sets";
+import { DEFAULT_STAGE_SET, stageSet } from "../../stage/sets";
 import { Stage } from "../../stage/Stage";
 
 // The whole overworld on one pannable, zoomable stage, with a control panel
@@ -62,7 +62,7 @@ type EffectChoice = "default" | "none" | StageEffect;
 
 export function Overworld() {
   const [params, setParams] = useSearchParams();
-  const set = stageSetOf(params.get("set"));
+  const set = stageSet(DEFAULT_STAGE_SET);
   // the explorer has no month unless asked: the plain art is the record
   const month = parseMonth(params.get("month"));
   const setMonth = (next: Month | null) =>
@@ -400,22 +400,6 @@ export function Overworld() {
             ]}
             value={language}
             onPick={(value) => rerender(naming, value as Language)}
-          />
-          <ToggleGroup
-            options={STAGE_SETS.map((option) => ({
-              value: option.id,
-              label: `${option.tile} px`,
-            }))}
-            value={set.id}
-            onPick={(value) =>
-              setParams(
-                (next) => {
-                  next.set("set", value);
-                  return next;
-                },
-                { replace: true },
-              )
-            }
           />
           <MonthStrip
             month={month}

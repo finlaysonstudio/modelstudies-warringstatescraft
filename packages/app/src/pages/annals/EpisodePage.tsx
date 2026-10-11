@@ -15,7 +15,7 @@ import type {
   Language,
 } from "../../lib/types";
 import { seatColor } from "../../stage/catalog";
-import { stageSetOf } from "../../stage/sets";
+import { DEFAULT_STAGE_SET, stageSet } from "../../stage/sets";
 import { Stage } from "../../stage/Stage";
 
 // One episode of the Annals: the stage above, the scenes revealed one at a
@@ -42,7 +42,7 @@ export function EpisodePage() {
   const [state, setState] = useState<LoadState>({ phase: "loading" });
   const [revealed, setRevealed] = useState(1);
   const language: Language = params.get("language") === "zh" ? "zh" : "en";
-  const set = stageSetOf(params.get("set"));
+  const set = stageSet(DEFAULT_STAGE_SET);
   const autoplay = params.get("play") === "all";
 
   useEffect(() => {

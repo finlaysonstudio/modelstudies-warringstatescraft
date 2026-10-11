@@ -14,6 +14,7 @@ import {
   type Site,
   type SiteId,
 } from "../sites";
+import { sitePathOf, siteSectionOf, siteSectionsOf } from "../site";
 
 const LANGUAGES = ["en", "zh"] as const;
 const grounds = new Set<string>([...TERRAINS, ...WATERS]);
@@ -28,6 +29,28 @@ interface GeographyFile {
 const GEOGRAPHIES: Record<SiteId, GeographyFile> = { city, village, house };
 
 describe("sites", () => {
+  it("gives every site the same page sections, the calendar among them", () => {
+    for (const site of SITES) {
+      const ids = siteSectionsOf(site).map((section) => section.id);
+      expect(ids).toEqual([
+        "description",
+        "map",
+        "residents",
+        "calendar",
+        "sources",
+      ]);
+      // the bare route is the description, and so is a segment that names none
+      expect(sitePathOf(site, "description")).toBe(site.path);
+      expect(sitePathOf(site, "map")).toBe(`${site.path}/map`);
+      expect(siteSectionOf(site, undefined)).toBe("description");
+      expect(siteSectionOf(site, "nonsense")).toBe("description");
+      expect(siteSectionOf(site, "residents")).toBe("residents");
+      // the calendar was two pages once, and both old addresses still open it
+      expect(siteSectionOf(site, "almanac")).toBe("calendar");
+      expect(siteSectionOf(site, "events")).toBe("calendar");
+    }
+  });
+
   it("lists each site once, by id, with its own route", () => {
     expect(SITES.map((site) => site.id)).toEqual(["city", "village", "house"]);
     expect(new Set(SITES.map((site) => site.path)).size).toBe(SITES.length);
