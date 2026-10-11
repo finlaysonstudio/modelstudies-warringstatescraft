@@ -5,10 +5,10 @@ description: Retrieve from the document lake (`var/lake/`, `@modelstudies/lake`)
 
 # 📚 Document Lake
 
-362 documents, 18.1M words, about 340MB under `var/lake/` (git ignored). Read side is
+376 documents, 18.2M words, about 340MB under `var/lake/` (git ignored). Read side is
 `@modelstudies/lake`, reached through the CLI. Acquisition is `var/lake/bin/`.
 
-Searching is cheap: a full `--use any` scan of all 362 documents returns in under a second. 🏊
+Searching is cheap: a full `--use any` scan of all 376 documents returns in under a second. 🏊
 Reading is what costs context. Search wide, then read narrow windows.
 
 Search is lexical. When a query fails because it names a shape rather than a vocabulary, that
@@ -56,7 +56,7 @@ characters. Snippet `--context <n>` adds n lines on each side. `--json` on any r
 
 ## 🇨🇳 The period corpus is Chinese-first
 
-The single most useful fact about this lake: 58 of the 68 period documents are Chinese
+The single most useful fact about this lake: 67 of the 77 period documents are Chinese
 originals from Wikisource. English is ten documents only.
 
 - `chinese-classics-legge-en` (Analects, Mencius, Great Learning, Doctrine of the Mean)
