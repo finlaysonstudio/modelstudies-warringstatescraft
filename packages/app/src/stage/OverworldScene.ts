@@ -404,6 +404,12 @@ export class OverworldScene extends Phaser.Scene {
   /** the registered site's people, on their clock */
   private populace?: Populace;
   private figureViews = new Map<string, FigureView>();
+  /** the person the page asked to have pointed out, ringed and named while they walk */
+  private marked?: {
+    id: string;
+    ring: Phaser.GameObjects.Graphics;
+    text: Phaser.GameObjects.Text;
+  };
   private clockReportedAt = 0;
   private nightGrade?: Phaser.GameObjects.Rectangle;
   private castGrade?: Phaser.GameObjects.Rectangle;
@@ -740,6 +746,7 @@ export class OverworldScene extends Phaser.Scene {
     this.liftRoofs();
     this.driftWeather();
     this.runPopulace(time, delta);
+    this.followMark();
   }
 
   /**
@@ -802,6 +809,56 @@ export class OverworldScene extends Phaser.Scene {
     this.pickables = this.pickables.filter((p) => p.pick.kind !== "figure");
     this.pendingEvent = undefined;
     this.populace = undefined;
+  }
+
+  /**
+   * Points one of the site's people out: a ring at the feet and the name over
+   * the head, both following the walk, and the camera brought over when the
+   * person stands outside the view. Null drops the mark.
+   */
+  markFigure(target: { id: string; label: string } | null): void {
+    this.marked?.ring.destroy();
+    this.marked?.text.destroy();
+    this.marked = undefined;
+    if (!target) return;
+    const ring = this.add.graphics().setDepth(8999).setVisible(false);
+    const text = this.add
+      .text(0, 0, target.label, {
+        fontFamily: FONT,
+        fontSize: `${8 * this.unit}px`,
+        color: "#ff7550",
+        stroke: "#0b0d10",
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5, 1)
+      .setResolution(3)
+      .setDepth(9001)
+      .setVisible(false);
+    this.marked = { id: target.id, ring, text };
+    const sprite = this.figureViews.get(target.id)?.sprite;
+    if (sprite) {
+      const width = sprite.displayWidth * 0.8;
+      ring.lineStyle(Math.max(1, this.unit), PICK_COLOR, 0.9);
+      ring.strokeEllipse(0, 0, width, width / 2);
+      const camera = this.cameras.main;
+      if (sprite.visible && !camera.worldView.contains(sprite.x, sprite.y))
+        camera.pan(sprite.x, sprite.y, 400, "Sine.easeInOut");
+    }
+    this.followMark();
+  }
+
+  private followMark(): void {
+    const marked = this.marked;
+    if (!marked) return;
+    const sprite = this.figureViews.get(marked.id)?.sprite;
+    const shown = sprite?.visible === true;
+    marked.ring.setVisible(shown);
+    marked.text.setVisible(shown);
+    if (!sprite || !shown) return;
+    marked.ring.setPosition(sprite.x, sprite.y - this.unit);
+    marked.text
+      .setPosition(sprite.x, sprite.y - sprite.displayHeight - this.unit)
+      .setScale(clamp(1 / this.cameras.main.zoom, 1, 2));
   }
 
   private runPopulace(time: number, delta: number): void {

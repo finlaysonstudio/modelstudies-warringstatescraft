@@ -96,6 +96,14 @@ export interface StageProps {
   onEvent?: (event: SiteEvent) => void;
   /** the card for a figure pick, by villager id; without it the pick shows nothing */
   renderFigure?: (id: string, close: () => void) => ReactNode;
+  /** a panel laid over the left of the map; the pick's note moves to the right to clear it */
+  panel?: ReactNode;
+  /** what the panel is called on the button that brings it back */
+  panelLabel?: string;
+  /** one of the site's people to point out on the map, by villager id, with the name to write over them */
+  marked?: { id: string; label: string } | null;
+  /** a figure was picked on the map, or the pick was dropped */
+  onFigure?: (id: string | null) => void;
 }
 
 type Status =
@@ -157,6 +165,10 @@ export function Stage({
   onLine,
   onEvent,
   renderFigure,
+  panel,
+  panelLabel,
+  marked,
+  onFigure,
 }: StageProps) {
   const set = stageSet(setId);
   const host = useRef<HTMLDivElement>(null);
@@ -171,6 +183,7 @@ export function Stage({
   const [idle, setIdle] = useState(true);
   const [pick, setPick] = useState<StagePick | null>(null);
   const [zoom, setZoom] = useState<StageZoom | null>(null);
+  const [panelOpen, setPanelOpen] = useState(true);
   // the scene is built once and the page's idle handler may change with its
   // own state, so the scene calls through a ref rather than a stale closure
   const onIdleRef = useRef(onIdle);
@@ -183,6 +196,8 @@ export function Stage({
   onLineRef.current = onLine;
   const onEventRef = useRef(onEvent);
   onEventRef.current = onEvent;
+  const onFigureRef = useRef(onFigure);
+  onFigureRef.current = onFigure;
 
   useEffect(() => {
     let cancelled = false;
@@ -241,7 +256,9 @@ export function Stage({
             onIdleRef.current?.();
           },
           onPick: (picked) => {
-            if (!cancelled) setPick(picked);
+            if (cancelled) return;
+            setPick(picked);
+            if (picked?.kind === "figure") onFigureRef.current?.(picked.id);
           },
           onZoom: (state) => {
             if (!cancelled) setZoom(state);
@@ -306,6 +323,10 @@ export function Stage({
   useEffect(() => {
     sceneRef.current?.setPaused(paused);
   }, [paused, status]);
+  // the month rebuilds the people, so the mark is drawn again after it
+  useEffect(() => {
+    sceneRef.current?.markFigure(marked ?? null);
+  }, [marked?.id, marked?.label, month, status]);
   useEffect(() => {
     if (!jump || !sceneRef.current) return;
     if (jump.event) sceneRef.current.jumpToEvent(jump.event);
@@ -463,10 +484,35 @@ export function Stage({
           />
         </div>
       )}
+      {panel && status.phase === "ready" && panelOpen && (
+        <div className="absolute top-3 bottom-3 left-3 flex w-44 flex-col overflow-hidden rounded-sm border border-white/10 bg-black/85">
+          <button
+            type="button"
+            onClick={() => setPanelOpen(false)}
+            title={language === "zh" ? "收起" : "Hide the panel"}
+            aria-label={language === "zh" ? "收起" : "Hide the panel"}
+            className="absolute top-1 right-1 cursor-pointer px-1 font-plex-mono text-sm leading-none text-zinc-500 hover:text-white focus-visible:outline-2 focus-visible:outline-brand-terminal"
+          >
+            ‹
+          </button>
+          {panel}
+        </div>
+      )}
+      {panel && status.phase === "ready" && !panelOpen && (
+        <button
+          type="button"
+          onClick={() => setPanelOpen(true)}
+          aria-expanded={false}
+          className="absolute top-3 left-3 cursor-pointer rounded-sm border border-white/10 bg-black/85 px-2 py-1 font-plex-mono text-[10px] tracking-wide text-zinc-400 uppercase hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal"
+        >
+          {panelLabel ?? "Panel"} ›
+        </button>
+      )}
       {pick?.kind === "figure" && renderFigure && (
         <div
           className={clsx(
-            "absolute left-3 max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3",
+            "absolute max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3",
+            panel ? "right-3" : "left-3",
             eyebrow === false ? "top-3" : "top-10",
           )}
         >
@@ -476,7 +522,8 @@ export function Stage({
       {pick && pick.kind !== "figure" && note && (
         <div
           className={clsx(
-            "absolute left-3 max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3",
+            "absolute max-w-[19rem] rounded-sm border border-white/10 bg-black/85 p-3",
+            panel ? "right-3" : "left-3",
             // the note sits under the eyebrow where there is one
             eyebrow === false ? "top-3" : "top-10",
           )}

@@ -284,6 +284,8 @@ export function Site({ site }: { site: SiteRecord }) {
   const [walking, setWalking] = useState(true);
   const [follow, setFollow] = useState(false);
   const [roofs, setRoofs] = useState(true);
+  // the person the people panel points out on the map
+  const [marked, setMarked] = useState<string | null>(null);
   const [beats, setBeats] = useState<StageBeat[]>([]);
   const [lines, setLines] = useState<Line[]>([]);
   const counter = useRef(0);
@@ -314,6 +316,7 @@ export function Site({ site }: { site: SiteRecord }) {
     },
     [state],
   );
+  const markedVillager = marked ? villagerOf(marked)?.villager : undefined;
   const onClock = useCallback((next: SiteClock, upcoming?: SiteEvent) => {
     setClock(next);
     setNextEvent(upcoming);
@@ -551,6 +554,26 @@ export function Site({ site }: { site: SiteRecord }) {
               jump={jump}
               onClock={registered ? onClock : undefined}
               onLine={registered ? onLine : undefined}
+              panel={
+                state && (
+                  <PeoplePanel
+                    state={state}
+                    language={language}
+                    marked={marked}
+                    onMark={setMarked}
+                  />
+                )
+              }
+              panelLabel={language === "zh" ? "人" : "People"}
+              marked={
+                markedVillager && state && isPresent(state, markedVillager)
+                  ? {
+                      id: markedVillager.id,
+                      label: markedVillager.name[language],
+                    }
+                  : null
+              }
+              onFigure={setMarked}
               renderFigure={
                 registered
                   ? (id, close) => {
@@ -1144,6 +1167,144 @@ function RegisterPanel({
         </div>
       )}
     </div>
+  );
+}
+
+type AgeFilter = Villager["age"];
+type SexFilter = Villager["sex"];
+
+const AGE_FILTERS: { id: AgeFilter; label: Localized }[] = [
+  { id: "小", label: { en: "child", zh: "小" } },
+  { id: "大", label: { en: "adult", zh: "大" } },
+  { id: "老", label: { en: "old", zh: "老" } },
+];
+
+const SEX_FILTERS: { id: SexFilter; label: Localized }[] = [
+  { id: "m", label: { en: "man", zh: "男" } },
+  { id: "f", label: { en: "woman", zh: "女" } },
+];
+
+const toggled = <T,>(set: ReadonlySet<T>, value: T): Set<T> => {
+  const next = new Set(set);
+  if (!next.delete(value)) next.add(value);
+  return next;
+};
+
+/**
+ * The people of a registered site, laid over the left of the map: filters by
+ * age class and sex, then every name they leave. A name points its person out
+ * on the map; one who is away, struck off, or not drawn has nobody to point to.
+ */
+function PeoplePanel({
+  state,
+  language,
+  marked,
+  onMark,
+}: {
+  state: RegisterState;
+  language: Language;
+  marked: string | null;
+  onMark: (id: string | null) => void;
+}) {
+  const zh = language === "zh";
+  const [ages, setAges] = useState<ReadonlySet<AgeFilter>>(new Set());
+  const [sexes, setSexes] = useState<ReadonlySet<SexFilter>>(new Set());
+  const people = [
+    ...state.register.flatMap((household) =>
+      household.members.map((villager) => ({
+        villager,
+        detail: zh
+          ? `${household.surname}氏 · ${villager.relation}`
+          : `${household.surname} · ${villager.relation}`,
+      })),
+    ),
+    // the oxen are on the visitors' list and are nobody's kind of person
+    ...state.visitors
+      .filter((visitor) => visitor.archetype !== "ox")
+      .map((villager) => ({ villager, detail: villager.relation })),
+  ].filter(
+    ({ villager }) =>
+      (ages.size === 0 || ages.has(villager.age)) &&
+      (sexes.size === 0 || sexes.has(villager.sex)),
+  );
+  const chip = (on: boolean): string =>
+    clsx(
+      "cursor-pointer rounded-sm border px-1.5 py-0.5 font-plex-mono text-[10px] tracking-wide uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-terminal",
+      on
+        ? "border-brand-terminal text-white"
+        : "border-white/10 text-zinc-500 hover:text-zinc-300",
+    );
+  return (
+    <>
+      <div className="border-b border-white/10 p-2">
+        <p className="font-plex-mono text-[10px] tracking-wide text-card-accent uppercase">
+          {zh ? `人 · ${people.length}` : `People · ${people.length}`}
+        </p>
+        <div className="mt-2 flex flex-wrap gap-1">
+          {AGE_FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              type="button"
+              aria-pressed={ages.has(filter.id)}
+              onClick={() => setAges(toggled(ages, filter.id))}
+              className={chip(ages.has(filter.id))}
+            >
+              {filter.label[language]}
+            </button>
+          ))}
+        </div>
+        <div className="mt-1 flex flex-wrap gap-1">
+          {SEX_FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              type="button"
+              aria-pressed={sexes.has(filter.id)}
+              onClick={() => setSexes(toggled(sexes, filter.id))}
+              className={chip(sexes.has(filter.id))}
+            >
+              {filter.label[language]}
+            </button>
+          ))}
+        </div>
+      </div>
+      <ul className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-1">
+        {people.map(({ villager, detail }) => {
+          const here = villager.drawn && isPresent(state, villager);
+          const on = marked === villager.id;
+          return (
+            <li key={villager.id}>
+              <button
+                type="button"
+                disabled={!here}
+                aria-pressed={on}
+                onClick={() => onMark(on ? null : villager.id)}
+                className={clsx(
+                  "flex w-full items-baseline gap-x-2 px-2 py-0.5 text-left",
+                  here
+                    ? "cursor-pointer hover:bg-white/10"
+                    : "cursor-not-allowed opacity-40",
+                  on && "bg-white/10",
+                )}
+              >
+                <span
+                  className={clsx(
+                    "shrink-0 text-xs",
+                    on ? "text-brand-terminal" : "text-zinc-200",
+                    state.struck.has(villager.id) && "line-through",
+                    !villager.drawn && "italic",
+                  )}
+                >
+                  {villager.name[language]}
+                </span>
+                <span className="truncate text-[10px] text-zinc-500">
+                  {detail}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }
 
