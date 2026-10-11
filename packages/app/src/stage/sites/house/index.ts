@@ -271,7 +271,7 @@ export const HOUSE: Site = {
     visitors: HOUSE_VISITORS,
     folk: HOUSEHOLD,
   }),
-  path: "/craft/house",
+  path: "/world/house",
   crumb: "House",
   title: { en: "A Model House", zh: "模范之第" },
   seat: "house",

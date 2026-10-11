@@ -5,7 +5,7 @@ import type { StageSource } from "./manifest";
  * resolution: the layers it stacks, the tile its sheets are drawn at, and the
  * Tiled map built to that tile. Two exist — the sixteen-pixel set the first
  * bespoke pass produced, and the thirty-two-pixel set drawn over it at a
- * higher shading grade — and `/craft/tiles` shows either.
+ * higher shading grade — and `/world/tiles` shows either.
  *
  * The tile is not decoration: a ground sheet is bound to the map by pixel
  * geometry, so a set's map and its ground art have to agree. Everything that

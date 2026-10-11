@@ -451,8 +451,8 @@ export function Site({ site }: { site: SiteRecord }) {
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
       <header className="animate-rise motion-reduce:animate-none">
         <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-          <Link to="/craft" className="hover:text-white">
-            Warring States Craft
+          <Link to="/world" className="hover:text-white">
+            The World
           </Link>
           {" › "}
           {site.crumb}

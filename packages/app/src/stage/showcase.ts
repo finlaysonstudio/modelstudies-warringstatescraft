@@ -22,7 +22,7 @@ import type { StageAsset, StageManifest, StageSource } from "./manifest";
 import { stageSet, type StageSet } from "./sets";
 
 /**
- * What `/craft/tiles` shows for one art set: the art that set generated for
+ * What `/world/tiles` shows for one art set: the art that set generated for
  * itself, in catalog order, with what it still borrows from a lower layer
  * named rather than rendered. The purchased packs are deliberately absent —
  * their licence keeps them out of anything that travels.

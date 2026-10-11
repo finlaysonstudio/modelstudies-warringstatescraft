@@ -304,7 +304,7 @@ export const STROLL_PLACES: readonly string[] = Object.keys(
 
 export const CITY: Site = {
   id: "city",
-  path: "/craft/city",
+  path: "/world/city",
   crumb: "City",
   title: { en: "A Model City", zh: "模范之城" },
   seat: "town",

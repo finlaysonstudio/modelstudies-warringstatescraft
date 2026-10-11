@@ -61,7 +61,7 @@ export interface StageOverlayMeta {
 /**
  * How one asset was made: the prompt, the generator's settings, and what the
  * build did to the reply. Only the period layer carries it (a purchased sheet
- * has no prompt), and `/craft/tiles` is what reads it.
+ * has no prompt), and `/world/tiles` is what reads it.
  */
 export interface StageAssetRecord {
   tool: string;

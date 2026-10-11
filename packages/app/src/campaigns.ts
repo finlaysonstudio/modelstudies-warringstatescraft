@@ -1,13 +1,14 @@
-// The three campaigns the site presents. Membership of the two bench
-// campaigns is derived from scenario ids, never listed: a study belongs to the
-// campaign of its scenarios, a run to the campaign of its scenario, a fielding
-// to Craft. No study or run id appears in code. The Annals carry no scenario
-// id at all, so their membership is the route (`useCampaign`), which is what
-// keeps the exhibit off the bench's own derivation.
+// The four sections the site presents, in the order the chrome lists them.
+// Membership of the two bench campaigns is derived from scenario ids, never
+// listed: a study belongs to the campaign of its scenarios, a run to the
+// campaign of its scenario, a fielding to Craft. No study or run id appears in
+// code. The World and the Annals carry no scenario id at all, so their
+// membership is the route (`useCampaign`), which is what keeps the exhibits
+// off the bench's own derivation.
 
-export type CampaignId = "craft" | "awry" | "annals";
+export type CampaignId = "craft" | "world" | "awry" | "annals";
 
-/** the campaigns a scenario can belong to; the Annals play no scenario */
+/** the campaigns a scenario can belong to; the World and the Annals play no scenario */
 export type ScenarioCampaignId = "craft" | "awry";
 
 export interface Campaign {
@@ -31,6 +32,14 @@ export const CAMPAIGNS: Record<CampaignId, Campaign> = {
     blurb:
       "One Warring States world, thirteen chapters, two languages, three namings. Frontier models hold the seats of rival courts; a judge panel scores every turn on the chapter's escalation ladder, and the Model Values Survey asks each model where it stands before it plays.",
     scenarios: (entry) => campaignOf(entry.id) === "craft",
+  },
+  world: {
+    id: "world",
+    title: "The World",
+    path: "/world",
+    blurb:
+      "The country the chronicle is set in, drawn for a reader rather than for a seat: the whole overworld on one pannable stage where every river, range, and court says what it is, a capital, a village, and a great officer's house at settlement scale, each walked through the months of the year, and the tiles all four are drawn from. Nothing here reaches a model.",
+    scenarios: () => false,
   },
   awry: {
     id: "awry",

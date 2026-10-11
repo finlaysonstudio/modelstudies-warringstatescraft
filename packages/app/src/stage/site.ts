@@ -245,7 +245,7 @@ export interface SiteEvent {
 
 export interface Site {
   id: SiteId;
-  /** the route under `/craft` */
+  /** the route under `/world` */
   path: string;
   crumb: string;
   title: Localized;

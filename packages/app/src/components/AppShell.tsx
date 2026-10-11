@@ -7,11 +7,12 @@ import { SNAPSHOT, SNAPSHOT_DATE, SNAPSHOT_LABEL } from "../lib/snapshot";
 import { SITES } from "../stage/sites";
 
 // Site chrome: three-row grid, main is the only scroll container. The top
-// bar carries the campaign-level destinations; the Craft sub site adds its
-// own section bar beneath. Branding lives in the bottom bar.
+// bar carries the campaign-level destinations; the Craft and World sub sites
+// each add their own section bar beneath. Branding lives in the bottom bar.
 export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const inCraft = pathname === "/craft" || pathname.startsWith("/craft/");
+  const inWorld = pathname === "/world" || pathname.startsWith("/world/");
   return (
     <div className="grid h-dvh grid-rows-[auto_1fr_auto] bg-surface-base font-geist text-zinc-300">
       <header className="border-b border-white/10">
@@ -20,6 +21,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <NavLink to="/" label="Home" exact />
           <Dot />
           <NavLink to={CAMPAIGNS.craft.path} label={CAMPAIGNS.craft.title} />
+          <Dot />
+          <NavLink to={CAMPAIGNS.world.path} label={CAMPAIGNS.world.title} />
           <Dot />
           <NavLink to={CAMPAIGNS.awry.path} label={CAMPAIGNS.awry.title} />
           <Dot />
@@ -54,11 +57,16 @@ export function AppShell({ children }: { children: ReactNode }) {
                 label="Play"
                 active={pathname.startsWith("/craft/play")}
               />
-              <Dot />
+            </div>
+          </div>
+        )}
+        {inWorld && (
+          <div className="border-t border-white/5">
+            <div className="mx-auto flex h-9 w-full max-w-7xl items-center gap-x-4 px-6 sm:px-16">
               <SectionLink
-                to="/craft/map"
+                to="/world/map"
                 label="Map"
-                active={pathname.startsWith("/craft/map")}
+                active={pathname.startsWith("/world/map")}
               />
               <Dot />
               {SITES.map((site) => (
@@ -72,9 +80,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </Fragment>
               ))}
               <SectionLink
-                to="/craft/tiles"
+                to="/world/tiles"
                 label="Tiles"
-                active={pathname.startsWith("/craft/tiles")}
+                active={pathname.startsWith("/world/tiles")}
               />
             </div>
           </div>

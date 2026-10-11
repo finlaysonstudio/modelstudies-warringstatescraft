@@ -82,7 +82,7 @@ export const villageBlockOf = (
 
 const VILLAGE_BASE: Omit<Site, "folk"> = {
   id: "village",
-  path: "/craft/village",
+  path: "/world/village",
   crumb: "Village",
   title: { en: "A Model Village", zh: "模範之里" },
   seat: "village",

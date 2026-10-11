@@ -33,7 +33,7 @@ describe("sites", () => {
     expect(new Set(SITES.map((site) => site.path)).size).toBe(SITES.length);
     for (const site of SITES) {
       expect(siteOf(site.id)).toBe(site);
-      expect(site.path).toBe(`/craft/${site.id}`);
+      expect(site.path).toBe(`/world/${site.id}`);
       expect(site.intro.length).toBeGreaterThan(200);
       expect(site.sources.length).toBeGreaterThan(2);
     }

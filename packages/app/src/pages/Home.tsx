@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CAMPAIGNS, campaignOf, type Campaign } from "../campaigns";
 import { libraryOf, type LibraryGame } from "../lib/library";
+import { MONTHS } from "../stage/almanac";
+import { SITES } from "../stage/sites";
 import type { RunIndexEntry, StudyIndexEntry } from "../lib/types";
 
 interface Headline {
@@ -13,8 +15,8 @@ interface Headline {
   annalsAnchored: number;
 }
 
-// Home: the project in one line, the method in one paragraph, and the two
-// campaigns as cards, each with one headline number read from data.
+// Home: the project in one line, the method in one paragraph, and the four
+// sections as cards in the chrome's order, each with its headline numbers.
 export function Home({ notFound = false }: { notFound?: boolean }) {
   const [headline, setHeadline] = useState<Headline | null>(null);
 
@@ -93,7 +95,7 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
         )}
       </header>
 
-      <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid gap-6 md:grid-cols-2">
         <CampaignCard
           campaign={CAMPAIGNS.craft}
           stats={
@@ -107,6 +109,15 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
           delay={60}
         />
         <CampaignCard
+          campaign={CAMPAIGNS.world}
+          eyebrow="Exhibit"
+          stats={[
+            { value: 1 + SITES.length, label: "maps to walk" },
+            { value: MONTHS.length, label: "months of the year" },
+          ]}
+          delay={120}
+        />
+        <CampaignCard
           campaign={CAMPAIGNS.awry}
           stats={
             headline
@@ -116,7 +127,7 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
                 ]
               : []
           }
-          delay={120}
+          delay={180}
         />
         <CampaignCard
           campaign={CAMPAIGNS.annals}
@@ -131,7 +142,7 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
                 ]
               : []
           }
-          delay={180}
+          delay={240}
         />
       </div>
     </div>
@@ -140,10 +151,12 @@ export function Home({ notFound = false }: { notFound?: boolean }) {
 
 function CampaignCard({
   campaign,
+  eyebrow = "Campaign",
   stats,
   delay,
 }: {
   campaign: Campaign;
+  eyebrow?: string;
   stats: { value: number; label: string }[];
   delay: number;
 }) {
@@ -154,7 +167,7 @@ function CampaignCard({
       style={{ animationDelay: `${delay}ms` }}
     >
       <p className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
-        Campaign
+        {eyebrow}
       </p>
       <h2 className="mt-2 text-xl font-medium tracking-tight text-white">
         {campaign.title}

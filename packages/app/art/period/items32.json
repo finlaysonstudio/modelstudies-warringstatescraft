@@ -9228,7 +9228,7 @@
       "characterId": "94748174-8379-43b6-9c9d-9aa636589e50",
       "date": "2026-09-09",
       "generations": 6,
-      "note": "the heir of the house before his capping, hair unbound; the first of the pair the house plan asks to be judged side by side in /craft/tiles; walk group 5bdf12e2-d8a5-4a21-b64f-8421c11da14d, four frames per cardinal facing",
+      "note": "the heir of the house before his capping, hair unbound; the first of the pair the house plan asks to be judged side by side in /world/tiles; walk group 5bdf12e2-d8a5-4a21-b64f-8421c11da14d, four frames per cardinal facing",
       "actions": [
         {
           "id": "kneel",
