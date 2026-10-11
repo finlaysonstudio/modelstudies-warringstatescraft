@@ -15,6 +15,7 @@ import {
   lowerOf,
   plainOf,
   patchIndexes,
+  sectionsShown,
   showcaseOf,
   wearerOf,
   type Showcase,
@@ -105,6 +106,15 @@ export function Tiles() {
   const river = state.phase === "ready" ? state.river : undefined;
   const beds = state.phase === "ready" ? state.beds : {};
   const manifest = state.phase === "ready" ? state.manifest : null;
+  const shown = showcase ? sectionsShown(showcase, params.get("show")) : null;
+  const show = (value: string) =>
+    setParams(
+      (next) => {
+        next.set("show", value);
+        return next;
+      },
+      { replace: true },
+    );
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pt-16 pb-24 sm:px-16 sm:pt-20">
@@ -193,10 +203,33 @@ export function Tiles() {
         </p>
       )}
 
-      {showcase?.sections.map((section) => (
+      {showcase && shown && showcase.sections.length > 1 && (
+        <nav
+          className="mt-10 flex flex-wrap gap-2 border-t border-white/10 pt-5"
+          aria-label="Categories"
+        >
+          {showcase.sections.map((section) => (
+            <FilterButton
+              key={section.group}
+              label={section.title}
+              count={section.assets.length}
+              active={shown.filter === section.group}
+              onClick={() => show(section.group)}
+            />
+          ))}
+          <FilterButton
+            label="All"
+            count={showcase.count}
+            active={shown.filter === "all"}
+            onClick={() => show("all")}
+          />
+        </nav>
+      )}
+
+      {shown?.sections.map((section) => (
         <section
           key={section.group}
-          className="mt-14 scroll-mt-8"
+          className="mt-10 scroll-mt-8"
           aria-label={section.title}
         >
           <h2 className="font-plex-mono text-xs tracking-wide text-card-accent uppercase">
@@ -275,6 +308,35 @@ export function Tiles() {
         </section>
       )}
     </div>
+  );
+}
+
+function FilterButton({
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={clsx(
+        "cursor-pointer rounded-sm border px-3 py-1.5 font-plex-mono text-xs transition-colors",
+        active
+          ? "border-brand-terminal/40 text-brand-terminal"
+          : "border-white/10 text-zinc-500 hover:border-white/20 hover:text-zinc-300",
+      )}
+    >
+      {label}
+      <span className="ml-2 text-zinc-600">{count}</span>
+    </button>
   );
 }
 

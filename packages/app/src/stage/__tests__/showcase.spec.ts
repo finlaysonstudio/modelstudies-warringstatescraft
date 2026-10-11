@@ -9,6 +9,7 @@ import {
   lowerOf,
   plainOf,
   patchIndexes,
+  sectionsShown,
   showcaseOf,
   wearerOf,
 } from "../showcase";
@@ -116,6 +117,19 @@ describe("showcaseOf", () => {
     expect(pairs.assets.map((entry) => entry.id)).toEqual([
       "terrain.mountain@forest",
     ]);
+  });
+
+  it("opens on the places and narrows to the group asked for", () => {
+    const showcase = showcaseOf(manifest);
+    const groupsOf = (show: string | null) =>
+      sectionsShown(showcase, show).sections.map((section) => section.group);
+    expect(sectionsShown(showcase, null).filter).toBe("place");
+    expect(groupsOf(null)).toEqual(["place"]);
+    expect(groupsOf("figure")).toEqual(["figure"]);
+    expect(groupsOf("all")).toEqual(["ground", "pair", "place", "figure"]);
+    // a group this set draws nothing in, or a value that is no group at all
+    expect(groupsOf("overlay")).toEqual(["place"]);
+    expect(groupsOf("nonsense")).toEqual(["place"]);
   });
 
   it("drops a section with nothing in it", () => {

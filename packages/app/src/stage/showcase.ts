@@ -243,6 +243,37 @@ export const showcaseOf = (manifest: StageManifest): Showcase => {
   };
 };
 
+/** What the page is narrowed to: one group, or every group in order. */
+export type ShowcaseFilter = ShowcaseGroup | "all";
+
+/**
+ * The group the page opens on. The grounds, their transitions, and their
+ * seasons are two hundred sheets of texture and come first in catalog order,
+ * so an unfiltered page reads as nothing but terrain; the places are the art
+ * a reader recognizes.
+ */
+export const DEFAULT_GROUP: ShowcaseGroup = "place";
+
+/**
+ * The filter a `?show=` value asks for and the sections it leaves. `all` is
+ * every section; a group the set draws is that section alone; anything else
+ * (no value, an unknown one, a group this set has nothing in) is the default
+ * group, or the set's first section where it lacks that too.
+ */
+export const sectionsShown = (
+  showcase: Showcase,
+  show: string | null,
+): { filter: ShowcaseFilter; sections: ShowcaseSection[] } => {
+  if (show === "all") return { filter: "all", sections: showcase.sections };
+  const section =
+    showcase.sections.find((entry) => entry.group === show) ??
+    showcase.sections.find((entry) => entry.group === DEFAULT_GROUP) ??
+    showcase.sections[0];
+  return section
+    ? { filter: section.group, sections: [section] }
+    : { filter: "all", sections: [] };
+};
+
 /** The patch a ground is shown on, in tiles. */
 export const PATCH = { width: 21, height: 9 };
 
