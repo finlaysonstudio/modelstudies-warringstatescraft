@@ -75,13 +75,13 @@ export function WorldHome() {
             Village
           </h2>
           <p className="mt-2 text-sm text-zinc-400">
-            A ward at ten metres a tile: twenty-five farmsteads in five groups
-            of five along three gated lanes, with the ward hall, two wells, a
-            granary, a threshing floor, a byre, and the silk shed, the altar of
-            the soil god on the rise and the graves beyond it, the fields in
-            blocks under every crop the sources harvest, a brook with its ford
-            and its pond, and the post station on the road out, walked by a
-            hundred and one villagers through every month of a household
+            Yangli (陽里), a ward at ten metres a tile: twenty-five farmsteads
+            in five groups of five along three gated lanes, with the ward hall,
+            two wells, a granary, a threshing floor, a byre, and the silk shed,
+            the altar of the soil god on the rise and the graves beyond it, the
+            fields in blocks under every crop the sources harvest, a brook with
+            its ford and its pond, and the post station on the road out, walked
+            by a hundred and one villagers through every month of a household
             register.
           </p>
           <Link
